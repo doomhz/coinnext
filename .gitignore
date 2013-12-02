@@ -13,3 +13,13 @@ results
 
 npm-debug.log
 node_modules
+
+.DS_Store
+.idea
+.idea/*
+.settings.xml
+.monitor
+.env
+crash.log
+builtAssets
+config.json
