@@ -16,7 +16,6 @@
     , "gzippo": "latest"
     , "connect-mongo": "latest"
     , "connect-redis": "latest"
-    , "bcrypt": "latest"
     , "underscore": "latest"
     , "underscore.string": "latest"
     , "bitcoin": "latest"
