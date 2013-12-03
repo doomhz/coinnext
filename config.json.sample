@@ -1,0 +1,30 @@
+{
+  "development" : {
+    "mongo_uri": "mongodb://localhost/coinnext_dev",
+    "redis": {
+      "db": "coinnext_auth_dev"
+    }
+  },
+  "test" : {
+    "mongo_uri": "mongodb://localhost/coinnext_test",
+    "redis": {
+      "db": "coinnext_auth_test"
+    }
+  },
+  "production" : {
+    "mongo": {
+      "host": "",
+      "port": "",
+      "user": "coinnext_prod",
+      "pass": "",
+      "db": "coinnext_prod"
+    },
+    "redis": {
+      "host": "",
+      "port": "",
+      "user": "",
+      "pass": "",
+      "db": "coinnext_auth"
+    }
+  }
+}
