@@ -13,7 +13,6 @@ $(document).ready ()->
       email: $form.find("[name='email']").val()
       password: $form.find("[name='password']").val()
     user.url = "#{url}"
-    console.log user
     user.save null,
       success: ()->
         if url isnt "/login"
