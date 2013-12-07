@@ -1,0 +1,21 @@
+extends ../layout
+
+block content
+
+  h2 Create account
+
+  form#signup-form
+    #error-cnt
+    label(for="email") E-mail
+    input(type="email", name="email", value="")
+    br
+    label(for="repeat_email") Repeat e-mail
+    input(type="email", name="repeat_email", value="")
+    br
+    label(for="password") Password
+    input(type="text", name="password", value="")
+    br
+    label(for="repeat_password") Repeat password
+    input(type="text", name="repeat_password", value="")
+    br
+    button(type="submit") Create account

@@ -12,6 +12,12 @@ html(lang='en')
       }
 
   body
+
+    - if (user)
+      include site/_user_nav
+    - else
+      include site/_login_form
+
     block content
     
     script(src="/socket.io/socket.io.js")

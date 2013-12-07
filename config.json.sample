@@ -3,13 +3,15 @@
     "mongo_uri": "mongodb://localhost/coinnext_dev",
     "redis": {
       "db": "coinnext_auth_dev"
-    }
+    },
+    "salt": "coinnextsecret#1999"
   },
   "test" : {
     "mongo_uri": "mongodb://localhost/coinnext_test",
     "redis": {
       "db": "coinnext_auth_test"
-    }
+    },
+    "salt": "coinnextsecret#1999"
   },
   "production" : {
     "mongo": {
@@ -25,6 +27,7 @@
       "user": "",
       "pass": "",
       "db": "coinnext_auth"
-    }
+    },
+    "salt": "coinnextsecret#1999"
   }
 }

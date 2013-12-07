@@ -14,8 +14,12 @@
     , "coffee-script": "latest"
     , "connect-assets": "2.x"
     , "gzippo": "latest"
+    , "bcrypt": "latest"
     , "connect-mongo": "latest"
     , "connect-redis": "latest"
+    , "passport": "latest"
+    , "passport-local": "latest"
+    , "sha1": "latest"
     , "underscore": "latest"
     , "underscore.string": "latest"
     , "bitcoin": "latest"
@@ -34,5 +38,6 @@
     , "should": "latest"
     , "growl": "latest"
     , "nodemock": "latest"
+    , "supertest": "latest"
   }
 }

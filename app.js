@@ -6,7 +6,7 @@
 var express = require('express');
 var http = require('http');
 var MongoStore = require('connect-mongo')(express);
-//var RedisStore = require('connect-redis')(express);
+var RedisStore = require('connect-redis')(express);
 var connectDomain = require('connect-domain');
 var gzippo = require('gzippo');
 var fs = require('fs');
@@ -16,12 +16,13 @@ var environment = process.env.NODE_ENV || 'development';
 //var BtcWallet = require("./lib/btc_wallet");
 var config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', encoding='utf8'))[environment];
 
-
 // Configure globals
+GLOBAL.passport = require('passport');
 GLOBAL.appConfig = function () {return config;};
 
 //GLOBAL.wallet    = new BtcWallet();
-//require('./models/db_connect_mongo');
+require('./models/db_connect_mongo');
+require('./lib/auth');
 
 // Setup the middlewares
 var oneYear = 31557600000;
@@ -42,16 +43,16 @@ app.configure(function () {
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser());
-  /*
   app.use(express.session({
     secret: 'coinnextsecret83',
-    store: new RedisStore(GLOBAL.appConfig().auth.redis),
+    store: new RedisStore(GLOBAL.appConfig().redis),
     cookie: {
       maxAge: 2592000000,
       path: '/'
     }
   }));
-*/
+  app.use(passport.initialize());
+  app.use(passport.session());
   app.use(helmet.xframe('sameorigin'));
   app.use(app.router);
   app.use(staticRenderer);
@@ -86,3 +87,4 @@ server.listen(app.get('port'), function(){
 
 // Routes
 require('./routes/site')(app);
+require('./routes/users')(app);
