@@ -1,4 +1,5 @@
-form#login-form
+form#login-form(action="/login")
+  #error-cnt
   label(for="email") E-mail
   input(type="text", name="email", value="")
   label(for="password") Password

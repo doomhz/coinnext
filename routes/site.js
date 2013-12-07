@@ -2,7 +2,9 @@
 (function() {
   module.exports = function(app) {
     app.get("/", function(req, res) {
-      return res.render("site/index");
+      return res.render("site/index", {
+        user: req.user
+      });
     });
     return app.get("/signup", function(req, res) {
       return res.render("site/signup");
