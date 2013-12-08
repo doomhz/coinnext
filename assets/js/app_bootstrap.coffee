@@ -3,6 +3,7 @@ $(document).ready ()->
   $signupForm = $("#signup-form")
   $loginForm = $("#login-form")
   $logoutBt = $("#logout-bt")
+  $qrGenBt = $("#qr-gen-bt")
 
   onAuthSubmit = (ev)->
     ev.preventDefault()
@@ -12,6 +13,7 @@ $(document).ready ()->
     user = new App.UserModel
       email: $form.find("[name='email']").val()
       password: $form.find("[name='password']").val()
+      gauth_pass: $form.find("[name='gauth_pass']").val()
     user.url = "#{url}"
     user.save null,
       success: ()->
@@ -39,3 +41,10 @@ $(document).ready ()->
       ev.preventDefault()
       $.get $logoutBt.attr("href"), ()->
         window.location = "/"
+
+  if $qrGenBt.length
+    $qrGenBt.click (ev)->
+      ev.preventDefault()
+      if confirm "Are yousure?"
+        $.get $qrGenBt.attr("href"), ()->
+          window.location.reload()

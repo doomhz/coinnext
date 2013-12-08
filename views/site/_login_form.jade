@@ -3,6 +3,8 @@ form#login-form(action="/login")
   label(for="email") E-mail
   input(type="text", name="email", value="")
   label(for="password") Password
-  input(type="text", name="password", value="")
+  input(type="password", name="password", value="")
+  label(for="gauth_pass") Google Authenticator code
+  input(type="text", name="gauth_pass", value="")
   button(type="submit") Login
 a(href="/signup") Signup

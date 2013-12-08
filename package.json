@@ -32,6 +32,7 @@
     , "async": "latest"
     , "helmet": "latest"
     , "mongoose-unique-validator": "latest"
+    , "speakeasy": "latest"
   },
   "devDependencies": {
     "mocha": "latest"

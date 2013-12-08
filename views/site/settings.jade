@@ -1,0 +1,11 @@
+extends ../layout
+
+block content
+  h1 Settings
+
+  - if (user.gauth_data)
+    a(href="#{user.gauth_data.google_auth_qr}", target="_blank")
+      img(src="#{user.gauth_data.google_auth_qr}")
+    p#qr-code #{user.gauth_data.base32}
+
+  a#qr-gen-bt(href="/generate_gauth") Generate Google Authenticator code
