@@ -2,6 +2,7 @@
 //= require vendor/underscore
 //= require vendor/backbone
 //= require vendor/qrcode
+//= require vendor/jquery.validate
 
 //= require app/models/user
 

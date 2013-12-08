@@ -8,6 +8,9 @@ $(document).ready ()->
   onAuthSubmit = (ev)->
     ev.preventDefault()
     $form = $(ev.target)
+    submitAuthForm $form
+
+  submitAuthForm = ($form)->
     $form.find("#error-cnt").text ""
     url = $form.attr "action"
     user = new App.UserModel
@@ -31,7 +34,36 @@ $(document).ready ()->
             $form.find("#error-cnt").text "Invalid credentials."
 
   if $signupForm.length
-    $signupForm.submit onAuthSubmit
+    $signupForm.validate
+      rules:
+        password:
+          required: true
+          minlength: 5
+        repeat_password:
+          required: true
+          minlength: 5
+          equalTo: "#password"
+        email:
+          required: true
+          email: true
+        repeat_email:
+          required: true
+          equalTo: "#email"
+      messages:
+        password:
+          required: "Please provide a password"
+          minlength: "Your password must be at least 5 characters long"
+        repeat_password:
+          required: "Please provide a password"
+          minlength: "Your password must be at least 5 characters long"
+          equalTo: "Please enter the same password as above"
+        email: "Please enter a valid email address"
+        repeat_email:
+          required: "Please provide an email"
+          equalTo: "Please enter the same email as above"
+      submitHandler: ()->
+        submitAuthForm $signupForm
+        return false
 
   if $loginForm.length
     $loginForm.submit onAuthSubmit

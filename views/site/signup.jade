@@ -7,13 +7,13 @@ block content
   form#signup-form(action="/user")
     #error-cnt
     label(for="email") E-mail
-    input(type="email", name="email", value="")
+    input#email(type="email", name="email", value="")
     br
     label(for="repeat_email") Repeat e-mail
     input(type="email", name="repeat_email", value="")
     br
     label(for="password") Password
-    input(type="password", name="password", value="")
+    input#password(type="password", name="password", value="")
     br
     label(for="repeat_password") Repeat password
     input(type="password", name="repeat_password", value="")
