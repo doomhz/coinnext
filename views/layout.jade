@@ -1,9 +1,13 @@
 doctype 5
 html(lang='en')
   head
-    title #{title ? title : 'Virtual Currency Exchange - CoinNext'}
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge")
+
+    title #{title ? title : 'Coinnext - Cryptocurrency Exchange'}
     
     meta(name='description', content='')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
 
     != css('main')
 
@@ -12,18 +16,9 @@ html(lang='en')
       }
 
   body
-
-    - if (user)
-      include site/_user_nav
-    - else
-      include site/_login_form
-
+    include site/_header
     block content
-    
+    include site/_footer
+
     script(src="/socket.io/socket.io.js")
     != js('application')
-    //script.
-    //  var _gaq=[['_setAccount','UA-39241506-1'],['_trackPageview']];
-    //  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-    //  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-    //  s.parentNode.insertBefore(g,s)}(document,'script'));

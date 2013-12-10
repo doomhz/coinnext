@@ -42,13 +42,10 @@ $(document).ready ()->
         repeat_password:
           required: true
           minlength: 5
-          equalTo: "#password"
+          equalTo: "#signup-password"
         email:
           required: true
           email: true
-        repeat_email:
-          required: true
-          equalTo: "#email"
       messages:
         password:
           required: "Please provide a password"
@@ -58,9 +55,6 @@ $(document).ready ()->
           minlength: "Your password must be at least 5 characters long"
           equalTo: "Please enter the same password as above"
         email: "Please enter a valid email address"
-        repeat_email:
-          required: "Please provide an email"
-          equalTo: "Please enter the same email as above"
       submitHandler: ()->
         submitAuthForm $signupForm
         return false
