@@ -20,19 +20,23 @@
     width 100%
   .control-group
     input
-      &:first-child
-        border-radius 1px 1px 0 0
-      &:last-child
-        border-radius 0 0 1px 1px
+      border-radius 1px
+      margin-bottom 5px
+      
   input[type="submit"]
     margin-top 10px
     btn($teal)
-
-  p
+  .error
+    color #da4444
+  label.error
     font-size 13px
+    margin 0 0 10px 0
+    display block
+  p
+    font-size 12px
     color #999
     text-align center
-    margin 10px 0 0 0
+    margin 0
     padding 0
       
 .auth .wrapper

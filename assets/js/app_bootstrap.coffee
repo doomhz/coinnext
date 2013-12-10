@@ -48,13 +48,13 @@ $(document).ready ()->
           email: true
       messages:
         password:
-          required: "Please provide a password"
-          minlength: "Your password must be at least 5 characters long"
+          required: "Please provide a password."
+          minlength: "Your password must be at least 5 characters long."
         repeat_password:
-          required: "Please provide a password"
-          minlength: "Your password must be at least 5 characters long"
-          equalTo: "Please enter the same password as above"
-        email: "Please enter a valid email address"
+          required: "Please provide a password."
+          minlength: "Your password must be at least 5 characters long."
+          equalTo: "Please enter the same password as above."
+        email: "Please enter a valid email address."
       submitHandler: ()->
         submitAuthForm $signupForm
         return false
