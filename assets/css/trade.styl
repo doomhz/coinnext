@@ -56,9 +56,12 @@
   select
     width 100%
 .market-ticker-coin
+  clearfix()
   border-bottom 1px solid #ecedef
   padding 10px
-  clearfix()
+  cursor pointer
+  &:hover
+    color $blue
   &.up
     animation tickGreen 2s ease-in-out
     .rate:after
