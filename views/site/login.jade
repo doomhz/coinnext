@@ -1,13 +1,17 @@
-.main-content.auth(role='main')
-  .wrapper
-    .auth-box
-      h1 Login
-      form#login-form(action="/login")
-      	#error-cnt
-        .control-group
-          input#login-email(type="email", placeholder="Email", tabindex="1")
-          input#login-password(type="password", placeholder="Password", tabindex="2")
-          input#login-gauth(type="text", name="gauth_pass", value="")
-        input#login-btn(type="submit", value="Log In", tabindex="3").btn
-    .auth-links
-      a(href='') Lost your password?
+extends ../layout
+
+block content
+
+  .main-content.auth(role='main')
+    .wrapper
+      .auth-box
+        h1 Login
+        form#login-form(action="/login")
+          #error-cnt
+          .control-group
+            input#login-email(type="email", name="email", placeholder="Email", tabindex="1")
+            input#login-password(type="password", name="password", placeholder="Password", tabindex="2")
+            input#login-gauth(type="text", name="gauth_pass", value="", placeholder="Google Authenticator (optional)", tabindex="3")
+          input#login-btn(type="submit", value="Log In", tabindex="4")
+      .auth-links
+        a(href='') Lost your password?

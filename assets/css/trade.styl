@@ -1,0 +1,111 @@
+/* Market Tickers */
+.market-ticker
+  background #fff
+  border-radius 2px
+  overflow hidden
+  border 1px solid #e0e5e8
+  width 200px
+  &.edit-on
+    color #999
+    .market-ticker-header
+      background #fff
+      .edit-ticker
+        color inherit
+    .rate
+      display none
+    .hide-coin
+    .show-coin
+    .move-coin
+    .add-coin
+      display block
+
+.market-ticker-header
+  margin 0
+  padding 10px
+  background #f9f9f9
+  text-transform uppercase
+  letter-spacing .3px
+  color #14294e
+  border-bottom 1px solid #e0e5e8
+  font-size 13px
+  .edit-ticker
+    float right
+    font-size 15px
+    color #999
+    &:hover
+      color inherit
+
+.market-ticker-coins
+  reset-list()
+
+@keyframes tickRed
+  from
+    color inherit
+  to 
+    color #da4444
+@keyframes tickGreen
+  from
+    color inherit
+  to 
+    color #72b54c
+
+.add-coin
+  display none
+  padding 10px
+  border-top 1px solid #ecedef
+  i
+    color #72b54c
+    font-size 15px
+.market-ticker-coin
+  border-bottom 1px solid #ecedef
+  padding 10px
+  clearfix()
+  &.up
+    animation tickGreen 2s ease-in-out
+    .rate:after
+      content "▲"
+      color #72b54c
+  &.down
+    animation tickRed 2s ease-in-out
+    .rate:after
+      content "▼"
+      color #da4444
+  .hide-coin
+  .move-coin
+    display none
+  .hide-coin
+    color #da4444
+    margin-right 5px
+    i
+      vertical-align -1px
+  .hide-coin
+  .label
+    float left
+  .move-coin
+    cursor pointer
+    float right
+    margin-left 5px
+    i
+      vertical-align middle
+  .rate
+    float right
+  &:last-child
+    border 0
+
+/* Center */
+.market-title
+  margin 0
+  font-weight 500
+  letter-spacing .3px
+  color $darkblue
+  .coin-icon
+    vertical-align text-bottom
+
+.coin-icon
+  width 32px
+  height 32px
+  display inline-block
+  image '/img/coins.png' auto 32px
+  background-repeat no-repeat
+  &.ppc
+    background-position -32px 0

@@ -1,0 +1,51 @@
+/* Chatbox */
+.chatbox
+  background #fff
+  border-radius 2px
+  overflow hidden
+  border 1px solid #e0e5e8
+  width 300px
+  height 400px
+  font-size 13px
+  position relative
+
+.message-list
+  reset-list()
+  padding 10px
+  overflow-y scroll
+  position absolute
+  width 100%
+  bottom 50px
+  top 0
+
+.message
+  margin-bottom 3px
+  .sender
+    font-weight bold
+    color $blue
+
+.message-post
+  position absolute
+  bottom 0
+  width 100%
+  height 40px
+  overflow hidden
+  border-top 1px solid #e0e5e8
+
+  .chat-message-input
+    border 0
+    background transparent
+    height 40px
+    font-size 13px
+    width 100%
+    padding-right 60px
+  #send-message-bt
+    btn($blue)
+    padding 0
+    position absolute
+    top 0
+    right 0
+    width 50px
+    height 30px
+    margin 5px
+    z-index 1

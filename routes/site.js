@@ -13,6 +13,12 @@
     app.get("/signup", function(req, res) {
       return res.render("site/signup");
     });
+    app.get("/login", function(req, res) {
+      return res.render("site/login");
+    });
+    app.get("/trade", function(req, res) {
+      return res.render("site/trade");
+    });
     return app.get("/settings", function(req, res) {
       return res.render("site/settings", {
         user: req.user

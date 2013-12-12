@@ -8,6 +8,7 @@
 body
   background #f6f7f8
   color #717171
+  color #5f6a7d
   -webkit-font-smoothing antialiased
   font 14px "Helvetica Neue", Helvetica, Arial, sans-serif
 
@@ -35,6 +36,12 @@ input:focus
 
 $teal = #8BC26C
 $blue = #539bd3
+$darkblue = #14294e
+
+reset-list()
+  list-style none
+  padding 0
+  margin 0
 
 btn(color)
   color #fff
@@ -88,9 +95,7 @@ p
   background-repeat no-repeat
 
 .nav
-  list-style none
-  margin 0
-  padding 0
+  reset-list()
 
 .site-nav
 .auth-nav
@@ -141,12 +146,37 @@ p
       &:active
         color #14294e
 
+/* Body */
+.main-content
+  clearfix()
+  margin 20px 0
+
+.col-left
+  float left
+  width 200px
+.col-center
+  margin-left 200px
+  margin-right 300px
+  padding 0 20px
+.col-right
+  float right
+  width 300px
+
 /* Footer */
 .page-foot
   clearfix()
   background darken(#13294e, 50%)
   color #fff
   font-size 12px
-  padding-top 20px
+  padding 20px 0
+  .copyright
+    letter-spacing .3px
+  .copyright
+  .locale-selector
+    display inline-block
+  .locale-selector
+    margin-left 50px
 
 @import 'auth'
+@import 'chat'
+@import 'trade'

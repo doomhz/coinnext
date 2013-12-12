@@ -1,0 +1,53 @@
+extends ../layout
+
+block content
+  .main-content(role='main')
+    .wrapper
+      .col-left
+        .market-ticker
+          h2.market-ticker-header
+            | Exchange / BTC
+            a(href='').edit-ticker <i class='icon-list-ul'></i>
+          ul.market-ticker-coins
+            li.market-ticker-coin
+              a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
+              .label LTC
+              .rate 0.03509
+              .move-coin <i class="icon-reorder"></i>
+            li.market-ticker-coin.up
+              a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
+              .label NMC
+              .rate 0.00736
+              .move-coin <i class="icon-reorder"></i>
+            li.market-ticker-coin
+              a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
+              .label NVC
+              .rate 0.02085
+              .move-coin <i class="icon-reorder"></i>
+            li.market-ticker-coin.down
+              a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
+              .label PPC
+              .rate 0.00525
+              .move-coin <i class="icon-reorder"></i>
+            li.market-ticker-coin
+              a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
+              .label FTC
+              .rate 0.00054
+              .move-coin <i class="icon-reorder"></i>
+          .add-coin
+            a(href='')
+              | Add Coin
+      .col-right
+        .chatbox
+          ul.message-list
+            li.message
+              <span class="sender">nanook</span>: Hey there, BUY!
+            li.message
+              <span class="sender">jason</span>: No man, all Sell!
+          .message-post
+            input(type="text", placeholder="Type here to chat...").chat-message-input
+            button#send-message-bt Send
+
+      .col-center
+        h1.market-title <i class="coin-icon ppc"></i> <b>Peercoin</b> to <b>Bitcoin</b> Exchange
+
