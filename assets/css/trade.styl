@@ -55,6 +55,7 @@
     color #fff
     background $blue
     border 0
+    font-weight bold
     .rate
     &:hover
       color #fff !important
@@ -96,18 +97,63 @@
 
 /* Center */
 .market-title
-  margin 0
+  margin 0 0 10px 0
   font-weight 500
+  font-size 20px
   letter-spacing .3px
   color $darkblue
   .coin-icon
     vertical-align text-bottom
 
 .coin-icon
-  width 32px
-  height 32px
+  width 20px
+  height 20px
   display inline-block
-  image '/img/coins.png' auto 32px
+  image '/img/coins.png' auto 20px
   background-repeat no-repeat
   &.ppc
-    background-position -32px 0
+    background-position -20px 0
+
+.coin-stats
+  background #f9f9f9
+  border-radius 2px
+  overflow hidden
+  border 1px solid #e0e5e8
+  margin-bottom 10px
+  padding 10px
+  p
+    padding 0
+    margin-bottom 5px
+    &:last-child
+      margin 0
+  .last-price
+    font-weight bold
+  .up
+    color #72b54c
+  .down
+    color #da4444
+
+.graph
+  width 100%
+  height 300px
+  background #ccc
+  border-radius 1px
+  margin-bottom 10px
+
+/* Order Boxes */
+.order-box-con-wrap
+  clearfix()
+  margin-bottom 10px
+.order-box-wrap
+  width 50%
+  float left
+  padding 0 10px 0 0
+  &:last-child
+    padding 0
+
+.order-box
+  background #f9f9f9
+  border-radius 2px
+  overflow hidden
+  border 1px solid #e0e5e8
+  padding 10px
