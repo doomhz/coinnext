@@ -2,8 +2,11 @@
 @import 'vendor/normalize.css'
 @import 'font'
 
-*
-  box-sizing border-box
+$teal = #8BC26C
+$blue = #539bd3
+$darkblue = #14294e
+
+@import 'framework'
 
 body
   background #f6f7f8
@@ -11,62 +14,6 @@ body
   color #5f6a7d
   -webkit-font-smoothing antialiased
   font 14px "Helvetica Neue", Helvetica, Arial, sans-serif
-
-input[type="text"]
-input[type="email"]
-input[type="password"]
-input[type="number"]
-input[type="url"]
-  border 1px solid #ddd
-  font-size 14px
-  padding 10px
-  background #fff
-  margin-top -1px
-  position relative
-  transition all .1s linear
-  &:focus
-    background #f9f9f9
-    z-index 1
-
-input[readonly]
-  cursor not-allowed
-
-input:focus
-  outline none
-
-$teal = #8BC26C
-$blue = #539bd3
-$darkblue = #14294e
-
-reset-list()
-  list-style none
-  padding 0
-  margin 0
-
-btn(color)
-  color #fff
-  border-radius 1px
-  background color
-  padding 10px 20px
-  text-transform uppercase
-  border 0
-  font-size 12px
-  transition all .1s linear
-  &:hover
-    color #fff
-    background darken(color, 30%)
-
-a
-  text-decoration none
-  color #539bd3
-  transition color .1s linear
-  &:hover
-    color #13294e
-
-p
-  margin-top 0
-  padding 0
-  margin-bottom 20px
 
 .wrapper
   max-width 1100px
@@ -77,15 +24,18 @@ p
 
 /* Header */
 .page-head
+  clearfix()
+  position relative
   background #fff
   height 50px
   border-bottom 1px solid #e0e5e8
   width 100%
-  clearfix()
 
 .site-logo
   float left
   margin 12px 10px
+  &:hover
+    opacity .8
 
 .coinnext-logo
   height 25px
@@ -103,7 +53,7 @@ p
   float right
   &> li
     float left
-  &> li a
+  &> li > a
     display block
     height 50px
     line-height 50px
@@ -118,7 +68,9 @@ p
     &:hover
       color #539bd3
     &:active
+    &.active
       color #14294e
+
 .auth-nav
   margin 0 5px
   .btn

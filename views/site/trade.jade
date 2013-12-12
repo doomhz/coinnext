@@ -4,7 +4,7 @@ block content
   .main-content(role='main')
     .wrapper
       .col-left
-        .market-ticker
+        .market-ticker.edit-on
           h2.market-ticker-header
             | Exchange / BTC
             a(href='').edit-ticker <i class='icon-list-ul'></i>
@@ -35,8 +35,11 @@ block content
               .rate 0.00054
               .move-coin <i class="icon-reorder"></i>
           .add-coin
-            a(href='')
-              | Add Coin
+            select
+              option(val='') Display Exchange
+              option(val='CL') CopperLark
+              option(val='DVC') Devcoin
+              option(val='MNC') MinCoin
       .col-right
         .chatbox
           ul.message-list
@@ -44,6 +47,8 @@ block content
               <span class="sender">nanook</span>: Hey there, BUY!
             li.message
               <span class="sender">jason</span>: No man, all Sell!
+            li.message
+              <span class="sender">jason</span>: Hey there, BUjlmqjsdfklmqjsdflmjqslmfjqlsmdjflmqksjflmqjsdfklmjqslmdfjqlkmsjdflmjqslmdfjqsfklmjqlsmdfY!
           .message-post
             input(type="text", placeholder="Type here to chat...").chat-message-input
             button#send-message-bt Send

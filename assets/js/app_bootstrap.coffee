@@ -71,6 +71,6 @@ $(document).ready ()->
   if $qrGenBt.length
     $qrGenBt.click (ev)->
       ev.preventDefault()
-      if confirm "Are yousure?"
+      if confirm "Are you sure?"
         $.get $qrGenBt.attr("href"), ()->
           window.location.reload()
