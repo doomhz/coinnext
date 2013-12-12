@@ -38,17 +38,6 @@
 .market-ticker-coins
   reset-list()
 
-@keyframes tickRed
-  from
-    color inherit
-  to 
-    color #da4444
-@keyframes tickGreen
-  from
-    color inherit
-  to 
-    color #72b54c
-
 .add-coin
   display none
   padding 10px
@@ -60,18 +49,29 @@
   border-bottom 1px solid #ecedef
   padding 10px
   cursor pointer
+  height 38px
+  margin-top -1px
+  &.active
+    color #fff
+    background $blue
+    border 0
+    .rate
+    &:hover
+      color #fff !important
   &:hover
     color $blue
   &.up
-    animation tickGreen 2s ease-in-out
-    .rate:after
-      content "▲"
+    .rate
       color #72b54c
+      transition color .3s ease-out
+      &:after
+        content "▲"
   &.down
-    animation tickRed 2s ease-in-out
-    .rate:after
-      content "▼"
+    .rate
       color #da4444
+      transition color .3s ease-out
+      &:after
+        content "▼"
   .hide-coin
   .move-coin
     display none
@@ -92,7 +92,7 @@
   .rate
     float right
   &:last-child
-    border 0
+    border-bottom 0
 
 /* Center */
 .market-title
