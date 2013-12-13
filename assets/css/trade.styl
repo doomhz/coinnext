@@ -23,17 +23,17 @@
   margin 0
   padding 10px
   background #f9f9f9
-  text-transform uppercase
   letter-spacing .3px
   color #14294e
   border-bottom 1px solid #e0e5e8
-  font-size 13px
+  font-size 14px
   .edit-ticker
     float right
     font-size 15px
     color #999
     &:hover
-      color inherit
+      color $blue
+      text-decoration none
 
 .market-ticker-coins
   reset-list()
@@ -128,6 +128,7 @@
       margin 0
   .last-price
     font-weight bold
+    color $darkblue
   .up
     color #72b54c
   .down
@@ -152,8 +153,28 @@
     padding 0
 
 .order-box
-  background #f9f9f9
+  background #fff
   border-radius 2px
   overflow hidden
   border 1px solid #e0e5e8
+.order-box-header
+  clearfix()
+  background #f9f9f9
   padding 10px
+  border-bottom 1px solid #e0e5e8
+.order-box-title
+  margin 0
+  color $darkblue
+  float left
+  font-size 16px
+  line-height 16px
+.order-box-balance
+  float right
+  line-height 16px
+  margin 0
+  .amount
+    font-weight bold
+.order-box-body
+  padding 10px
+  select
+    margin-bottom 10px

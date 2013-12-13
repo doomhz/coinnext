@@ -4,23 +4,24 @@
 
 $teal = #8BC26C
 $blue = #539bd3
+$blue = #4183c4
 $darkblue = #14294e
 
 @import 'framework'
 
 body
+  min-width 1000px
   background #f6f7f8
-  color #717171
   color #5f6a7d
   -webkit-font-smoothing antialiased
   font 14px "Helvetica Neue", Helvetica, Arial, sans-serif
 
 .wrapper
-  max-width 1100px
+  max-width 1600px
   margin-right auto
   margin-left auto
-  padding-left 24px
-  padding-right 24px
+  padding-left 20px
+  padding-right 20px
 
 /* Header */
 .page-head
@@ -30,10 +31,11 @@ body
   height 50px
   border-bottom 1px solid #e0e5e8
   width 100%
+  overflow hidden
 
 .site-logo
   float left
-  margin 12px 10px
+  margin 12px 10px 12px 0
   &:hover
     opacity .8
 
@@ -46,6 +48,7 @@ body
 
 .nav
   reset-list()
+  overflow hidden
 
 .site-nav
 .auth-nav
@@ -53,6 +56,7 @@ body
   float right
   &> li
     float left
+    white-space nowrap
   &> li > a
     display block
     height 49px
@@ -66,11 +70,13 @@ body
     font-size 12px
     text-transform uppercase
     &:hover
-      color #539bd3
+      color $blue
+      text-decoration none
     &:active
     &.active
-      background-color #f9f9f9
       color #14294e
+    &.active
+      background-color #f9f9f9
 
 .auth-nav
   margin 0 5px
@@ -94,8 +100,8 @@ body
       border 1px solid #ecedef
       line-height 23px
       &:hover
-        color #539bd3
-        border-color #539bd3
+        color $blue
+        border-color $blue
       &:active
         color #14294e
 
@@ -108,8 +114,8 @@ body
   float left
   width 200px
 .col-center
-  margin-left 220px
-  margin-right 320px
+  margin-left 210px
+  margin-right 310px
 .col-right
   float right
   width 300px
