@@ -1,12 +1,14 @@
 (function() {
-  var JsonRenderer, User;
+  var JsonRenderer, User, _;
 
   User = require('../models/user');
 
   JsonRenderer = require('../lib/json_renderer');
 
+  _ = require("underscore");
+
   module.exports = function(app) {
-    var login;
+    var login, renderError;
     app.post("/user", function(req, res) {
       var user;
       user = new User({
@@ -15,14 +17,9 @@
       });
       return user.save(function(err) {
         if (err) {
-          console.error("Could not create user", err);
-          res.statusCode = 409;
-          return res.json({
-            "error": "User cannot be created"
-          });
-        } else {
-          return res.json(JsonRenderer.user(user));
+          return renderError(err, res);
         }
+        return res.json(JsonRenderer.user(user));
       });
     });
     app.post("/login", function(req, res, next) {
@@ -33,55 +30,69 @@
     });
     app.get("/user/:id?", function(req, res) {
       if (!req.user) {
-        res.statusCode = 409;
-        return {};
+        return renderError(null, res);
       }
       return res.json(JsonRenderer.user(req.user));
     });
     app.get("/logout", function(req, res) {
       req.logout();
-      return res.json({});
+      if (req.accepts("html")) {
+        return res.redirect("/");
+      } else {
+        return res.json({});
+      }
     });
     app.get("/generate_gauth", function(req, res) {
       if (!req.user) {
-        res.statusCode = 409;
-        return {};
+        return renderError(null, res);
       }
       return req.user.generateGAuthData(function() {
         return res.json(JsonRenderer.user(req.user));
       });
     });
-    return login = function(req, res, next) {
+    login = function(req, res, next) {
       return passport.authenticate("local", function(err, user, info) {
         if (err) {
-          res.statusCode = 401;
-          return res.json({
-            error: err
-          });
+          return renderError(err, res, 401);
         }
         if (!user) {
-          res.statusCode = 401;
-          return res.json({
-            error: "Invalid credentials"
-          });
+          return renderError("Invalid credentials", res, 401);
         }
         return req.logIn(user, function(err) {
           if (err) {
-            res.statusCode = 401;
-            return res.json({
-              error: "Invalid credentials"
-            });
+            return renderError("Invalid credentials", res, 401);
           }
           if (user.gauth_data && !user.isValidGAuthPass(req.body.gauth_pass)) {
             req.logout();
-            res.statusCode = 401;
-            return res.json({
-              error: "Invalid Google Authenticator code"
-            });
+            return renderError("Invalid Google Authenticator code", res, 401);
           }
           return res.json(JsonRenderer.user(req.user));
         });
       })(req, res, next);
+    };
+    return renderError = function(err, res, code) {
+      var key, message, val, _ref;
+      if (code == null) {
+        code = 409;
+      }
+      res.statusCode = code;
+      message = "";
+      if (_.isString(err)) {
+        message = err;
+      } else if (_.isObject(err) && err.name === "ValidationError") {
+        _ref = err.errors;
+        for (key in _ref) {
+          val = _ref[key];
+          if (val.path === "email" && val.message === "unique") {
+            message += "E-mail is already taken. ";
+          } else {
+            message += "" + val.message + " ";
+          }
+        }
+      }
+      return res.json({
+        error: message
+      });
     };
   };
 

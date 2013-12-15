@@ -1,9 +1,11 @@
 (function() {
-  var User, UserSchema, crypto, exports, speakeasy;
+  var User, UserSchema, crypto, exports, speakeasy, uniqueValidator;
 
   crypto = require("crypto");
 
   speakeasy = require("speakeasy");
+
+  uniqueValidator = require("mongoose-unique-validator");
 
   UserSchema = new Schema({
     email: {
@@ -26,6 +28,8 @@
   });
 
   UserSchema.set("autoIndex", false);
+
+  UserSchema.plugin(uniqueValidator);
 
   UserSchema.methods.isValidPassword = function(password) {
     return this.password === User.hashPassword(password);
@@ -55,6 +59,16 @@
   UserSchema.statics.hashPassword = function(password) {
     return crypto.createHash("sha1").update("" + password + (GLOBAL.appConfig().salt), "utf8").digest("hex");
   };
+
+  UserSchema.path("email").validate(function(value) {
+    var emailPattern;
+    emailPattern = /^\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i;
+    return emailPattern.test(value);
+  }, "Invalid email");
+
+  UserSchema.path("password").validate(function(value) {
+    return value.length > 4;
+  }, "The password is too short. 5 chars min.");
 
   User = mongoose.model("User", UserSchema);
 
