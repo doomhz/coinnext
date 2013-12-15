@@ -33,6 +33,7 @@
     , "helmet": "latest"
     , "mongoose-unique-validator": "latest"
     , "speakeasy": "latest"
+    , "nodemailer": "latest"
   },
   "devDependencies": {
     "mocha": "latest"

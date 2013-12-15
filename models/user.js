@@ -1,11 +1,13 @@
 (function() {
-  var User, UserSchema, crypto, exports, speakeasy, uniqueValidator;
+  var Emailer, User, UserSchema, crypto, exports, speakeasy, uniqueValidator;
 
   crypto = require("crypto");
 
   speakeasy = require("speakeasy");
 
   uniqueValidator = require("mongoose-unique-validator");
+
+  Emailer = require("../lib/emailer");
 
   UserSchema = new Schema({
     email: {
@@ -19,6 +21,12 @@
     },
     gauth_data: {
       type: {}
+    },
+    token: {
+      type: String,
+      index: {
+        unique: true
+      }
     },
     created:  ({
       type: Date ,
@@ -54,6 +62,54 @@
       encoding: "base32"
     });
     return currentPass === pass;
+  };
+
+  UserSchema.methods.sendPasswordLink = function(callback) {
+    var data, emailer, options, passUrl, siteUrl;
+    if (callback == null) {
+      callback = function() {};
+    }
+    siteUrl = GLOBAL.appConfig().emailer.host;
+    passUrl = "" + siteUrl + "/change-password/" + this.token;
+    data = {
+      "site_url": siteUrl,
+      "pass_url": passUrl
+    };
+    options = {
+      to: {
+        email: this.email
+      },
+      subject: "Change password request on Coinnext.com",
+      template: "change_password"
+    };
+    emailer = new Emailer(options, data);
+    emailer.send(function(err, result) {
+      if (err) {
+        return console.error(err);
+      }
+    });
+    return callback();
+  };
+
+  UserSchema.methods.generateToken = function(callback) {
+    if (callback == null) {
+      callback = function() {};
+    }
+    this.token = crypto.createHash("sha1").update("" + this._id + (GLOBAL.appConfig().salt) + (Date.now()), "utf8").digest("hex");
+    return this.save(function(err, u) {
+      return callback(u.token);
+    });
+  };
+
+  UserSchema.statics.findByToken = function(token, callback) {
+    if (callback == null) {
+      callback = function() {};
+    }
+    return User.findOne({
+      token: token
+    }).exec(function(err, user) {
+      return callback(err, user);
+    });
   };
 
   UserSchema.statics.hashPassword = function(password) {

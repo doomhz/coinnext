@@ -1,20 +1,10 @@
 (function() {
-  var speakeasy;
-
-  speakeasy = require("speakeasy");
-
   module.exports = function(app) {
     app.get("/", function(req, res) {
       return res.render("site/index", {
         title: 'Home',
         user: req.user
       });
-    });
-    app.get("/signup", function(req, res) {
-      return res.render("site/signup");
-    });
-    app.get("/login", function(req, res) {
-      return res.render("site/login");
     });
     app.get("/trade", function(req, res) {
       return res.render("site/trade", {
