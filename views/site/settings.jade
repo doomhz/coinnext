@@ -1,11 +1,19 @@
 extends ../layout
 
 block content
-  h1 Settings
+  .main-content.settings(role='main')
+    .wrapper
+      aside
+        ul.sub-nav
+          li: a(href='/') Settings
+          li: a(href='/') Preferences
+          li: a(href='/') Security
+          li: a(href='/') Delete Account
 
-  - if (user.gauth_data)
-    a(href="#{user.gauth_data.google_auth_qr}", target="_blank")
-      img(src="#{user.gauth_data.google_auth_qr}")
-    p#qr-code #{user.gauth_data.base32}
+        - if (user.gauth_data)
+          a(href="#{user.gauth_data.google_auth_qr}", target="_blank")
+            img(src="#{user.gauth_data.google_auth_qr}")
+          p#qr-code #{user.gauth_data.base32}
 
-  a#qr-gen-bt(href="/generate_gauth") Generate Google Authenticator code
+      section.body
+        a#qr-gen-bt(href="/generate_gauth") Generate Google Authenticator code

@@ -42,25 +42,19 @@ $(document).ready ()->
         repeat_password:
           required: true
           minlength: 5
-          equalTo: "#password"
+          equalTo: "#signup-password"
         email:
           required: true
           email: true
-        repeat_email:
-          required: true
-          equalTo: "#email"
       messages:
         password:
-          required: "Please provide a password"
-          minlength: "Your password must be at least 5 characters long"
+          required: "Please provide a password."
+          minlength: "Your password must be at least 5 characters long."
         repeat_password:
-          required: "Please provide a password"
-          minlength: "Your password must be at least 5 characters long"
-          equalTo: "Please enter the same password as above"
-        email: "Please enter a valid email address"
-        repeat_email:
-          required: "Please provide an email"
-          equalTo: "Please enter the same email as above"
+          required: "Please provide a password."
+          minlength: "Your password must be at least 5 characters long."
+          equalTo: "Please enter the same password as above."
+        email: "Please enter a valid email address."
       submitHandler: ()->
         submitAuthForm $signupForm
         return false
@@ -77,6 +71,6 @@ $(document).ready ()->
   if $qrGenBt.length
     $qrGenBt.click (ev)->
       ev.preventDefault()
-      if confirm "Are yousure?"
+      if confirm "Are you sure?"
         $.get $qrGenBt.attr("href"), ()->
           window.location.reload()

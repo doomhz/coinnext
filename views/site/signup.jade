@@ -1,21 +1,16 @@
 extends ../layout
 
 block content
-
-  h2 Create account
-
-  form#signup-form(action="/user")
-    #error-cnt
-    label(for="email") E-mail
-    input#email(type="email", name="email", value="")
-    br
-    label(for="repeat_email") Repeat e-mail
-    input(type="email", name="repeat_email", value="")
-    br
-    label(for="password") Password
-    input#password(type="password", name="password", value="")
-    br
-    label(for="repeat_password") Repeat password
-    input(type="password", name="repeat_password", value="")
-    br
-    button(type="submit") Create account
+  .main-content.auth(role='main')
+    .wrapper
+      .auth-box
+        h1 Create Account
+        form#signup-form(action="/user")
+          #error-cnt
+          .control-group
+            input#signup-email(type="email", name="email", placeholder="Email", tabindex="1")
+            input#signup-password(type="password", name="password" placeholder="Password", tabindex="2")
+            input(type="password", name="repeat_password" placeholder="Confirm Password", tabindex="3")
+          input#login-btn(type="submit", value="Create Account", tabindex="4")
+          p.terms
+            | By creating an account, <br />you agree to our <a href="/">Terms of service</a>.

@@ -1,2 +1,148 @@
+@import 'nib'
+@import 'vendor/normalize.css'
+@import 'font'
+
+$teal = #8BC26C
+$blue = #539bd3
+$blue = #4183c4
+$darkblue = #14294e
+
+@import 'framework'
+
 body
-  background gray
+  min-width 1000px
+  background #f6f7f8
+  color #5f6a7d
+  -webkit-font-smoothing antialiased
+  font 14px "Helvetica Neue", Helvetica, Arial, sans-serif
+
+.wrapper
+  max-width 1600px
+  margin-right auto
+  margin-left auto
+  padding-left 20px
+  padding-right 20px
+
+/* Header */
+.page-head
+  clearfix()
+  position relative
+  background #fff
+  height 50px
+  border-bottom 1px solid #e0e5e8
+  width 100%
+  overflow hidden
+
+.site-logo
+  float left
+  margin 12px 10px 12px 0
+  &:hover
+    opacity .8
+
+.coinnext-logo
+  height 25px
+  width 146px
+  display block
+  image '/img/logo.png' auto 25px
+  background-repeat no-repeat
+
+.nav
+  reset-list()
+  overflow hidden
+
+.site-nav
+.auth-nav
+  clearfix()
+  float right
+  &> li
+    float left
+    white-space nowrap
+  &> li > a
+    display block
+    height 49px
+    line-height 50px
+    border-left 1px solid #ecedef
+    border-right 1px solid #ecedef
+    margin-left -1px
+    font-weight 500
+    padding 0 20px
+    color #999
+    font-size 12px
+    text-transform uppercase
+    &:hover
+      color $blue
+      text-decoration none
+    &:active
+    &.active
+      color #14294e
+    &.active
+      background-color #f9f9f9
+
+.auth-nav
+  margin 0 5px
+  .btn
+    color #fff
+    background darken(#8BC26C, 15%)
+    height 25px
+    line-height 25px
+    border-radius 1px
+    margin 12px 5px
+    padding 0 20px
+    border 0
+    font-size 12px
+    transition all .1s linear
+    &:hover
+      color #fff
+      background darken(#8BC26C, 30%)
+    &.white
+      background transparent
+      color #999
+      border 1px solid #ecedef
+      line-height 23px
+      &:hover
+        color $blue
+        border-color $blue
+      &:active
+        color #14294e
+
+/* Body */
+.main-content
+  clearfix()
+  margin 20px 0
+
+.col-left
+  float left
+  width 200px
+.col-center
+  margin-left 210px
+  margin-right 310px
+.col-right
+  float right
+  width 300px
+
+.settings
+.finances
+  aside
+    float left
+    width 200px
+  section.body
+    margin-left 220px
+
+/* Footer */
+.page-foot
+  clearfix()
+  background darken(#13294e, 50%)
+  color #fff
+  font-size 12px
+  padding 20px 0
+  .copyright
+    letter-spacing .3px
+  .copyright
+  .locale-selector
+    display inline-block
+  .locale-selector
+    margin-left 50px
+
+@import 'auth'
+@import 'chat'
+@import 'trade'
