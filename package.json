@@ -33,6 +33,7 @@
     , "helmet": "latest"
     , "mongoose-unique-validator": "latest"
     , "speakeasy": "latest"
+    , "nodemailer": "latest"
   },
   "devDependencies": {
     "mocha": "latest"
@@ -40,5 +41,7 @@
     , "growl": "latest"
     , "nodemock": "latest"
     , "supertest": "latest"
+    , "grunt-contrib-coffee": "latest"
+    , "grunt-contrib-watch": "latest"
   }
 }

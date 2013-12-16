@@ -2,6 +2,8 @@ $(document).ready ()->
 
   $signupForm = $("#signup-form")
   $loginForm = $("#login-form")
+  $changePassForm = $("#change-pass-form")
+  $sendPassForm = $("#send-pass-form")
   $logoutBt = $("#logout-bt")
   $qrGenBt = $("#qr-gen-bt")
 
@@ -58,6 +60,34 @@ $(document).ready ()->
       submitHandler: ()->
         submitAuthForm $signupForm
         return false
+
+  if $changePassForm
+    $changePassForm.validate
+      rules:
+        password:
+          required: true
+          minlength: 5
+        repeat_password:
+          required: true
+          minlength: 5
+          equalTo: "#change-pass-new-pass"
+      messages:
+        password:
+          required: "Please provide a password."
+          minlength: "Your password must be at least 5 characters long."
+        repeat_password:
+          required: "Please provide a password."
+          minlength: "Your password must be at least 5 characters long."
+          equalTo: "Please enter the same password as above."
+
+  if $sendPassForm
+    $sendPassForm.validate
+      rules:
+        email:
+          required: true
+          email: true
+      messages:
+        email: "Please enter a valid email address."
 
   if $loginForm.length
     $loginForm.submit onAuthSubmit

@@ -4,14 +4,42 @@
     "redis": {
       "db": "coinnext_auth_dev"
     },
-    "salt": "coinnextsecret#1999"
+    "salt": "coinnextsecret#1999",
+    "emailer": {
+      "host": "http://localhost:5000",
+      "from": "Coinnext Mailer <no-reply@coinnext.com>",
+      "transport": {
+        "host": "email-smtp.us-east-1.amazonaws.com",
+        "port": 465,
+        "secureConnection": true,
+        "auth": {
+          "user": "",
+          "pass": ""
+        },
+        "debug": true
+      }
+    }
   },
   "test" : {
     "mongo_uri": "mongodb://localhost/coinnext_test",
     "redis": {
       "db": "coinnext_auth_test"
     },
-    "salt": "coinnextsecret#1999"
+    "salt": "coinnextsecret#1999",
+    "emailer": {
+      "host": "http://localhost:5000",
+      "from": "Coinnext Mailer <no-reply@coinnext.com>",
+      "transport": {
+        "host": "email-smtp.us-east-1.amazonaws.com",
+        "port": 465,
+        "secureConnection": true,
+        "auth": {
+          "user": "",
+          "pass": ""
+        },
+        "debug": true
+      }
+    }
   },
   "production" : {
     "mongo": {
@@ -28,6 +56,20 @@
       "pass": "",
       "db": "coinnext_auth"
     },
-    "salt": "coinnextsecret#1999"
+    "salt": "coinnextsecret#1999",
+    "emailer": {
+      "host": "https://coinnext.com",
+      "from": "Coinnext Mailer <no-reply@coinnext.com>",
+      "transport": {
+        "host": "email-smtp.us-east-1.amazonaws.com",
+        "port": 465,
+        "secureConnection": true,
+        "auth": {
+          "user": "",
+          "pass": ""
+        },
+        "debug": false
+      }
+    }
   }
 }

@@ -87,4 +87,5 @@ server.listen(app.get('port'), function(){
 
 // Routes
 require('./routes/site')(app);
+require('./routes/auth')(app);
 require('./routes/users')(app);
