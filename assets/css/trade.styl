@@ -142,9 +142,6 @@
   margin-bottom 10px
 
 /* Order Boxes */
-.order-box-con-wrap
-  clearfix()
-  margin-bottom 10px
 .order-box-wrap
   width 50%
   float left
@@ -156,7 +153,10 @@
   background #fff
   border-radius 2px
   overflow hidden
+  min-height 287px
   border 1px solid #e0e5e8
+  .amount
+    font-weight bold
 .order-box-header
   clearfix()
   background #f9f9f9
@@ -172,9 +172,78 @@
   float right
   line-height 16px
   margin 0
-  .amount
-    font-weight bold
-.order-box-body
+
+.market-type
+  clearfix()
+  border-bottom 1px solid #e0e5e8
+  label
+    padding 10px
+    width 50%
+    display block
+    float left
+    &:first-child
+      border-right 1px solid #ecedef
+  input[type="radio"]
+    margin-right 5px
+  i
+    font-style normal
+    cursor pointer
+    &:hover
+      color $blue
+
+.market-order
+.limit-order
   padding 10px
-  select
-    margin-bottom 10px
+  label
+    margin-bottom 5px
+    display block
+  .confirm-order
+    button
+      width 100%
+      btn($blue)
+
+.order-overview
+  width 100%
+  margin-bottom 10px
+  font-size 13px
+  th
+    padding 7px 5px
+    font-weight normal
+    text-align left
+  td
+    padding 7px 5px
+  .subtotal
+  .to-receive
+    background #f9f9f9
+  .to-receive
+    padding 8px 5px
+    font-size 14px
+    th
+      font-weight bold
+
+.wrap-amount
+  position relative
+  margin-bottom 10px
+  input
+    z-index 1
+    width 100%
+    height 30px
+    position relative
+    background transparent
+    &:focus
+      border-color $blue
+      background transparent
+.overlay-amount
+  position absolute
+  line-height 28px
+  top 0
+  right 10px
+  height 20px
+  color #808080
+  z-index 2
+
+#sell-box .market-order
+  display none
+
+
+

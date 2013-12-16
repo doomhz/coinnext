@@ -66,23 +66,78 @@ block content
                 h3.order-box-title Buy PPC
                 .order-box-balance <a href="#" class="amount">0 BTC</a> Available
               .order-box-body
-                select
-                  option Market Order
-                  option Limit Order
+                .market-type
+                  label
+                    input(type='radio', name='buy-type', checked)
+                    i Market Order
+                  label
+                    input(type='radio', name='buy-type')
+                    i Limit Order
                 .market-order
-                  label Spend:
-                  input(type="text")
+                  label I want to Spend:
+                  .wrap-amount
+                    input(type="text")
+                    .overlay-amount BTC
+                  table.order-overview
+                    tr.subtotal
+                      th Total:
+                      td <span class="amount">5 BTC</span>
+                    tr.fee
+                      th Fee:
+                      td <span class="amount">0.002 BTC</span>
+                    tr.to-receive
+                      th Approx. PPC to receive:
+                      td <span class="amount">0.11471265 PPC</span>
+                  .confirm-order
+                    button Buy PPC
 
-          .order-box-wrap
+          #order-box.container
             #sell-box.order-box
               .order-box-header
                 h3.order-box-title Sell PPC
                 .order-box-balance <a href="#" class="amount">0893892039 PPC</a> Available
               .order-box-body
-                select
-                  option Market Order
-                  option Limit Order
+                .market-type
+                  label
+                    input(type='radio', name='sell-type')
+                    i Market Order
+                  label
+                    input(type='radio', name='sell-type', checked)
+                    i Limit Order
+                .limit-order
+                  label Amount to Sell:
+                  .wrap-amount
+                    input(type="text")
+                    .overlay-amount PPC
+                  label Price per PPC:
+                  .wrap-amount
+                    input(type="text")
+                    .overlay-amount BTC
+                  table.order-overview
+                    tr.to-receive 
+                      th Total:
+                      td <span class="amount">0 BTC</span>
+                  .confirm-order
+                    button Sell PPC
                 .market-order
-                  label Sell:
-                  input(type="text")
-
+                  label I want to Sell:
+                  .wrap-amount
+                    input(type="text")
+                    .overlay-amount PPC
+                  table.order-overview
+                    tr.subtotal 
+                      th Total:
+                      td <span class="amount">0 PPC</span>
+                    tr.fee
+                      th Fee:
+                      td <span class="amount">0 PPC</span>
+                    tr.to-receive
+                      th Approx. BTC to receive:
+                      td <span class="amount">0 BTC</span>
+                  .confirm-order
+                    button Buy PPC
+        #order-book
+          .order-book-wrap
+            #sell-orders.order-book
+          .order-book-wrap
+            #buy-orders.order-book
