@@ -59,7 +59,9 @@ block content
       .col-center
         h1.market-title <i class="coin-icon ppc"></i> <b>Peercoin</b> to <b>Bitcoin</b> Exchange
         .graph
-        .order-box-con-wrap
+
+        // Order Box
+        #order-boxes.container
           .order-box-wrap
             #buy-box.order-box
               .order-box-header
@@ -91,7 +93,7 @@ block content
                   .confirm-order
                     button Buy PPC
 
-          #order-box.container
+          .order-box-wrap
             #sell-box.order-box
               .order-box-header
                 h3.order-box-title Sell PPC
@@ -136,8 +138,83 @@ block content
                       td <span class="amount">0 BTC</span>
                   .confirm-order
                     button Buy PPC
-        #order-book
+
+        // Order Book                    
+        #order-book.container
           .order-book-wrap
             #sell-orders.order-book
+              .order-book-header
+                h3.order-book-title Sell Orders
+                .order-book-total Total: 0893892039 PPC
+              table.order-book-table
+                tr
+                  th Price
+                  th Amount
+                  th Value
+                tr
+                  td 0.00501
+                  td 42.38924071
+                  td 0.21237009
+                tr
+                  td 0.00504
+                  td 1.1821
+                  td 0.19942049
+                tr
+                  td 0.00505
+                  td 1.1821
+                  td 0.19942049
+                tr
+                  td 0.00506
+                  td 1.82102910
+                  td 0.19942049
+                tr
+                  td 0.00507
+                  td 1.82102910
+                  td 0.19942049
+                tr
+                  td 0.00508
+                  td 1.82102910
+                  td 0.19942049
+                tr
+                  td 0.00509
+                  td 1.82102910
+                  td 0.19942049
+
           .order-book-wrap
             #buy-orders.order-book
+              .order-book-header
+                h3.order-book-title Buy Orders
+                .order-book-total Total: 673 BTC
+              table.order-book-table
+                tr
+                  th Price
+                  th Amount
+                  th Value
+                tr
+                  td 0.005
+                  td 42.38924071
+                  td 0.21237009
+                tr
+                  td 0.00499
+                  td 1.1821
+                  td 0.19942049
+                tr
+                  td 0.00498
+                  td 1.1821
+                  td 0.19942049
+                tr
+                  td 0.00497
+                  td 1.82102910
+                  td 0.19942049
+                tr
+                  td 0.00496
+                  td 1.82102910
+                  td 0.19942049
+                tr
+                  td 0.00495
+                  td 1.82102910
+                  td 0.19942049
+                tr
+                  td 0.00494
+                  td 1.82102910
+                  td 0.19942049
