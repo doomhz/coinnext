@@ -1,9 +1,6 @@
 /* Market Tickers */
 .market-ticker
-  background #fff
-  border-radius 2px
-  overflow hidden
-  border 1px solid #e0e5e8
+  @extends .container
   width 200px
   &.edit-on
     color #999
@@ -19,21 +16,13 @@
     .add-coin
       display block
 
-.market-ticker-header
-  margin 0
-  padding 10px
-  background #f9f9f9
-  letter-spacing .3px
-  color #14294e
-  border-bottom 1px solid #e0e5e8
-  font-size 14px
   .edit-ticker
     float right
     font-size 15px
     color #999
     &:hover
       color $blue
-      text-decoration none
+      text-decoration none   
 
 .market-ticker-coins
   reset-list()
@@ -150,21 +139,18 @@
       margin-right 10px
 
 .order-box
-  background #fff
-  border-radius 2px
-  overflow hidden
+  @extends .container
   min-height 287px
-  border 1px solid #e0e5e8
   .amount
     font-weight bold
 
-.order-box-header
+.con-header
   clearfix()
   background #f9f9f9
   padding 10px
   border-bottom 1px solid #e0e5e8
 
-.order-box-title
+.con-header-title
   margin 0
   color $darkblue
   float left
@@ -259,31 +245,15 @@
       margin-right 10px
 
 .order-book
-  background #fff
-  border-radius 2px
-  overflow hidden
+  @extends .container
   max-height 500px
-  border 1px solid #e0e5e8
-
-.order-book-header
-  clearfix()
-  background #f9f9f9
-  padding 10px
-  border-bottom 1px solid #e0e5e8
-
-.order-book-title
-  margin 0
-  color $darkblue
-  float left
-  font-size 16px
-  line-height 16px
   
 .order-book-total
   float right
   line-height 16px
   margin 0
 
-.order-book-table
+.trade-table
   width 100%
   border-spacing 1px
   border-collapse separate
@@ -291,5 +261,13 @@
     padding 5px 10px
   td
     padding 5px 10px
+  .wall
+    font-weight bold
   tr:nth-child(even)
     background-color #f9f9f9
+  .buy
+    .trade-type
+      color #72b54c
+  .sell
+    .trade-type
+      color #da4444
