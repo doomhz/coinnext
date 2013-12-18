@@ -139,6 +139,33 @@ block content
                   .confirm-order
                     button Buy PPC
 
+        // Open Orders
+        #open-orders.container
+          .con-header
+            h3.con-header-title Open Orders
+          table.trade-table
+            tr
+              th Date
+              th Type
+              th Price
+              th PPC
+              th BTC
+              th Action
+            tr.sell
+              td.trade-date 18.12.13 05:31
+              td.trade-type Sell
+              td.trade-price 1
+              td.trade-amount 2
+              td.trade-total 2
+              td.trade-action <a href="#">Cancel</a>
+            tr.sell
+              td.trade-date 18.12.13 05:30
+              td.trade-type Sell
+              td.trade-price 0.5
+              td.trade-amount 1
+              td.trade-total 0.5
+              td.trade-action <a href="#">Cancel</a>
+        
         // Order Book
         #order-book.wrap
           .order-book-wrap
