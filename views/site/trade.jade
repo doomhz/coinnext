@@ -143,28 +143,29 @@ block content
         #open-orders.container
           .con-header
             h3.con-header-title Open Orders
-          table.trade-table
-            tr
-              th Date
-              th Type
-              th Price
-              th PPC
-              th BTC
-              th Action
-            tr.sell
-              td.trade-date 18.12.13 05:31
-              td.trade-type Sell
-              td.trade-price 1
-              td.trade-amount 2
-              td.trade-total 2
-              td.trade-action <a href="#">Cancel</a>
-            tr.sell
-              td.trade-date 18.12.13 05:30
-              td.trade-type Sell
-              td.trade-price 0.5
-              td.trade-amount 1
-              td.trade-total 0.5
-              td.trade-action <a href="#">Cancel</a>
+          .table-wrap
+            table.trade-table
+              tr
+                th Date
+                th Type
+                th Price
+                th PPC
+                th BTC
+                th Action
+              tr.sell
+                td.trade-date 18.12.13 05:31
+                td.trade-type Sell
+                td.trade-price 1
+                td.trade-amount 2
+                td.trade-total 2
+                td.trade-action <a href="#">Cancel</a>
+              tr.sell
+                td.trade-date 18.12.13 05:30
+                td.trade-type Sell
+                td.trade-price 0.5
+                td.trade-amount 1
+                td.trade-total 0.5
+                td.trade-action <a href="#">Cancel</a>
         
         // Order Book
         #order-book.wrap
@@ -173,39 +174,146 @@ block content
               .con-header
                 h3.con-header-title Sell Orders
                 .order-book-total Total: 0893892039 PPC
-              table.trade-table
-                tr
-                  th Price
-                  th PPC
-                  th BTC
-                tr
-                  td 0.00501
-                  td 42.38924071
-                  td 0.21237009
-                tr
-                  td 0.00504
-                  td 1.1821
-                  td 0.19942049
-                tr
-                  td 0.00505
-                  td 1.1821
-                  td 0.19942049
-                tr
-                  td 0.00506
-                  td 1.82102910
-                  td 0.19942049
-                tr
-                  td 0.00507
-                  td 1.82102910
-                  td 0.19942049
-                tr
-                  td 0.00508
-                  td 1.82102910
-                  td 0.19942049
-                tr
-                  td 0.00509
-                  td 1.82102910
-                  td 0.19942049
+              .table-wrap
+                table.trade-table
+                  thead
+                    tr
+                      th Price
+                      th PPC
+                      th BTC
+                  tbody
+                    tr
+                      td 0.00501
+                      td 42.38924071
+                      td 0.21237009
+                    tr
+                      td 0.00504
+                      td 1.1821
+                      td 0.19942049
+                    tr
+                      td 0.00505
+                      td 1.1821
+                      td 0.19942049
+                    tr
+                      td 0.00506
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00507
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00508
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
+                    tr
+                      td 0.00509
+                      td 1.82102910
+                      td 0.19942049
 
           .order-book-wrap
             #buy-orders.order-book
@@ -213,137 +321,214 @@ block content
                 h3.con-header-title Buy Orders
                 .order-book-total Total: 673 BTC
               table.trade-table
-                tr
-                  th Price
-                  th PPC
-                  th BTC
-                tr
-                  td 0.005
-                  td 42.38924071
-                  td 0.21237009
-                tr
-                  td 0.00499
-                  td 1.1821
-                  td 0.19942049
-                tr.wall
-                  td 0.00498
-                  td 50
-                  td 0.19942049
-                tr
-                  td 0.00497
-                  td 1.82102910
-                  td 0.19942049
-                tr
-                  td 0.00496
-                  td 1.82102910
-                  td 0.19942049
-                tr
-                  td 0.00495
-                  td 1.82102910
-                  td 0.19942049
-                tr
-                  td 0.00494
-                  td 1.82102910
-                  td 0.19942049
+                thead
+                  tr
+                    th Price
+                    th PPC
+                    th BTC
+                tbody
+                  tr
+                    td 0.005
+                    td 42.38924071
+                    td 0.21237009
+                  tr
+                    td 0.00499
+                    td 1.1821
+                    td 0.19942049
+                  tr.wall
+                    td 0.00498
+                    td 50
+                    td 0.19942049
+                  tr
+                    td 0.00497
+                    td 1.82102910
+                    td 0.19942049
+                  tr
+                    td 0.00496
+                    td 1.82102910
+                    td 0.19942049
+                  tr
+                    td 0.00495
+                    td 1.82102910
+                    td 0.19942049
+                  tr
+                    td 0.00494
+                    td 1.82102910
+                    td 0.19942049
 
         // Trade History
         #trade-history.container
           .con-header
             h3.con-header-title Trade History
-          table.trade-table
-            tr
-              th Date
-              th Type
-              th Price
-              th PPC
-              th BTC
-            tr.sell
-              td.trade-date 18.12.13 04:23
-              td.trade-type Sell
-              td.trade-price 0.0046
-              td.trade-amount 19.8594
-              td.trade-total 0.09135324
-            tr.sell
-              td.trade-date 18.12.13 04:22
-              td.trade-type Sell
-              td.trade-price 0.0046
-              td.trade-amount 19.8594
-              td.trade-total 0.09135324
-            tr.sell
-              td.trade-date 18.12.13 04:22 
-              td.trade-type Sell
-              td.trade-price 0.0046
-              td.trade-amount 19.8594
-              td.trade-total 0.09135324
-            tr.sell
-              td.trade-date 18.12.13 04:22
-              td.trade-type Sell
-              td.trade-price 0.0046
-              td.trade-amount 15.8796
-              td.trade-total 0.07304616
-            tr.sell
-              td.trade-date 18.12.13 04:21
-              td.trade-type Sell
-              td.trade-price 0.00462
-              td.trade-amount 0.33544
-              td.trade-total 0.00154973
-            tr.sell
-              td.trade-date 18.12.13 04:19
-              td.trade-type Sell
-              td.trade-price 0.0046
-              td.trade-amount 2.8
-              td.trade-total 0.01288
-            tr.buy
-              td.trade-date 18.12.13 04:18
-              td.trade-type Buy
-              td.trade-price 0.00462
-              td.trade-amount 108.254
-              td.trade-total 0.50013348
-            tr.sell
-              td.trade-date 18.12.13 04:18
-              td.trade-type Sell
-              td.trade-price 0.0046
-              td.trade-amount 300
-              td.trade-total 1.38
-            tr.sell
-              td.trade-date 18.12.13 04:17
-              td.trade-type Sell
-              td.trade-price 0.00461
-              td.trade-amount 15.9911
-              td.trade-total 0.07371897
-            tr.sell
-              td.trade-date 18.12.13 04:17
-              td.trade-type Sell
-              td.trade-price 0.00461
-              td.trade-amount 73
-              td.trade-total 0.33653
-            tr.sell
-              td.trade-date 18.12.13 04:17
-              td.trade-type Sell
-              td.trade-price 0.00461
-              td.trade-amount 7.54056
-              td 0.03476198
-            tr.sell
-              td.trade-date 18.12.13 04:15
-              td.trade-type Sell
-              td.trade-price 0.00461
-              td.trade-amount 2.18607
-              td.trade-total 0.01007778
-            tr.sell
-              td.trade-date 18.12.13 04:15
-              td.trade-type Sell
-              td.trade-price 0.00461
-              td.trade-amount 2.18822
-              td.trade-total 0.01008769
-            tr.buy
-              td.trade-date 18.12.13 04:15
-              td.trade-type Buy
-              td.trade-price 0.00462
-              td.trade-amount 0.81589
-              td.trade-total 0.00376941
-            tr.buy
-              td.trade-date 18.12.13 04:15
-              td.trade-type Buy
-              td.trade-price 0.00462
-              td.trade-amount 2
-              td.trade-total 0.00924
+          .table-wrap
+            table.trade-table
+              tr
+                th Date
+                th Type
+                th Price
+                th PPC
+                th BTC
+              tr.sell
+                td.trade-date 18.12.13 04:23
+                td.trade-type Sell
+                td.trade-price 0.0046
+                td.trade-amount 19.8594
+                td.trade-total 0.09135324
+              tr.sell
+                td.trade-date 18.12.13 04:22
+                td.trade-type Sell
+                td.trade-price 0.0046
+                td.trade-amount 19.8594
+                td.trade-total 0.09135324
+              tr.sell
+                td.trade-date 18.12.13 04:22 
+                td.trade-type Sell
+                td.trade-price 0.0046
+                td.trade-amount 19.8594
+                td.trade-total 0.09135324
+              tr.sell
+                td.trade-date 18.12.13 04:22
+                td.trade-type Sell
+                td.trade-price 0.0046
+                td.trade-amount 15.8796
+                td.trade-total 0.07304616
+              tr.sell
+                td.trade-date 18.12.13 04:21
+                td.trade-type Sell
+                td.trade-price 0.00462
+                td.trade-amount 0.33544
+                td.trade-total 0.00154973
+              tr.sell
+                td.trade-date 18.12.13 04:19
+                td.trade-type Sell
+                td.trade-price 0.0046
+                td.trade-amount 2.8
+                td.trade-total 0.01288
+              tr.buy
+                td.trade-date 18.12.13 04:18
+                td.trade-type Buy
+                td.trade-price 0.00462
+                td.trade-amount 108.254
+                td.trade-total 0.50013348
+              tr.sell
+                td.trade-date 18.12.13 04:18
+                td.trade-type Sell
+                td.trade-price 0.0046
+                td.trade-amount 300
+                td.trade-total 1.38
+              tr.sell
+                td.trade-date 18.12.13 04:17
+                td.trade-type Sell
+                td.trade-price 0.00461
+                td.trade-amount 15.9911
+                td.trade-total 0.07371897
+              tr.sell
+                td.trade-date 18.12.13 04:17
+                td.trade-type Sell
+                td.trade-price 0.00461
+                td.trade-amount 73
+                td.trade-total 0.33653
+              tr.sell
+                td.trade-date 18.12.13 04:17
+                td.trade-type Sell
+                td.trade-price 0.00461
+                td.trade-amount 7.54056
+                td 0.03476198
+              tr.sell
+                td.trade-date 18.12.13 04:15
+                td.trade-type Sell
+                td.trade-price 0.00461
+                td.trade-amount 2.18607
+                td.trade-total 0.01007778
+              tr.sell
+                td.trade-date 18.12.13 04:15
+                td.trade-type Sell
+                td.trade-price 0.00461
+                td.trade-amount 2.18822
+                td.trade-total 0.01008769
+              tr.buy
+                td.trade-date 18.12.13 04:15
+                td.trade-type Buy
+                td.trade-price 0.00462
+                td.trade-amount 0.81589
+                td.trade-total 0.00376941
+              tr.buy
+                td.trade-date 18.12.13 04:15
+                td.trade-type Buy
+                td.trade-price 0.00462
+                td.trade-amount 2
+                td.trade-total 0.00924
+              tr.sell
+                td.trade-date 18.12.13 04:15
+                td.trade-type Sell
+                td.trade-price 0.00461
+                td.trade-amount 2.18822
+                td.trade-total 0.01008769
+              tr.buy
+                td.trade-date 18.12.13 04:15
+                td.trade-type Buy
+                td.trade-price 0.00462
+                td.trade-amount 0.81589
+                td.trade-total 0.00376941
+              tr.buy
+                td.trade-date 18.12.13 04:15
+                td.trade-type Buy
+                td.trade-price 0.00462
+                td.trade-amount 2
+                td.trade-total 0.00924
+              tr.sell
+                td.trade-date 18.12.13 04:15
+                td.trade-type Sell
+                td.trade-price 0.00461
+                td.trade-amount 2.18822
+                td.trade-total 0.01008769
+              tr.buy
+                td.trade-date 18.12.13 04:15
+                td.trade-type Buy
+                td.trade-price 0.00462
+                td.trade-amount 0.81589
+                td.trade-total 0.00376941
+              tr.buy
+                td.trade-date 18.12.13 04:15
+                td.trade-type Buy
+                td.trade-price 0.00462
+                td.trade-amount 2
+                td.trade-total 0.00924
+              tr.sell
+                td.trade-date 18.12.13 04:15
+                td.trade-type Sell
+                td.trade-price 0.00461
+                td.trade-amount 2.18822
+                td.trade-total 0.01008769
+              tr.buy
+                td.trade-date 18.12.13 04:15
+                td.trade-type Buy
+                td.trade-price 0.00462
+                td.trade-amount 0.81589
+                td.trade-total 0.00376941
+              tr.buy
+                td.trade-date 18.12.13 04:15
+                td.trade-type Buy
+                td.trade-price 0.00462
+                td.trade-amount 2
+                td.trade-total 0.00924
+              tr.sell
+                td.trade-date 18.12.13 04:15
+                td.trade-type Sell
+                td.trade-price 0.00461
+                td.trade-amount 2.18822
+                td.trade-total 0.01008769
+              tr.buy
+                td.trade-date 18.12.13 04:15
+                td.trade-type Buy
+                td.trade-price 0.00462
+                td.trade-amount 0.81589
+                td.trade-total 0.00376941
+              tr.buy
+                td.trade-date 18.12.13 04:15
+                td.trade-type Buy
+                td.trade-price 0.00462
+                td.trade-amount 2
+                td.trade-total 0.00924
+
+
