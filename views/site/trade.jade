@@ -6,9 +6,20 @@ block content
       .col-left
         include _market-ticker
       .col-right
-        .coin-stats
-          p.last-price Last Price: 0.00525 BTC <span class="change down">-4.81%</span>
-          p Volume: 1392 PPC / 291 BTC
+        .coin-stats.container
+          table.trade-data
+            tr.last-price
+              th Last Price:
+              td 0.00525 BTC <span class="change down">-4.81%</span>
+            tr.high-price
+              th 24hr High:
+              td 0.00525 BTC
+            tr.low-price
+              th 24hr Low:
+              td 0.00525 BTC
+            tr.volume
+              th Volume:
+              td 1392 PPC / 291 BTC
         include _chatbox
 
       .col-center
@@ -99,7 +110,7 @@ block content
           .con-header
             h3.con-header-title Open Orders
           .table-wrap
-            table.trade-table
+            table.trade-data
               tr
                 th Date
                 th Type
@@ -130,7 +141,7 @@ block content
                 h3.con-header-title Sell Orders
                 .order-book-total Total: 0893892039 PPC
               .table-wrap
-                table.trade-table
+                table.trade-data
                   thead
                     tr
                       th Price
@@ -275,7 +286,7 @@ block content
               .con-header
                 h3.con-header-title Buy Orders
                 .order-book-total Total: 673 BTC
-              table.trade-table
+              table.trade-data
                 thead
                   tr
                     th Price
@@ -316,7 +327,7 @@ block content
           .con-header
             h3.con-header-title Trade History
           .table-wrap
-            table.trade-table
+            table.trade-data
               tr
                 th Date
                 th Type
