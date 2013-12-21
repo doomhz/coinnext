@@ -4,57 +4,12 @@ block content
   .main-content(role='main')
     .wrapper
       .col-left
-        .market-ticker
-          .con-header
-            h2.con-header-title Exchange / BTC
-            a(href='').edit-ticker <i class='icon-list-ul'></i>
-          ul.market-ticker-coins
-            li.market-ticker-coin
-              a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
-              .label LTC
-              .rate 0.03509
-              .move-coin <i class="icon-reorder"></i>
-            li.market-ticker-coin.up
-              a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
-              .label NMC
-              .rate 0.00736
-              .move-coin <i class="icon-reorder"></i>
-            li.market-ticker-coin
-              a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
-              .label NVC
-              .rate 0.02085
-              .move-coin <i class="icon-reorder"></i>
-            li.market-ticker-coin.up.active
-              a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
-              .label PPC
-              .rate 0.00525
-              .move-coin <i class="icon-reorder"></i>
-            li.market-ticker-coin.down
-              a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
-              .label FTC
-              .rate 0.00054
-              .move-coin <i class="icon-reorder"></i>
-          .add-coin
-            select
-              option(val='') Display Exchange
-              option(val='CL') CopperLark
-              option(val='DVC') Devcoin
-              option(val='MNC') MinCoin
+        include _market-ticker
       .col-right
         .coin-stats
           p.last-price Last Price: 0.00525 BTC <span class="change down">-4.81%</span>
           p Volume: 1392 PPC / 291 BTC
-        .chatbox
-          ul.message-list
-            li.message
-              <span class="sender">nanook</span>: Hey there, BUY!
-            li.message
-              <span class="sender">jason</span>: No man, all Sell!
-            li.message
-              <span class="sender">jason</span>: Hey there, BUjlmqjsdfklmqjsdflmjqslmfjqlsmdjflmqksjflmqjsdfklmjqslmdfjqlkmsjdflmjqslmdfjqsfklmjqlsmdfY!
-          .message-post
-            input(type="text", placeholder="Type here to chat...").chat-message-input
-            button#send-message-bt Send
+        include _chatbox
 
       .col-center
         h1.market-title <i class="coin-icon ppc"></i> <b>Peercoin</b> to <b>Bitcoin</b> Exchange
