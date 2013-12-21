@@ -9,5 +9,16 @@ block content
           li: a(href='/') Open Orders
           li: a(href='/') Transactions
 
-      section.body
-        | Finances
+      section.body#finances-cnt
+        h1 Finances
+
+        form#add-wallet-form
+          label Currency type
+          select#currency-type(name="currency_type")
+            - for currency in currencies
+             option(value="#{currency}") #{currency}
+          button(type="submit") Create wallet
+
+        ul#wallets
+
+  include ../templates/wallets

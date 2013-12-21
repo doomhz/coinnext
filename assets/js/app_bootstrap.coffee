@@ -1,5 +1,7 @@
 $(document).ready ()->
 
+  $.tmpload.defaults.tplWrapper = _.template
+
   $signupForm = $("#signup-form")
   $loginForm = $("#login-form")
   $changePassForm = $("#change-pass-form")
@@ -104,3 +106,10 @@ $(document).ready ()->
       if confirm "Are you sure?"
         $.get $qrGenBt.attr("href"), ()->
           window.location.reload()
+
+  $finances = $("#finances")
+  if $finances
+    finances = new App.FinancesView
+      el: $("#finances-cnt")
+      collection: new App.WalletsCollection
+    finances.render()

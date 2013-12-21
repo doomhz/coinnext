@@ -1,3 +1,5 @@
+Wallet = require "../models/wallet"
+
 module.exports = (app)->
 
   app.get "/", (req, res)->
@@ -14,6 +16,7 @@ module.exports = (app)->
     res.render "site/finances",
       title: 'Finances'
       user: req.user
+      currencies: Wallet.getCurrencies()
 
   app.get "/settings", (req, res)->
     res.render "site/settings",
