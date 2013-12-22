@@ -129,15 +129,18 @@ p
 /* Sub Nav */
 .sub-nav
   reset-list()
-  background #fff
-  border-radius 2px
-  overflow hidden
-  border 1px solid #e0e5e8
-  width 200px
+  @extends .container
   li
     border-bottom 1px solid #ecedef
     &:last-child
       border 0
+    &.active a
+      color #fff
+      background $blue
+      border 0
+      font-weight bold
+      &:hover
+        color #fff !important
     a
       padding 12px
       display block

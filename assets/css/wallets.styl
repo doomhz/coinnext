@@ -1,0 +1,46 @@
+.wallets
+  reset-list()
+
+.wallet
+  @extends .container
+  padding 10px
+
+  .coin-info
+    float left
+
+  .coin-name
+  .coin-total
+    float left
+  .coin-total
+    clear both
+  .coin-name
+    font-weight bold
+    width 50px
+
+  .coin-actions
+    float right
+    button
+      color #fff
+      background darken(#8BC26C, 15%)
+      height 25px
+      line-height 25px
+      border-radius 1px
+      text-transform uppercase
+      margin 5px
+      padding 0 20px
+      border 0
+      font-size 12px
+      transition all .1s linear
+      &:hover
+        color #fff
+        background darken(#8BC26C, 30%)
+      &.white
+        background transparent
+        color #999
+        border 1px solid #ecedef
+        line-height 23px
+        &:hover
+          color $blue
+          border-color $blue
+        &:active
+          color #14294e

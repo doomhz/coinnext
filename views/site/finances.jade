@@ -3,15 +3,13 @@ extends ../layout
 block content
   .main-content.finances(role='main')
     .wrapper
-      aside
+      .col-left
         ul.sub-nav
-          li: a(href='/') Funds
+          li.active: a(href='/') Funds
           li: a(href='/') Open Orders
           li: a(href='/') Transactions
 
-      section.body#finances-cnt
-        h1 Finances
-
+      .col-right
         form#add-wallet-form
           label Currency type
           select#currency-type(name="currency_type")
@@ -19,6 +17,14 @@ block content
              option(value="#{currency}") #{currency}
           button(type="submit") Create wallet
 
-        ul#wallets
-
-  include ../templates/wallets
+      .col-center#finances-cnt
+        h1.page-title Funds
+        ul.wallets
+          include ../templates/wallets
+          li.wallet
+            .coin-info
+              .coin-name BTC
+              .coin-total Balance: <span class="amount">100</span> BTC <span class="coin-available">(<span class="amount">10</span> BTC Available)</span>
+            .coin-actions
+              button.white Withdraw
+              button Deposit
