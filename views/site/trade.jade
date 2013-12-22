@@ -6,7 +6,7 @@ block content
       .col-left
         include _market-ticker
       .col-right
-        .coin-stats.container
+        .coin-stats
           table.trade-data
             tr.last-price
               th Last Price:
@@ -23,8 +23,9 @@ block content
         include _chatbox
 
       .col-center
-        h1.market-title <i class="coin-icon ppc"></i> <b>Peercoin</b> to <b>Bitcoin</b> Exchange
-        .graph
+        .container
+          h1.market-title <b>Peercoin</b> to <b>Bitcoin</b> Exchange
+          .graph
 
         // Order Box
         #order-boxes.wrap

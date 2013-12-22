@@ -89,29 +89,21 @@ $red = #e37368
 /* Center */
 .page-title
 .market-title
-  margin 0 0 10px 0
-  font-weight 500
-  font-size 20px
-  letter-spacing .3px
+  background #f9f9f9
+  background $darkblue
+  background linear-gradient(90deg, $darkblue,$blue)
+  padding 10px
+  border-bottom 1px solid #e0e5e8
+  margin 0
   color $darkblue
-  .coin-icon
-    vertical-align text-bottom
-
-.coin-icon
-  width 20px
-  height 20px
-  display inline-block
-  image '/img/coins.png' auto 20px
-  background-repeat no-repeat
-  &.ppc
-    background-position -20px 0
+  color #fff
+  font-size 16px
+  line-height 16px
+  font-weight 500
 
 .coin-stats
+  @extends .container
   background #f9f9f9
-  border-radius 2px
-  overflow hidden
-  border 1px solid #e0e5e8
-  margin-bottom 10px
   .last-price
     font-weight bold
     color $darkblue
@@ -123,7 +115,7 @@ $red = #e37368
 .graph
   width 100%
   height 300px
-  background #ccc
+  background #fff
   border-radius 1px
   margin-bottom 10px
 

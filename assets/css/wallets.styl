@@ -1,6 +1,18 @@
 .wallets
   reset-list()
 
+.add-wallet
+  @extends .container
+  background #f9f9f9
+  padding 10px
+  .last-price
+    font-weight bold
+    color $darkblue
+  .up
+    color #72b54c
+  .down
+    color #da4444
+
 .wallet
   @extends .container
   padding 10px
@@ -30,7 +42,7 @@
       line-height 25px
       border-radius 1px
       text-transform uppercase
-      margin 5px
+      margin 0 0 0 5px
       padding 0 20px
       border 0
       font-size 12px
