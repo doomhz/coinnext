@@ -9,6 +9,7 @@
 
 //= require app/models/user
 //= require app/models/wallet
+//= require app/models/payment
 
 //= require app/collections/wallets
 

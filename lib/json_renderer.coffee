@@ -22,6 +22,16 @@ JsonRenderer =
       data.push @wallet wallet
     data
 
+  payment: (payment)->
+    id:        payment.id
+    user_id:   payment.user_id
+    wallet_id: payment.wallet_id
+    address:   payment.address
+    amount:    payment.amount
+    status:    payment.status
+    updated:   payment.updated
+    created:   payment.created
+
   error: (err, res, code = 409)->
     res.statusCode = code
     message = ""

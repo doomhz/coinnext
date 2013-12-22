@@ -39,6 +39,10 @@
     return this.save(callback);
   };
 
+  WalletSchema.methods.canWithdraw = function(amount) {
+    return parseFloat(this.balance) >= parseFloat(amount);
+  };
+
   WalletSchema.statics.getCurrencies = function() {
     return CURRENCIES;
   };

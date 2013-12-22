@@ -4,6 +4,7 @@ class App.ErrorLogger
 
   constructor: ()->
     $.subscribe "error", @renderError
+    $.subscribe "notice", @renderNotice
 
   renderError: (ev, xhrError = {})=>
     if xhrError.responseText
@@ -17,3 +18,8 @@ class App.ErrorLogger
     $.jGrowl error,
       position: "top-right"
       theme: "error"
+
+  renderNotice: (ev, msg)=>
+    $.jGrowl msg,
+      position: "top-right"
+      theme: "notice"

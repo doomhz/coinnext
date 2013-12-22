@@ -5,7 +5,9 @@ class App.FinancesView extends App.MasterView
   events:
     "submit #add-wallet-form": "onAddWallet"
     "click .deposit-bt": "onDeposit"
+    "click .withdraw-bt": "onWithdraw"
     "click .show-qr-address": "onShowQrAddress"
+    "submit #withdraw-form": "onPay"
 
   initialize: ()->
 
@@ -59,3 +61,29 @@ class App.FinancesView extends App.MasterView
       @renderQrAddress $qrCnt
     else
       $qrCnt.toggle()  
+
+  onWithdraw: (ev)->
+    $target = $(ev.target)
+    $target.parents(".wallet:first")
+    .find(".withdraw-cnt").slideToggle()
+
+  onPay: (ev)->
+    ev.preventDefault()
+    $form = $(ev.target)
+    amount = parseFloat $form.find("[name='amount']").val()
+    if _.isNumber(amount) and amount > 0
+      $form.find("button").attr "disabled", true
+      payment = new App.PaymentModel
+        wallet_id: $form.find("[name='wallet_id']").val()
+        amount: amount
+        address: $form.find("[name='address']").val()
+      payment.save null,
+        success: ()->
+          $form.find("button").attr "disabled", false
+          $form.parent().slideToggle()
+          $.publish "notice", "Your withdrawal will be processed soon."
+        error: (m, xhr)->
+          $form.find("button").attr "disabled", false
+          $.publish "error", xhr
+    else
+      $.publish "error", "Please submit a proper amount."

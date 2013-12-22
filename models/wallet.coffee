@@ -29,6 +29,9 @@ WalletSchema.methods.generateAddress = (callback = ()->)->
   @address = "new_address_#{@id}"
   @save callback
 
+WalletSchema.methods.canWithdraw = (amount)->
+  parseFloat(@balance) >= parseFloat(amount)
+
 WalletSchema.statics.getCurrencies = ()->
   CURRENCIES
 

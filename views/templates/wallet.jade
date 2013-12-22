@@ -13,3 +13,10 @@ script(type="text/template", id="wallet-tpl")
       | <% if (!wallet.get("address")) { %>
       button.deposit-bt(data-id="<%= wallet.id %>") Deposit
       | <% } %>
+    .withdraw-cnt
+      form#withdraw-form
+        input(type="hidden", name="wallet_id", value="<%= wallet.id %>")
+        input(type="text", name="amount", placeholder="Amount")
+        <%= wallet.get("currency") %>
+        input(type="text", name="address", placeholder="Address")
+        button(type="submit") Pay
