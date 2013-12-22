@@ -4,8 +4,8 @@ class App.FinancesView extends App.MasterView
 
   events:
     "submit #add-wallet-form": "onAddWallet"
-    "click #generate-wallet-address": "onGenerateAddress"
-    "click #show-qr-address": "onShowQrAddress"
+    "click .deposit-bt": "onDeposit"
+    "click .show-qr-address": "onShowQrAddress"
 
   initialize: ()->
 
@@ -24,7 +24,7 @@ class App.FinancesView extends App.MasterView
     if $wallet.length
       $wallet.replaceWith $walletEl
     else
-      @$("#wallets").prepend $walletEl
+      @$("#wallets").append $walletEl
 
   renderQrAddress: ($qrCnt)->
     $qrCnt.empty()
@@ -40,7 +40,7 @@ class App.FinancesView extends App.MasterView
       error: (m, xhr)->
         $.publish "error", xhr
 
-  onGenerateAddress: (ev)->
+  onDeposit: (ev)->
     ev.preventDefault()
     $target = $(ev.target)
     wallet = @collection.get $target.data "id"

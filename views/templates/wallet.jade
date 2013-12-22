@@ -1,13 +1,15 @@
 script(type="text/template", id="wallet-tpl")
   li.wallet(data-id="<%= wallet.id %>")
-    p Currency: <%= wallet.get("currency") %>
-    p Balance: <%= wallet.get("balance") %>
-    | <% if (wallet.get("address")) { %>
-    p Address: <%= wallet.get("address") %>
-    p.qr-address(data-address="<%= wallet.get('address') %>", data-id="<%= wallet.id %>")
-    p
-      a#show-qr-address(href="#", data-id="<%= wallet.id %>") Show QR code
-    | <% } else { %>
-    p
-      a#generate-wallet-address(href="#", data-id="<%= wallet.id %>") Generate deposit address
-    | <% } %>
+    .coin-info
+      .coin-name <%= wallet.get("currency") %>
+      .coin-total Balance: <span class="amount"><%= wallet.get("balance") %></span> <%= wallet.get("currency") %> <span class="coin-available">(<span class="amount"><%= wallet.get("balance") %></span> <%= wallet.get("currency") %> Available)</span>
+      | <% if (wallet.get("address")) { %>
+      .coin-address Address: <%= wallet.get("address") %>
+      .qr-address(data-address="<%= wallet.get('address') %>", data-id="<%= wallet.id %>")
+      a.show-qr-address(href="#", data-id="<%= wallet.id %>") Show QR code
+      | <% } %>
+    .coin-actions
+      button.withdraw-bt.white Withdraw
+      | <% if (!wallet.get("address")) { %>
+      button.deposit-bt(data-id="<%= wallet.id %>") Deposit
+      | <% } %>

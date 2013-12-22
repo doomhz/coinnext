@@ -1,0 +1,10 @@
+script(type="text/template", id="wallets-tpl")
+  | <% wallets.each(function (wallet) { %>
+  li.wallet
+    .coin-info
+      .coin-name <%= wallet.get("currency") %>
+      .coin-total Balance: <span class="amount">10</span> BTC <span class="coin-available">(<span class="amount">100</span> BTC Available)</span>
+    .coin-actions
+      button Deposit
+      button Withdraw
+  | <% }) %>
