@@ -10,12 +10,11 @@
     "express": "~>3"
     , "mongoose": "latest"
     , "stylus": "latest"
-    , "jade": "latest"
+    , "jade": "<1.0"
     , "coffee-script": "latest"
     , "connect-assets": "2.x"
     , "gzippo": "latest"
     , "bcrypt": "latest"
-    , "connect-mongo": "latest"
     , "connect-redis": "latest"
     , "passport": "latest"
     , "passport-local": "latest"
@@ -34,6 +33,8 @@
     , "mongoose-unique-validator": "latest"
     , "speakeasy": "latest"
     , "nodemailer": "latest"
+    , "restify": "latest"
+    , "request": "latest"
   },
   "devDependencies": {
     "mocha": "latest"

@@ -31,12 +31,23 @@
 
   WalletSchema.set("autoIndex", false);
 
-  WalletSchema.methods.generateAddress = function(callback) {
+  WalletSchema.methods.generateAddress = function(userId, callback) {
+    var _this = this;
     if (callback == null) {
       callback = function() {};
     }
-    this.address = "new_address_" + this.id;
-    return this.save(callback);
+    return GLOBAL.walletsClient.send("create_account", [userId, this.currency], function(err, res, body) {
+      if (err) {
+        console.error(err);
+        return callback(err, res, body);
+      }
+      if (body && body.address) {
+        _this.address = body.address;
+        return _this.save(callback);
+      } else {
+        return callback("Invalid address");
+      }
+    });
   };
 
   WalletSchema.methods.canWithdraw = function(amount) {

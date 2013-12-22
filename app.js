@@ -5,22 +5,21 @@
 
 var express = require('express');
 var http = require('http');
-var MongoStore = require('connect-mongo')(express);
 var RedisStore = require('connect-redis')(express);
 var connectDomain = require('connect-domain');
 var gzippo = require('gzippo');
 var fs = require('fs');
 var io = require('socket.io');
 var helmet = require('helmet');
+var WalletsClient = require('./lib/wallets_client');
 var environment = process.env.NODE_ENV || 'development';
-//var BtcWallet = require("./lib/btc_wallet");
 var config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', encoding='utf8'))[environment];
 
 // Configure globals
 GLOBAL.passport = require('passport');
 GLOBAL.appConfig = function () {return config;};
+GLOBAL.walletsClient = new WalletsClient({host: GLOBAL.appConfig().wallets_host});
 
-//GLOBAL.wallet    = new BtcWallet();
 require('./models/db_connect_mongo');
 require('./lib/auth');
 

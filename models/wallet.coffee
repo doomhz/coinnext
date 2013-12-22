@@ -25,9 +25,16 @@ WalletSchema = new Schema
 
 WalletSchema.set("autoIndex", false)
 
-WalletSchema.methods.generateAddress = (callback = ()->)->
-  @address = "new_address_#{@id}"
-  @save callback
+WalletSchema.methods.generateAddress = (userId, callback = ()->)->
+  GLOBAL.walletsClient.send "create_account", [userId, @currency], (err, res, body)=>
+    if err
+      console.error err
+      return callback err, res, body
+    if body and body.address
+      @address = body.address
+      @save callback
+    else
+      callback "Invalid address"
 
 WalletSchema.methods.canWithdraw = (amount)->
   parseFloat(@balance) >= parseFloat(amount)

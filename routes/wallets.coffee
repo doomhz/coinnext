@@ -33,7 +33,10 @@ module.exports = (app)->
         console.error err  if err
         if wallet
           if req.body.address is "pending"
-            wallet.generateAddress (err, wallet)->
+            wallet.generateAddress req.user.id, (err, wallet)->
+              if err
+                console.error err
+                return JsonRenderer.error "Could not generate deposit address.", res
               res.json JsonRenderer.wallet wallet
           else
             res.json JsonRenderer.wallet wallet
