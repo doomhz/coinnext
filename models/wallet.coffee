@@ -36,7 +36,7 @@ WalletSchema.statics.findUserWalletByCurrency = (userId, currency, callback = ()
   Wallet.findOne {user_id: userId, currency: currency}, callback
 
 WalletSchema.statics.findUserWallets = (userId, callback = ()->)->
-  Wallet.find({user_id: userId}).sort({created: "desc"}).exec callback
+  Wallet.find({user_id: userId}).sort({created: "asc"}).exec callback
 
 WalletSchema.statics.findUserWallet = (userId, walletId, callback = ()->)->
   Wallet.findOne {user_id: userId, _id: walletId}, callback

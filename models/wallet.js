@@ -60,7 +60,7 @@
     return Wallet.find({
       user_id: userId
     }).sort({
-      created: "desc"
+      created: "asc"
     }).exec(callback);
   };
 
