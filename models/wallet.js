@@ -15,9 +15,7 @@
     },
     address: {
       type: String,
-      index: {
-        unique: true
-      }
+      index: true
     },
     balance: {
       type: Number,

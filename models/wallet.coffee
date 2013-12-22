@@ -13,8 +13,7 @@ WalletSchema = new Schema
     index: true
   address:
     type: String
-    index:
-      unique: true
+    index: true
   balance:
     type: Number
     default: 0
