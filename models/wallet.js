@@ -14,7 +14,10 @@
       index: true
     },
     address: {
-      type: String
+      type: String,
+      index: {
+        unique: true
+      }
     },
     balance: {
       type: Number,
@@ -29,6 +32,14 @@
   });
 
   WalletSchema.set("autoIndex", false);
+
+  WalletSchema.methods.generateAddress = function(callback) {
+    if (callback == null) {
+      callback = function() {};
+    }
+    this.address = "new_address_" + this.id;
+    return this.save(callback);
+  };
 
   WalletSchema.statics.getCurrencies = function() {
     return CURRENCIES;
@@ -50,6 +61,18 @@
     }
     return Wallet.find({
       user_id: userId
+    }).sort({
+      created: "desc"
+    }).exec(callback);
+  };
+
+  WalletSchema.statics.findUserWallet = function(userId, walletId, callback) {
+    if (callback == null) {
+      callback = function() {};
+    }
+    return Wallet.findOne({
+      user_id: userId,
+      _id: walletId
     }, callback);
   };
 

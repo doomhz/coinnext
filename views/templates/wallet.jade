@@ -1,0 +1,13 @@
+script(type="text/template", id="wallet-tpl")
+  li.wallet(data-id="<%= wallet.id %>")
+    p Currency: <%= wallet.get("currency") %>
+    p Balance: <%= wallet.get("balance") %>
+    | <% if (wallet.get("address")) { %>
+    p Address: <%= wallet.get("address") %>
+    p.qr-address(data-address="<%= wallet.get('address') %>", data-id="<%= wallet.id %>")
+    p
+      a#show-qr-address(href="#", data-id="<%= wallet.id %>") Show QR code
+    | <% } else { %>
+    p
+      a#generate-wallet-address(href="#", data-id="<%= wallet.id %>") Generate deposit address
+    | <% } %>

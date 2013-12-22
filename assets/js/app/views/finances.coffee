@@ -1,21 +1,34 @@
-class App.FinancesView extends Backbone.View
+class App.FinancesView extends App.MasterView
 
-  tpl: "wallets-tpl"
+  tpl: "wallet-tpl"
 
   events:
-    "#add-wallet-form submit": "onAddWallet"
+    "submit #add-wallet-form": "onAddWallet"
+    "click #generate-wallet-address": "onGenerateAddress"
+    "click #show-qr-address": "onShowQrAddress"
 
   initialize: ()->
 
   render: ()->
-    @collection.fetch
-      success: @renderWallets
+    @renderWallets()
 
   renderWallets: ()=>
-    tpl = $.tmpload
-      id: @tpl
-    @$("#wallets").html tpl
-      wallets: @collection
+    @collection.fetch
+      success: ()=>
+        @renderWallet wallet for wallet in @collection.models
+
+  renderWallet: (wallet)->
+    $wallet = @$("[data-id='#{wallet.id}']")
+    $walletEl = @template
+      wallet: wallet
+    if $wallet.length
+      $wallet.replaceWith $walletEl
+    else
+      @$("#wallets").prepend $walletEl
+
+  renderQrAddress: ($qrCnt)->
+    $qrCnt.empty()
+    new QRCode $qrCnt[0], $qrCnt.data("address")
 
   onAddWallet: (ev)->
     ev.preventDefault()
@@ -24,5 +37,21 @@ class App.FinancesView extends Backbone.View
       currency: $form.find("#currency-type").val()
     wallet.save null,
       success: @renderWallets
-      error: ()->
-        console.log arguments
+      error: (m, xhr)->
+        $.publish "error", xhr
+
+  onGenerateAddress: (ev)->
+    ev.preventDefault()
+    $target = $(ev.target)
+    wallet = @collection.get $target.data "id"
+    wallet.save {address: "pending"},
+      success: ()=>
+        @renderWallet wallet
+      error: (m, xhr)->
+        $.publish "error", xhr
+
+  onShowQrAddress: (ev)->
+    ev.preventDefault()
+    $target = $(ev.target)
+    walletId = $target.data "id"
+    @renderQrAddress @$(".qr-address[data-id='#{walletId}']")

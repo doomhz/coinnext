@@ -1,3 +1,5 @@
+_ = require "underscore"
+
 JsonRenderer =
 
   user: (user)->
@@ -5,5 +7,32 @@ JsonRenderer =
     email:   user.email
     created: user.created
     gauth_data: user.gauth_data
+
+  wallet: (wallet)->
+    id:       wallet.id
+    user_id:  wallet.user_id
+    currency: wallet.currency
+    balance:  wallet.balance
+    address:  wallet.address
+    created:  wallet.created
+
+  wallets: (wallets)->
+    data = []
+    for wallet in wallets
+      data.push @wallet wallet
+    data
+
+  error: (err, res, code = 409)->
+    res.statusCode = code
+    message = ""
+    if _.isString err
+      message = err
+    else if _.isObject(err) and err.name is "ValidationError"
+      for key, val of err.errors
+        if val.path is "email" and val.message is "unique"
+          message += "E-mail is already taken. "
+        else
+          message += "#{val.message} "
+    res.json {error: message}
 
 exports = module.exports = JsonRenderer
