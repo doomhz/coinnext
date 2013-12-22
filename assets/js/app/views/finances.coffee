@@ -54,4 +54,8 @@ class App.FinancesView extends App.MasterView
     ev.preventDefault()
     $target = $(ev.target)
     walletId = $target.data "id"
-    @renderQrAddress @$(".qr-address[data-id='#{walletId}']")
+    $qrCnt = @$(".qr-address[data-id='#{walletId}']")
+    if $qrCnt.is ":empty"
+      @renderQrAddress $qrCnt
+    else
+      $qrCnt.toggle()  
