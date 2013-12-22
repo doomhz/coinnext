@@ -1,7 +1,7 @@
 extends ../layout
 
 block content
-  .main-content.finances(role='main')
+  #finances.main-content.finances(role='main')
     .wrapper
       .col-left
         ul.sub-nav
@@ -20,19 +20,6 @@ block content
 
       .col-center#finances-cnt
         h1.page-title Funds
-        ul.wallets
-          include ../templates/wallets
-          li.wallet
-            .coin-info
-              .coin-name BTC
-              .coin-total Balance: <span class="amount">100</span> BTC <span class="coin-available">(<span class="amount">10</span> BTC Available)</span>
-            .coin-actions
-              button.white Withdraw
-              button Deposit
-          li.wallet
-            .coin-info
-              .coin-name BTC
-              .coin-total Balance: <span class="amount">100</span> BTC <span class="coin-available">(<span class="amount">10</span> BTC Available)</span>
-            .coin-actions
-              button.white Withdraw
-              button Deposit
+        ul#wallets.wallets
+
+          include ../templates/wallet

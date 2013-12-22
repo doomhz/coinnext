@@ -1,17 +1,14 @@
 (function() {
-  var Wallet, _;
+  var JsonRenderer, Wallet;
 
   Wallet = require("../models/wallet");
 
-  _ = require("underscore");
+  JsonRenderer = require("../lib/json_renderer");
 
   module.exports = function(app) {
-    var renderError;
     app.post("/wallets", function(req, res) {
       var currency;
       currency = req.body.currency;
-      console.log(currency);
-      console.log(req.body);
       if (req.user) {
         return Wallet.findUserWalletByCurrency(req.user.id, currency, function(err, wallet) {
           if (!wallet) {
@@ -21,14 +18,16 @@
             });
             return wallet.save(function(err, wl) {
               if (err) {
-                return renderError("Sorry, can not create a wallet at this time...", res);
+                return JsonRenderer.error("Sorry, can not create a wallet at this time...", res);
               }
-              return res.json(wl);
+              return res.json(JsonRenderer.wallet(wl));
             });
           } else {
-            return renderError("A wallet of this currency already exists.", res);
+            return JsonRenderer.error("A wallet of this currency already exists.", res);
           }
         });
+      } else {
+        return JsonRenderer.error("Please auth.", res);
       }
     });
     app.get("/wallets", function(req, res) {
@@ -37,34 +36,34 @@
           if (err) {
             console.error(err);
           }
-          return res.json(wallets);
+          return res.json(JsonRenderer.wallets(wallets));
         });
+      } else {
+        return JsonRenderer.error("Please auth.", res);
       }
     });
-    return renderError = function(err, res, code) {
-      var key, message, val, _ref;
-      if (code == null) {
-        code = 409;
-      }
-      res.statusCode = code;
-      message = "";
-      if (_.isString(err)) {
-        message = err;
-      } else if (_.isObject(err) && err.name === "ValidationError") {
-        _ref = err.errors;
-        for (key in _ref) {
-          val = _ref[key];
-          if (val.path === "email" && val.message === "unique") {
-            message += "E-mail is already taken. ";
-          } else {
-            message += "" + val.message + " ";
+    return app.put("/wallets/:id", function(req, res) {
+      if (req.user) {
+        return Wallet.findUserWallet(req.user.id, req.body.id, function(err, wallet) {
+          if (err) {
+            console.error(err);
           }
-        }
+          if (wallet) {
+            if (req.body.address === "pending") {
+              return wallet.generateAddress(function(err, wallet) {
+                return res.json(JsonRenderer.wallet(wallet));
+              });
+            } else {
+              return res.json(JsonRenderer.wallet(wallet));
+            }
+          } else {
+            return JsonRenderer.error("Wrong wallet.", res);
+          }
+        });
+      } else {
+        return JsonRenderer.error("Please auth.", res);
       }
-      return res.json({
-        error: message
-      });
-    };
+    });
   };
 
 }).call(this);
