@@ -56,6 +56,11 @@ p
   padding 0
   margin-bottom 20px
 
+.wrapper
+  max-width 1600px
+  margin 0 auto
+  padding 0 10px
+
 .container
   clearfix()
   position relative
@@ -63,7 +68,7 @@ p
   background #fff
   border 1px solid #e0e5e8
   overflow hidden
-  border-radius 2px
+  border-radius 3px
 
 .wrap
   clearfix()
@@ -131,6 +136,7 @@ p
   reset-list()
   @extends .container
   li
+    margin-top -1px
     border-bottom 1px solid #ecedef
     &:last-child
       border 0
@@ -153,6 +159,7 @@ p
         text-decoration none
       &:active
         color #14294e
+
 
 /* Table */
 th

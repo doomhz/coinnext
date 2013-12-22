@@ -10,17 +10,25 @@ block content
           li: a(href='/') Transactions
 
       .col-right
-        form#add-wallet-form
-          label Currency type
-          select#currency-type(name="currency_type")
-            - for currency in currencies
-             option(value="#{currency}") #{currency}
-          button(type="submit") Create wallet
+          
+        .add-wallet.container
+          form#add-wallet-form
+            select#currency-type(name="currency_type")
+              - for currency in currencies
+                option(value="#{currency}") #{currency}
+            button(type="submit") Create wallet
 
       .col-center#finances-cnt
         h1.page-title Funds
         ul.wallets
           include ../templates/wallets
+          li.wallet
+            .coin-info
+              .coin-name BTC
+              .coin-total Balance: <span class="amount">100</span> BTC <span class="coin-available">(<span class="amount">10</span> BTC Available)</span>
+            .coin-actions
+              button.white Withdraw
+              button Deposit
           li.wallet
             .coin-info
               .coin-name BTC
