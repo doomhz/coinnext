@@ -2,8 +2,8 @@ restify = require "restify"
 
 module.exports = (app)->
 
-  app.put "/complete_trade/:trade_id", (req, res, next)->
-    tradeId = req.params.trade_id
+  app.put "/complete_order/:order_id", (req, res, next)->
+    orderId = req.params.order_id
     res.send
-      id:     tradeId
+      id:     orderId
       status: "complete"

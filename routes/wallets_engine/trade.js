@@ -4,11 +4,11 @@
   restify = require("restify");
 
   module.exports = function(app) {
-    return app.put("/complete_trade/:trade_id", function(req, res, next) {
-      var tradeId;
-      tradeId = req.params.trade_id;
+    return app.put("/complete_order/:order_id", function(req, res, next) {
+      var orderId;
+      orderId = req.params.order_id;
       return res.send({
-        id: tradeId,
+        id: orderId,
         status: "complete"
       });
     });
