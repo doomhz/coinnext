@@ -26,7 +26,7 @@ class App.FinancesView extends App.MasterView
     if $wallet.length
       $wallet.replaceWith $walletEl
     else
-      @$("#wallets").prepend $walletEl
+      @$("#wallets .trade-data").append $walletEl
 
   renderQrAddress: ($qrCnt)->
     $qrCnt.empty()

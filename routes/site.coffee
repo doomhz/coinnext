@@ -12,9 +12,9 @@ module.exports = (app)->
       title: 'Trade'
       user: req.user
 
-  app.get "/finances", (req, res)->
-    res.render "site/finances",
-      title: 'Finances'
+  app.get "/funds", (req, res)->
+    res.render "site/funds",
+      title: 'Funds'
       user: req.user
       currencies: Wallet.getCurrencies()
 

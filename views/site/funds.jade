@@ -1,0 +1,32 @@
+extends ../layout
+
+block content
+  #finances.main-content.finances(role='main')
+    .wrapper
+      .col-aside
+        ul.fund-nav.container
+          li.con-header: a(href='/').con-header-title Overview
+          li.active: a(href='/') 
+            .label BTC
+            .balance <span class="amount">900</span> BTC
+          li: a(href='/')
+            .label LTC
+            .balance <span class="amount">900</span> LTC       
+
+      .col-main#finances-cnt
+        #wallets.container
+          .con-header
+            h3.con-header-title Portfolio
+          table.trade-data
+            tr
+              th Currency
+              th Total Balance
+              th Available Balance
+              th Value in BTC
+            include ../templates/wallet
+          .add-wallet
+            form#add-wallet-form
+              select#currency-type(name="currency_type")
+                - for currency in currencies
+                  option(value="#{currency}") #{currency}
+              button(type="submit") Add currency
