@@ -6,7 +6,7 @@ block content
       .col-left
         ul.sub-nav
           li.active: a(href='/') Funds
-          li: a(href='/') Open Orders
+          li: a(href='/') Open Orders (0)
           li: a(href='/') Transactions
 
       .col-right
@@ -18,6 +18,5 @@ block content
             button(type="submit") Create wallet
 
       .col-center#finances-cnt
-        h1.page-title Funds
         ul#wallets.wallets
           include ../templates/wallet

@@ -87,18 +87,6 @@ $red = #e37368
     border-bottom 0
 
 /* Center */
-.page-title
-.market-title
-  background #f9f9f9
-  padding 10px
-  margin 0 0 10px 0
-  color $darkblue
-  font-size 18px
-  line-height 16px
-  font-weight 500
-  border 1px solid #e0e5e8
-  border-radius 3px
-
 .coin-stats
   @extends .container
   background #f9f9f9
@@ -128,26 +116,29 @@ $red = #e37368
 .order-box
   @extends .container
   min-height 287px
+  .currency-input
+    width 100%
+    margin-bottom 10px
+
 .amount
   font-weight bold
-
-.con-header
-  clearfix()
-  background #f9f9f9
-  padding 10px
-  border-bottom 1px solid #e0e5e8
-
-.con-header-title
-  margin 0
-  color $darkblue
-  float left
-  font-size 16px
-  line-height 16px
 
 .order-box-balance
   float right
   line-height 16px
   margin 0
+
+.page-title
+.market-title
+  background #f6f7f8
+  padding 10px
+  color $darkblue
+  margin 0 0 10px 0
+  font-size 18px
+  line-height 16px
+  font-weight 500
+  border 1px solid $border-color
+  border-radius 3px
 
 .market-type
   clearfix()
@@ -198,16 +189,6 @@ $red = #e37368
     th
       font-weight bold
 
-.wrap-amount
-  position relative
-  margin-bottom 10px
-  input
-    z-index 1
-    width 100%
-    height 30px
-    position relative
-    background transparent
-
 .overlay-amount
   position absolute
   line-height 28px
@@ -220,8 +201,6 @@ $red = #e37368
 // TEMP
 #sell-box .market-order
   display none
-
-/* Open Orders */
 
 /* Order Book */
 .order-book-wrap

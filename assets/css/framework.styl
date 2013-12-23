@@ -20,7 +20,8 @@ input[type="url"]
 input[readonly]
   cursor not-allowed
 
-input:focus
+input
+button:focus
   outline none
 
 .hidden
@@ -59,19 +60,44 @@ p
 .wrapper
   max-width 1600px
   margin 0 auto
-  padding 0 10px
+  padding 0 15px
 
 .container
   clearfix()
   position relative
   margin-bottom 10px
   background #fff
-  border 1px solid #e0e5e8
+  border 1px solid $border-color
   overflow hidden
   border-radius 3px
+  box-shadow 0 1px 0 rgba(#fff,.3)
+
+.con-header
+  clearfix()
+  background #f6f7f8
+  padding 10px
+  border-bottom 1px solid #e0e5e8
+
+.con-header-title
+  margin 0
+  color $darkblue
+  float left
+  text-shadow 0 1px 0 #fff
+  font-size 16px
+  line-height 16px
 
 .wrap
   clearfix()
+
+.currency-input
+  position relative
+  display inline-block
+  input
+    width 100%
+    z-index 1
+    height 30px
+    position relative
+    background #fff
 
 /* Dropdown */
 .dropdown
@@ -87,6 +113,7 @@ p
     transition opacity .2s ease-out
     background #fff
     border 1px solid #e0e5e8
+    box-shadow 0 1px 3px rgba(#000,.05)
     border-top 0
     font-size 14px
     position absolute
@@ -134,21 +161,22 @@ p
 /* Sub Nav */
 .sub-nav
   reset-list()
-  @extends .container
+  border 1px solid $border-color
+  border-radius 3px
+  background #fff
   li
-    margin-top -1px
     border-bottom 1px solid #ecedef
     &:last-child
       border 0
     &.active a
       color #fff
-      background $blue
-      border 0
-      font-weight bold
+      border-radius 3px
+      color $darkblue
+      background #f9f9f9
       &:hover
-        color #fff !important
+        color $darkblue
     a
-      padding 12px
+      padding 10px
       display block
       font-weight 500
       color #999

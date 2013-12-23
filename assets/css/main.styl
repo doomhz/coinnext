@@ -6,12 +6,13 @@
 $teal = #8BC26C
 $blue = #539bd3
 $darkblue = #14294e
+$border-color = #e0e5e8
 
 @import 'framework'
 
 body
   min-width 1000px
-  background #f6f7f8
+  background #f9f9f9
   color #5f6a7d
   -webkit-font-smoothing antialiased
   font 14px "Helvetica Neue", Helvetica, Arial, sans-serif
@@ -22,7 +23,7 @@ body
   position relative
   background #fff
   height 50px
-  border-bottom 1px solid #e0e5e8
+  border-bottom 1px solid $border-color
   width 100%
 
 .site-logo
@@ -97,10 +98,13 @@ body
       &:active
         color #14294e
 
+.btn
+  btn($teal)
+
 /* Body */
 .main-content
   clearfix()
-  margin 10px 0
+  margin 15px 0
 
 .col-left
   float left
@@ -126,7 +130,7 @@ body
   background darken(#13294e, 50%)
   color #fff
   font-size 12px
-  padding 20px 0
+  padding 15px 0
   .copyright
     letter-spacing .3px
   .copyright

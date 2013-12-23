@@ -16,7 +16,12 @@ script(type="text/template", id="wallet-tpl")
     .withdraw-cnt
       form#withdraw-form
         input(type="hidden", name="wallet_id", value="<%= wallet.id %>")
-        input(type="text", name="amount", placeholder="Amount")
-        <%= wallet.get("currency") %>
-        input(type="text", name="address", placeholder="Address")
-        button(type="submit") Pay
+        .amount-field
+          label Amount:
+          .currency-input
+            input(type="text", name="amount", placeholder="Amount")
+            .overlay-amount <%= wallet.get("currency") %>
+        .address-field
+          label Address:
+          input(type="text", name="address", placeholder="Address").address-input
+        button(type="submit").submit Withdraw

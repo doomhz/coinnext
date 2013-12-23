@@ -15,10 +15,10 @@
 
 .wallet
   @extends .container
-  padding 10px
 
   .coin-info
     float left
+    padding 10px
 
   .coin-total
     float left
@@ -62,7 +62,39 @@
           color #14294e
 
   .withdraw-cnt
-    float right
-    clear right
+    border-top 1px solid #ecedef
     display none
+    clear both
+    padding 10px
+    background #f9f9f9
+    clearfix()
+    .amount-field
+    .address-field
+      float left
+      label
+        display block
+        margin-bottom 5px
+    .address-field
+      margin-left 5px
+    .currency-input
+      width 200px
+    .address-input
+      height 30px
+      width 250px
+    .submit
+      float left
+      color #fff
+      background #72b54c
+      height 30px
+      line-height 30px
+      border-radius 1px
+      text-transform uppercase
+      margin 20px 0 0 5px
+      padding 0 20px
+      border 1px solid #72b54c
+      font-size 12px
+      transition all .1s linear
+      &:hover
+        color #fff
+        background darken(#8BC26C, 30%)
 
