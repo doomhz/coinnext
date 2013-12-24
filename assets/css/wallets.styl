@@ -2,11 +2,29 @@
   reset-list()
 
 .add-wallet
-  border-top 1px solid #e0e5e8
+  border-top 1px dotted #e0e5e8
   background #f9f9f9
   padding 10px
   select
     width 100%
+  button
+    margin-top 5px
+    width 100%
+    color #999
+    background #fff
+    height 25px
+    line-height 23px
+    border-radius 3px
+    padding 1px 5px
+    text-transform uppercase
+    border 1px solid #ecedef
+    font-size 12px
+    transition all .1s linear
+    &:hover
+      color $blue
+      border-color $blue
+    &:active
+      color #14294e
 
 .wallet
   .coin-deposit

@@ -18,9 +18,9 @@ block content
           .add-wallet
             form#add-wallet-form
               select#currency-type(name="currency_type")
-                option(value="") Add Currency
                 - for currency in currencies
                   option(value="#{currency}") #{currency} - Bitcoin
+              button(type="submit") Add Currency      
 
       .col-main#finances-cnt
         #wallets.container
