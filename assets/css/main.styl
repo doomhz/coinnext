@@ -7,12 +7,16 @@ $teal = #8BC26C
 $blue = #549cd5
 $darkblue = #14294e
 $border-color = #e0e5e8
+$$border-color = #d2d3d6
+
+$bgcolor = #f9f9f9
+$bgcolor = #f7f7f7
 
 @import 'framework'
 
 body
   min-width 1000px
-  background #f9f9f9
+  background $bgcolor
   color #5f6a7d
   -webkit-font-smoothing antialiased
   font 14px "Helvetica Neue", Helvetica, Arial, sans-serif
@@ -62,6 +66,7 @@ body
     color #999
     font-size 12px
     text-transform uppercase
+    position relative
     &:hover
       color $blue
       text-decoration none
@@ -69,7 +74,28 @@ body
     &.active
       color #14294e
     &.active
-      background-color #f9f9f9
+      &:before
+        content ""
+        border-left 9px solid transparent
+        border-right 9px solid transparent
+        border-bottom 9px solid $border-color
+        display inline-block
+        left 50%
+        margin-left -9px
+        position absolute
+        vertical-align top
+        bottom -1px
+      &:after
+        content ""
+        border-left 8px solid transparent
+        border-right 8px solid transparent
+        border-bottom 8px solid $bgcolor
+        display inline-block
+        left 50%
+        margin-left -8px
+        position absolute
+        vertical-align top
+        bottom -1px
 
 .auth-nav
   margin 0 5px
