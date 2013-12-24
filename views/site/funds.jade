@@ -20,7 +20,7 @@ block content
               select#currency-type(name="currency_type")
                 - for currency in currencies
                   option(value="#{currency}") #{currency} - Bitcoin
-              button(type="submit") Add Currency      
+              button(type="submit") Add      
 
       .col-main#finances-cnt
         #wallets.container
@@ -33,3 +33,31 @@ block content
               th Available Balance
               th Value in BTC
             include ../templates/wallet
+
+        #open-orders.container
+          .con-header
+            h3.con-header-title Open Orders
+          table.trade-data
+            thead
+              tr
+                th Date
+                th Type
+                th Price
+                th PPC
+                th BTC
+                th Action
+            tbody
+              tr.sell
+                td.trade-date 18/12/13 05:31
+                td.trade-type Sell
+                td.trade-price 1
+                td.trade-amount 2
+                td.trade-total 2
+                td.trade-action <a href="#">Cancel</a>
+              tr.sell
+                td.trade-date 18/12/13 05:30
+                td.trade-type Sell
+                td.trade-price 0.5
+                td.trade-amount 1
+                td.trade-total 0.5
+                td.trade-action <a href="#">Cancel</a>
