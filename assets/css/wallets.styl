@@ -5,8 +5,8 @@
   border-top 1px solid #e0e5e8
   background #f9f9f9
   padding 10px
-  button
-    margin-left 5px
+  select
+    width 100%
 
 .wallet
   .coin-deposit
@@ -19,12 +19,16 @@
   reset-list()
   li
     border-bottom 1px solid #ecedef
+    border-top 1px solid #ecedef
     cursor pointer
     height 38px
     margin-top -1px
+    margin-bottom -1px
     &:last-child
       border-bottom 0
     &.active
+      margin 4px 3px
+      border-radius 1px
       background $blue
       border 0
       font-weight bold
@@ -37,7 +41,6 @@
       padding 10px
       display block
       color #5f6a7d
-      text-transform uppercase
       &:hover
         color $blue
         text-decoration none
@@ -47,10 +50,3 @@
         float left
       .balance
         float right
-      &.con-header-title
-        padding 0
-        text-transform none
-        color $darkblue
-        &:hover
-          color $blue
-          text-decoration none

@@ -32,20 +32,25 @@ $red = #e37368
 .add-coin
   display none
   padding 10px
+  background #f9f9f9
   border-top 1px solid #ecedef
   select
     width 100%
 .market-ticker-coin
   clearfix()
   border-bottom 1px solid #ecedef
+  border-top 1px solid #ecedef
   padding 10px
   cursor pointer
   height 38px
+  margin-bottom -1px
   margin-top -1px
   &.active
     color #fff
-    background $blue
+    margin 4px 3px
+    border-radius 1px
     border 0
+    background $blue
     font-weight bold
     .rate
     &:hover
@@ -72,6 +77,8 @@ $red = #e37368
     margin-right 5px
     i
       vertical-align -1px
+    &:hover
+      text-decoration none
   .hide-coin
   .label
     float left
@@ -134,7 +141,7 @@ $red = #e37368
   padding 10px
   color $darkblue
   margin 0 0 10px 0
-  font-size 18px
+  font-size 16px
   line-height 16px
   font-weight 500
   border 1px solid $border-color
