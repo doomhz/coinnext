@@ -7,10 +7,8 @@ $teal = #8BC26C
 $blue = #549cd5
 $darkblue = #14294e
 $border-color = #e0e5e8
-$$border-color = #d2d3d6
-
+$border-color = #dcdfe3
 $bgcolor = #f9f9f9
-$bgcolor = #f7f7f7
 
 @import 'framework'
 
@@ -159,6 +157,29 @@ body
     margin-left 220px
 
 /* Footer */
+
+.footer-body
+  background #fff
+  border-top 1px solid $border-color
+  clearfix()
+  .column
+    margin-left 20px
+    padding 10px
+    float left
+    h2
+      text-transform uppercase
+      font-size 14px
+      color #999
+      font-weight 500
+      padding 2px
+      margin 0 0 5px 0
+    ul
+      reset-list()
+      li
+        a
+          padding 2px
+          display block
+
 .page-foot
   clearfix()
   background darken(#13294e, 50%)
