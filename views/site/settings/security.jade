@@ -10,6 +10,7 @@ block content
           li.active: a(href='/settings/security') Security
 
       .col-main
+        h1.page-title Security
         - if (user.gauth_data)
           a(href="#{user.gauth_data.google_auth_qr}", target="_blank")
             img(src="#{user.gauth_data.google_auth_qr}")

@@ -50,6 +50,11 @@
         title: 'Terms'
       });
     });
+    app.get("/legal/privacy", function(req, res) {
+      return res.render("static/privacy", {
+        title: 'Privacy'
+      });
+    });
     app.get("/fees", function(req, res) {
       return res.render("static/fees", {
         title: 'Fees'

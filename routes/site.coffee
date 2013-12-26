@@ -42,6 +42,10 @@ module.exports = (app)->
     res.render "static/terms",
       title: 'Terms'
 
+  app.get "/legal/privacy", (req, res)->
+    res.render "static/privacy",
+      title: 'Privacy'
+
   app.get "/fees", (req, res)->
     res.render "static/fees",
       title: 'Fees'
