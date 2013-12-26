@@ -18,7 +18,34 @@ module.exports = (app)->
       user: req.user
       currencies: Wallet.getCurrencies()
 
+  # Settings
   app.get "/settings", (req, res)->
-    res.render "site/settings",
+    res.render "site/settings/settings",
       title: 'Settings'
+      page: 'Settings'
       user: req.user
+
+  app.get "/settings/preferences", (req, res)->
+    res.render "site/settings/preferences",
+      title: 'Preferencs - Settings'
+      page: 'Settings'
+      user: req.user
+
+  app.get "/settings/security", (req, res)->
+    res.render "site/settings/security",
+      title: 'Security - Settings'
+      page: 'Settings'
+      user: req.user
+
+  # Static Pages
+  app.get "/legal/terms", (req, res)->
+    res.render "static/terms",
+      title: 'Terms'
+
+  app.get "/fees", (req, res)->
+    res.render "static/fees",
+      title: 'Fees'
+
+  app.get "/company", (req, res)->
+    res.render "static/company",
+      title: 'Company'

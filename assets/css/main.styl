@@ -40,6 +40,8 @@ body
   display block
   image '/img/logo.png' auto 25px
   background-repeat no-repeat
+  &.bw
+    image '/img/bw_logo.png' auto 12px
 
 .nav
   reset-list()
@@ -147,20 +149,15 @@ body
   float right
   width 300px
 
-.settings
-.finances
-  aside
-    float left
-    width 200px
-  section.body
-    margin-left 220px
-
 /* Footer */
 
 .footer-body
   background #fff
   border-top 1px solid $border-color
   clearfix()
+  .coinnext-logo
+    float left
+    margin 20px
   .column
     margin-left 20px
     padding 10px
@@ -185,12 +182,18 @@ body
   color #fff
   font-size 12px
   padding 15px 0
+  .coinnext-logo
+    float left
+    width 75px
+    margin-right 5px
+    height 15px
   .copyright
     letter-spacing .3px
   .copyright
   .locale-selector
     display inline-block
   .locale-selector
+    float right
     margin-left 50px
 
 @import 'auth'

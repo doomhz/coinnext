@@ -8,7 +8,7 @@ header.page-head
       - if (user)
         li: a(href='/funds', class=(title === 'Funds' ? 'active' : '')) Funds
         li.dropdown
-          a(href="/settings", class=(title === 'Settings' ? 'active' : '')).dropdown-toggle
+          a(href="/settings", class=(page === 'Settings' ? 'active' : '')).dropdown-toggle
             | addischol@gmail.com
             .caret
           ul.dropdown-menu

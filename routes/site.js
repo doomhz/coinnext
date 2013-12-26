@@ -24,10 +24,40 @@
         currencies: Wallet.getCurrencies()
       });
     });
-    return app.get("/settings", function(req, res) {
-      return res.render("site/settings", {
+    app.get("/settings", function(req, res) {
+      return res.render("site/settings/settings", {
         title: 'Settings',
+        page: 'Settings',
         user: req.user
+      });
+    });
+    app.get("/settings/preferences", function(req, res) {
+      return res.render("site/settings/preferences", {
+        title: 'Preferencs - Settings',
+        page: 'Settings',
+        user: req.user
+      });
+    });
+    app.get("/settings/security", function(req, res) {
+      return res.render("site/settings/security", {
+        title: 'Security - Settings',
+        page: 'Settings',
+        user: req.user
+      });
+    });
+    app.get("/legal/terms", function(req, res) {
+      return res.render("static/terms", {
+        title: 'Terms'
+      });
+    });
+    app.get("/fees", function(req, res) {
+      return res.render("static/fees", {
+        title: 'Fees'
+      });
+    });
+    return app.get("/company", function(req, res) {
+      return res.render("static/company", {
+        title: 'Company'
       });
     });
   };

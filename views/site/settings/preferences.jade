@@ -1,0 +1,13 @@
+extends ../../layout
+
+block content
+  .main-content.settings(role='main')
+    .wrapper
+      .col-aside
+        ul.sub-nav
+          li: a(href='/settings') Settings
+          li.active: a(href='/settings/preferences') Preferences
+          li: a(href='/settings/security') Security
+
+      .col-main
+        | Preferences

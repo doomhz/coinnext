@@ -166,16 +166,39 @@ p
   background #fff
   li
     border-bottom 1px solid #ecedef
+    position relative
     &:last-child
       border 0
     &.active a
       color #fff
       border-radius 3px
       color $darkblue
-      background #f9f9f9
       font-weight bold
       &:hover
         color $darkblue
+    &.active
+      &:before
+        content ""
+        border-top 9px solid transparent
+        border-right 9px solid $border-color
+        border-bottom 9px solid transparent
+        display inline-block
+        top 50%
+        margin-top -9px
+        position absolute
+        vertical-align top
+        right -1px
+      &:after
+        content ""
+        border-top 8px solid transparent
+        border-right 8px solid $bgcolor
+        border-bottom 8px solid transparent
+        display inline-block
+        top 50%
+        margin-top -8px
+        position absolute
+        vertical-align top
+        right -1px
     a
       padding 10px
       display block
