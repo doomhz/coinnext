@@ -26,6 +26,7 @@ module.exports = (app)->
           title: 'Wallet overview'
           user: req.user
           wallet: Wallet.getCurrencies()
+          currencies: Wallet.getCurrencies()
       else
         res.redirect "/"
 
