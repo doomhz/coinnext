@@ -4,6 +4,9 @@ $(document).ready ()->
 
   errorLogger = new App.ErrorLogger
 
+  user = new App.UserModel
+  user.listenToEvents()
+
   $qrGenBt = $("#qr-gen-bt")
 
   if $qrGenBt.length

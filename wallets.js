@@ -25,4 +25,5 @@ server.listen(process.env.PORT || 6000, function(){
 
 // Routes
 require('./routes/wallets_engine/wallets')(server);
+require('./routes/wallets_engine/transactions')(server);
 require('./routes/wallets_engine/trade')(server);

@@ -50,6 +50,10 @@
     });
   };
 
+  WalletSchema.methods.syncBalance = function() {};
+
+  WalletSchema.methods.addBalance = function() {};
+
   WalletSchema.methods.canWithdraw = function(amount) {
     return parseFloat(this.balance) >= parseFloat(amount);
   };

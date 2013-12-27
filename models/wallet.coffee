@@ -36,6 +36,12 @@ WalletSchema.methods.generateAddress = (userId, callback = ()->)->
     else
       callback "Invalid address"
 
+WalletSchema.methods.syncBalance = ()->
+  #TODO: Implement
+
+WalletSchema.methods.addBalance = ()->
+  #TODO: Implement
+
 WalletSchema.methods.canWithdraw = (amount)->
   parseFloat(@balance) >= parseFloat(amount)
 

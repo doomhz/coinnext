@@ -5,6 +5,9 @@ PaymentSchema = new Schema
   wallet_id:
     type: String
     index: true
+  currency:
+    type: String
+    index: true
   address:
     type: String
   amount:
@@ -35,6 +38,7 @@ PaymentSchema.methods.isCanceled = ()->
 
 PaymentSchema.methods.process = (callback = ()->)->
   @status = "processed"
+  #TODO: Implement
   @save callback
 
 PaymentSchema.methods.cancel = (reason, callback = ()->)->

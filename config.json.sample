@@ -18,6 +18,29 @@
         },
         "debug": true
       }
+    },
+    "wallets": {
+      "btc": {
+        "client": {
+          "host": "127.0.0.1",
+          "port": 18332,
+          "user": "doomhz",
+          "pass": "greatsuccess"
+        },
+        "wallet": {
+          "address": "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw",
+          "account": "satoshi_bank"
+        },
+        "confirmations": 1,
+        "transaction_fee": 0.0001,
+        "balance_confirmations": 0,
+        "currency": "BTC"
+      }
+    },
+    "wallets_host": "localhost:6000",
+    "users": {
+      "hostname": "http://localhost:5000",
+      "events_endpoint": "http://localhost:5000/user_event"
     }
   },
   "test" : {
@@ -39,6 +62,29 @@
         },
         "debug": true
       }
+    },
+    "wallets": {
+      "btc": {
+        "client": {
+          "host": "127.0.0.1",
+          "port": 18332,
+          "user": "doomhz",
+          "pass": "greatsuccess"
+        },
+        "wallet": {
+          "address": "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw",
+          "account": "satoshi_bank"
+        },
+        "confirmations": 1,
+        "transaction_fee": 0.0001,
+        "balance_confirmations": 0,
+        "currency": "BTC"
+      }
+    },
+    "wallets_host": "localhost:6000",
+    "users": {
+      hostname: "http://localhost:5000",
+      "events_endpoint": "http://localhost:5000/user_event"
     }
   },
   "production" : {
@@ -70,6 +116,29 @@
         },
         "debug": false
       }
+    },
+    "wallets": {
+      "btc": {
+        "client": {
+          "host": "127.0.0.1",
+          "port": 18332,
+          "user": "doomhz",
+          "pass": "greatsuccess"
+        },
+        "wallet": {
+          "address": "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw",
+          "account": "satoshi_bank"
+        },
+        "confirmations": 1,
+        "transaction_fee": 0.0001,
+        "balance_confirmations": 0,
+        "currency": "BTC"
+      }
+    },
+    "wallets_host": "localhost:6000",
+    "users": {
+      hostname: "http://direct.coinnext.com",
+      "events_endpoint": "http://localhost:5000/user_event"
     }
   }
 }

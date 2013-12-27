@@ -80,6 +80,9 @@ class BtcWallet
   getTransactions: (account = "*", count = 10, from = 0, callback)->
     @client.listTransactions account, count, from, callback
 
+  getTransaction: (txId, callback)->
+    @client.getTransaction txId, callback
+
   getBankBalance: (callback)->
     @getBalance @account, callback
 

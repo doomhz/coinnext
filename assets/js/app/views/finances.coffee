@@ -10,6 +10,7 @@ class App.FinancesView extends App.MasterView
     "submit #withdraw-form": "onPay"
 
   initialize: ()->
+    $.subscribe "new-balance", @onNewBalance
 
   render: ()->
     @renderWallets()
@@ -87,3 +88,6 @@ class App.FinancesView extends App.MasterView
           $.publish "error", xhr
     else
       $.publish "error", "Please submit a proper amount."
+
+  onNewBalance: (ev, data)=>
+    @renderWallets()
