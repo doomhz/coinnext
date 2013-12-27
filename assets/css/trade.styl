@@ -113,12 +113,14 @@ $red = #e37368
   margin-bottom 10px
 
 /* Order Boxes */
-.order-box-wrap
+.two-col-wrap
   width 50%
   float left
-  &:first-child
-    .order-box
-      margin-right 10px
+  &:last-child > div
+    margin-left 10px
+
+.order-box-wrap
+  @extends .two-col-wrap
 
 .order-box
   @extends .container
@@ -130,7 +132,7 @@ $red = #e37368
 .amount
   font-weight bold
 
-.order-box-balance
+.header-balance
   float right
   line-height 16px
   margin 0
@@ -171,12 +173,12 @@ $red = #e37368
   label
     margin-bottom 5px
     display block
-  .confirm-order
-    button
-      width 100%
-      btn($teal)
-      font-weight 500
-      letter-spacing .5px
+.confirm-order
+  button
+    width 100%
+    btn($teal)
+    font-weight 500
+    letter-spacing .5px
 
 .order-overview
   width 100%

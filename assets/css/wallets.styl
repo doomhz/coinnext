@@ -13,9 +13,9 @@
     color #999
     background #fff
     height 25px
-    line-height 23px
+    line-height 25px
     border-radius 3px
-    padding 1px 5px
+    padding 0 5px
     text-transform uppercase
     border 1px solid $border-color
     font-size 12px
@@ -68,3 +68,62 @@
         float left
       .balance
         float right
+
+#balance
+  th
+    width 150px
+
+.transaction-con
+  label
+    margin-bottom 5px
+    display block
+  .terms
+    reset-list()
+    margin-top 5px
+    color #999
+    font-size 13px
+    li
+      margin-bottom 3px
+      &:last-child
+        margin 0
+  .currency-input
+  .address-input
+    width 100%
+    margin-bottom 5px
+
+
+.coin-deposit-address
+  background #f0f0f0
+  padding 10px
+  box-sizing border-box
+  word-wrap break-word
+  border-radius 5px
+  clearfix()
+  code
+    float left
+    font-weight bold
+    margin 4px 0
+  button
+    float right
+    font-weight 300
+    white-space nowrap
+    color #999
+    background #fff
+    height 25px
+    line-height 23px
+    border-radius 3px
+    padding 0 8px
+    text-transform uppercase
+    border 1px solid $border-color
+    font-size 12px
+    transition all .1s linear
+    &:hover
+    &.zeroclipboard-is-hover
+      color $blue
+      border-color $blue
+    &:active
+      color #14294e
+
+#show-qr-bt
+  margin-left 6px
+

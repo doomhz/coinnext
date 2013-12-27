@@ -5,16 +5,52 @@ block content
     .wrapper
       .col-aside
         include _funds_list
-      .col-main#finances-cnt
-        #wallets.container
+      .col-main
+        #balance.container
           .con-header
-            h3.con-header-title Balance
+            h3.con-header-title Bitcoin Balance
           table.trade-data
             tr
-              th Currency
               th Total Balance
+              td 51 BTC
+            tr
               th Available Balance
-              th Value in BTC
+              td 50 BTC
+
+        // Deposit
+        .wrap
+          .two-col-wrap
+            .transaction-con.container
+              .con-header
+                h3.con-header-title Deposit Bitcoin
+              .con-body
+                label To deposit bitcoins, send to this address:
+                .coin-deposit-address
+                  code 13ve5vXacXcvN2BbF1o5C4pWo7bJJC7qR9
+                  button#show-qr-bt Show QR
+                  button#copy-address(data-clipboard-text="#") Copy
+                ul.terms
+                  li Minimal deposit amount is 0.0001 BTC.
+                  li Your deposit will be credited after 3 network confirmations.
+          .two-col-wrap
+            .transaction-con.container
+              .con-header
+                h3.con-header-title Withdraw Bitcoin
+                .header-balance <a href="#" class="amount">0893892039 PPC</a> Available
+              .con-body
+                label Enter the amount you would like to withdraw:
+                .currency-input
+                  input(type="text", placeholder="Amount")
+                  .overlay-amount BTC
+                label Enter a bitcoin address:
+                .address-input
+                  input(type="text", placeholder="Bitcoin address")
+                .confirm-order
+                  button Withdraw
+                ul.terms
+                  li Minimal amount for withdrawal is 0.01 BTC.
+                  li Fee for withdrawal is 0.001 BTC.
+                  li Daily limit on withdrawal is 100 BTC.
 
         // Open Orders (All)
         #open-orders.container
@@ -32,7 +68,7 @@ block content
                 th Action
             tbody
               tr.sell
-                td BTC/LTC
+                td <a href="#">BTC/LTC</a>
                 td.trade-date 18/12/13 05:31
                 td.trade-type Sell
                 td.trade-amount 2 BTC
