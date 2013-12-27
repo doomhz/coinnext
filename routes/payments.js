@@ -21,6 +21,7 @@
               payment = new Payment({
                 user_id: req.user.id,
                 wallet_id: walletId,
+                currency: wallet.currency,
                 amount: amount,
                 address: address
               });

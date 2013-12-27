@@ -10,6 +10,10 @@
       type: String,
       index: true
     },
+    currency: {
+      type: String,
+      index: true
+    },
     address: {
       type: String
     },
