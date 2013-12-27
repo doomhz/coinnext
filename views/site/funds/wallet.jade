@@ -3,4 +3,62 @@ extends ../../layout
 block content
   .main-content.settings(role='main')
     .wrapper
-      h1 Wallet overview
+      .col-aside
+        include _funds_list
+      .col-main#finances-cnt
+        #wallets.container
+          .con-header
+            h3.con-header-title Balance
+          table.trade-data
+            tr
+              th Currency
+              th Total Balance
+              th Available Balance
+              th Value in BTC
+
+        // Open Orders (All)
+        #open-orders.container
+          .con-header
+            h3.con-header-title Open Orders
+          table.trade-data
+            thead
+              tr
+                th Market
+                th Date
+                th Type
+                th Amount
+                th Price
+                th Total
+                th Action
+            tbody
+              tr.sell
+                td BTC/LTC
+                td.trade-date 18/12/13 05:31
+                td.trade-type Sell
+                td.trade-amount 2 BTC
+                td.trade-price 1 LTC
+                td.trade-total 2 LTC
+                td.trade-action <a href="#">Cancel</a>
+
+        // Transaction History
+        #trade-history.trade-history.container
+          .con-header
+            h3.con-header-title Transaction History
+          .table-wrap
+            table.trade-data
+              thead
+                tr
+                  th Market
+                  th Date
+                  th Type
+                  th Amount
+                  th Price
+                  th Total
+              tbody
+                tr.sell
+                  td BTC/LTC
+                  td.trade-date 18/12/13 04:23
+                  td.trade-type Sell
+                  td.trade-amount 19.8594
+                  td.trade-price 0.0046
+                  td.trade-total 0.09135324
