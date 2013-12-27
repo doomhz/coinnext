@@ -24,13 +24,13 @@
         currencies: Wallet.getCurrencies()
       });
     });
-    app.get("/wallet-overview/:currency", function(req, res) {
+    app.get("/funds/:currency", function(req, res) {
       return Wallet.findUserWalletByCurrency(req.user.id, req.params.currency, function(err, wallet) {
         if (err) {
           console.error(err);
         }
         if (wallet) {
-          return res.render("site/funds/wallet_overview", {
+          return res.render("site/funds/wallet", {
             title: 'Wallet overview',
             user: req.user,
             wallet: Wallet.getCurrencies()
