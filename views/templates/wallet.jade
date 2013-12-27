@@ -1,6 +1,6 @@
 script(type="text/template", id="wallet-tpl")
   tr.wallet(data-id="<%= wallet.id %>")
-    td <a href="#"><%= wallet.get("currency") %></a>
+    td <a href="/wallet-overview/<%= wallet.get("currency") %>"><%= wallet.get("currency") %></a>
     td <%= wallet.get("balance") %> <%= wallet.get("currency") %>
     td <%= wallet.get("balance") %> <%= wallet.get("currency") %>
     td <%= wallet.get("balance") %> BTC

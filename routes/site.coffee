@@ -18,6 +18,17 @@ module.exports = (app)->
       user: req.user
       currencies: Wallet.getCurrencies()
 
+  app.get "/wallet-overview/:currency", (req, res)->
+    Wallet.findUserWalletByCurrency req.user.id, req.params.currency, (err, wallet)->
+      console.error err  if err
+      if wallet
+        res.render "site/funds/wallet_overview",
+          title: 'Wallet overview'
+          user: req.user
+          wallet: Wallet.getCurrencies()
+      else
+        res.redirect "/"
+
   # Settings
   app.get "/settings", (req, res)->
     res.render "site/settings/settings",
