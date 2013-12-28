@@ -8,14 +8,14 @@ block content
       .col-main
         #balance.container
           .con-header
-            h3.con-header-title Bitcoin Balance
+            h3.con-header-title #{wallet.currency} Balance
           table.trade-data
             tr
               th Available for trading
-              td 51 BTC
+              td #{wallet.balance} #{wallet.currency}
             tr
               th Available Balance
-              td 50 BTC
+              td #{wallet.balance} #{wallet.currency}
 
         // Pending Transactions
         #pending-transactions.container
@@ -53,19 +53,21 @@ block content
                 h3.con-header-title Withdraw Bitcoin
                 .header-balance <a href="#" class="amount">0893892039 PPC</a> Available
               .con-body
-                label Enter the amount you would like to withdraw:
-                .currency-input
-                  input(type="text", placeholder="Amount")
-                  .overlay-amount BTC
-                label Enter a bitcoin address:
-                .address-input
-                  input(type="text", placeholder="Bitcoin address")
-                .confirm-order
-                  button Withdraw
-                ul.terms
-                  li Minimal amount for withdrawal is 0.01 BTC.
-                  li Fee for withdrawal is 0.001 BTC.
-                  li Daily limit on withdrawal is 100 BTC.
+                form#withdraw-form
+                  input(type="hidden", name="wallet_id", value="#{wallet.id}")
+                  label Enter the amount you would like to withdraw:
+                  .currency-input
+                    input(type="text", name="amount", placeholder="Amount")
+                    .overlay-amount #{wallet.currency}
+                  label Enter a bitcoin address:
+                  .address-input
+                    input(type="text", name="address", placeholder="#{wallet.currency} address")
+                  .confirm-order
+                    button Withdraw
+                  ul.terms
+                    li Minimal amount for withdrawal is 0.01 BTC.
+                    li Fee for withdrawal is 0.001 BTC.
+                    li Daily limit on withdrawal is 100 BTC.
 
         // Open Orders (All)
         #open-orders.container

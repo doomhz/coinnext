@@ -5,7 +5,6 @@ class App.FinancesView extends App.MasterView
   events:
     "submit #add-wallet-form": "onAddWallet"
     "click .deposit-bt": "onDeposit"
-    "click .withdraw-bt": "onWithdraw"
     "click #show-qr-bt": "onShowQrAddress"
     "submit #withdraw-form": "onPay"
 
@@ -66,11 +65,6 @@ class App.FinancesView extends App.MasterView
       @renderQrAddress $qrCnt
     else
       $qrCnt.toggle()
-
-  onWithdraw: (ev)->
-    $target = $(ev.target)
-    $target.parents(".wallet:first")
-    .find(".withdraw-cnt").slideToggle()
 
   onPay: (ev)->
     ev.preventDefault()
