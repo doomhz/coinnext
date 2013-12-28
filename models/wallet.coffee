@@ -1,3 +1,5 @@
+_ = require "underscore"
+
 CURRENCIES = [
   "BTC", "LTC", "PPC", "WDC", "NMC", "QRK",
   "NVC", "ZET", "FTC", "XPM", "MEC", "TRC"
@@ -25,8 +27,11 @@ WalletSchema = new Schema
 
 WalletSchema.set("autoIndex", false)
 
-WalletSchema.methods.generateAddress = (userId, callback = ()->)->
-  GLOBAL.walletsClient.send "create_account", [userId, @currency], (err, res, body)=>
+WalletSchema.virtual("account").get ()->
+  "wallet_#{@_id}"
+
+WalletSchema.methods.generateAddress = (callback = ()->)->
+  GLOBAL.walletsClient.send "create_account", [@account, @currency], (err, res, body)=>
     if err
       console.error err
       return callback err, res, body
@@ -36,11 +41,16 @@ WalletSchema.methods.generateAddress = (userId, callback = ()->)->
     else
       callback "Invalid address"
 
-WalletSchema.methods.syncBalance = ()->
-  #TODO: Implement
-
-WalletSchema.methods.addBalance = ()->
-  #TODO: Implement
+WalletSchema.methods.addBalance = (newBalance, callback = ()->)->
+  if not _.isNaN(newBalance) and _.isNumber(newBalance)
+    Wallet.update {_id: @_id}, {$inc: {balance: newBalance}}, (err)=>
+      if err
+        console.log "Could not add the wallet balance #{newBalance} for #{@_id}: #{err}"
+      Wallet.findById @_id, (err, wl)=>
+        callback err, pl
+  else
+    console.log "Could not add wallet balance #{newBalance} for #{@_id}"
+    callback(null, @)
 
 WalletSchema.methods.canWithdraw = (amount)->
   parseFloat(@balance) >= parseFloat(amount)

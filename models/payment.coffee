@@ -36,13 +36,17 @@ PaymentSchema.methods.isProcessed = ()->
 PaymentSchema.methods.isCanceled = ()->
   @status is "canceled"
 
-PaymentSchema.methods.process = (callback = ()->)->
+PaymentSchema.methods.process = (response, callback = ()->)->
   @status = "processed"
-  #TODO: Implement
+  @log.push response
   @save callback
 
 PaymentSchema.methods.cancel = (reason, callback = ()->)->
   @status = "canceled"
+  @log.push reason
+  @save callback
+
+PaymentSchema.methods.errored = (reason, callback = ()->)->
   @log.push reason
   @save callback
 
