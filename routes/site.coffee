@@ -13,22 +13,26 @@ module.exports = (app)->
       user: req.user
 
   app.get "/funds", (req, res)->
-    res.render "site/funds",
-      title: 'Funds'
-      user: req.user
-      currencies: Wallet.getCurrencies()
+    Wallet.findUserWallets req.user.id, (err, wallets)->
+      res.render "site/funds",
+        title: 'Funds'
+        user: req.user
+        wallets: wallets
+        currencies: Wallet.getCurrencies()
 
   app.get "/funds/:currency", (req, res)->
-    Wallet.findUserWalletByCurrency req.user.id, req.params.currency, (err, wallet)->
-      console.error err  if err
-      if wallet
-        res.render "site/funds/wallet",
-          title: 'Wallet overview'
-          user: req.user
-          wallet: wallet
-          currencies: Wallet.getCurrencies()
-      else
-        res.redirect "/"
+    Wallet.findUserWallets req.user.id, (err, wallets)->
+      Wallet.findUserWalletByCurrency req.user.id, req.params.currency, (err, wallet)->
+        console.error err  if err
+        if wallet
+          res.render "site/funds/wallet",
+            title: 'Wallet overview'
+            user: req.user
+            wallet: wallet
+            wallets: wallets
+            currencies: Wallet.getCurrencies()
+        else
+          res.redirect "/"
 
   # Settings
   app.get "/settings", (req, res)->

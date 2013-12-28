@@ -16,6 +16,13 @@ block content
               th Total Balance
               th Available Balance
               th Value in BTC
+            - each wallet in wallets
+              tr.wallet(data-id="#{wallet._id}")
+                td
+                  a(href="/funds/#{wallet.currency}") #{wallet.currency}
+                td #{wallet.balance} #{wallet.currency}
+                td #{wallet.balance} #{wallet.currency}
+                td #{wallet.balance} #{wallet.currency}
 
         // Open Orders (All)
         #open-orders.container
@@ -253,5 +260,3 @@ block content
                   td.trade-price 0.00462
                   td.trade-amount 2
                   td.trade-total 0.00924
-
-  include ../templates/wallet

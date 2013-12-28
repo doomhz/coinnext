@@ -11,9 +11,11 @@ module.exports = (app)->
           wallet = new Wallet
             user_id: req.user.id
             currency: currency
-          wallet.save (err, wl)->
+          wallet.save (err, wallet)->
             return JsonRenderer.error "Sorry, can not create a wallet at this time...", res  if err
-            res.json JsonRenderer.wallet wl
+            wallet.generateAddress (err, wl)->
+              console.error err  if err
+              res.json JsonRenderer.wallet wl or wallet
         else
           JsonRenderer.error "A wallet of this currency already exists.", res
     else
@@ -24,23 +26,5 @@ module.exports = (app)->
       Wallet.findUserWallets req.user.id, (err, wallets)->
         console.error err  if err
         res.json JsonRenderer.wallets wallets
-    else
-      JsonRenderer.error "Please auth.", res
-
-  app.put "/wallets/:id", (req, res)->
-    if req.user
-      Wallet.findUserWallet req.user.id, req.body.id, (err, wallet)->
-        console.error err  if err
-        if wallet
-          if req.body.address is "pending"
-            wallet.generateAddress (err, wallet)->
-              if err
-                console.error err
-                return JsonRenderer.error "Could not generate deposit address.", res
-              res.json JsonRenderer.wallet wallet
-          else
-            res.json JsonRenderer.wallet wallet
-        else
-          JsonRenderer.error "Wrong wallet.", res
     else
       JsonRenderer.error "Please auth.", res

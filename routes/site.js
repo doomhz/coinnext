@@ -17,27 +17,33 @@
       });
     });
     app.get("/funds", function(req, res) {
-      return res.render("site/funds", {
-        title: 'Funds',
-        user: req.user,
-        currencies: Wallet.getCurrencies()
+      return Wallet.findUserWallets(req.user.id, function(err, wallets) {
+        return res.render("site/funds", {
+          title: 'Funds',
+          user: req.user,
+          wallets: wallets,
+          currencies: Wallet.getCurrencies()
+        });
       });
     });
     app.get("/funds/:currency", function(req, res) {
-      return Wallet.findUserWalletByCurrency(req.user.id, req.params.currency, function(err, wallet) {
-        if (err) {
-          console.error(err);
-        }
-        if (wallet) {
-          return res.render("site/funds/wallet", {
-            title: 'Wallet overview',
-            user: req.user,
-            wallet: wallet,
-            currencies: Wallet.getCurrencies()
-          });
-        } else {
-          return res.redirect("/");
-        }
+      return Wallet.findUserWallets(req.user.id, function(err, wallets) {
+        return Wallet.findUserWalletByCurrency(req.user.id, req.params.currency, function(err, wallet) {
+          if (err) {
+            console.error(err);
+          }
+          if (wallet) {
+            return res.render("site/funds/wallet", {
+              title: 'Wallet overview',
+              user: req.user,
+              wallet: wallet,
+              wallets: wallets,
+              currencies: Wallet.getCurrencies()
+            });
+          } else {
+            return res.redirect("/");
+          }
+        });
       });
     });
     app.get("/settings", function(req, res) {

@@ -1,7 +1,5 @@
 class App.FinancesView extends App.MasterView
 
-  tpl: "wallet-tpl"
-
   events:
     "submit #add-wallet-form": "onAddWallet"
     "click .deposit-bt": "onDeposit"
@@ -13,21 +11,6 @@ class App.FinancesView extends App.MasterView
 
   render: ()->
     @renderCopyButton()
-    @renderWallets()  if @$("#wallets").length
-
-  renderWallets: ()=>
-    @collection.fetch
-      success: ()=>
-        @renderWallet wallet for wallet in @collection.models
-
-  renderWallet: (wallet)->
-    $wallet = @$("[data-id='#{wallet.id}']")
-    $walletEl = @template
-      wallet: wallet
-    if $wallet.length
-      $wallet.replaceWith $walletEl
-    else
-      @$("#wallets .trade-data").append $walletEl
 
   renderCopyButton: ()->
     $copyButton = @$("#copy-address")
@@ -44,7 +27,8 @@ class App.FinancesView extends App.MasterView
     wallet = new App.WalletModel
       currency: $form.find("#currency-type").val()
     wallet.save null,
-      success: @renderWallets
+      success: ()->
+        window.location.reload()
       error: (m, xhr)->
         $.publish "error", xhr
 
@@ -88,4 +72,4 @@ class App.FinancesView extends App.MasterView
       $.publish "error", "Please submit a proper amount."
 
   onNewBalance: (ev, data)=>
-    @renderWallets()
+    #TODO: Implement

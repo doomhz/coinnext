@@ -15,7 +15,11 @@ class WalletsClient
     for param in data
       url += "/#{param}"
     if @commands[command]
-      request[@commands[command]](url, {json: true}, callback)
+      try
+        request[@commands[command]](url, {json: true}, callback)
+      catch e
+        console.error e
+        callback "Bad response '#{e}'"
     else
       callback "Invalid command '#{command}'"
 
