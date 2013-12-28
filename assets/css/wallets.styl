@@ -51,7 +51,7 @@
       clearfix()
       padding 10px
       display block
-      color #5f6a7d
+      color inherit
       &:hover
         color $blue
         text-decoration none
@@ -92,27 +92,30 @@
     margin-bottom 5px
 
 .coin-deposit-address
-  background #fcfce6
-  padding 10px
   border 1px solid #e9eaed
   box-sizing border-box
-  word-wrap break-word
   border-radius 3px
+  background #fcfce6
+  word-wrap break-word
   clearfix()
   code
     float left
+    height 30px
+    padding 0 10px
+    margin-right 1%
+    line-height 28px
     font-weight bold
-    margin 4px 0
-    color $darkblue
+    color #65502c
   button
     float right
-    font-weight 300
     white-space nowrap
+    margin 3px
     background #fff
-    height 25px
+    height 24px
+    line-height 24px
     color inherit
-    line-height 23px
     border-radius 3px
+    box-sizing border-box
     padding 0 8px
     text-transform uppercase
     border 1px solid $border-color
@@ -123,10 +126,16 @@
       color $blue
       border-color $blue
     &:active
-      color #14294e
+      color $darkblue
+    &:last-child
+      margin-right 0
 
-#show-qr-bt
-  margin-left 6px
+.qr-address
+  text-align center
+  margin-top 10px
+  img
+    display inline-block
+    height 100px
 
 .add .trade-amount
   color $teal
