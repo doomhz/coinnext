@@ -26,13 +26,6 @@
     &:active
       color #14294e
 
-.wallet
-  .coin-deposit
-    display none
-
-  .withdraw-cnt
-    display none
-
 .fund-nav
   reset-list()
   li
@@ -53,7 +46,7 @@
       a
         color #fff
         &:hover
-          color #fff !important
+          color #fff
     a
       clearfix()
       padding 10px
@@ -71,7 +64,7 @@
 
 #balance
   th
-    width 150px
+    width 200px
 
 .transaction-con
   min-height 280px
@@ -97,7 +90,6 @@
   .address-input
     width 100%
     margin-bottom 5px
-
 
 .coin-deposit-address
   background #fcfce6
@@ -136,3 +128,7 @@
 #show-qr-bt
   margin-left 6px
 
+.add .trade-amount
+  color $teal
+.distract .trade-amount
+  color $red

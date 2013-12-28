@@ -1,4 +1,4 @@
-$red = #e37368
+$red = #da4444
 
 /* Market Tickers */
 .market-ticker
@@ -59,13 +59,13 @@ $red = #e37368
     color $blue
   &.up
     .rate
-      color #72b54c
+      color $teal
       transition color .3s ease-out
       &:after
         content "▲"
   &.down
     .rate
-      color #da4444
+      color $red
       transition color .3s ease-out
       &:after
         content "▼"
@@ -139,7 +139,8 @@ $red = #e37368
 
 .page-title
 .market-title
-  background #f6f7f8
+  background $con-header-bg
+  background linear-gradient(#fafafa, $con-header-bg)
   padding 10px
   color $darkblue
   margin 0 0 10px 0
@@ -147,6 +148,7 @@ $red = #e37368
   line-height 16px
   font-weight 500
   border 1px solid $border-color
+  border 1px solid #d5d5d5
   border-radius 3px
 
 .market-type
