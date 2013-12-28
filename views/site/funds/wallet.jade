@@ -1,7 +1,7 @@
 extends ../../layout
 
 block content
-  .main-content.settings(role='main')
+  #finances.main-content.settings(role='main')
     .wrapper
       .col-aside
         include _funds_list
@@ -40,10 +40,10 @@ block content
               .con-body
                 label To deposit bitcoins, send to this address:
                 .coin-deposit-address
-                  code 13ve5vXacXcvN2BbF1o5C4pWo7bJJC7qR9
+                  code #{wallet.address}
                   button#show-qr-bt Show QR
-                  button#copy-address(data-clipboard-text="#") Copy
-                .qr-address(data-address="<%= wallet.get('address') %>", data-id="<%= wallet.id %>")
+                  button#copy-address(data-clipboard-text="#{wallet.address}") Copy
+                #qr-address-cnt.qr-address(data-address="#{wallet.address}")
                 ul.terms
                   li Minimal deposit amount is 0.0001 BTC.
                   li Your deposit will be credited after 3 network confirmations.

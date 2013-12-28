@@ -6,14 +6,15 @@ class App.FinancesView extends App.MasterView
     "submit #add-wallet-form": "onAddWallet"
     "click .deposit-bt": "onDeposit"
     "click .withdraw-bt": "onWithdraw"
-    "click .show-qr-address": "onShowQrAddress"
+    "click #show-qr-bt": "onShowQrAddress"
     "submit #withdraw-form": "onPay"
 
   initialize: ()->
     $.subscribe "new-balance", @onNewBalance
 
   render: ()->
-    @renderWallets()
+    @renderCopyButton()
+    @renderWallets()  if @$("#wallets").length
 
   renderWallets: ()=>
     @collection.fetch
@@ -28,6 +29,11 @@ class App.FinancesView extends App.MasterView
       $wallet.replaceWith $walletEl
     else
       @$("#wallets .trade-data").append $walletEl
+
+  renderCopyButton: ()->
+    $copyButton = @$("#copy-address")
+    new ZeroClipboard $copyButton[0],
+      moviePath: "#{window.location.origin}/ZeroClipboard.swf"
 
   renderQrAddress: ($qrCnt)->
     $qrCnt.empty()
@@ -55,13 +61,11 @@ class App.FinancesView extends App.MasterView
 
   onShowQrAddress: (ev)->
     ev.preventDefault()
-    $target = $(ev.target)
-    walletId = $target.data "id"
-    $qrCnt = @$(".qr-address[data-id='#{walletId}']")
+    $qrCnt = @$("#qr-address-cnt")
     if $qrCnt.is ":empty"
       @renderQrAddress $qrCnt
     else
-      $qrCnt.toggle()  
+      $qrCnt.toggle()
 
   onWithdraw: (ev)->
     $target = $(ev.target)
