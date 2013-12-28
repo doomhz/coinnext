@@ -19,6 +19,6 @@ $(document).ready ()->
   $finances = $("#finances")
   if $finances
     finances = new App.FinancesView
-      el: $("#finances")
+      el: $finances
       collection: new App.WalletsCollection
     finances.render()
