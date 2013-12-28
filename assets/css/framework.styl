@@ -14,6 +14,7 @@ input[type="url"]
   margin-top -1px
   position relative
   transition all .1s linear
+  box-shadow inset 0 0 3px rgba(0,0,0,0.1)
   &:focus
     border-color $blue
     z-index 1
@@ -79,10 +80,11 @@ p
 
 .con-header
   clearfix()
-  background $con-header-bg
   background linear-gradient(#fafafa, $con-header-bg)
   padding 10px
   border-bottom 1px solid #d5d5d5
+  position relative
+  z-index 1
 
 .con-header-title
   margin 0
