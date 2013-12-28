@@ -6,15 +6,15 @@
   Wallet = require("../../models/wallet");
 
   module.exports = function(app) {
-    return app.post("/create_account/:user_id/:currency", function(req, res, next) {
-      var currency, userId;
-      userId = req.params.user_id;
+    return app.post("/create_account/:account/:currency", function(req, res, next) {
+      var account, currency;
+      account = req.params.account;
       currency = req.params.currency;
       if (GLOBAL.wallets[currency]) {
-        return GLOBAL.wallets[currency].generateAddress(userId, function(err, address) {
+        return GLOBAL.wallets[currency].generateAddress(account, function(err, address) {
           if (!err) {
             return res.send({
-              account: userId,
+              account: account,
               address: address
             });
           } else {

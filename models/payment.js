@@ -52,11 +52,12 @@
     return this.status === "canceled";
   };
 
-  PaymentSchema.methods.process = function(callback) {
+  PaymentSchema.methods.process = function(response, callback) {
     if (callback == null) {
       callback = function() {};
     }
     this.status = "processed";
+    this.log.push(response);
     return this.save(callback);
   };
 
@@ -65,6 +66,14 @@
       callback = function() {};
     }
     this.status = "canceled";
+    this.log.push(reason);
+    return this.save(callback);
+  };
+
+  PaymentSchema.methods.errored = function(reason, callback) {
+    if (callback == null) {
+      callback = function() {};
+    }
     this.log.push(reason);
     return this.save(callback);
   };

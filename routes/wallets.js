@@ -50,7 +50,7 @@
           }
           if (wallet) {
             if (req.body.address === "pending") {
-              return wallet.generateAddress(req.user.id, function(err, wallet) {
+              return wallet.generateAddress(function(err, wallet) {
                 if (err) {
                   console.error(err);
                   return JsonRenderer.error("Could not generate deposit address.", res);

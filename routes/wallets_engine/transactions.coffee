@@ -20,7 +20,7 @@ module.exports = (app)->
             if user
               Wallet.findUserWalletByCurrency user.id, currency, (err, wallet)->
                 Transaction.addFromWallet transaction, currency, user, wallet
-                wallet.syncBalance()  if wallet
+                loadEntireAccountBalance wallet  if wallet
             else
               Transaction.addFromWallet transaction, currency, user
         else
@@ -33,7 +33,7 @@ module.exports = (app)->
         if wallet.canWithdraw payment.amount
           wallet.addBalance -payment.amount, (err)->
             if not err
-              payment.process (err)->
+              processPayment payment, (err)->
                 if not err
                   callback null, "#{payment.id} - processed"
                 else
@@ -47,3 +47,29 @@ module.exports = (app)->
       async.mapSeries payments, processPayment, (err, result)->
         console.log err  if err
         console.log result
+
+
+  loadEntireAccountBalance = (wallet, callback = ()->)->
+    GLOBAL.wallets[wallet.currency].getBalance wallet.account, (err, balance)=>
+      if err
+        console.error "Could not get balance for #{wallet.account}", err
+        callback err, @
+      else
+        if balance isnt 0
+          GLOBAL.wallets[wallet.currency].chargeAccount wallet.account, -balance, (err, success)=>
+            if err
+              console.error "Could not charge #{wallet.account} #{balance} BTC", err
+              callback err, @
+            else
+              wallet.addBalance balance, callback
+        else
+          Wallet.findById wallet.id, callback
+
+  processPayment = (payment, callback = ()->)->
+    account = GLOBAL.wallets[payment.currency].account
+    GLOBAL.wallets[payment.currency].sendToAddress payment.address, account, payment.amount, (err, response = "")=>
+      if err
+        console.error "Could not withdraw to #{payment.address} from #{account} #{payment.amount} BTC", err
+        payment.errored JSON.stringify(err), callback
+      else
+        payment.process JSON.stringify(response), callback
