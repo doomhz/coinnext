@@ -6,6 +6,7 @@
 //= require vendor/jquery.validate
 //= require vendor/jquery.tmpload
 //= require vendor/jquery.jgrowl
+//= require vendor/ZeroClipboard
 
 //= require app/models/user
 //= require app/models/wallet

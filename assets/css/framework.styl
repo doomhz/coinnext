@@ -10,12 +10,16 @@ input[type="url"]
   font-size 14px
   padding 10px
   background #fff
+  border-radius 2px
   margin-top -1px
   position relative
   transition all .1s linear
   &:focus
-    background #f9f9f9
+    border-color $blue
     z-index 1
+
+input[type="submit"]
+  user-select none
 
 input[readonly]
   cursor not-allowed
@@ -37,9 +41,8 @@ btn(color)
   border-radius 1px
   background color
   padding 10px 20px
-  text-transform uppercase
   border 0
-  font-size 12px
+  user-select none
   transition all .1s linear
   &:hover
     color #fff
@@ -61,6 +64,9 @@ p
   max-width 1600px
   margin 0 auto
   padding 0 15px
+
+.wrap
+  clearfix()
 
 .container
   clearfix()
@@ -86,12 +92,15 @@ p
   line-height 16px
   font-weight 700
 
-.wrap
-  clearfix()
+.con-body
+  padding 10px
 
 .currency-input
   position relative
   display inline-block
+
+.currency-input
+.address-input
   input
     width 100%
     z-index 1

@@ -22,3 +22,8 @@ $(document).ready ()->
       el: $("#finances")
       collection: new App.WalletsCollection
     finances.render()
+
+    # zeroClipBoard
+    $copyButton = $("#copy-address")
+    clip = new ZeroClipboard $copyButton,
+      moviePath: "#{window.location.origin}/ZeroClipboard.swf"

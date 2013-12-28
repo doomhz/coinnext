@@ -10,19 +10,19 @@
   button
     margin-left 3%
     width 20%
-    color #999
+    color inherit
     background #fff
     height 25px
-    line-height 23px
+    line-height 25px
     border-radius 3px
-    padding 1px 5px
+    padding 0 5px
     text-transform uppercase
     border 1px solid $border-color
     font-size 12px
     transition all .1s linear
     &:hover
-      color $blue
-      border-color $blue
+      color $teal
+      border-color $teal
     &:active
       color #14294e
 
@@ -68,3 +68,70 @@
         float left
       .balance
         float right
+
+#balance
+  th
+    width 150px
+
+.transaction-con
+  min-height 280px
+  label
+    margin-bottom 5px
+    display block
+  .confirm-order
+    margin-top 10px
+  .terms
+    reset-list()
+    margin-top 5px
+    text-align center
+    color #999
+    margin 10px -10px -10px -10px
+    padding 10px
+    border-top 1px solid #ecedef
+    li
+      margin-bottom 3px
+      &:last-child
+        margin 0
+
+  .currency-input
+  .address-input
+    width 100%
+    margin-bottom 5px
+
+
+.coin-deposit-address
+  background #fafbfb
+  padding 10px
+  border 1px solid #e9eaed
+  box-sizing border-box
+  word-wrap break-word
+  border-radius 3px
+  clearfix()
+  code
+    float left
+    font-weight bold
+    margin 4px 0
+  button
+    float right
+    font-weight 300
+    white-space nowrap
+    background #fff
+    height 25px
+    color inherit
+    line-height 23px
+    border-radius 3px
+    padding 0 8px
+    text-transform uppercase
+    border 1px solid $border-color
+    font-size 12px
+    transition all .1s linear
+    &:hover
+    &.zeroclipboard-is-hover
+      color $blue
+      border-color $blue
+    &:active
+      color #14294e
+
+#show-qr-bt
+  margin-left 6px
+
