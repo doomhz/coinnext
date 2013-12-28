@@ -261,3 +261,25 @@ $red = #da4444
     .trade-type
     .trade-amount
       color $red
+
+  .action
+    background #fff
+    color inherit
+    border-radius 3px
+    box-sizing border-box
+    padding 2px 5px
+    text-transform uppercase
+    border 1px solid $border-color
+    font-size 12px
+    margin 0
+    transition all .1s linear
+    &:hover
+      color $blue
+      text-decoration none
+      border-color $blue
+    &:active
+      color $darkblue
+    &.cancel
+      &:hover
+        color $red
+        border-color $red
