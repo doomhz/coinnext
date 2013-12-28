@@ -18,6 +18,9 @@ input[type="url"]
     border-color $blue
     z-index 1
 
+input[type="submit"]
+  user-select none
+
 input[readonly]
   cursor not-allowed
 
@@ -38,9 +41,8 @@ btn(color)
   border-radius 1px
   background color
   padding 10px 20px
-  text-transform uppercase
   border 0
-  font-size 12px
+  user-select none
   transition all .1s linear
   &:hover
     color #fff
