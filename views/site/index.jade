@@ -7,7 +7,6 @@ block content
         include _market-ticker
       .col-right
         include _chatbox
-        
         // Twitter Widget
         <a class="twitter-timeline" href="https://twitter.com/coinnext" data-widget-id="416750665692487681" data-border-color="#dcdfe3">Tweets by @coinnext</a>
         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
@@ -16,6 +15,16 @@ block content
         #news.container
           .con-header
             h3.con-header-title News
+          ul.news-items
+            li.news-item
+              .time 24/12/13
+              a(href="#").title Bank holiday - December 25th, 26th
+            li.news-item
+              .time 26/12/13
+              a(href="#").title Bank holiday - December 25th, 26th
+            li.news-item
+              .time 28/12/13
+              a(href="#").title Bank holiday - December 25th, 26th
         #market-list.container
           .con-header
             h3.con-header-title All Markets

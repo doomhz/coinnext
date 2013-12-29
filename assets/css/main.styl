@@ -202,6 +202,22 @@ body
     float right
     margin-left 50px
 
+.news-items
+  reset-list()
+.news-item
+  clearfix()
+  padding 6px 10px
+  margin-top 5px
+  .time
+  .title
+    float left
+  .time
+    margin-right 10px
+  &:first-child
+    margin 0
+  &:nth-child(even)
+    background-color #f9f9f9
+
 @import 'auth'
 @import 'chat'
 @import 'trade'
