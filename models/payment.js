@@ -52,6 +52,10 @@
     return this.status === "canceled";
   };
 
+  PaymentSchema.methods.isPending = function() {
+    return this.status === "pending";
+  };
+
   PaymentSchema.methods.process = function(response, callback) {
     if (callback == null) {
       callback = function() {};

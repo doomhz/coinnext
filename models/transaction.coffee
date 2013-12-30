@@ -32,10 +32,10 @@ TransactionSchema = new Schema
 
 TransactionSchema.set("autoIndex", false)
 
-TransactionSchema.statics.addFromWallet = (transactionData, currency, user, wallet)->
+TransactionSchema.statics.addFromWallet = (transactionData, currency, wallet, callback = ()->)->
   details = transactionData.details[0] or {}
   data =
-    user_id:       user._id  if user
+    user_id:       wallet.user_id  if wallet
     wallet_id:     wallet._id  if wallet
     currency:      currency
     account:       details.account
@@ -48,7 +48,7 @@ TransactionSchema.statics.addFromWallet = (transactionData, currency, user, wall
     created:       new Date(transactionData.time * 1000)
   for key of data
     delete data[key]  if not data[key]
-  Transaction.findOneAndUpdate {txid: data.txid}, data, {upsert: true}, ()->
+  Transaction.findOneAndUpdate {txid: data.txid}, data, {upsert: true}, callback
 
 Transaction = mongoose.model("Transaction", TransactionSchema)
 exports = module.exports = Transaction

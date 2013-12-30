@@ -36,6 +36,9 @@ PaymentSchema.methods.isProcessed = ()->
 PaymentSchema.methods.isCanceled = ()->
   @status is "canceled"
 
+PaymentSchema.methods.isPending = ()->
+  @status is "pending"
+
 PaymentSchema.methods.process = (response, callback = ()->)->
   @status = "processed"
   @log.push response

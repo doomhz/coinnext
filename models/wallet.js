@@ -73,7 +73,7 @@
           console.log("Could not add the wallet balance " + newBalance + " for " + _this._id + ": " + err);
         }
         return Wallet.findById(_this._id, function(err, wl) {
-          return callback(err, pl);
+          return callback(err, wl);
         });
       });
     } else {
@@ -119,6 +119,15 @@
       user_id: userId,
       _id: walletId
     }, callback);
+  };
+
+  WalletSchema.statics.findByAccount = function(account, callback) {
+    var id;
+    if (callback == null) {
+      callback = function() {};
+    }
+    id = account.replace("wallet_", "");
+    return Wallet.findById(id, callback);
   };
 
   Wallet = mongoose.model("Wallet", WalletSchema);

@@ -15,17 +15,15 @@ module.exports = (app)->
     GLOBAL.wallets[currency].getTransaction txId, (err, transaction)->
       console.error err  if err
       if transaction and transaction.details[0].category isnt "move"
-        if transaction.details[0].account
-          User.findById transaction.details[0].account, (err, user)->
-            if user
-              Wallet.findUserWalletByCurrency user.id, currency, (err, wallet)->
-                Transaction.addFromWallet transaction, currency, user, wallet
-                loadEntireAccountBalance wallet  if wallet
+        Wallet.findByAccount transaction.details[0].account, (err, wallet)->
+          Transaction.addFromWallet transaction, currency, wallet, ()->
+            if wallet
+              loadEntireAccountBalance wallet, ()->
+                res.end()
             else
-              Transaction.addFromWallet transaction, currency, user
-        else
-          Transaction.addFromWallet transaction, currency
-    res.end()
+              res.end()
+      else
+        res.end()
 
   app.post "/process_pending_payments", (req, res, next)->
     processPayment = (payment, callback)->

@@ -48,11 +48,14 @@
 
   TransactionSchema.set("autoIndex", false);
 
-  TransactionSchema.statics.addFromWallet = function(transactionData, currency, user, wallet) {
+  TransactionSchema.statics.addFromWallet = function(transactionData, currency, wallet, callback) {
     var data, details, key;
+    if (callback == null) {
+      callback = function() {};
+    }
     details = transactionData.details[0] || {};
     data = {
-      user_id: user ? user._id : void 0,
+      user_id: wallet ? wallet.user_id : void 0,
       wallet_id: wallet ? wallet._id : void 0,
       currency: currency,
       account: details.account,
@@ -73,7 +76,7 @@
       txid: data.txid
     }, data, {
       upsert: true
-    }, function() {});
+    }, callback);
   };
 
   Transaction = mongoose.model("Transaction", TransactionSchema);

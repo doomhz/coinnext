@@ -6,5 +6,8 @@ GLOBAL.appConfig = function () {return config;};
 
 require('./../../models/db_connect_mongo');
 GLOBAL.User = require('./../../models/user');
+GLOBAL.Wallet = require('./../../models/wallet');
+GLOBAL.Payment = require('./../../models/payment');
+GLOBAL.Transaction = require('./../../models/transaction');
 
 module.exports.should = require("should");

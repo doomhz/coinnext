@@ -47,7 +47,7 @@ WalletSchema.methods.addBalance = (newBalance, callback = ()->)->
       if err
         console.log "Could not add the wallet balance #{newBalance} for #{@_id}: #{err}"
       Wallet.findById @_id, (err, wl)=>
-        callback err, pl
+        callback err, wl
   else
     console.log "Could not add wallet balance #{newBalance} for #{@_id}"
     callback(null, @)
@@ -66,6 +66,10 @@ WalletSchema.statics.findUserWallets = (userId, callback = ()->)->
 
 WalletSchema.statics.findUserWallet = (userId, walletId, callback = ()->)->
   Wallet.findOne {user_id: userId, _id: walletId}, callback
+
+WalletSchema.statics.findByAccount = (account, callback = ()->)->
+  id = account.replace("wallet_", "")
+  Wallet.findById id, callback
 
 Wallet = mongoose.model "Wallet", WalletSchema
 exports = module.exports = Wallet
