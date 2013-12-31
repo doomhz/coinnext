@@ -47,11 +47,13 @@ PaymentSchema.methods.process = (response, callback = ()->)->
 PaymentSchema.methods.cancel = (reason, callback = ()->)->
   @status = "canceled"
   @log.push reason
-  @save callback
+  @save (e, p)->
+    callback reason, p
 
 PaymentSchema.methods.errored = (reason, callback = ()->)->
   @log.push reason
-  @save callback
+  @save (e, p)->
+    callback reason, p
 
 Payment = mongoose.model("Payment", PaymentSchema)
 exports = module.exports = Payment

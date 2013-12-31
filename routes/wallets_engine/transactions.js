@@ -45,29 +45,32 @@
       processedUserIds = [];
       processPaymentCallback = function(payment, callback) {
         return Wallet.findById(payment.wallet_id, function(err, wallet) {
-          if (processedUserIds.indexOf(wallet.user_id) === -1) {
-            if (wallet.canWithdraw(payment.amount)) {
-              return wallet.addBalance(-payment.amount, function(err) {
-                if (!err) {
-                  return processPayment(payment, wallet, function(err) {
-                    if (!err) {
-                      processedUserIds.push(wallet.user_id);
-                      return callback(null, "" + payment.id + " - processed");
-                    } else {
-                      return wallet.addBalance(payment.amount, function() {
+          if (wallet) {
+            if (processedUserIds.indexOf(wallet.user_id) === -1) {
+              if (wallet.canWithdraw(payment.amount)) {
+                return wallet.addBalance(-payment.amount, function(err) {
+                  if (!err) {
+                    return processPayment(payment, function(err, p) {
+                      if (p.isProcessed()) {
+                        processedUserIds.push(wallet.user_id);
+                        return callback(null, "" + payment.id + " - processed");
+                      } else {
+                        wallet.addBalance(payment.amount, function() {});
                         return callback(null, "" + payment.id + " - not processed - " + err);
-                      });
-                    }
-                  });
-                } else {
-                  return callback(null, "" + payment.id + " - not processed - " + err);
-                }
-              });
+                      }
+                    });
+                  } else {
+                    return callback(null, "" + payment.id + " - not processed - " + err);
+                  }
+                });
+              } else {
+                return callback(null, "" + payment.id + " - not processed - no funds");
+              }
             } else {
-              return callback(null, "" + payment.id + " - not processed - no funds");
+              return callback(null, "" + payment.id + " - user already had a processed payment");
             }
           } else {
-            return callback(null, "" + payment.id + " - user already had a processed payment");
+            return callback(null, "" + payment.id + " - wallet " + payment.wallet_id + " not found");
           }
         });
       };
@@ -107,27 +110,22 @@
         }
       });
     };
-    return processPayment = function(payment, wallet, callback) {
+    return processPayment = function(payment, callback) {
+      var account,
+        _this = this;
       if (callback == null) {
         callback = function() {};
       }
-      return GLOBAL.wallets[payment.currency].chargeAccount(wallet.account, payment.amount, function(err) {
-        var _this = this;
+      account = GLOBAL.wallets[payment.currency].account;
+      return GLOBAL.wallets[payment.currency].sendToAddress(payment.address, account, payment.amount, function(err, response) {
+        if (response == null) {
+          response = "";
+        }
         if (err) {
-          console.error("Could not move " + payment.amount + " to " + wallet.account, err);
+          console.error("Could not withdraw to " + payment.address + " from " + account + " " + payment.amount + " BTC", err);
           return payment.errored(JSON.stringify(err), callback);
         } else {
-          return GLOBAL.wallets[payment.currency].sendToAddress(payment.address, wallet.account, payment.amount, function(err, response) {
-            if (response == null) {
-              response = "";
-            }
-            if (err) {
-              console.error("Could not withdraw to " + payment.address + " from " + account + " " + payment.amount + " BTC", err);
-              return payment.errored(JSON.stringify(err), callback);
-            } else {
-              return payment.process(JSON.stringify(response), callback);
-            }
-          });
+          return payment.process(JSON.stringify(response), callback);
         }
       });
     };

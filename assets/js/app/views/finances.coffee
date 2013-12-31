@@ -63,7 +63,6 @@ class App.FinancesView extends App.MasterView
       payment.save null,
         success: ()->
           $form.find("button").attr "disabled", false
-          $form.parent().slideToggle()
           $.publish "notice", "Your withdrawal will be processed soon."
         error: (m, xhr)->
           $form.find("button").attr "disabled", false

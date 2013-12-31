@@ -71,7 +71,9 @@
     }
     this.status = "canceled";
     this.log.push(reason);
-    return this.save(callback);
+    return this.save(function(e, p) {
+      return callback(reason, p);
+    });
   };
 
   PaymentSchema.methods.errored = function(reason, callback) {
@@ -79,7 +81,9 @@
       callback = function() {};
     }
     this.log.push(reason);
-    return this.save(callback);
+    return this.save(function(e, p) {
+      return callback(reason, p);
+    });
   };
 
   Payment = mongoose.model("Payment", PaymentSchema);
