@@ -57,7 +57,10 @@ describe "Transactions Api", ->
             .post("/process_pending_payments")
             .send()
             .expect(200)
-            .expect(["#{pm.id} - processed"], done)
+            .expect ["#{pm.id} - processed"], ()->
+              Payment.findById pm.id, (e, p)->
+                p.status.should.eql "processed"
+                done()
 
     describe "when the wallet does not have enough balance", ()->
       it "returns 200 ok and the non executed payment ids", (done)->
@@ -66,7 +69,10 @@ describe "Transactions Api", ->
           .post("/process_pending_payments")
           .send()
           .expect(200)
-          .expect(["#{pm.id} - not processed - no funds"], done)
+          .expect ["#{pm.id} - not processed - no funds"], ()->
+            Payment.findById pm.id, (e, p)->
+              p.status.should.eql "pending"
+              done()
 
     describe "when there are payments for the same user", ()->
       it "processes only one payment", (done)->
@@ -80,4 +86,11 @@ describe "Transactions Api", ->
                   .post("/process_pending_payments")
                   .send()
                   .expect(200)
-                  .expect(["#{pm.id} - processed", "#{pm2.id} - user already had a processed payment", "#{pm3.id} - processed"], done)
+                  .expect ["#{pm.id} - processed", "#{pm2.id} - user already had a processed payment", "#{pm3.id} - processed"], ()->
+                    Payment.findById pm.id, (e, p)->
+                      p.status.should.eql "processed"
+                      Payment.findById pm2.id, (e, p)->
+                        p.status.should.eql "pending"
+                        Payment.findById pm3.id, (e, p)->
+                          p.status.should.eql "processed"
+                          done()

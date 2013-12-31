@@ -33,7 +33,7 @@ module.exports = (app)->
           if wallet.canWithdraw payment.amount
             wallet.addBalance -payment.amount, (err)->
               if not err
-                processPayment payment, (err)->
+                processPayment payment, wallet, (err)->
                   if not err
                     processedUserIds.push wallet.user_id
                     callback null, "#{payment.id} - processed"
@@ -68,11 +68,15 @@ module.exports = (app)->
         else
           Wallet.findById wallet.id, callback
 
-  processPayment = (payment, callback = ()->)->
-    account = GLOBAL.wallets[payment.currency].account
-    GLOBAL.wallets[payment.currency].sendToAddress payment.address, account, payment.amount, (err, response = "")=>
+  processPayment = (payment, wallet, callback = ()->)->
+    GLOBAL.wallets[payment.currency].chargeAccount wallet.account, payment.amount, (err)->
       if err
-        console.error "Could not withdraw to #{payment.address} from #{account} #{payment.amount} BTC", err
+        console.error "Could not move #{payment.amount} to #{wallet.account}", err
         payment.errored JSON.stringify(err), callback
       else
-        payment.process JSON.stringify(response), callback
+        GLOBAL.wallets[payment.currency].sendToAddress payment.address, wallet.account, payment.amount, (err, response = "")=>
+          if err
+            console.error "Could not withdraw to #{payment.address} from #{account} #{payment.amount} BTC", err
+            payment.errored JSON.stringify(err), callback
+          else
+            payment.process JSON.stringify(response), callback

@@ -49,7 +49,7 @@
             if (wallet.canWithdraw(payment.amount)) {
               return wallet.addBalance(-payment.amount, function(err) {
                 if (!err) {
-                  return processPayment(payment, function(err) {
+                  return processPayment(payment, wallet, function(err) {
                     if (!err) {
                       processedUserIds.push(wallet.user_id);
                       return callback(null, "" + payment.id + " - processed");
@@ -107,22 +107,27 @@
         }
       });
     };
-    return processPayment = function(payment, callback) {
-      var account,
-        _this = this;
+    return processPayment = function(payment, wallet, callback) {
       if (callback == null) {
         callback = function() {};
       }
-      account = GLOBAL.wallets[payment.currency].account;
-      return GLOBAL.wallets[payment.currency].sendToAddress(payment.address, account, payment.amount, function(err, response) {
-        if (response == null) {
-          response = "";
-        }
+      return GLOBAL.wallets[payment.currency].chargeAccount(wallet.account, payment.amount, function(err) {
+        var _this = this;
         if (err) {
-          console.error("Could not withdraw to " + payment.address + " from " + account + " " + payment.amount + " BTC", err);
+          console.error("Could not move " + payment.amount + " to " + wallet.account, err);
           return payment.errored(JSON.stringify(err), callback);
         } else {
-          return payment.process(JSON.stringify(response), callback);
+          return GLOBAL.wallets[payment.currency].sendToAddress(payment.address, wallet.account, payment.amount, function(err, response) {
+            if (response == null) {
+              response = "";
+            }
+            if (err) {
+              console.error("Could not withdraw to " + payment.address + " from " + account + " " + payment.amount + " BTC", err);
+              return payment.errored(JSON.stringify(err), callback);
+            } else {
+              return payment.process(JSON.stringify(response), callback);
+            }
+          });
         }
       });
     };
