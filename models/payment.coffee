@@ -5,6 +5,9 @@ PaymentSchema = new Schema
   wallet_id:
     type: String
     index: true
+  transaction_id:
+    type: String
+    index: true
   currency:
     type: String
     index: true
@@ -41,16 +44,19 @@ PaymentSchema.methods.isPending = ()->
 
 PaymentSchema.methods.process = (response, callback = ()->)->
   @status = "processed"
-  @log.push response
+  @transaction_id = response
+  @log.push JSON.stringify(response)
   @save callback
 
 PaymentSchema.methods.cancel = (reason, callback = ()->)->
   @status = "canceled"
+  reason = JSON.stringify reason
   @log.push reason
   @save (e, p)->
     callback reason, p
 
 PaymentSchema.methods.errored = (reason, callback = ()->)->
+  reason = JSON.stringify reason
   @log.push reason
   @save (e, p)->
     callback reason, p

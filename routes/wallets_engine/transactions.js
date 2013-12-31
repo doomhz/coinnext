@@ -123,9 +123,9 @@
         }
         if (err) {
           console.error("Could not withdraw to " + payment.address + " from " + account + " " + payment.amount + " BTC", err);
-          return payment.errored(JSON.stringify(err), callback);
+          return payment.errored(err, callback);
         } else {
-          return payment.process(JSON.stringify(response), callback);
+          return payment.process(response, callback);
         }
       });
     };

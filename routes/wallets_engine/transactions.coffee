@@ -76,6 +76,6 @@ module.exports = (app)->
     GLOBAL.wallets[payment.currency].sendToAddress payment.address, account, payment.amount, (err, response = "")=>
       if err
         console.error "Could not withdraw to #{payment.address} from #{account} #{payment.amount} BTC", err
-        payment.errored JSON.stringify(err), callback
+        payment.errored err, callback
       else
-        payment.process JSON.stringify(response), callback
+        payment.process response, callback

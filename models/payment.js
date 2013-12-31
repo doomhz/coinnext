@@ -10,6 +10,10 @@
       type: String,
       index: true
     },
+    transaction_id: {
+      type: String,
+      index: true
+    },
     currency: {
       type: String,
       index: true
@@ -61,7 +65,8 @@
       callback = function() {};
     }
     this.status = "processed";
-    this.log.push(response);
+    this.transaction_id = response;
+    this.log.push(JSON.stringify(response));
     return this.save(callback);
   };
 
@@ -70,6 +75,7 @@
       callback = function() {};
     }
     this.status = "canceled";
+    reason = JSON.stringify(reason);
     this.log.push(reason);
     return this.save(function(e, p) {
       return callback(reason, p);
@@ -80,6 +86,7 @@
     if (callback == null) {
       callback = function() {};
     }
+    reason = JSON.stringify(reason);
     this.log.push(reason);
     return this.save(function(e, p) {
       return callback(reason, p);
