@@ -41,38 +41,44 @@
       });
     });
     app.post("/process_pending_payments", function(req, res, next) {
-      var processPayment;
-      processPayment = function(payment, callback) {
+      var processPaymentCallback, processedUserIds;
+      processedUserIds = [];
+      processPaymentCallback = function(payment, callback) {
         return Wallet.findById(payment.wallet_id, function(err, wallet) {
-          if (wallet.canWithdraw(payment.amount)) {
-            return wallet.addBalance(-payment.amount, function(err) {
-              if (!err) {
-                return processPayment(payment, function(err) {
-                  if (!err) {
-                    return callback(null, "" + payment.id + " - processed");
-                  } else {
-                    return wallet.addBalance(payment.amount, function() {
-                      return callback(null, "" + payment.id + " - not processed - " + err);
-                    });
-                  }
-                });
-              } else {
-                return callback(null, "" + payment.id + " - not processed - " + err);
-              }
-            });
+          if (processedUserIds.indexOf(wallet.user_id) === -1) {
+            if (wallet.canWithdraw(payment.amount)) {
+              return wallet.addBalance(-payment.amount, function(err) {
+                if (!err) {
+                  return processPayment(payment, function(err) {
+                    if (!err) {
+                      processedUserIds.push(wallet.user_id);
+                      return callback(null, "" + payment.id + " - processed");
+                    } else {
+                      return wallet.addBalance(payment.amount, function() {
+                        return callback(null, "" + payment.id + " - not processed - " + err);
+                      });
+                    }
+                  });
+                } else {
+                  return callback(null, "" + payment.id + " - not processed - " + err);
+                }
+              });
+            } else {
+              return callback(null, "" + payment.id + " - not processed - no funds");
+            }
           } else {
-            return callback(null, "" + payment.id + " - not processed - no funds");
+            return callback(null, "" + payment.id + " - user already had a processed payment");
           }
         });
       };
       return Payment.find({
         status: "pending"
       }).exec(function(err, payments) {
-        return async.mapSeries(payments, processPayment, function(err, result) {
+        return async.mapSeries(payments, processPaymentCallback, function(err, result) {
           if (err) {
             console.log(err);
           }
-          return console.log(result);
+          return res.send(result);
         });
       });
     });

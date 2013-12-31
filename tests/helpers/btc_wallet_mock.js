@@ -34,6 +34,12 @@
       return callback(null, true);
     };
 
+    BtcWallet.prototype.sendToAddress = function(address, account, amount, callback) {
+      return callback(null, {
+        success: true
+      });
+    };
+
     return BtcWallet;
 
   })();

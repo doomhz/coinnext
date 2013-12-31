@@ -19,5 +19,7 @@ class BtcWallet
     callback null, 1
   chargeAccount: (account, balance, callback)->
     callback null, true
+  sendToAddress: (address, account, amount, callback)->
+    callback null, {success: true}
 
 exports = module.exports = BtcWallet
