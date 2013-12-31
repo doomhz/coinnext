@@ -18,6 +18,7 @@
               address: address
             });
           } else {
+            console.error(err);
             return next(new restify.ConflictError("Could not generate address."));
           }
         });

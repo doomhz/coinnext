@@ -29,12 +29,28 @@
         },
         "wallet": {
           "address": "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw",
-          "account": "satoshi_bank"
+          "account": "coinnext_bank"
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
         "balance_confirmations": 0,
         "currency": "BTC"
+      },
+      "ltc": {
+        "client": {
+          "host": "127.0.0.1",
+          "port": 19332,
+          "user": "doomhz",
+          "pass": "greatsuccess"
+        },
+        "wallet": {
+          "address": "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw",
+          "account": "coinnext_bank"
+        },
+        "confirmations": 1,
+        "transaction_fee": 0.0001,
+        "balance_confirmations": 0,
+        "currency": "LTC"
       }
     },
     "wallets_host": "localhost:6000",
@@ -73,12 +89,28 @@
         },
         "wallet": {
           "address": "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw",
-          "account": "satoshi_bank"
+          "account": "coinnext_bank"
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
         "balance_confirmations": 0,
         "currency": "BTC"
+      },
+      "ltc": {
+        "client": {
+          "host": "127.0.0.1",
+          "port": 19332,
+          "user": "doomhz",
+          "pass": "greatsuccess"
+        },
+        "wallet": {
+          "address": "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw",
+          "account": "coinnext_bank"
+        },
+        "confirmations": 1,
+        "transaction_fee": 0.0001,
+        "balance_confirmations": 0,
+        "currency": "LTC"
       }
     },
     "wallets_host": "localhost:6000",
@@ -127,12 +159,28 @@
         },
         "wallet": {
           "address": "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw",
-          "account": "satoshi_bank"
+          "account": "coinnext_bank"
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
         "balance_confirmations": 0,
         "currency": "BTC"
+      },
+      "ltc": {
+        "client": {
+          "host": "127.0.0.1",
+          "port": 9332,
+          "user": "doomhz",
+          "pass": "greatsuccess"
+        },
+        "wallet": {
+          "address": "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw",
+          "account": "coinnext_bank"
+        },
+        "confirmations": 1,
+        "transaction_fee": 0.0001,
+        "balance_confirmations": 0,
+        "currency": "LTC"
       }
     },
     "wallets_host": "localhost:6000",

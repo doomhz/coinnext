@@ -13,6 +13,7 @@ module.exports = (app)->
             account: account
             address: address
         else
+          console.error err
           return next(new restify.ConflictError "Could not generate address.")
     else
       return next(new restify.ConflictError "Wrong Currency.")

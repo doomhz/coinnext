@@ -7,12 +7,14 @@ var restify = require('restify');
 var fs = require('fs');
 var environment = process.env.NODE_ENV || 'development';
 var BtcWallet = environment === "test" ? require("./tests/helpers/btc_wallet_mock") : require("./lib/btc_wallet");
+var LtcWallet = environment === "test" ? require("./tests/helpers/ltc_wallet_mock") : require("./lib/ltc_wallet");
 var config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', encoding='utf8'))[environment];
 
 // Configure globals
 GLOBAL.appConfig = function () {return config;};
 GLOBAL.wallets = []
 GLOBAL.wallets["BTC"] = new BtcWallet();
+GLOBAL.wallets["LTC"] = new LtcWallet();
 require('./models/db_connect_mongo');
 
 // Setup express

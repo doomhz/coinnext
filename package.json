@@ -22,6 +22,7 @@
     , "underscore": "latest"
     , "underscore.string": "latest"
     , "bitcoin": "latest"
+    , "litecoin": "latest"
     , "nib": "latest"
     , "jslogger": "latest"
     , "date-utils": "latest"
