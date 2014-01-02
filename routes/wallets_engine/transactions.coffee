@@ -26,25 +26,33 @@ module.exports = (app)->
         res.end()
 
   app.post "/process_pending_payments", (req, res, next)->
-    processPayment = (payment, callback)->
+    processedUserIds = []
+    processPaymentCallback = (payment, callback)->      
       Wallet.findById payment.wallet_id, (err, wallet)->
-        if wallet.canWithdraw payment.amount
-          wallet.addBalance -payment.amount, (err)->
-            if not err
-              processPayment payment, (err)->
+        if wallet
+          if processedUserIds.indexOf(wallet.user_id) is -1
+            if wallet.canWithdraw payment.amount
+              wallet.addBalance -payment.amount, (err)->
                 if not err
-                  callback null, "#{payment.id} - processed"
+                  processPayment payment, (err, p)->
+                    if p.isProcessed()
+                      processedUserIds.push wallet.user_id
+                      callback null, "#{payment.id} - processed"
+                    else
+                      wallet.addBalance payment.amount, ()->
+                      callback null, "#{payment.id} - not processed - #{err}"
                 else
-                  wallet.addBalance payment.amount, ()->
-                    callback null, "#{payment.id} - not processed - #{err}"
+                  callback null, "#{payment.id} - not processed - #{err}"
             else
-              callback null, "#{payment.id} - not processed - #{err}"
+              callback null, "#{payment.id} - not processed - no funds"
+          else
+            callback null, "#{payment.id} - user already had a processed payment"
         else
-          callback null, "#{payment.id} - not processed - no funds"
+          callback null, "#{payment.id} - wallet #{payment.wallet_id} not found"
     Payment.find({status: "pending"}).exec (err, payments)->
-      async.mapSeries payments, processPayment, (err, result)->
+      async.mapSeries payments, processPaymentCallback, (err, result)->
         console.log err  if err
-        console.log result
+        res.send(result)
 
 
   loadEntireAccountBalance = (wallet, callback = ()->)->
@@ -68,6 +76,6 @@ module.exports = (app)->
     GLOBAL.wallets[payment.currency].sendToAddress payment.address, account, payment.amount, (err, response = "")=>
       if err
         console.error "Could not withdraw to #{payment.address} from #{account} #{payment.amount} BTC", err
-        payment.errored JSON.stringify(err), callback
+        payment.errored err, callback
       else
-        payment.process JSON.stringify(response), callback
+        payment.process response, callback

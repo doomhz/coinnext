@@ -39,6 +39,7 @@ WalletSchema.methods.generateAddress = (callback = ()->)->
       @address = body.address
       @save callback
     else
+      console.error "Could not generate address - #{JSON.stringify(body)}"
       callback "Invalid address"
 
 WalletSchema.methods.addBalance = (newBalance, callback = ()->)->

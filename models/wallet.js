@@ -51,6 +51,7 @@
         _this.address = body.address;
         return _this.save(callback);
       } else {
+        console.error("Could not generate address - " + (JSON.stringify(body)));
         return callback("Invalid address");
       }
     });

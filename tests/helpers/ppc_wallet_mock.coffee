@@ -11,7 +11,7 @@ transactionData =
     category: "send"
   }]
 
-class BtcWallet
+class PpcWallet
   
   getTransaction: (txId, callback)->
     callback null, transactionData
@@ -22,4 +22,4 @@ class BtcWallet
   sendToAddress: (address, account, amount, callback)->
     callback null, {success: true}
 
-exports = module.exports = BtcWallet
+exports = module.exports = PpcWallet

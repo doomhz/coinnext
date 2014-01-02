@@ -49,13 +49,18 @@ describe "Payment", ->
 
   describe "process", ()->
     it "sets the status processed", (done)->
-      payment.process "result", (err, pm)->
+      payment.process "txid", (err, pm)->
         pm.status.should.eql "processed"
         done()
 
+    it "sets the transaction id", (done)->
+      payment.process "txid", (err, pm)->
+        pm.transaction_id.should.eql "txid"
+        done()
+
     it "sets the given result as log", (done)->
-      payment.process "result", (err, pm)->
-        pm.log.toString().should.eql "result"
+      payment.process "txid", (err, pm)->
+        pm.log.toString().should.eql JSON.stringify("txid")
         done()
 
 
@@ -67,7 +72,7 @@ describe "Payment", ->
 
     it "sets the given result as log", (done)->
       payment.cancel "result", (err, pm)->
-        pm.log.toString().should.eql "result"
+        pm.log.toString().should.eql JSON.stringify("result")
         done()
 
 
@@ -79,5 +84,5 @@ describe "Payment", ->
 
     it "sets the given result as log", (done)->
       payment.errored "result", (err, pm)->
-        pm.log.toString().should.eql "result"
+        pm.log.toString().should.eql JSON.stringify("result")
         done()
