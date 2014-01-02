@@ -23,6 +23,7 @@
     , "underscore.string": "latest"
     , "bitcoin": "latest"
     , "litecoin": "latest"
+    , "node-peercoin": "latest"
     , "nib": "latest"
     , "jslogger": "latest"
     , "date-utils": "latest"

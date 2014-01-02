@@ -51,6 +51,22 @@
         "transaction_fee": 0.0001,
         "balance_confirmations": 0,
         "currency": "LTC"
+      },
+      "ppc": {
+        "client": {
+          "host": "127.0.0.1",
+          "port": 19902,
+          "user": "doomhz",
+          "pass": "greatsuccess"
+        },
+        "wallet": {
+          "address": "mj2BmUbumpy1eEYEvCTynUWdj7DrXkcTxm",
+          "account": "coinnext_bank"
+        },
+        "confirmations": 1,
+        "transaction_fee": 0.0001,
+        "balance_confirmations": 0,
+        "currency": "PPC"
       }
     },
     "wallets_host": "localhost:6000",
@@ -111,6 +127,22 @@
         "transaction_fee": 0.0001,
         "balance_confirmations": 0,
         "currency": "LTC"
+      },
+      "ppc": {
+        "client": {
+          "host": "127.0.0.1",
+          "port": 19902,
+          "user": "doomhz",
+          "pass": "greatsuccess"
+        },
+        "wallet": {
+          "address": "mj2BmUbumpy1eEYEvCTynUWdj7DrXkcTxm",
+          "account": "coinnext_bank"
+        },
+        "confirmations": 1,
+        "transaction_fee": 0.0001,
+        "balance_confirmations": 0,
+        "currency": "PPC"
       }
     },
     "wallets_host": "localhost:6000",
@@ -181,6 +213,22 @@
         "transaction_fee": 0.0001,
         "balance_confirmations": 0,
         "currency": "LTC"
+      },
+      "ppc": {
+        "client": {
+          "host": "127.0.0.1",
+          "port": 9902,
+          "user": "doomhz",
+          "pass": "greatsuccess"
+        },
+        "wallet": {
+          "address": "mj2BmUbumpy1eEYEvCTynUWdj7DrXkcTxm",
+          "account": "coinnext_bank"
+        },
+        "confirmations": 1,
+        "transaction_fee": 0.0001,
+        "balance_confirmations": 0,
+        "currency": "PPC"
       }
     },
     "wallets_host": "localhost:6000",
