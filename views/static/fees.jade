@@ -3,7 +3,7 @@ extends ../layout
 block content
   .main-content.terms(role='main')
     .wrapper
-      .one-col.static
+      .one-col
         h1.page-title Fees
         .fees.container
           table.trade-data
@@ -22,5 +22,6 @@ block content
             tr
               th Withdraw Other Coin
               td 0.1
-        p All fees are subject to change. Any fee change will be announced in writing prior to going live.
+        .content
+          p All fees are subject to change. Any fee change will be announced in writing prior to going live.
           
