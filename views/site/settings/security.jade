@@ -11,9 +11,21 @@ block content
 
       .col-main
         h1.page-title Security
-        - if (user.gauth_data)
-          a(href="#{user.gauth_data.google_auth_qr}", target="_blank")
-            img(src="#{user.gauth_data.google_auth_qr}")
-          p#qr-code #{user.gauth_data.base32}
-        a#qr-gen-bt(href="/generate_gauth") Generate Google Authenticator code
+        .content
+          h2 Change Password
+          form
+            fieldset
+              input(type="password", placeholder="Current password")
+            fieldset
+              input(type="password", placeholder="New password")
+            fieldset
+              input(type="password", placeholder="Confirm password")
+            input(type="submit" value="Change Password")
+          hr
+          h2 Two factor authentication
+          - if (user.gauth_data)
+            a(href="#{user.gauth_data.google_auth_qr}", target="_blank")
+              img(src="#{user.gauth_data.google_auth_qr}")
+            p#qr-code #{user.gauth_data.base32}
+          a#qr-gen-bt(href="/generate_gauth") Enable Google Authenticator
 

@@ -11,11 +11,15 @@ block content
             h3.con-header-title #{wallet.currency} Balance
           table.trade-data
             tr
-              th Available Balance
+              th Balance
               td #{wallet.balance} #{wallet.currency}
             tr
-              th Total Balance
+              th Available
               td #{wallet.balance} #{wallet.currency}
+            tr
+              th On Hold
+              td #{wallet.balance} #{wallet.currency}
+            
 
         // Pending Transactions
         #pending-transactions.container

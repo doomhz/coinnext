@@ -1,1 +1,27 @@
-h1.page-title Fees
+extends ../layout
+
+block content
+  .main-content.terms(role='main')
+    .wrapper
+      .one-col
+        h1.page-title Fees
+        .fees.container
+          table.trade-data
+            tr
+              th Buy / Sell Coin
+              td 0.25%
+            tr
+              th Deposit Coin
+              td Free
+            tr
+              th Withdraw BTC
+              td 0.001
+            tr
+              th Withdraw LTC
+              td 0.01
+            tr
+              th Withdraw Other Coin
+              td 0.1
+        .content
+          p All fees are subject to change. Any fee change will be announced in writing prior to going live.
+          

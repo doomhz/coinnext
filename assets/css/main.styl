@@ -134,6 +134,18 @@ body
   clearfix()
   margin 15px 0
 
+.content
+  margin 10px
+
+hr
+  margin 10px 0
+  border 0
+  border-top 1px solid #d5d5d5
+
+/* 1 Col */
+.one-col
+  width 900px
+
 /* 2 Column */
 .col-aside
   float left
@@ -153,12 +165,10 @@ body
   width 300px
 
 /* Footer */
-
 .footer-body
   background #fff
   border-top 1px solid $border-color
   clearfix()
-
   .coinnext-logo
     float left
     margin 20px
@@ -218,7 +228,12 @@ body
   &:nth-child(even)
     background-color #f9f9f9
 
+.fees
+  th
+    width 200px
+
 @import 'auth'
 @import 'chat'
 @import 'trade'
 @import 'wallets'
+@import 'static'
