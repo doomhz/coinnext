@@ -79,6 +79,17 @@
     }, callback);
   };
 
+  TransactionSchema.statics.findPendingByUserAndWallet = function(userId, walletId, callback) {
+    return Transaction.find({
+      user_id: userId,
+      wallet_id: walletId
+    }).where("confirmations").lt(3).exec(callback);
+  };
+
+  TransactionSchema.statics.findPendingByIds = function(ids, callback) {
+    return Transaction.where("txid")["in"](ids).where("confirmations").lt(3).exec(callback);
+  };
+
   Transaction = mongoose.model("Transaction", TransactionSchema);
 
   exports = module.exports = Transaction;

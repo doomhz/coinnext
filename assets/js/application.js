@@ -11,11 +11,14 @@
 //= require app/models/user
 //= require app/models/wallet
 //= require app/models/payment
+//= require app/models/transaction
 
 //= require app/collections/wallets
+//= require app/collections/transactions
 
 //= require app/views/master
 //= require app/views/finances
+//= require app/views/pending_transactions
 
 //= require app/error_logger
 

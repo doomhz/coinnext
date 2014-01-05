@@ -61,5 +61,8 @@ PaymentSchema.methods.errored = (reason, callback = ()->)->
   @save (e, p)->
     callback reason, p
 
+PaymentSchema.statics.findByUserAndWallet = (userId, walletId, status, callback)->
+  Payment.find {user_id: userId, wallet_id: walletId, status: status}, callback
+
 Payment = mongoose.model("Payment", PaymentSchema)
 exports = module.exports = Payment

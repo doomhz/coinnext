@@ -26,10 +26,7 @@ block content
               th Transaction ID
               th Amount
               th Confirms
-            tr.add
-              td f634db311366dac393354ad9ec2656011340964cfb94037879447ae1
-              td.trade-amount +5 BTC
-              td 1/3
+            tbody#pending-transactions-cnt(data-wallet-id="#{wallet.id}")
 
         // Deposit
         .wrap
@@ -149,3 +146,4 @@ block content
                   td Wallet Created
                   td
                 
+  include ../../templates/pending_transaction

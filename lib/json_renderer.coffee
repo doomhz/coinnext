@@ -23,14 +23,34 @@ JsonRenderer =
     data
 
   payment: (payment)->
-    id:        payment.id
-    user_id:   payment.user_id
-    wallet_id: payment.wallet_id
-    address:   payment.address
-    amount:    payment.amount
-    status:    payment.status
-    updated:   payment.updated
-    created:   payment.created
+    id:             payment.id
+    user_id:        payment.user_id
+    wallet_id:      payment.wallet_id
+    transaction_id: payment.transaction_id
+    address:        payment.address
+    amount:         payment.amount
+    status:         payment.status
+    updated:        payment.updated
+    created:        payment.created
+
+  transaction: (transaction)->
+    id:            transaction.id
+    user_id:       transaction.user_id
+    wallet_id:     transaction.wallet_id
+    currency:      transaction.currency
+    fee:           transaction.fee
+    address:       transaction.address
+    amount:        transaction.amount
+    category:      transaction.category
+    txid:          transaction.txid
+    confirmations: transaction.confirmations
+    created:       transaction.created
+
+  transactions: (transactions)->
+    data = []
+    for transaction in transactions
+      data.push @transaction transaction
+    data
 
   error: (err, res, code = 409)->
     res.statusCode = code

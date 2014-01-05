@@ -17,8 +17,17 @@ $(document).ready ()->
           window.location.reload()
 
   $finances = $("#finances")
-  if $finances
+  if $finances.length
     finances = new App.FinancesView
       el: $finances
       collection: new App.WalletsCollection
     finances.render()
+
+  $pendingTransactions = $("#pending-transactions-cnt")
+  if $pendingTransactions.length
+    pendingTransactions = new App.PendingTransactionsView
+      el: $pendingTransactions
+      collection: new App.TransactionsCollection null,
+        type: "pending"
+        walletId: $pendingTransactions.data "wallet-id"
+    pendingTransactions.render()

@@ -93,6 +93,14 @@
     });
   };
 
+  PaymentSchema.statics.findByUserAndWallet = function(userId, walletId, status, callback) {
+    return Payment.find({
+      user_id: userId,
+      wallet_id: walletId,
+      status: status
+    }, callback);
+  };
+
   Payment = mongoose.model("Payment", PaymentSchema);
 
   exports = module.exports = Payment;

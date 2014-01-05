@@ -50,5 +50,11 @@ TransactionSchema.statics.addFromWallet = (transactionData, currency, wallet, ca
     delete data[key]  if not data[key]
   Transaction.findOneAndUpdate {txid: data.txid}, data, {upsert: true}, callback
 
+TransactionSchema.statics.findPendingByUserAndWallet = (userId, walletId, callback)->
+  Transaction.find({user_id: userId, wallet_id: walletId}).where("confirmations").lt(3).exec callback
+
+TransactionSchema.statics.findPendingByIds = (ids, callback)->
+  Transaction.where("txid").in(ids).where("confirmations").lt(3).exec callback
+
 Transaction = mongoose.model("Transaction", TransactionSchema)
 exports = module.exports = Transaction
