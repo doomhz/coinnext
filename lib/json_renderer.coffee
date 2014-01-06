@@ -29,9 +29,16 @@ JsonRenderer =
     transaction_id: payment.transaction_id
     address:        payment.address
     amount:         payment.amount
+    currency:       payment.currency
     status:         payment.status
     updated:        payment.updated
     created:        payment.created
+
+  payments: (payments)->
+    data = []
+    for payment in payments
+      data.push @payment payment
+    data
 
   transaction: (transaction)->
     id:            transaction.id

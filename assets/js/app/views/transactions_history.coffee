@@ -1,14 +1,11 @@
-class App.PendingTransactionsView extends App.MasterView
+class App.TransactionsHistoryView extends App.MasterView
 
-  tpl: "pending-transaction-tpl"
+  tpl: "transaction-history-tpl"
 
   collection: null
 
-  payments: null
-
   initialize: (options = {})->
     $.subscribe "new-balance", @onNewBalance
-    @payments = options.payments
 
   render: ()->
     @collection.fetch
@@ -16,11 +13,6 @@ class App.PendingTransactionsView extends App.MasterView
         @collection.each (transaction)=>
           @$el.append @template
             transaction: transaction
-    @payments.fetch
-      success: ()=>
-        @payments.each (payment)=>
-          @$el.append @template
-            payment: payment
 
   onNewBalance: (ev, data)=>
     #TODO: Implement

@@ -19,6 +19,8 @@
       var currency, txId;
       txId = req.params.tx_id;
       currency = req.params.currency;
+      console.log(txId);
+      console.log(currency);
       return GLOBAL.wallets[currency].getTransaction(txId, function(err, transaction) {
         if (err) {
           console.error(err);
@@ -31,13 +33,78 @@
                   return res.end();
                 });
               } else {
-                return res.end();
+                return Payment.findOne({
+                  transaction_id: txId
+                }, function(err, payment) {
+                  if (payment) {
+                    return Transaction.update({
+                      txid: txId
+                    }, {
+                      user_id: payment.user_id,
+                      wallet_id: payment.wallet_id
+                    }, function() {
+                      return res.end();
+                    });
+                  } else {
+                    return res.end();
+                  }
+                });
               }
             });
           });
         } else {
           return res.end();
         }
+      });
+    });
+    app.post("/load_latest_transactions/:currency", function(req, res, next) {
+      var currency;
+      currency = req.params.currency;
+      return GLOBAL.wallets[currency].getTransactions("*", 100, 0, function(err, transactions) {
+        var loadTransactionCallback;
+        if (err) {
+          console.error(err);
+        }
+        loadTransactionCallback = function(transaction, callback) {
+          return GLOBAL.wallets[currency].getTransaction(transaction.txid, function(err, transaction) {
+            if (transaction && transaction.details[0].category !== "move") {
+              return Wallet.findByAccount(transaction.details[0].account, function(err, wallet) {
+                return Transaction.addFromWallet(transaction, currency, wallet, function() {
+                  if (wallet) {
+                    return loadEntireAccountBalance(wallet, function() {
+                      return callback();
+                    });
+                  } else {
+                    return Payment.findOne({
+                      transaction_id: transaction.txid
+                    }, function(err, payment) {
+                      if (payment) {
+                        return Transaction.update({
+                          txid: transaction.txid
+                        }, {
+                          user_id: payment.user_id,
+                          wallet_id: payment.wallet_id
+                        }, function() {
+                          return callback();
+                        });
+                      } else {
+                        return callback();
+                      }
+                    });
+                  }
+                });
+              });
+            } else {
+              return callback();
+            }
+          });
+        };
+        return async.mapSeries(transactions, loadTransactionCallback, function(err, result) {
+          if (err) {
+            console.log(err);
+          }
+          return res.send();
+        });
       });
     });
     app.post("/process_pending_payments", function(req, res, next) {
@@ -53,7 +120,13 @@
                     return processPayment(payment, function(err, p) {
                       if (p.isProcessed()) {
                         processedUserIds.push(wallet.user_id);
-                        return callback(null, "" + payment.id + " - processed");
+                        return Transaction.update({
+                          txid: p.transaction_id
+                        }, {
+                          user_id: p.user_id
+                        }, function() {
+                          return callback(null, "" + payment.id + " - processed");
+                        });
                       } else {
                         wallet.addBalance(payment.amount, function() {});
                         return callback(null, "" + payment.id + " - not processed - " + err);
@@ -76,6 +149,8 @@
       };
       return Payment.find({
         status: "pending"
+      }).sort({
+        created: "asc"
       }).exec(function(err, payments) {
         return async.mapSeries(payments, processPaymentCallback, function(err, result) {
           if (err) {

@@ -20,6 +20,7 @@ PaymentSchema = new Schema
     type: String
     enum: ["pending", "processed", "canceled"]
     default: "pending"
+    index: true
   log:
     type: [String]
     default: []

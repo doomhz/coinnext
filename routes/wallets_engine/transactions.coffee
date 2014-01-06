@@ -10,8 +10,8 @@ module.exports = (app)->
   app.put "/transaction/:currency/:tx_id", (req, res, next)->
     txId = req.params.tx_id
     currency = req.params.currency
-    #console.log txId
-    #console.log currency
+    console.log txId
+    console.log currency
     GLOBAL.wallets[currency].getTransaction txId, (err, transaction)->
       console.error err  if err
       if transaction and transaction.details[0].category isnt "move"
@@ -21,9 +21,39 @@ module.exports = (app)->
               loadEntireAccountBalance wallet, ()->
                 res.end()
             else
-              res.end()
+              Payment.findOne {transaction_id: txId}, (err, payment)->
+                if payment
+                  Transaction.update {txid: txId}, {user_id: payment.user_id, wallet_id: payment.wallet_id}, ()->
+                    res.end()
+                else
+                  res.end()
       else
         res.end()
+
+  app.post "/load_latest_transactions/:currency", (req, res, next)->
+    currency = req.params.currency
+    GLOBAL.wallets[currency].getTransactions "*", 100, 0, (err, transactions)->
+      console.error err  if err
+      loadTransactionCallback = (transaction, callback)->
+        GLOBAL.wallets[currency].getTransaction transaction.txid, (err, transaction)->
+          if transaction and transaction.details[0].category isnt "move"
+            Wallet.findByAccount transaction.details[0].account, (err, wallet)->
+              Transaction.addFromWallet transaction, currency, wallet, ()->
+                if wallet
+                  loadEntireAccountBalance wallet, ()->
+                    callback()
+                else
+                  Payment.findOne {transaction_id: transaction.txid}, (err, payment)->
+                    if payment
+                      Transaction.update {txid: transaction.txid}, {user_id: payment.user_id, wallet_id: payment.wallet_id}, ()->
+                        callback()
+                    else
+                      callback()
+          else
+            callback()
+      async.mapSeries transactions, loadTransactionCallback, (err, result)->
+        console.log err  if err
+        res.send()
 
   app.post "/process_pending_payments", (req, res, next)->
     processedUserIds = []
@@ -37,7 +67,8 @@ module.exports = (app)->
                   processPayment payment, (err, p)->
                     if p.isProcessed()
                       processedUserIds.push wallet.user_id
-                      callback null, "#{payment.id} - processed"
+                      Transaction.update {txid: p.transaction_id}, {user_id: p.user_id}, ()->
+                        callback null, "#{payment.id} - processed"
                     else
                       wallet.addBalance payment.amount, ()->
                       callback null, "#{payment.id} - not processed - #{err}"
@@ -49,7 +80,7 @@ module.exports = (app)->
             callback null, "#{payment.id} - user already had a processed payment"
         else
           callback null, "#{payment.id} - wallet #{payment.wallet_id} not found"
-    Payment.find({status: "pending"}).exec (err, payments)->
+    Payment.find({status: "pending"}).sort({created: "asc"}).exec (err, payments)->
       async.mapSeries payments, processPaymentCallback, (err, result)->
         console.log err  if err
         res.send(result)

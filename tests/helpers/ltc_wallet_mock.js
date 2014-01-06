@@ -35,9 +35,7 @@
     };
 
     LtcWallet.prototype.sendToAddress = function(address, account, amount, callback) {
-      return callback(null, {
-        success: true
-      });
+      return callback(null, "unique_tx_id");
     };
 
     return LtcWallet;

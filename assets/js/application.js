@@ -15,10 +15,12 @@
 
 //= require app/collections/wallets
 //= require app/collections/transactions
+//= require app/collections/payments
 
 //= require app/views/master
 //= require app/views/finances
 //= require app/views/pending_transactions
+//= require app/views/transactions_history
 
 //= require app/error_logger
 

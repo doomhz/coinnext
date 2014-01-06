@@ -1,6 +1,13 @@
 script(type="text/template", id="pending-transaction-tpl")
+  | <% if (typeof(transaction) !== "undefined") { %>
   tr(class="<%= transaction.get('category') === 'send' ? 'distract' : 'add' %>")
-    td
-      a(href="https://blockchain.info/tx/<%= transaction.get('txid') %>", target="_blank", title="View on blockchain.info")<%= transaction.get("txid") %>
-    td.trade-amount <%= transaction.get("amount") %> <%= transaction.get("currency") %>
+    td <%= transaction.get('txid') %>
+    td.trade-amount <%= transaction.get('category') === 'receive' ? '+' : '' %><%= transaction.get("amount") %> <%= transaction.get("currency") %>
     td <%= transaction.get("confirmations") %>/3
+  | <% } %>
+  | <% if (typeof(payment) !== "undefined") { %>
+  tr.distract
+    td Withdrawal to <%= payment.get("address") %>
+    td.trade-amount -<%= payment.get("amount") %> <%= payment.get("currency") %>
+    td Pending approval
+  | <% } %>

@@ -1,0 +1,7 @@
+script(type="text/template", id="transaction-history-tpl")
+  | <% if (typeof(transaction) !== "undefined") { %>
+  tr(class="<%= transaction.get('category') === 'send' ? 'distract' : 'add' %>")
+    td <%= transaction.get('created') %>
+    td <%= transaction.get('category') === 'send' ? 'Withdrawal' : 'Deposit' %>
+    td.trade-amount <%= transaction.get('category') === 'receive' ? '+' : '' %><%= transaction.get("amount") %> <%= transaction.get("currency") %>
+  | <% } %>

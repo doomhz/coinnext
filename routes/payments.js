@@ -8,7 +8,7 @@
   JsonRenderer = require("../lib/json_renderer");
 
   module.exports = function(app) {
-    return app.post("/payments", function(req, res) {
+    app.post("/payments", function(req, res) {
       var address, amount, walletId;
       amount = req.body.amount;
       walletId = req.body.wallet_id;
@@ -37,6 +37,23 @@
           } else {
             return JsonRenderer.error("Wrong wallet.", res);
           }
+        });
+      } else {
+        return JsonRenderer.error("Please auth.", res);
+      }
+    });
+    return app.get("/payments/pending/:wallet_id", function(req, res) {
+      var walletId;
+      walletId = req.params.wallet_id;
+      if (req.user) {
+        return Payment.findByUserAndWallet(req.user.id, walletId, "pending", function(err, payments) {
+          if (err) {
+            console.error(err);
+          }
+          if (err) {
+            return JsonRenderer.error("Sorry, could not get pending payments...", res);
+          }
+          return res.json(JsonRenderer.payments(payments));
         });
       } else {
         return JsonRenderer.error("Please auth.", res);

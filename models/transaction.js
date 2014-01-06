@@ -37,7 +37,8 @@
       }
     },
     confirmations: {
-      type: Number
+      type: Number,
+      index: true
     },
     created: {
       type: Date,
@@ -68,7 +69,7 @@
       created: new Date(transactionData.time * 1000)
     };
     for (key in data) {
-      if (!data[key]) {
+      if (!data[key] && data[key] !== 0) {
         delete data[key];
       }
     }
@@ -86,7 +87,17 @@
     }).where("confirmations").lt(3).exec(callback);
   };
 
+  TransactionSchema.statics.findProcessedByUserAndWallet = function(userId, walletId, callback) {
+    return Transaction.find({
+      user_id: userId,
+      wallet_id: walletId
+    }).where("confirmations").gt(2).exec(callback);
+  };
+
   TransactionSchema.statics.findPendingByIds = function(ids, callback) {
+    if (ids.length === 0) {
+      return callback(null, []);
+    }
     return Transaction.where("txid")["in"](ids).where("confirmations").lt(3).exec(callback);
   };
 

@@ -28,7 +28,8 @@
     status: {
       type: String,
       "enum": ["pending", "processed", "canceled"],
-      "default": "pending"
+      "default": "pending",
+      index: true
     },
     log: {
       type: [String],

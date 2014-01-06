@@ -25,6 +25,7 @@ TransactionSchema = new Schema
       unique: true
   confirmations:
     type: Number
+    index: true
   created:
     type: Date
     default: Date.now
@@ -47,13 +48,17 @@ TransactionSchema.statics.addFromWallet = (transactionData, currency, wallet, ca
     confirmations: transactionData.confirmations
     created:       new Date(transactionData.time * 1000)
   for key of data
-    delete data[key]  if not data[key]
+    delete data[key]  if not data[key] and data[key] isnt 0
   Transaction.findOneAndUpdate {txid: data.txid}, data, {upsert: true}, callback
 
 TransactionSchema.statics.findPendingByUserAndWallet = (userId, walletId, callback)->
   Transaction.find({user_id: userId, wallet_id: walletId}).where("confirmations").lt(3).exec callback
 
+TransactionSchema.statics.findProcessedByUserAndWallet = (userId, walletId, callback)->
+  Transaction.find({user_id: userId, wallet_id: walletId}).where("confirmations").gt(2).exec callback
+
 TransactionSchema.statics.findPendingByIds = (ids, callback)->
+  return callback(null, [])  if ids.length is 0
   Transaction.where("txid").in(ids).where("confirmations").lt(3).exec callback
 
 Transaction = mongoose.model("Transaction", TransactionSchema)

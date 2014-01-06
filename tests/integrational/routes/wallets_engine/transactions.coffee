@@ -62,6 +62,19 @@ describe "Transactions Api", ->
                 p.status.should.eql "processed"
                 done()
 
+      it "updates the user_id from the payment", (done)->
+        wallet.balance = 10
+        wallet.save ()->
+          Transaction.create {wallet_id: wallet.id, currency: "BTC", txid: "unique_tx_id"}, (err, tx)->
+            Payment.create {wallet_id: wallet.id, amount: 10, currency: "BTC", user_id: "user_id", transaction_id: "txid"}, (err, pm)->
+              request('http://localhost:6000')
+              .post("/process_pending_payments")
+              .send()
+              .expect 200, ()->
+                Transaction.findById tx.id, (e, t)->
+                  t.user_id.should.eql "user_id"
+                  done()
+
     describe "when the wallet does not have enough balance", ()->
       it "returns 200 ok and the non executed payment ids", (done)->
         Payment.create {wallet_id: wallet.id, amount: 10, currency: "BTC"}, (err, pm)->
@@ -87,10 +100,8 @@ describe "Transactions Api", ->
                   .send()
                   .expect(200)
                   .expect ["#{pm.id} - processed", "#{pm2.id} - user already had a processed payment", "#{pm3.id} - processed"], ()->
-                    Payment.findById pm.id, (e, p)->
-                      p.status.should.eql "processed"
-                      Payment.findById pm2.id, (e, p)->
-                        p.status.should.eql "pending"
-                        Payment.findById pm3.id, (e, p)->
-                          p.status.should.eql "processed"
+                    Payment.findById pm.id, (e, p1)->
+                      Payment.findById pm2.id, (e, p2)->
+                        Payment.findById pm3.id, (e, p3)->
+                          [p1.status, p2.status, p3.status].toString().should.eql "processed,pending,processed"
                           done()

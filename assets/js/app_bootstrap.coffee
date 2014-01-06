@@ -30,4 +30,16 @@ $(document).ready ()->
       collection: new App.TransactionsCollection null,
         type: "pending"
         walletId: $pendingTransactions.data "wallet-id"
+      payments: new App.PaymentsCollection null,
+        type: "pending"
+        walletId: $pendingTransactions.data "wallet-id"
     pendingTransactions.render()
+
+  $transactionsHistory = $("#transactions-history-cnt")
+  if $transactionsHistory.length
+    transactionsHistory = new App.TransactionsHistoryView
+      el: $transactionsHistory
+      collection: new App.TransactionsCollection null,
+        type: "processed"
+        walletId: $transactionsHistory.data "wallet-id"
+    transactionsHistory.render()

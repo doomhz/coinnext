@@ -136,18 +136,7 @@ block content
                   th Date
                   th Description
                   th Amount
-              tbody
-                tr.distract
-                  td 18/12/13 04:23
-                  td Withdrawal to 1Gmy4M1cAqboYuLtM282LQDZWLLyPe3iyv
-                  td.trade-amount -2 BTC
-                tr.add
-                  td 18/12/13 04:23
-                  td Deposit
-                  td.trade-amount +10 BTC
-                tr
-                  td 18/12/13 04:23
-                  td Wallet Created
-                  td
+              tbody#transactions-history-cnt(data-wallet-id="#{wallet.id}")
                 
   include ../../templates/pending_transaction
+  include ../../templates/transaction_history
