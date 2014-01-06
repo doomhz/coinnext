@@ -18,7 +18,7 @@ module.exports = (app)->
         title: 'Funds'
         user: req.user
         wallets: wallets
-        currencies: Wallet.getCurrencies()
+        currencies: Wallet.getCurrencyNames()
 
   app.get "/funds/:currency", (req, res)->
     Wallet.findUserWallets req.user.id, (err, wallets)->
@@ -30,7 +30,7 @@ module.exports = (app)->
             user: req.user
             wallet: wallet
             wallets: wallets
-            currencies: Wallet.getCurrencies()
+            currencies: Wallet.getCurrencyNames()
         else
           res.redirect "/"
 

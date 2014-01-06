@@ -1,15 +1,19 @@
 .fund-list.container
   .con-header
     .con-header-title Portfolio
+  - var availableCurrencies = [];
   ul.fund-nav
-    li.active: a(href='/funds') Overview
-    - each wallet in wallets
-      li: a(href='/funds/#{wallet.currency}') 
-        .label #{wallet.currency}
-        .balance <span class="amount">#{wallet.balance}</span> #{wallet.currency}
-  .add-wallet
-    form#add-wallet-form
-      select#currency-type(name="currency_type")
-        - for currency in currencies
-          option(value="#{currency}") #{currency} - Bitcoin
-      button(type="submit") Add
+    li(class="#{wallet ? '' : 'active'}"): a(href='/funds') Overview
+    - each wl in wallets
+      li(class="#{wallet && wallet.id == wl.id ? 'active' : ''}"): a(href='/funds/#{wl.currency}') 
+        .label #{wl.currency}
+        .balance <span class="amount">#{wl.balance}</span> #{wl.currency}
+      - availableCurrencies.push(wl.currency);
+  - if (availableCurrencies.length !== Object.keys(currencies).length)
+    .add-wallet
+      form#add-wallet-form
+        select#currency-type(name="currency_type")
+          - each currencyName, currency in currencies
+            - if (availableCurrencies.indexOf(currency) === -1)
+              option(value="#{currency}") #{currency} - #{currencyName}
+        button(type="submit") Add

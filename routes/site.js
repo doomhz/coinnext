@@ -22,7 +22,7 @@
           title: 'Funds',
           user: req.user,
           wallets: wallets,
-          currencies: Wallet.getCurrencies()
+          currencies: Wallet.getCurrencyNames()
         });
       });
     });
@@ -38,7 +38,7 @@
               user: req.user,
               wallet: wallet,
               wallets: wallets,
-              currencies: Wallet.getCurrencies()
+              currencies: Wallet.getCurrencyNames()
             });
           } else {
             return res.redirect("/");

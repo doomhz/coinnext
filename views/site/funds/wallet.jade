@@ -8,7 +8,7 @@ block content
       .col-main
         #balance.container
           .con-header
-            h3.con-header-title #{wallet.currency} Balance
+            h3.con-header-title #{currencies[wallet.currency]} Balance
           table.trade-data
             tr
               th Balance
@@ -37,7 +37,7 @@ block content
           .two-col-wrap
             .transaction-con.container
               .con-header
-                h3.con-header-title Deposit Bitcoin
+                h3.con-header-title Deposit #{currencies[wallet.currency]}
               .con-body
                 label To deposit bitcoins, send to this address:
                 .coin-deposit-address
@@ -46,13 +46,13 @@ block content
                   button#copy-address(data-clipboard-text="#{wallet.address}") Copy
                 #qr-address-cnt.qr-address(data-address="#{wallet.address}")
                 ul.terms
-                  li Minimal deposit amount is 0.0001 BTC.
+                  li Minimal deposit amount is 0.0001  #{wallet.currency}.
                   li Your deposit will be credited after 3 network confirmations.
           .two-col-wrap
             .transaction-con.container
               .con-header
-                h3.con-header-title Withdraw Bitcoin
-                .header-balance <a href="#" class="amount">0893892039 PPC</a> Available
+                h3.con-header-title Withdraw #{currencies[wallet.currency]}
+                .header-balance <a href="#" class="amount">#{wallet.balance}  #{wallet.currency}</a> Available
               .con-body
                 form#withdraw-form
                   input(type="hidden", name="wallet_id", value="#{wallet.id}")
@@ -66,9 +66,9 @@ block content
                   .confirm-order
                     button Withdraw
                   ul.terms
-                    li Minimal amount for withdrawal is 0.01 BTC.
-                    li Fee for withdrawal is 0.001 BTC.
-                    li Daily limit on withdrawal is 100 BTC.
+                    li Minimal amount for withdrawal is 0.01 #{wallet.currency}.
+                    li Fee for withdrawal is 0.001 #{wallet.currency}.
+                    li Daily limit on withdrawal is 100 #{wallet.currency}.
 
         // Open Orders (All)
         #open-orders.container

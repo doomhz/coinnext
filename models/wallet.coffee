@@ -1,9 +1,18 @@
 _ = require "underscore"
 
+#CURRENCIES = [
+#  "BTC", "LTC", "PPC", "WDC", "NMC", "QRK",
+#  "NVC", "ZET", "FTC", "XPM", "MEC", "TRC"
+#]
+
 CURRENCIES = [
-  "BTC", "LTC", "PPC", "WDC", "NMC", "QRK",
-  "NVC", "ZET", "FTC", "XPM", "MEC", "TRC"
+  "BTC", "LTC", "PPC"
 ]
+
+CURRENCY_NAMES =
+  BTC: "Bitcoin"
+  LTC: "Litecoin"
+  PPC: "Peercoin"
 
 WalletSchema = new Schema
   user_id:
@@ -58,6 +67,9 @@ WalletSchema.methods.canWithdraw = (amount)->
 
 WalletSchema.statics.getCurrencies = ()->
   CURRENCIES
+
+WalletSchema.statics.getCurrencyNames = ()->
+  CURRENCY_NAMES
 
 WalletSchema.statics.findUserWalletByCurrency = (userId, currency, callback = ()->)->
   Wallet.findOne {user_id: userId, currency: currency}, callback

@@ -1,9 +1,15 @@
 (function() {
-  var CURRENCIES, Wallet, WalletSchema, exports, _;
+  var CURRENCIES, CURRENCY_NAMES, Wallet, WalletSchema, exports, _;
 
   _ = require("underscore");
 
-  CURRENCIES = ["BTC", "LTC", "PPC", "WDC", "NMC", "QRK", "NVC", "ZET", "FTC", "XPM", "MEC", "TRC"];
+  CURRENCIES = ["BTC", "LTC", "PPC"];
+
+  CURRENCY_NAMES = {
+    BTC: "Bitcoin",
+    LTC: "Litecoin",
+    PPC: "Peercoin"
+  };
 
   WalletSchema = new Schema({
     user_id: {
@@ -89,6 +95,10 @@
 
   WalletSchema.statics.getCurrencies = function() {
     return CURRENCIES;
+  };
+
+  WalletSchema.statics.getCurrencyNames = function() {
+    return CURRENCY_NAMES;
   };
 
   WalletSchema.statics.findUserWalletByCurrency = function(userId, currency, callback) {
