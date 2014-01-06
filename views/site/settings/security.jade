@@ -28,4 +28,5 @@ block content
               img(src="#{user.gauth_data.google_auth_qr}")
             p#qr-code #{user.gauth_data.base32}
           a#qr-gen-bt(href="/generate_gauth") Enable Google Authenticator
+          p Warning: Resetting your password will disable Two factor authentication.
 
