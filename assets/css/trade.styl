@@ -83,7 +83,7 @@ $red = #da4444
   .label
     float left
   .move-coin
-    cursor pointer
+    cursor ns-resize
     float right
     margin-left 5px
     i
@@ -284,3 +284,11 @@ $red = #da4444
       &:hover
         color $red
         border-color $red
+
+@media screen and (max-width: 800px)
+  .order-book-wrap
+  .two-col-wrap, .order-box-wrap
+    width 100%
+  .order-book-wrap:first-child .order-book
+  .two-col-wrap:first-child > div, .order-box-wrap:first-child > div
+    margin 0 0 10px 0
