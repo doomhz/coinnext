@@ -99,12 +99,17 @@
             }
           });
         };
-        return async.mapSeries(transactions, loadTransactionCallback, function(err, result) {
-          if (err) {
-            console.log(err);
-          }
+        if (transactions) {
+          return async.mapSeries(transactions, loadTransactionCallback, function(err, result) {
+            if (err) {
+              console.log(err);
+            }
+            return res.send();
+          });
+        } else {
+          console.log("Nothing to process");
           return res.send();
-        });
+        }
       });
     });
     app.post("/process_pending_payments", function(req, res, next) {

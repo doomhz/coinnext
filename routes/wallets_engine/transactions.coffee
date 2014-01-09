@@ -51,8 +51,12 @@ module.exports = (app)->
                       callback()
           else
             callback()
-      async.mapSeries transactions, loadTransactionCallback, (err, result)->
-        console.log err  if err
+      if transactions
+        async.mapSeries transactions, loadTransactionCallback, (err, result)->
+          console.log err  if err
+          res.send()
+      else
+        console.log "Nothing to process"
         res.send()
 
   app.post "/process_pending_payments", (req, res, next)->
