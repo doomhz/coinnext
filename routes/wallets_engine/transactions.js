@@ -102,13 +102,12 @@
         if (transactions) {
           return async.mapSeries(transactions, loadTransactionCallback, function(err, result) {
             if (err) {
-              console.log(err);
+              console.error(err);
             }
-            return res.send();
+            return res.send("" + (new Date()) + " - Processed " + result.length + " transactions");
           });
         } else {
-          console.log("Nothing to process");
-          return res.send();
+          return res.send("" + (new Date()) + " - Nothing to process");
         }
       });
     });
@@ -161,7 +160,7 @@
           if (err) {
             console.log(err);
           }
-          return res.send(result);
+          return res.send("" + (new Date()) + " - " + result);
         });
       });
     });

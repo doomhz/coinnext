@@ -53,11 +53,10 @@ module.exports = (app)->
             callback()
       if transactions
         async.mapSeries transactions, loadTransactionCallback, (err, result)->
-          console.log err  if err
-          res.send()
+          console.error err  if err
+          res.send("#{new Date()} - Processed #{result.length} transactions")
       else
-        console.log "Nothing to process"
-        res.send()
+        res.send("#{new Date()} - Nothing to process")
 
   app.post "/process_pending_payments", (req, res, next)->
     processedUserIds = []
@@ -87,7 +86,7 @@ module.exports = (app)->
     Payment.find({status: "pending"}).sort({created: "asc"}).exec (err, payments)->
       async.mapSeries payments, processPaymentCallback, (err, result)->
         console.log err  if err
-        res.send(result)
+        res.send("#{new Date()} - #{result}")
 
 
   loadEntireAccountBalance = (wallet, callback = ()->)->
