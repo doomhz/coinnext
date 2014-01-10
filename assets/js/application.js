@@ -21,6 +21,7 @@
 //= require app/views/finances
 //= require app/views/pending_transactions
 //= require app/views/transactions_history
+//= require app/views/trade
 
 //= require app/error_logger
 
