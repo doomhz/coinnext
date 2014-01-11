@@ -41,9 +41,11 @@ block content
               .con-body
                 label To deposit bitcoins, send to this address:
                 .coin-deposit-address
-                  code #{wallet.address}
-                  button#show-qr-bt Show QR
-                  button#copy-address(data-clipboard-text="#{wallet.address}") Copy
+                  code PHHf9zmYy2GDqYqwCgD3GFyzmDLowjzmpr
+                  // code #{wallet.address}
+                  .coin-deposit-actions
+                    button#show-qr-bt Show QR
+                    button#copy-address(data-clipboard-text="#{wallet.address}") Copy
                 #qr-address-cnt.qr-address(data-address="#{wallet.address}")
                 ul.terms
                   li Minimal deposit amount is 0.0001  #{wallet.currency}.
