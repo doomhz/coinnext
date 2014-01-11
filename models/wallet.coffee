@@ -39,6 +39,9 @@ WalletSchema.set("autoIndex", false)
 WalletSchema.virtual("account").get ()->
   "wallet_#{@_id}"
 
+WalletSchema.virtual("currency_name").get ()->
+  CURRENCY_NAMES[@currency]
+
 WalletSchema.methods.generateAddress = (callback = ()->)->
   GLOBAL.walletsClient.send "create_account", [@account, @currency], (err, res, body)=>
     if err

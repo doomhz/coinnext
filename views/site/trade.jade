@@ -1,7 +1,7 @@
 extends ../layout
 
 block content
-  .main-content(role='main')
+  #trade.main-content(role='main')
     .wrapper
       .col-left
         include _market-ticker
@@ -23,7 +23,7 @@ block content
         include _chatbox
 
       .col-center
-        h1.market-title <b>Peercoin</b> to <b>Bitcoin</b> Exchange
+        h1.market-title <b>#{wallet1.currency_name}</b> to <b>#{wallet2.currency_name}</b> Exchange
         .container
           .graph
 
@@ -32,79 +32,94 @@ block content
           .two-col-wrap
             #buy-box.order-box
               .con-header
-                h3.con-header-title Buy PPC
-                .header-balance <a href="#" class="amount">0 BTC</a> Available
+                h3.con-header-title Buy #{wallet1.currency}
+                .header-balance <a href="#" class="amount">#{wallet2.balance} #{wallet2.currency}</a> Available
               .order-box-body
                 .market-type
                   label
-                    input(type='radio', name='buy-type', checked)
+                    input.market-switcher(type='radio', name='buy-type', data-type="market-buy", checked)
                     i Market Order
                   label
-                    input(type='radio', name='buy-type')
+                    input.market-switcher(type='radio', name='buy-type', data-type="limit-buy")
                     i Limit Order
                 .market-order
                   label I want to Spend:
                   .currency-input
                     input(type="text")
-                    .overlay-amount BTC
+                    .overlay-amount #{wallet2.currency}
                   table.order-overview
                     tr.subtotal
                       th Total:
-                      td <span class="amount">5 BTC</span>
+                      td <span class="amount">#{wallet1.balance} #{wallet2.currency}</span>
                     tr.fee
                       th Fee:
-                      td <span class="amount">0.002 BTC</span>
+                      td <span class="amount">0.002 #{wallet2.currency}</span>
                     tr.to-receive
-                      th Approx. PPC to receive:
-                      td <span class="amount">0.11471265 PPC</span>
+                      th Approx. #{wallet1.currency} to receive:
+                      td <span class="amount">0 #{wallet1.currency}</span>
                   .confirm-order
-                    button Buy PPC
+                    button Buy #{wallet1.currency}
+                .limit-order
+                  label Amount to Buy:
+                  .currency-input
+                    input(type="text")
+                    .overlay-amount #{wallet1.currency}
+                  label Price per #{wallet1.currency}:
+                  .currency-input
+                    input(type="text")
+                    .overlay-amount #{wallet2.currency}
+                  table.order-overview
+                    tr.to-receive 
+                      th Total:
+                      td <span class="amount">#{wallet2.balance} #{wallet2.currency}</span>
+                  .confirm-order
+                    button Buy #{wallet1.currency}
 
           .two-col-wrap
             #sell-box.order-box
               .con-header
-                h3.con-header-title Sell PPC
-                .header-balance <a href="#" class="amount">0893892039 PPC</a> Available
+                h3.con-header-title Sell #{wallet1.currency}
+                .header-balance <a href="#" class="amount">#{wallet1.balance} #{wallet1.currency}</a> Available
               .order-box-body
                 .market-type
                   label
-                    input(type='radio', name='sell-type')
+                    input.market-switcher(type='radio', name='sell-type', data-type="market-sell", checked)
                     i Market Order
                   label
-                    input(type='radio', name='sell-type', checked)
+                    input.market-switcher(type='radio', name='sell-type', data-type="limit-sell")
                     i Limit Order
                 .limit-order
                   label Amount to Sell:
                   .currency-input
                     input(type="text")
-                    .overlay-amount PPC
-                  label Price per PPC:
+                    .overlay-amount #{wallet1.currency}
+                  label Price per #{wallet1.currency}:
                   .currency-input
                     input(type="text")
-                    .overlay-amount BTC
+                    .overlay-amount #{wallet2.currency}
                   table.order-overview
                     tr.to-receive 
                       th Total:
-                      td <span class="amount">0 BTC</span>
+                      td <span class="amount">#{wallet2.balance} #{wallet2.currency}</span>
                   .confirm-order
-                    button Sell PPC
+                    button Sell #{wallet1.currency}
                 .market-order
                   label I want to Sell:
                   .currency-input
                     input(type="text")
-                    .overlay-amount PPC
+                    .overlay-amount #{wallet1.currency}
                   table.order-overview
                     tr.subtotal 
                       th Total:
-                      td <span class="amount">0 PPC</span>
+                      td <span class="amount">#{wallet1.balance} #{wallet1.currency}</span>
                     tr.fee
                       th Fee:
-                      td <span class="amount">0 PPC</span>
+                      td <span class="amount">0 #{wallet1.currency}</span>
                     tr.to-receive
-                      th Approx. BTC to receive:
-                      td <span class="amount">0 BTC</span>
+                      th Approx. #{wallet2.currency} to receive:
+                      td <span class="amount">0 #{wallet2.currency}</span>
                   .confirm-order
-                    button Buy PPC
+                    button Sell #{wallet1.currency}
 
         // Open Orders
         #open-orders.container

@@ -43,6 +43,10 @@
     return "wallet_" + this._id;
   });
 
+  WalletSchema.virtual("currency_name").get(function() {
+    return CURRENCY_NAMES[this.currency];
+  });
+
   WalletSchema.methods.generateAddress = function(callback) {
     var _this = this;
     if (callback == null) {

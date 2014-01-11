@@ -43,3 +43,9 @@ $(document).ready ()->
         type: "processed"
         walletId: $transactionsHistory.data "wallet-id"
     transactionsHistory.render()
+
+  $trade = $("#trade")
+  if $trade.length
+    trade = new App.TradeView
+      el: $trade
+    trade.render()

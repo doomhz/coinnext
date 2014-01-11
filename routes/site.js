@@ -11,9 +11,29 @@
       });
     });
     app.get("/trade", function(req, res) {
-      return res.render("site/trade", {
-        title: 'Trade',
-        user: req.user
+      return res.redirect("/trade/BTC/LCT");
+    });
+    app.get("/trade/:currency1/:currency2", function(req, res) {
+      var currencies, currency1, currency2;
+      currency1 = req.params.currency1;
+      currency2 = req.params.currency2;
+      currencies = Wallet.getCurrencies();
+      if (currencies.indexOf(currency1) === -1 || currencies.indexOf(currency2) === -1) {
+        res.redirect("/");
+      }
+      return Wallet.findUserWalletByCurrency(req.user.id, currency1, function(err, wallet1) {
+        return Wallet.findUserWalletByCurrency(req.user.id, currency2, function(err, wallet2) {
+          if (!wallet1 || !wallet2) {
+            redirect("/funds");
+          }
+          return res.render("site/trade", {
+            title: 'Trade #{currency1} to #{currency2}',
+            user: req.user,
+            wallet1: wallet1,
+            wallet2: wallet2,
+            currencies: Wallet.getCurrencyNames()
+          });
+        });
       });
     });
     app.get("/funds", function(req, res) {

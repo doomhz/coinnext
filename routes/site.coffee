@@ -8,9 +8,22 @@ module.exports = (app)->
       user: req.user
 
   app.get "/trade", (req, res)->
-    res.render "site/trade",
-      title: 'Trade'
-      user: req.user
+    res.redirect "/trade/BTC/LCT"
+
+  app.get "/trade/:currency1/:currency2", (req, res)->
+    currency1 = req.params.currency1
+    currency2 = req.params.currency2
+    currencies = Wallet.getCurrencies()
+    res.redirect "/"  if currencies.indexOf(currency1) is -1 or currencies.indexOf(currency2) is -1
+    Wallet.findUserWalletByCurrency req.user.id, currency1, (err, wallet1)->
+      Wallet.findUserWalletByCurrency req.user.id, currency2, (err, wallet2)->
+        redirect "/funds"  if not wallet1 or not wallet2
+        res.render "site/trade",
+          title: 'Trade #{currency1} to #{currency2}'
+          user: req.user
+          wallet1: wallet1
+          wallet2: wallet2
+          currencies: Wallet.getCurrencyNames()
 
   app.get "/funds", (req, res)->
     Wallet.findUserWallets req.user.id, (err, wallets)->
