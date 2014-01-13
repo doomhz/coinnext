@@ -91,7 +91,6 @@ $red = #da4444
   .rate
     float right
 
-
 /* Center */
 .coin-stats
   @extends .container
@@ -117,9 +116,6 @@ $red = #da4444
   float left
   &:first-child > div
     margin-right 10px
-
-.order-box-wrap
-  @extends .two-col-wrap
 
 .order-box
   @extends .container
@@ -286,9 +282,7 @@ $red = #da4444
         border-color $red
 
 @media screen and (max-width: 800px)
-  .order-book-wrap
-  .two-col-wrap, .order-box-wrap
+  .two-col-wrap
     width 100%
-  .order-book-wrap:first-child .order-book
-  .two-col-wrap:first-child > div, .order-box-wrap:first-child > div
+  .two-col-wrap:first-child > div
     margin 0 0 10px 0
