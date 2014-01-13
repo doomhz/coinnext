@@ -30,6 +30,11 @@
       "default": 0,
       index: true
     },
+    hold_balance: {
+      type: Number,
+      "default": 0,
+      index: true
+    },
     created:  ({
       type: Date ,
       "default": Date.now ,
@@ -90,6 +95,41 @@
     } else {
       console.log("Could not add wallet balance " + newBalance + " for " + this._id);
       return callback(null, this);
+    }
+  };
+
+  WalletSchema.methods.holdBalance = function(balance, callback) {
+    var _this = this;
+    if (callback == null) {
+      callback = function() {};
+    }
+    if (!_.isNaN(balance) && _.isNumber(balance) && this.canWithdraw(balance)) {
+      return this.addBalance(-balance, function(err) {
+        if (!err) {
+          return Wallet.update({
+            _id: _this._id
+          }, {
+            $inc: {
+              hold_balance: balance
+            }
+          }, function(err) {
+            if (err) {
+              console.log("Could not add the wallet hold balance " + balance + " for " + _this._id + ": " + err);
+            }
+            return Wallet.findById(_this._id, function(err, wl) {
+              return callback(err, wl);
+            });
+          });
+        } else {
+          console.log("Could not hold wallet balance " + balance + " for " + _this._id + ", not enough funds?");
+          return Wallet.findById(_this._id, function(err, wl) {
+            return callback(err, wl);
+          });
+        }
+      });
+    } else {
+      console.log("Could not add wallet hold balance " + balance + " for " + this._id);
+      return callback("Invalid balance " + balance, this);
     }
   };
 

@@ -12,6 +12,7 @@
 //= require app/models/wallet
 //= require app/models/payment
 //= require app/models/transaction
+//= require app/models/order
 
 //= require app/collections/wallets
 //= require app/collections/transactions

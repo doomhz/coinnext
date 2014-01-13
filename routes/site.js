@@ -24,7 +24,7 @@
       return Wallet.findUserWalletByCurrency(req.user.id, currency1, function(err, wallet1) {
         return Wallet.findUserWalletByCurrency(req.user.id, currency2, function(err, wallet2) {
           if (!wallet1 || !wallet2) {
-            redirect("/funds");
+            res.redirect("/funds");
           }
           return res.render("site/trade", {
             title: 'Trade #{currency1} to #{currency2}',

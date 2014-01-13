@@ -33,93 +33,113 @@ block content
             #buy-box.order-box
               .con-header
                 h3.con-header-title Buy #{wallet1.currency}
-                .header-balance <a href="#" class="amount">#{wallet2.balance} #{wallet2.currency}</a> Available
+                .header-balance <a href="/funds/#{wallet2.currency}" class="amount">#{wallet2.balance} #{wallet2.currency}</a> Available
               .order-box-body
                 .market-type
                   label
-                    input.market-switcher(type='radio', name='buy-type', data-type="market-buy", checked)
+                    input.market-switcher(type='radio', name='buy', value="market", checked)
                     i Market Order
                   label
-                    input.market-switcher(type='radio', name='buy-type', data-type="limit-buy")
+                    input.market-switcher(type='radio', name='buy', value="limit")
                     i Limit Order
-                .market-order
-                  label I want to Spend:
-                  .currency-input
-                    input(type="text")
-                    .overlay-amount #{wallet2.currency}
-                  table.order-overview
-                    tr.subtotal
-                      th Total:
-                      td <span class="amount">#{wallet1.balance} #{wallet2.currency}</span>
-                    tr.fee
-                      th Fee:
-                      td <span class="amount">0.002 #{wallet2.currency}</span>
-                    tr.to-receive
-                      th Approx. #{wallet1.currency} to receive:
-                      td <span class="amount">0 #{wallet1.currency}</span>
-                  .confirm-order
-                    button Buy #{wallet1.currency}
-                .limit-order
-                  label Amount to Buy:
-                  .currency-input
-                    input(type="text")
-                    .overlay-amount #{wallet1.currency}
-                  label Price per #{wallet1.currency}:
-                  .currency-input
-                    input(type="text")
-                    .overlay-amount #{wallet2.currency}
-                  table.order-overview
-                    tr.to-receive 
-                      th Total:
-                      td <span class="amount">#{wallet2.balance} #{wallet2.currency}</span>
-                  .confirm-order
-                    button Buy #{wallet1.currency}
+                #market-buy-box.market-order
+                  form#market-buy-form.order-form
+                    input(name="type", type="hidden", value="market")
+                    input(name="action", type="hidden", value="buy")
+                    input(name="sell_currency", type="hidden", value="#{wallet2.currency}")
+                    input(name="buy_currency", type="hidden", value="#{wallet1.currency}")
+                    label I want to Spend:
+                    .currency-input
+                      input(type="text", name="amount")
+                      .overlay-amount #{wallet2.currency}
+                    table.order-overview
+                      tr.subtotal
+                        th Total:
+                        td <span class="amount">#{wallet1.balance} #{wallet2.currency}</span>
+                      tr.fee
+                        th Fee:
+                        td <span class="amount">0.002 #{wallet2.currency}</span>
+                      tr.to-receive
+                        th Approx. #{wallet1.currency} to receive:
+                        td <span class="amount">0 #{wallet1.currency}</span>
+                    .confirm-order
+                      button Buy #{wallet1.currency}
+                #limit-buy-box.limit-order
+                  form#limit-buy-form.order-form
+                    input(name="type", type="hidden", value="limit")
+                    input(name="action", type="hidden", value="buy")
+                    input(name="sell_currency", type="hidden", value="#{wallet2.currency}")
+                    input(name="buy_currency", type="hidden", value="#{wallet1.currency}")
+                    label Amount to Buy:
+                    .currency-input
+                      input(type="text", name="amount")
+                      .overlay-amount #{wallet1.currency}
+                    label Price per #{wallet1.currency}:
+                    .currency-input
+                      input(type="text", name="unit_price")
+                      .overlay-amount #{wallet2.currency}
+                    table.order-overview
+                      tr.to-receive 
+                        th Total:
+                        td <span class="amount">#{wallet2.balance} #{wallet2.currency}</span>
+                    .confirm-order
+                      button Buy #{wallet1.currency}
 
           .order-box-wrap
             #sell-box.order-box
               .con-header
                 h3.con-header-title Sell #{wallet1.currency}
-                .header-balance <a href="#" class="amount">#{wallet1.balance} #{wallet1.currency}</a> Available
+                .header-balance <a href="/funds/#{wallet2.currency}" class="amount">#{wallet1.balance} #{wallet1.currency}</a> Available
               .order-box-body
                 .market-type
                   label
-                    input.market-switcher(type='radio', name='sell-type', data-type="market-sell", checked)
+                    input.market-switcher(type='radio', name='sell', value="market", checked)
                     i Market Order
                   label
-                    input.market-switcher(type='radio', name='sell-type', data-type="limit-sell")
+                    input.market-switcher(type='radio', name='sell', value="limit")
                     i Limit Order
-                .limit-order
-                  label Amount to Sell:
-                  .currency-input
-                    input(type="text")
-                    .overlay-amount #{wallet1.currency}
-                  label Price per #{wallet1.currency}:
-                  .currency-input
-                    input(type="text")
-                    .overlay-amount #{wallet2.currency}
-                  table.order-overview
-                    tr.to-receive 
-                      th Total:
-                      td <span class="amount">#{wallet2.balance} #{wallet2.currency}</span>
-                  .confirm-order
-                    button Sell #{wallet1.currency}
-                .market-order
-                  label I want to Sell:
-                  .currency-input
-                    input(type="text")
-                    .overlay-amount #{wallet1.currency}
-                  table.order-overview
-                    tr.subtotal 
-                      th Total:
-                      td <span class="amount">#{wallet1.balance} #{wallet1.currency}</span>
-                    tr.fee
-                      th Fee:
-                      td <span class="amount">0 #{wallet1.currency}</span>
-                    tr.to-receive
-                      th Approx. #{wallet2.currency} to receive:
-                      td <span class="amount">0 #{wallet2.currency}</span>
-                  .confirm-order
-                    button Sell #{wallet1.currency}
+                #limit-sell-box.limit-order
+                  form#limit-sell-form.order-form
+                    input(name="type", type="hidden", value="limit")
+                    input(name="action", type="hidden", value="sell")
+                    input(name="sell_currency", type="hidden", value="#{wallet2.currency}")
+                    input(name="buy_currency", type="hidden", value="#{wallet1.currency}")
+                    label Amount to Sell:
+                    .currency-input
+                      input(type="text", name="amount")
+                      .overlay-amount #{wallet1.currency}
+                    label Price per #{wallet1.currency}:
+                    .currency-input
+                      input(type="text", name="unit_price")
+                      .overlay-amount #{wallet2.currency}
+                    table.order-overview
+                      tr.to-receive 
+                        th Total:
+                        td <span class="amount">#{wallet2.balance} #{wallet2.currency}</span>
+                    .confirm-order
+                      button Sell #{wallet1.currency}
+                #market-sell-box.market-order
+                  form#market-sell-form.order-form
+                    input(name="type", type="hidden", value="market")
+                    input(name="action", type="hidden", value="sell")
+                    input(name="sell_currency", type="hidden", value="#{wallet2.currency}")
+                    input(name="buy_currency", type="hidden", value="#{wallet1.currency}")
+                    label I want to Sell:
+                    .currency-input
+                      input(type="text", name="amount")
+                      .overlay-amount #{wallet1.currency}
+                    table.order-overview
+                      tr.subtotal 
+                        th Total:
+                        td <span class="amount">#{wallet1.balance} #{wallet1.currency}</span>
+                      tr.fee
+                        th Fee:
+                        td <span class="amount">0 #{wallet1.currency}</span>
+                      tr.to-receive
+                        th Approx. #{wallet2.currency} to receive:
+                        td <span class="amount">0 #{wallet2.currency}</span>
+                    .confirm-order
+                      button Sell #{wallet1.currency}
 
         // Open Orders
         #open-orders.container

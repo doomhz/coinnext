@@ -59,7 +59,26 @@ JsonRenderer =
       data.push @transaction transaction
     data
 
-  error: (err, res, code = 409)->
+  order: (order)->
+    id:            order.id
+    user_id:       order.user_id
+    type:          order.type
+    action:        order.action
+    buy_currency:  order.buy_currency
+    sell_currency: order.sell_currency
+    amount:        order.amount
+    fee:           order.fee
+    unit_price:    order.unit_price
+    status:        order.status
+    created:       order.created
+
+  orders: (orders)->
+    data = []
+    for order in orders
+      data.push @order order
+    data
+
+  error: (err, res, code = 409, log = true)->
     res.statusCode = code
     message = ""
     if _.isString err
@@ -71,5 +90,6 @@ JsonRenderer =
         else
           message += "#{val.message} "
     res.json {error: message}
+    console.error message  if log
 
 exports = module.exports = JsonRenderer

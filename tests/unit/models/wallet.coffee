@@ -3,9 +3,14 @@ speakeasy = require "speakeasy"
 
 describe "Wallet", ->
   wallet = undefined
+  ###
   CURRENCIES = [
     "BTC", "LTC", "PPC", "WDC", "NMC", "QRK",
     "NVC", "ZET", "FTC", "XPM", "MEC", "TRC"
+  ]
+  ###
+  CURRENCIES = [
+    "BTC", "LTC", "PPC"
   ]
 
   beforeEach ->
