@@ -9,5 +9,6 @@ GLOBAL.User = require('./../../models/user');
 GLOBAL.Wallet = require('./../../models/wallet');
 GLOBAL.Payment = require('./../../models/payment');
 GLOBAL.Transaction = require('./../../models/transaction');
+GLOBAL.Order = require('./../../models/order');
 
 module.exports.should = require("should");
