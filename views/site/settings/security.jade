@@ -10,26 +10,29 @@ block content
           li.active: a(href='/settings/security') Security
 
       .col-main
-        h1.page-title Security
-        .content
-          h2 Change Password
-          form
-            fieldset
-              input(type="password", placeholder="Current password")
-            fieldset
-              input(type="password", placeholder="New password")
-            fieldset
-              input(type="password", placeholder="Confirm password")
-            input(type="submit" value="Change Password")
-          hr
-          h2 Two factor authentication
-          p 
-            | We offer Google Authenticator as an extra security layer when logging in.
-            | <br /> Enabling two-factor authentication greatly increases the security of your account.
-            | <br /> <a href="https://support.google.com/accounts/answer/1066447?hl=en" target="_blank" rel="_nofollow">Check here for instructions on how to install Google Authenticator on your device.</a>
-          - if (user.gauth_data)
-            a(href="#{user.gauth_data.google_auth_qr}", target="_blank")
-              img(src="#{user.gauth_data.google_auth_qr}")
-            p#qr-code #{user.gauth_data.base32}
-          a#qr-gen-bt(href="/generate_gauth") Enable Google Authenticator
+        .container
+          .con-header
+            h1.con-header-title Security
+          .con-body
+            h2 Change Password
+            form
+              fieldset
+                input(type="password", placeholder="Current password")
+              fieldset
+                input(type="password", placeholder="New password")
+              fieldset
+                input(type="password", placeholder="Confirm password")
+              input(type="submit" value="Change Password").btn
+            hr
+            h2 Two factor authentication
+            p 
+              | We offer Google Authenticator as an extra security layer when logging in.
+              | <br /> Enabling two-factor authentication greatly increases the security of your account.
+              | <br /> <a href="https://support.google.com/accounts/answer/1066447?hl=en" target="_blank" rel="_nofollow">Check here for instructions on how to install Google Authenticator on your device.</a>
+            - if (user.gauth_data)
+              .qr-code
+                a(href="#{user.gauth_data.google_auth_qr}", target="_blank")
+                  img(src="#{user.gauth_data.google_auth_qr}")
+                p#qr-code #{user.gauth_data.base32}
+            a#qr-gen-bt(href="/generate_gauth") Enable Google Authenticator
 
