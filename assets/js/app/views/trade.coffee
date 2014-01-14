@@ -26,6 +26,8 @@ class App.TradeView extends App.MasterView
       unit_price: $form.find("[name='unit_price']").val()
     order.save null,
       success: ()->
-        console.log "order added"
+        $.publish "new-order", order
+        $form.find("[name='amount']").val ""
+        $form.find("[name='unit_price']").val ""
       error: (m, xhr)->
         $.publish "error", xhr

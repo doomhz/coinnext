@@ -41,7 +41,7 @@ OrderSchema.path("unit_price").validate ()->
   , "Invalid unit price"
 ###
 
-OrderSchema.statics.findOpenByUserAndWallet = (userId, currencies, callback)->
+OrderSchema.statics.findOpenByUserAndCurrencies = (userId, currencies, callback)->
   Order.find({user_id: userId}).where("buy_currency").in(currencies).where("sell_currency").in(currencies).exec callback
 
 Order = mongoose.model("Order", OrderSchema)

@@ -38,19 +38,37 @@
         return JsonRenderer.error("Please auth.", res);
       }
     });
-    return app.get("/orders/open/:currency1/:currency2", function(req, res) {
+    app.get("/orders/open/:currency1/:currency2", function(req, res) {
       var currency1, currency2;
-      currency1 = req.body.currency1;
-      currency2 = req.body.currency2;
+      currency1 = req.params.currency1;
+      currency2 = req.params.currency2;
       if (req.user) {
-        return Order.findOpenByUserAndCurrencies(req.user.id, [currency1, currency2], function(err, transactions) {
-          if (err) {
-            console.error(err);
-          }
+        return Order.findOpenByUserAndCurrencies(req.user.id, [currency1, currency2], function(err, orders) {
           if (err) {
             return JsonRenderer.error("Sorry, could not get open orders...", res);
           }
           return res.json(JsonRenderer.orders(orders));
+        });
+      } else {
+        return JsonRenderer.error("Please auth.", res);
+      }
+    });
+    return app.del("/orders/:id", function(req, res) {
+      if (req.user) {
+        return Order.findOne({
+          user_id: req.user.id,
+          _id: req.params.id
+        }, function(err, order) {
+          if (err || !order) {
+            return JsonRenderer.error("Sorry, could not delete orders...", res);
+          }
+          return Wallet.findUserWalletByCurrency(req.user.id, order.sell_currency, function(err, wallet) {
+            return wallet.holdBalance(-order.amount, function(err, wallet) {
+              return order.remove(function() {
+                return res.json(JsonRenderer.orders(order));
+              });
+            });
+          });
         });
       } else {
         return JsonRenderer.error("Please auth.", res);

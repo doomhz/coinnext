@@ -56,7 +56,7 @@
   */
 
 
-  OrderSchema.statics.findOpenByUserAndWallet = function(userId, currencies, callback) {
+  OrderSchema.statics.findOpenByUserAndCurrencies = function(userId, currencies, callback) {
     return Order.find({
       user_id: userId
     }).where("buy_currency")["in"](currencies).where("sell_currency")["in"](currencies).exec(callback);
