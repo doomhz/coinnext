@@ -50,6 +50,19 @@ btn(color)
     color #fff
     background darken(color, 30%)
     text-decoration none
+
+  if color is white
+    background transparent
+    color #999
+    border 1px solid #d5d5d5
+    &:hover
+      background-color transparent
+      color $blue
+      border-color $blue
+    &:active
+      color #14294e
+
+
 a
   text-decoration none
   color $blue

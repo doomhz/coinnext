@@ -3,7 +3,7 @@
 @import 'vendor/jquery.jgrowl.css'
 @import 'font'
 
-$teal = #72b54c
+$teal = #3eae5f
 $blue = #549cd5
 $darkblue = #14294e
 $lightgray = #a7abb1
@@ -49,9 +49,9 @@ body
 
 .site-nav
 .auth-nav
-  ul.nav
+  float right
+  .nav
     clearfix()
-    float right
     &> li
       float left
       white-space nowrap
@@ -100,30 +100,19 @@ body
 
 .auth-nav
   margin 0 5px
-  .btn
-    color #fff
-    background $teal
-    height 25px
-    line-height 25px
-    border-radius 1px
-    margin 12px 5px
-    padding 0 20px
-    border 0
-    font-size 12px
-    transition all .1s linear
-    &:hover
-      color #fff
-      background darken(#8BC26C, 30%)
-    &.white
-      background transparent
-      color #999
-      border 1px solid #d5d5d5
-      line-height 23px
-      &:hover
-        color $blue
-        border-color $blue
-      &:active
-        color #14294e
+  .nav
+    .btn
+      btn($teal)
+      height 25px
+      line-height 25px
+      border-radius 1px
+      margin 12px 5px
+      padding 0 20px
+      font-size 12px
+      &.white
+        btn(white)
+        padding 0 20px
+        line-height 23px
 
 .btn
   btn($teal)
