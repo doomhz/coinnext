@@ -21,12 +21,22 @@ module.exports = (app)->
       JsonRenderer.error "Please auth.", res
 
   app.get "/orders/open/:currency1/:currency2", (req, res)->
-    currency1 = req.body.currency1
-    currency2 = req.body.currency2
+    currency1 = req.params.currency1
+    currency2 = req.params.currency2
     if req.user
-      Order.findOpenByUserAndCurrencies req.user.id, [currency1, currency2], (err, transactions)->
-        console.error err  if err
+      Order.findOpenByUserAndCurrencies req.user.id, [currency1, currency2], (err, orders)->
         return JsonRenderer.error "Sorry, could not get open orders...", res  if err
         res.json JsonRenderer.orders orders
+    else
+      JsonRenderer.error "Please auth.", res
+
+  app.del "/orders/:id", (req, res)->
+    if req.user
+      Order.findOne {user_id: req.user.id, _id: req.params.id}, (err, order)->
+        return JsonRenderer.error "Sorry, could not delete orders...", res  if err or not order
+        Wallet.findUserWalletByCurrency req.user.id, order.sell_currency, (err, wallet)->
+          wallet.holdBalance -order.amount, (err, wallet)->
+            order.remove ()->
+              res.json JsonRenderer.orders order
     else
       JsonRenderer.error "Please auth.", res

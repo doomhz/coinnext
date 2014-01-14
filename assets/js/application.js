@@ -17,12 +17,14 @@
 //= require app/collections/wallets
 //= require app/collections/transactions
 //= require app/collections/payments
+//= require app/collections/orders
 
 //= require app/views/master
 //= require app/views/finances
 //= require app/views/pending_transactions
 //= require app/views/transactions_history
 //= require app/views/trade
+//= require app/views/open_orders
 
 //= require app/error_logger
 

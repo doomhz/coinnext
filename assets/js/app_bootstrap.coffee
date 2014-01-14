@@ -49,3 +49,14 @@ $(document).ready ()->
     trade = new App.TradeView
       el: $trade
     trade.render()
+
+  $openOrders = $("#open-orders-cnt")
+  if $openOrders.length
+    openOrders = new App.OpenOrdersView
+      el: $openOrders
+      collection: new App.OrdersCollection null,
+        type: "open"
+        currency1: $openOrders.data "currency1"
+        currency2: $openOrders.data "currency2"
+    openOrders.render()
+

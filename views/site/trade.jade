@@ -152,24 +152,10 @@ block content
                   th Date
                   th Type
                   th Price
-                  th PPC
-                  th BTC
+                  th #{wallet2.currency}
+                  th #{wallet1.currency}
                   th Action
-              tbody
-                tr.sell
-                  td.trade-date 18/12/13 05:31
-                  td.trade-type Sell
-                  td.trade-price 1
-                  td.trade-amount 2
-                  td.trade-total 2
-                  td.trade-action <a href="#" class="action cancel">Cancel</a>
-                tr.sell
-                  td.trade-date 18/12/13 05:30
-                  td.trade-type Sell
-                  td.trade-price 0.5
-                  td.trade-amount 1
-                  td.trade-total 0.5
-                  td.trade-action <a href="#" class="action cancel">Cancel</a>
+              tbody#open-orders-cnt(data-currency1="#{wallet1.currency}", data-currency2="#{wallet2.currency}")
         
         // Order Book
         section#order-book.wrap
@@ -535,3 +521,5 @@ block content
                   td.trade-price 0.00462
                   td.trade-amount 2
                   td.trade-total 0.00924
+
+  include ../templates/open_order

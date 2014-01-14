@@ -1,0 +1,8 @@
+script(type="text/template", id="open-order-tpl")
+  tr(class="<%= order.get('action') %>", data-id="<%= order.id %>")
+    td.trade-date <%= order.get('created') %>
+    td.trade-type <%= order.get('action') %>
+    td.trade-price <%= order.get('unit_price') %>
+    td.trade-amount <%= order.get('amount') %>
+    td.trade-total ?
+    td.trade-action <a href="#" class="action cancel" data-id="<%= order.id %>">Cancel</a>
