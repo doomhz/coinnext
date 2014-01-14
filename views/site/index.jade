@@ -12,7 +12,7 @@ block content
         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 
       .col-center
-        #announcements.container
+        section#announcements.container
           .con-header
             h3.con-header-title Announcements
           ul.announcement-list
@@ -25,50 +25,38 @@ block content
             li.announcement-item
               .time 28/12/13
               a(href="#").title Bank holiday - December 25th, 26th
-        #market-list.container
+        section#market-list.container
           .con-header
             h3.con-header-title All Markets
           table.trade-data
             tr
               th Market
               th Currency
-              th Last Trade
-              th High
-              th Low
+              th Last Price
               th Volume
             tr
               td <a href="#">LTC/BTC</a>
               td Litecoin
               td 0.02760000
-              td 0.02909087
-              td 0.00000110
               td 341 BTC
             tr
               td <a href="#">NMC/BTC</a>
               td Namecoin
               td 0.00661062
-              td 0.00708289
-              td 0.00647612
               td 9.22 BTC
             tr
               td <a href="#">NVC/BTC</a>
               td Novacoin
-              td 0.01903232
-              td 0.01999798
               td 0.01903232
               td 1.53 BTC
             tr
               td <a href="#">PPC/BTC</a>
               td Peercoin
               td 0.00505847
-              td 0.00529891
-              td 0.00476400
               td 15.5 BTC
             tr
               td <a href="#">FTC/BTC</a>
               td Feathercoin
               td 0.00042010
-              td 0.00044944
-              td 0.00042005
               td 6.45 BTC
 

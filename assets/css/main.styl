@@ -3,15 +3,14 @@
 @import 'vendor/jquery.jgrowl.css'
 @import 'font'
 
-$teal = #72b54c
+$teal = #3eae5f
 $blue = #549cd5
 $darkblue = #14294e
+$lightgray = #a7abb1
 
-$border-color = #d5d5d5
-$border-color = darken(#eceef1,10%)
+$border-color = #d1d5dd
 $con-header-bg = #f2f4f5
 $bgcolor = #f6f7f8
-$bgcolor = #eceef1
 
 @import 'framework'
 
@@ -50,80 +49,70 @@ body
 
 .site-nav
 .auth-nav
-  clearfix()
   float right
-  &> li
-    float left
-    white-space nowrap
-  &> li > a
-    display block
-    height 49px
-    line-height 50px
-    border-left 1px solid #ecedef
-    border-right 1px solid #ecedef
-    margin-left -1px
-    font-weight 500
-    padding 0 20px
-    color #999
-    font-size 12px
-    text-transform uppercase
-    position relative
-    &:hover
-      color $blue
-      text-decoration none
-    &:active
-    &.active
-      color #14294e
-    &.active
-      &:before
-        content ""
-        border-left 9px solid transparent
-        border-right 9px solid transparent
-        border-bottom 9px solid $border-color
-        display inline-block
-        left 50%
-        margin-left -9px
-        position absolute
-        vertical-align top
-        bottom -1px
-      &:after
-        content ""
-        border-left 8px solid transparent
-        border-right 8px solid transparent
-        border-bottom 8px solid $bgcolor
-        display inline-block
-        left 50%
-        margin-left -8px
-        position absolute
-        vertical-align top
-        bottom -1px
+  .nav
+    clearfix()
+    &> li
+      float left
+      white-space nowrap
+    &> li > a
+      display block
+      height 49px
+      line-height 50px
+      border-left 1px solid #ecedef
+      border-right 1px solid #ecedef
+      margin-left -1px
+      font-weight 500
+      padding 0 20px
+      color $lightgray
+      font-size 12px
+      text-transform uppercase
+      position relative
+      &:hover
+        color $blue
+        text-decoration none
+      &:active
+      &.active
+        color #14294e
+      &.active
+        &:before
+          content ""
+          border-left 9px solid transparent
+          border-right 9px solid transparent
+          border-bottom 9px solid $border-color
+          display inline-block
+          left 50%
+          margin-left -9px
+          position absolute
+          vertical-align top
+          bottom -1px
+        &:after
+          content ""
+          border-left 8px solid transparent
+          border-right 8px solid transparent
+          border-bottom 8px solid $bgcolor
+          display inline-block
+          left 50%
+          margin-left -8px
+          position absolute
+          vertical-align top
+          bottom -1px
 
 .auth-nav
   margin 0 5px
-  .btn
-    color #fff
-    background $teal
-    height 25px
-    line-height 25px
-    border-radius 1px
-    margin 12px 5px
-    padding 0 20px
-    border 0
-    font-size 12px
-    transition all .1s linear
-    &:hover
-      color #fff
-      background darken(#8BC26C, 30%)
-    &.white
-      background transparent
-      color #999
-      border 1px solid #d5d5d5
-      line-height 23px
-      &:hover
-        color $blue
-        border-color $blue
-      &:active
-        color #14294e
+  .nav
+    .btn
+      btn($teal)
+      height 25px
+      line-height 25px
+      border-radius 1px
+      margin 12px 5px
+      padding 0 20px
+      font-size 12px
+      &.white
+        btn(white)
+        padding 0 20px
+        line-height 23px
 
 .btn
   btn($teal)
@@ -139,7 +128,7 @@ body
 hr
   margin 10px 0
   border 0
-  border-top 1px solid #d5d5d5
+  border-top 1px solid #ecedef
 
 /* 1 Col */
 .one-col
@@ -186,10 +175,11 @@ hr
       li
         a
           padding 2px
-          color #999
+          color $lightgray
           display block
           &:hover
             color $blue
+            text-decoration none
 
 .page-foot
   clearfix()
