@@ -28,7 +28,7 @@ block content
           .graph
 
         // Order Box
-        #order-boxes.wrap
+        section#order-boxes.wrap
           .two-col-wrap
             #buy-box.order-box
               .con-header
@@ -142,7 +142,7 @@ block content
                       button Sell #{wallet1.currency}
 
         // Open Orders
-        #open-orders.container
+        section#open-orders.container
           .con-header
             h3.con-header-title Open Orders
           .table-wrap
@@ -158,7 +158,7 @@ block content
               tbody#open-orders-cnt(data-currency1="#{wallet1.currency}", data-currency2="#{wallet2.currency}")
         
         // Order Book
-        #order-book.wrap
+        section#order-book.wrap
           .two-col-wrap
             #sell-orders.order-book
               .con-header
@@ -187,7 +187,7 @@ block content
                 tbody#open-buy-orders-cnt(data-currency1="#{wallet2.currency}", data-currency2="#{wallet1.currency}")
 
         // Trade History
-        #trade-history.trade-history.container
+        section#trade-history.trade-history.container
           .con-header
             h3.con-header-title Trade History
           .table-wrap
