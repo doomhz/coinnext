@@ -25,6 +25,8 @@
 //= require app/views/transactions_history
 //= require app/views/trade
 //= require app/views/open_orders
+//= require app/views/all_open_orders
+//= require app/views/all_closed_orders
 
 //= require app/error_logger
 

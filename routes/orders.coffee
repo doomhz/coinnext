@@ -30,6 +30,18 @@ module.exports = (app)->
     else
       JsonRenderer.error "Please auth.", res
 
+  app.get "/orders/:status/:action/:currency1/:currency2", (req, res)->
+    status    = req.params.status
+    currency1 = req.params.currency1
+    currency2 = req.params.currency2
+    action    = req.params.action
+    if req.user
+      Order.findByStatusActionAndCurrencies status, action, currency1, currency2, (err, orders)->
+        return JsonRenderer.error "Sorry, could not get open orders...", res  if err
+        res.json JsonRenderer.orders orders
+    else
+      JsonRenderer.error "Please auth.", res
+
   app.del "/orders/:id", (req, res)->
     if req.user
       Order.findOne {user_id: req.user.id, _id: req.params.id}, (err, order)->

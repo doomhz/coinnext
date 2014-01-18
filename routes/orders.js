@@ -53,6 +53,23 @@
         return JsonRenderer.error("Please auth.", res);
       }
     });
+    app.get("/orders/:status/:action/:currency1/:currency2", function(req, res) {
+      var action, currency1, currency2, status;
+      status = req.params.status;
+      currency1 = req.params.currency1;
+      currency2 = req.params.currency2;
+      action = req.params.action;
+      if (req.user) {
+        return Order.findByStatusActionAndCurrencies(status, action, currency1, currency2, function(err, orders) {
+          if (err) {
+            return JsonRenderer.error("Sorry, could not get open orders...", res);
+          }
+          return res.json(JsonRenderer.orders(orders));
+        });
+      } else {
+        return JsonRenderer.error("Please auth.", res);
+      }
+    });
     return app.del("/orders/:id", function(req, res) {
       if (req.user) {
         return Order.findOne({

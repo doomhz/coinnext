@@ -16,6 +16,7 @@ $(document).ready ()->
         $.get $qrGenBt.attr("href"), ()->
           window.location.reload()
 
+  # Funds page
   $finances = $("#finances")
   if $finances.length
     finances = new App.FinancesView
@@ -23,8 +24,7 @@ $(document).ready ()->
       collection: new App.WalletsCollection
     finances.render()
 
-  $pendingTransactions = $("#pending-transactions-cnt")
-  if $pendingTransactions.length
+    $pendingTransactions = $("#pending-transactions-cnt")
     pendingTransactions = new App.PendingTransactionsView
       el: $pendingTransactions
       collection: new App.TransactionsCollection null,
@@ -35,8 +35,7 @@ $(document).ready ()->
         walletId: $pendingTransactions.data "wallet-id"
     pendingTransactions.render()
 
-  $transactionsHistory = $("#transactions-history-cnt")
-  if $transactionsHistory.length
+    $transactionsHistory = $("#transactions-history-cnt")
     transactionsHistory = new App.TransactionsHistoryView
       el: $transactionsHistory
       collection: new App.TransactionsCollection null,
@@ -44,14 +43,15 @@ $(document).ready ()->
         walletId: $transactionsHistory.data "wallet-id"
     transactionsHistory.render()
 
+
+  # Trade page
   $trade = $("#trade")
   if $trade.length
     trade = new App.TradeView
       el: $trade
     trade.render()
 
-  $openOrders = $("#open-orders-cnt")
-  if $openOrders.length
+    $openOrders = $("#open-orders-cnt")
     openOrders = new App.OpenOrdersView
       el: $openOrders
       collection: new App.OrdersCollection null,
@@ -59,4 +59,34 @@ $(document).ready ()->
         currency1: $openOrders.data "currency1"
         currency2: $openOrders.data "currency2"
     openOrders.render()
+
+    $openSellOrders = $("#open-sell-orders-cnt")
+    openSellOrders = new App.AllOpenOrdersView
+      el: $openSellOrders
+      collection: new App.OrdersCollection null,
+        type: "open"
+        action: "sell"
+        currency1: $openSellOrders.data "currency1"
+        currency2: $openSellOrders.data "currency2"
+    openSellOrders.render()
+
+    $openBuyOrders = $("#open-buy-orders-cnt")
+    openBuyOrders = new App.AllOpenOrdersView
+      el: $openBuyOrders
+      collection: new App.OrdersCollection null,
+        type: "open"
+        action: "buy"
+        currency1: $openBuyOrders.data "currency1"
+        currency2: $openBuyOrders.data "currency2"
+    openBuyOrders.render()
+
+    $closedOrders = $("#closed-orders-cnt")
+    closedOrders = new App.AllClosedOrdersView
+      el: $closedOrders
+      collection: new App.OrdersCollection null,
+        type: "closed"
+        action: "*"
+        currency1: $openBuyOrders.data "currency1"
+        currency2: $openBuyOrders.data "currency2"
+    closedOrders.render()
 

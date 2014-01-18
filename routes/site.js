@@ -11,7 +11,7 @@
       });
     });
     app.get("/trade", function(req, res) {
-      return res.redirect("/trade/BTC/LCT");
+      return res.redirect("/trade/BTC/LTC");
     });
     app.get("/trade/:currency1/:currency2", function(req, res) {
       var currencies, currency1, currency2;
@@ -19,7 +19,7 @@
       currency2 = req.params.currency2;
       currencies = Wallet.getCurrencies();
       if (currencies.indexOf(currency1) === -1 || currencies.indexOf(currency2) === -1) {
-        res.redirect("/");
+        return res.redirect("/");
       }
       return Wallet.findUserWalletByCurrency(req.user.id, currency1, function(err, wallet1) {
         return Wallet.findUserWalletByCurrency(req.user.id, currency2, function(err, wallet2) {

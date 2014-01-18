@@ -8,7 +8,8 @@ class window.App.OrdersCollection extends Backbone.Collection
 
   url: ()->
     url = "/orders"
-    url += "/#{@type}"  if @type
+    url += "/#{@type}"       if @type
+    url += "/#{@action}"     if @action
     url += "/#{@currency1}"  if @currency1
     url += "/#{@currency2}"  if @currency2
     url
@@ -17,5 +18,6 @@ class window.App.OrdersCollection extends Backbone.Collection
 
   initialize: (models, options = {})->
     @type      = options.type
+    @action    = options.action
     @currency1 = options.currency1
     @currency2 = options.currency2

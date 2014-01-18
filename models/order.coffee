@@ -42,7 +42,26 @@ OrderSchema.path("unit_price").validate ()->
 ###
 
 OrderSchema.statics.findOpenByUserAndCurrencies = (userId, currencies, callback)->
-  Order.find({user_id: userId}).where("buy_currency").in(currencies).where("sell_currency").in(currencies).exec callback
+  Order.find({user_id: userId, status: "open"}).where("buy_currency").in(currencies).where("sell_currency").in(currencies).exec callback
+
+OrderSchema.statics.findByStatusActionAndCurrencies = (status, action, currency1, currency2, callback)->
+  query =
+    status: status
+  if action is "buy"
+    query.action = action
+    query.buy_currency = currency2
+    query.sell_currency = currency1
+    Order.find query, callback
+  else if action is "sell"
+    query.action = action
+    query.buy_currency = currency1
+    query.sell_currency = currency2
+    Order.find query, callback
+  else if action is "*"
+    currencies = [currency1, currency2]
+    Order.find(query).where("buy_currency").in(currencies).where("sell_currency").in(currencies).exec callback
+  else
+    callback "Wrong action", []
 
 Order = mongoose.model("Order", OrderSchema)
 exports = module.exports = Order
