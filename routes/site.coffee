@@ -64,7 +64,7 @@ module.exports = (app)->
 
   app.get "/settings/preferences", (req, res)->
     res.render "site/settings/preferences",
-      title: 'Preferencs - Settings'
+      title: 'Preferences - Settings'
       page: 'Settings'
       user: req.user
 
