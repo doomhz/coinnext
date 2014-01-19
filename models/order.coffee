@@ -60,7 +60,7 @@ OrderSchema.statics.findByOptions = (options = {}, callback)->
     currencies.push options.currency2  if options.currency2
     if currencies.length > 1
       dbQuery.where("buy_currency").in(currencies).where("sell_currency").in(currencies)
-    else
+    else if currencies.length is 1
       dbQuery.or([{buy_currency: currencies[0]}, {sell_currency: currencies[0]}])
   else
     callback "Wrong action", []

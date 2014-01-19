@@ -1,6 +1,6 @@
-class App.OpenOrdersView extends App.MasterView
+class App.OrdersView extends App.MasterView
 
-  tpl: "open-order-tpl"
+  tpl: null
 
   collection: null
 
@@ -8,6 +8,7 @@ class App.OpenOrdersView extends App.MasterView
     "click .cancel": "onCancelClick"
 
   initialize: (options = {})->
+    @tpl = options.tpl  if options.tpl
     $.subscribe "new-order", @onNewOrder
 
   render: ()->

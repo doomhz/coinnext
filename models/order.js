@@ -94,7 +94,7 @@
       }
       if (currencies.length > 1) {
         dbQuery.where("buy_currency")["in"](currencies).where("sell_currency")["in"](currencies);
-      } else {
+      } else if (currencies.length === 1) {
         dbQuery.or([
           {
             buy_currency: currencies[0]

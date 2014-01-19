@@ -25,43 +25,67 @@ $(document).ready ()->
     finances.render()
 
     $pendingTransactions = $("#pending-transactions-cnt")
-    pendingTransactions = new App.PendingTransactionsView
-      el: $pendingTransactions
-      collection: new App.TransactionsCollection null,
-        type: "pending"
-        walletId: $pendingTransactions.data "wallet-id"
-      payments: new App.PaymentsCollection null,
-        type: "pending"
-        walletId: $pendingTransactions.data "wallet-id"
-    pendingTransactions.render()
+    if $pendingTransactions.length
+      pendingTransactions = new App.PendingTransactionsView
+        el: $pendingTransactions
+        collection: new App.TransactionsCollection null,
+          type: "pending"
+          walletId: $pendingTransactions.data "wallet-id"
+        payments: new App.PaymentsCollection null,
+          type: "pending"
+          walletId: $pendingTransactions.data "wallet-id"
+      pendingTransactions.render()
 
     $transactionsHistory = $("#transactions-history-cnt")
-    transactionsHistory = new App.TransactionsHistoryView
-      el: $transactionsHistory
-      collection: new App.TransactionsCollection null,
-        type: "processed"
-        walletId: $transactionsHistory.data "wallet-id"
-    transactionsHistory.render()
+    if $transactionsHistory.length
+      transactionsHistory = new App.TransactionsHistoryView
+        el: $transactionsHistory
+        collection: new App.TransactionsCollection null,
+          type: "processed"
+          walletId: $transactionsHistory.data "wallet-id"
+      transactionsHistory.render()
 
     $openOrders = $("#open-orders-cnt")
-    openOrders = new App.OpenOrdersView
-      el: $openOrders
-      collection: new App.OrdersCollection null,
-        type: "open"
-        currency1: $openOrders.data "currency1"
-        userId: CONFIG.currentUser.id
-    openOrders.tpl = "wallet-open-order-tpl"
-    openOrders.render()
+    if $openOrders.length
+      openOrders = new App.OrdersView
+        el: $openOrders
+        tpl: "wallet-open-order-tpl"
+        collection: new App.OrdersCollection null,
+          type: "open"
+          currency1: $openOrders.data "currency1"
+          userId: CONFIG.currentUser.id
+      openOrders.render()
 
     $closedOrders = $("#closed-orders-cnt")
-    closedOrders = new App.OpenOrdersView
-      el: $closedOrders
-      collection: new App.OrdersCollection null,
-        type: "closed"
-        currency1: $closedOrders.data "currency1"
-        userId: CONFIG.currentUser.id
-    closedOrders.tpl = "wallet-closed-order-tpl"
-    closedOrders.render()
+    if $closedOrders.length
+      closedOrders = new App.OrdersView
+        el: $closedOrders
+        tpl: "wallet-closed-order-tpl"
+        collection: new App.OrdersCollection null,
+          type: "closed"
+          currency1: $closedOrders.data "currency1"
+          userId: CONFIG.currentUser.id
+      closedOrders.render()
+
+    $overviewOpenOrders = $("#overview-open-orders-cnt")
+    if $overviewOpenOrders.length
+      overviewOpenOrders = new App.OrdersView
+        el: $overviewOpenOrders
+        tpl: "wallet-open-order-tpl"
+        collection: new App.OrdersCollection null,
+          type: "open"
+          userId: CONFIG.currentUser.id
+      overviewOpenOrders.render()
+
+    $overviewClosedOrders = $("#overview-closed-orders-cnt")
+    if $overviewClosedOrders.length
+      overviewClosedOrders = new App.OrdersView
+        el: $overviewClosedOrders
+        tpl: "wallet-closed-order-tpl"
+        collection: new App.OrdersCollection null,
+          type: "closed"
+          userId: CONFIG.currentUser.id
+      overviewClosedOrders.render()
 
 
   # Trade page
@@ -72,8 +96,9 @@ $(document).ready ()->
     trade.render()
 
     $openOrders = $("#open-orders-cnt")
-    openOrders = new App.OpenOrdersView
+    openOrders = new App.OrdersView
       el: $openOrders
+      tpl: "open-order-tpl"
       collection: new App.OrdersCollection null,
         type: "open"
         currency1: $openOrders.data "currency1"
@@ -82,8 +107,9 @@ $(document).ready ()->
     openOrders.render()
 
     $openSellOrders = $("#open-sell-orders-cnt")
-    openSellOrders = new App.AllOpenOrdersView
+    openSellOrders = new App.OrdersView
       el: $openSellOrders
+      tpl: "site-open-order-tpl"
       collection: new App.OrdersCollection null,
         type: "open"
         action: "sell"
@@ -92,8 +118,9 @@ $(document).ready ()->
     openSellOrders.render()
 
     $openBuyOrders = $("#open-buy-orders-cnt")
-    openBuyOrders = new App.AllOpenOrdersView
+    openBuyOrders = new App.OrdersView
       el: $openBuyOrders
+      tpl: "site-open-order-tpl"
       collection: new App.OrdersCollection null,
         type: "open"
         action: "buy"
@@ -102,8 +129,9 @@ $(document).ready ()->
     openBuyOrders.render()
 
     $closedOrders = $("#closed-orders-cnt")
-    closedOrders = new App.AllClosedOrdersView
+    closedOrders = new App.OrdersView
       el: $closedOrders
+      tpl: "site-closed-order-tpl"
       collection: new App.OrdersCollection null,
         type: "closed"
         currency1: $openBuyOrders.data "currency1"
