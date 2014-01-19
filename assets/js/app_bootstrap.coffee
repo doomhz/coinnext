@@ -43,6 +43,26 @@ $(document).ready ()->
         walletId: $transactionsHistory.data "wallet-id"
     transactionsHistory.render()
 
+    $openOrders = $("#open-orders-cnt")
+    openOrders = new App.OpenOrdersView
+      el: $openOrders
+      collection: new App.OrdersCollection null,
+        type: "open"
+        currency1: $openOrders.data "currency1"
+        userId: CONFIG.currentUser.id
+    openOrders.tpl = "wallet-open-order-tpl"
+    openOrders.render()
+
+    $closedOrders = $("#closed-orders-cnt")
+    closedOrders = new App.OpenOrdersView
+      el: $closedOrders
+      collection: new App.OrdersCollection null,
+        type: "closed"
+        currency1: $closedOrders.data "currency1"
+        userId: CONFIG.currentUser.id
+    closedOrders.tpl = "wallet-closed-order-tpl"
+    closedOrders.render()
+
 
   # Trade page
   $trade = $("#trade")
@@ -58,6 +78,7 @@ $(document).ready ()->
         type: "open"
         currency1: $openOrders.data "currency1"
         currency2: $openOrders.data "currency2"
+        userId: CONFIG.currentUser.id
     openOrders.render()
 
     $openSellOrders = $("#open-sell-orders-cnt")
@@ -85,7 +106,6 @@ $(document).ready ()->
       el: $closedOrders
       collection: new App.OrdersCollection null,
         type: "closed"
-        action: "*"
         currency1: $openBuyOrders.data "currency1"
         currency2: $openBuyOrders.data "currency2"
     closedOrders.render()

@@ -41,27 +41,30 @@ OrderSchema.path("unit_price").validate ()->
   , "Invalid unit price"
 ###
 
-OrderSchema.statics.findOpenByUserAndCurrencies = (userId, currencies, callback)->
-  Order.find({user_id: userId, status: "open"}).where("buy_currency").in(currencies).where("sell_currency").in(currencies).exec callback
-
-OrderSchema.statics.findByStatusActionAndCurrencies = (status, action, currency1, currency2, callback)->
-  query =
-    status: status
-  if action is "buy"
-    query.action = action
-    query.buy_currency = currency2
-    query.sell_currency = currency1
-    Order.find query, callback
-  else if action is "sell"
-    query.action = action
-    query.buy_currency = currency1
-    query.sell_currency = currency2
-    Order.find query, callback
-  else if action is "*"
-    currencies = [currency1, currency2]
-    Order.find(query).where("buy_currency").in(currencies).where("sell_currency").in(currencies).exec callback
+OrderSchema.statics.findByOptions = (options = {}, callback)->
+  dbQuery = Order.find
+    status: options.status
+  dbQuery.where({action: options.action})    if ["buy", "sell"].indexOf(options.action) > -1
+  dbQuery.where({user_id: options.user_id})  if options.user_id
+  if options.action is "buy"
+    dbQuery.where
+      buy_currency: options.currency2
+      sell_currency: options.currency1
+  else if options.action is "sell"
+    dbQuery.where
+      buy_currency: options.currency1
+      sell_currency: options.currency2
+  else if not options.action
+    currencies = []
+    currencies.push options.currency1  if options.currency1
+    currencies.push options.currency2  if options.currency2
+    if currencies.length > 1
+      dbQuery.where("buy_currency").in(currencies).where("sell_currency").in(currencies)
+    else
+      dbQuery.or([{buy_currency: currencies[0]}, {sell_currency: currencies[0]}])
   else
     callback "Wrong action", []
+  dbQuery.exec callback
 
 Order = mongoose.model("Order", OrderSchema)
 exports = module.exports = Order

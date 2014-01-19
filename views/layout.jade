@@ -16,6 +16,9 @@ html(lang='en')
       CONFIG = {
         users: {
           hostname: "#{GLOBAL.appConfig().users.hostname}"
+        },
+        currentUser: {
+          id: "#{user ? user.id : ''}"
         }
       }
 

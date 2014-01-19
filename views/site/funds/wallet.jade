@@ -86,23 +86,7 @@ block content
                 th Amount
                 th Total
                 th Action
-            tbody
-              tr.sell
-                td <a href="#">BTC/LTC</a>
-                td.trade-date 18/12/13 05:31
-                td.trade-type Sell
-                td.trade-price 1 LTC
-                td.trade-amount 2 BTC
-                td.trade-total 2 LTC
-                td.trade-action <a href="#" class="action cancel">Cancel</a>
-              tr.sell
-                td <a href="#">BTC/LTC</a>
-                td.trade-date 18/12/13 05:31
-                td.trade-type Sell
-                td.trade-price 1 LTC
-                td.trade-amount 2 BTC
-                td.trade-total 2 LTC
-                td.trade-action <a href="#" class="action cancel">Cancel</a>
+            tbody#open-orders-cnt(data-currency1="#{wallet.currency}")
 
         // Order History
         #order-history.order-history.container
@@ -118,14 +102,7 @@ block content
                   th Price
                   th Amount
                   th Total
-              tbody
-                tr.sell
-                  td BTC/LTC
-                  td.trade-date 18/12/13 04:23
-                  td.trade-type Sell
-                  td.trade-price 0.0046
-                  td.trade-amount 19.8594
-                  td.trade-total 0.09135324
+              tbody#closed-orders-cnt(data-currency1="#{wallet.currency}")
 
         // Transaction History
         #balance-history.balance-history.container
@@ -142,3 +119,5 @@ block content
                 
   include ../../templates/pending_transaction
   include ../../templates/transaction_history
+  include ../../templates/wallet_open_order
+  include ../../templates/wallet_closed_order

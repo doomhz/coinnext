@@ -8,11 +8,13 @@ class window.App.OrdersCollection extends Backbone.Collection
 
   url: ()->
     url = "/orders"
-    url += "/#{@type}"       if @type
-    url += "/#{@action}"     if @action
-    url += "/#{@currency1}"  if @currency1
-    url += "/#{@currency2}"  if @currency2
-    url
+    params = {}
+    params.status    = @type       if @type
+    params.action    = @action     if @action
+    params.currency1 = @currency1  if @currency1
+    params.currency2 = @currency2  if @currency2
+    params.user_id   = @userId     if @userId
+    url += "?#{$.param(params)}"
 
   model: window.App.OrderModel
 
@@ -21,3 +23,4 @@ class window.App.OrdersCollection extends Backbone.Collection
     @action    = options.action
     @currency1 = options.currency1
     @currency2 = options.currency2
+    @userId    = options.userId
