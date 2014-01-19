@@ -1,11 +1,15 @@
 Wallet = require "../models/wallet"
+MarketStats = require "../models/market_stats"
 
 module.exports = (app)->
 
   app.get "/", (req, res)->
-    res.render "site/index",
-      title: 'Home'
-      user: req.user
+    MarketStats.getStats (err, marketStats)->
+      res.render "site/index",
+        title: 'Home'
+        user: req.user
+        marketStats: marketStats
+        currencies: Wallet.getCurrencyNames()
 
   app.get "/trade", (req, res)->
     res.redirect "/trade/BTC/LTC"
@@ -15,15 +19,19 @@ module.exports = (app)->
     currency2 = req.params.currency2
     currencies = Wallet.getCurrencies()
     return res.redirect "/"  if currencies.indexOf(currency1) is -1 or currencies.indexOf(currency2) is -1
-    Wallet.findUserWalletByCurrency req.user.id, currency1, (err, wallet1)->
-      Wallet.findUserWalletByCurrency req.user.id, currency2, (err, wallet2)->
-        res.redirect "/funds"  if not wallet1 or not wallet2
-        res.render "site/trade",
-          title: 'Trade #{currency1} to #{currency2}'
-          user: req.user
-          wallet1: wallet1
-          wallet2: wallet2
-          currencies: Wallet.getCurrencyNames()
+    MarketStats.getStats (err, marketStats)->
+      Wallet.findUserWalletByCurrency req.user.id, currency1, (err, wallet1)->
+        Wallet.findUserWalletByCurrency req.user.id, currency2, (err, wallet2)->
+          res.redirect "/funds"  if not wallet1 or not wallet2
+          res.render "site/trade",
+            title: "Trade #{currency1} to #{currency2}"
+            user: req.user
+            currency1: currency1
+            currency2: currency2
+            wallet1: wallet1
+            wallet2: wallet2
+            currencies: Wallet.getCurrencyNames()
+            marketStats: marketStats
 
   app.get "/funds", (req, res)->
     Wallet.findUserWallets req.user.id, (err, wallets)->

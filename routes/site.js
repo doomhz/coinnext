@@ -1,13 +1,19 @@
 (function() {
-  var Wallet;
+  var MarketStats, Wallet;
 
   Wallet = require("../models/wallet");
 
+  MarketStats = require("../models/market_stats");
+
   module.exports = function(app) {
     app.get("/", function(req, res) {
-      return res.render("site/index", {
-        title: 'Home',
-        user: req.user
+      return MarketStats.getStats(function(err, marketStats) {
+        return res.render("site/index", {
+          title: 'Home',
+          user: req.user,
+          marketStats: marketStats,
+          currencies: Wallet.getCurrencyNames()
+        });
       });
     });
     app.get("/trade", function(req, res) {
@@ -21,17 +27,22 @@
       if (currencies.indexOf(currency1) === -1 || currencies.indexOf(currency2) === -1) {
         return res.redirect("/");
       }
-      return Wallet.findUserWalletByCurrency(req.user.id, currency1, function(err, wallet1) {
-        return Wallet.findUserWalletByCurrency(req.user.id, currency2, function(err, wallet2) {
-          if (!wallet1 || !wallet2) {
-            res.redirect("/funds");
-          }
-          return res.render("site/trade", {
-            title: 'Trade #{currency1} to #{currency2}',
-            user: req.user,
-            wallet1: wallet1,
-            wallet2: wallet2,
-            currencies: Wallet.getCurrencyNames()
+      return MarketStats.getStats(function(err, marketStats) {
+        return Wallet.findUserWalletByCurrency(req.user.id, currency1, function(err, wallet1) {
+          return Wallet.findUserWalletByCurrency(req.user.id, currency2, function(err, wallet2) {
+            if (!wallet1 || !wallet2) {
+              res.redirect("/funds");
+            }
+            return res.render("site/trade", {
+              title: "Trade " + currency1 + " to " + currency2,
+              user: req.user,
+              currency1: currency1,
+              currency2: currency2,
+              wallet1: wallet1,
+              wallet2: wallet2,
+              currencies: Wallet.getCurrencyNames(),
+              marketStats: marketStats
+            });
           });
         });
       });

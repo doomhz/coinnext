@@ -18,7 +18,7 @@ block content
           ul.announcement-list
             li.announcement-item
               .time 24/12/13
-              a(href="#").title Bank holiday - December 25th, 26th
+              a(href="/announcements/1").title Bank holiday - December 25th, 26th
         section#market-list.container
           .con-header
             h3.con-header-title All Markets
@@ -28,29 +28,9 @@ block content
               th Currency
               th Last Price
               th Volume
-            tr
-              td <a href="#">LTC/BTC</a>
-              td Litecoin
-              td 0.02760000
-              td 341 BTC
-            tr
-              td <a href="#">NMC/BTC</a>
-              td Namecoin
-              td 0.00661062
-              td 9.22 BTC
-            tr
-              td <a href="#">NVC/BTC</a>
-              td Novacoin
-              td 0.01903232
-              td 1.53 BTC
-            tr
-              td <a href="#">PPC/BTC</a>
-              td Peercoin
-              td 0.00505847
-              td 15.5 BTC
-            tr
-              td <a href="#">FTC/BTC</a>
-              td Feathercoin
-              td 0.00042010
-              td 6.45 BTC
-
+            - each info, type in marketStats
+              tr
+                td <a href="/trade/#{type.replace("_", "/")}">#{type.replace("_", "/")}</a>
+                td #{currencies[info.label]}
+                td #{info.last_price}
+                td #{info.volume1} #{type.split("_")[0]}
