@@ -3,6 +3,7 @@ $(document).ready ()->
   $signupForm = $("#signup-form")
   $loginForm = $("#login-form")
   $changePassForm = $("#change-pass-form")
+  $setNewPassForm = $("#set-new-pass-form")
   $sendPassForm = $("#send-pass-form")
   $logoutBt = $("#logout-bt")
 
@@ -78,6 +79,44 @@ $(document).ready ()->
           required: "Please provide a password."
           minlength: "Your password must be at least 5 characters long."
           equalTo: "Please enter the same password as above."
+
+  if $setNewPassForm
+    $setNewPassForm.validate
+      rules:
+        password:
+          required: true
+        new_password:
+          required: true
+          minlength: 5
+        repeat_new_password:
+          required: true
+          minlength: 5
+          equalTo: "#set-new-pass"
+      messages:
+        password:
+          required: "Please provide current password."
+        new_password:
+          required: "Please provide a new password."
+          minlength: "Your password must be at least 5 characters long."
+        repeat_new_password:
+          required: "Please provide a password."
+          minlength: "Your password must be at least 5 characters long."
+          equalTo: "Please enter the same password as above."
+      submitHandler: ()->
+        $form = $setNewPassForm
+        $form.find("#error-cnt").text ""
+        url = $form.attr "action"
+        user = new App.UserModel
+          password: $form.find("[name='password']").val()
+          new_password: $form.find("[name='new_password']").val()
+        user.url = "#{url}"
+        user.save null,
+          success: ()->
+            $form.find("#notice-cnt").text "The password was successfully changed."
+          error: (model, response)->
+            if response.responseJSON and response.responseJSON.error
+              $form.find("#error-cnt").text response.responseJSON.error
+        return false
 
   if $sendPassForm
     $sendPassForm.validate

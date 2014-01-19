@@ -1,0 +1,13 @@
+extends ../layout
+
+block content
+
+  .main-content.auth(role='main')
+    .wrapper
+      .auth-box
+        h1 Account Verification
+        - if (verified)
+          p Your account was successfully verified.
+        - else
+          p Your account could not be verified.
+          

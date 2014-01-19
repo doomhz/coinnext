@@ -17,6 +17,9 @@
         if (err) {
           return JsonRenderer.error(err, res);
         }
+        user.generateToken(function() {
+          return user.sendEmailVerificationLink();
+        });
         return res.json(JsonRenderer.user(user));
       });
     });
