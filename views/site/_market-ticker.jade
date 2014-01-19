@@ -7,7 +7,7 @@
       ul
         - each info, type in marketStats
           li(class="market-ticker-coin #{info.growth ? 'up' : 'down'}")
-            a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
+            // a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
             a(href="/trade/#{type.replace('_', '/')}")
               .label #{info.label}
               .rate #{info.last_price}
