@@ -63,3 +63,13 @@ module.exports = (app)->
           message: "The password was successfully changed."
     else
       JsonRenderer.error "Please auth.", res
+
+  app.get "/verify/:token", (req, res)->
+    token = req.params.token
+    User.findById token, (err, user)->
+      if user
+        user.email_verified = true
+        user.save (err, u)->
+          res.render "auth/verify", {title: "Verify Account - Coinnext.com", verified: true}
+      else
+        res.render "auth/verify", {title: "Verify Account - Coinnext.com", verified: false}

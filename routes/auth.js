@@ -90,7 +90,7 @@
         }
       });
     });
-    return app.post("/set-new-password", function(req, res) {
+    app.post("/set-new-password", function(req, res) {
       var newPassword, password;
       password = req.body.password;
       newPassword = req.body.new_password;
@@ -110,6 +110,26 @@
       } else {
         return JsonRenderer.error("Please auth.", res);
       }
+    });
+    return app.get("/verify/:token", function(req, res) {
+      var token;
+      token = req.params.token;
+      return User.findById(token, function(err, user) {
+        if (user) {
+          user.email_verified = true;
+          return user.save(function(err, u) {
+            return res.render("auth/verify", {
+              title: "Verify Account - Coinnext.com",
+              verified: true
+            });
+          });
+        } else {
+          return res.render("auth/verify", {
+            title: "Verify Account - Coinnext.com",
+            verified: false
+          });
+        }
+      });
     });
   };
 

@@ -17,6 +17,7 @@
         if (err) {
           return JsonRenderer.error(err, res);
         }
+        user.sendEmailVerificationLink();
         return res.json(JsonRenderer.user(user));
       });
     });

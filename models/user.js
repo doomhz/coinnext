@@ -28,6 +28,11 @@
         unique: true
       }
     },
+    email_verified: {
+      type: Boolean,
+      index: true,
+      "default": false
+    },
     created:  ({
       type: Date ,
       "default": Date.now ,
@@ -81,6 +86,33 @@
       },
       subject: "Change password request on Coinnext.com",
       template: "change_password"
+    };
+    emailer = new Emailer(options, data);
+    emailer.send(function(err, result) {
+      if (err) {
+        return console.error(err);
+      }
+    });
+    return callback();
+  };
+
+  UserSchema.methods.sendEmailVerificationLink = function(callback) {
+    var data, emailer, options, siteUrl, verificationUrl;
+    if (callback == null) {
+      callback = function() {};
+    }
+    siteUrl = GLOBAL.appConfig().emailer.host;
+    verificationUrl = "" + siteUrl + "/verify/" + this.id;
+    data = {
+      "site_url": siteUrl,
+      "verification_url": verificationUrl
+    };
+    options = {
+      to: {
+        email: this.email
+      },
+      subject: "Account confirmation on Coinnext.com",
+      template: "confirm_email"
     };
     emailer = new Emailer(options, data);
     emailer.send(function(err, result) {

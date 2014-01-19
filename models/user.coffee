@@ -16,6 +16,10 @@ UserSchema = new Schema
     type: String
     index:
       unique: true
+  email_verified:
+    type: Boolean
+    index: true
+    default: false
   created: 
     type: Date 
     default: Date.now 
@@ -52,6 +56,22 @@ UserSchema.methods.sendPasswordLink = (callback = ()->)->
       email: @email
     subject: "Change password request on Coinnext.com"
     template: "change_password"
+  emailer = new Emailer options, data
+  emailer.send (err, result)->
+    console.error err  if err
+  callback()
+
+UserSchema.methods.sendEmailVerificationLink = (callback = ()->)->
+  siteUrl = GLOBAL.appConfig().emailer.host
+  verificationUrl = "#{siteUrl}/verify/#{@id}"
+  data =
+    "site_url": siteUrl
+    "verification_url": verificationUrl
+  options =
+    to:
+      email: @email
+    subject: "Account confirmation on Coinnext.com"
+    template: "confirm_email"
   emailer = new Emailer options, data
   emailer.send (err, result)->
     console.error err  if err
