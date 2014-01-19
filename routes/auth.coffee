@@ -1,4 +1,5 @@
 User = require "../models/user"
+JsonRenderer = require "../lib/json_renderer"
 
 module.exports = (app)->
 
@@ -49,3 +50,16 @@ module.exports = (app)->
       else
         res.writeHead(303, {"Location": "/change-password/#{token}?error=wrong-token"})
         res.end()
+
+  app.post "/set-new-password", (req, res)->
+    password = req.body.password
+    newPassword = req.body.new_password
+    if req.user
+      return JsonRenderer.error "The old password is incorrect.", res  if User.hashPassword(password) isnt req.user.password
+      req.user.password = User.hashPassword newPassword
+      req.user.save (err, u)->
+        console.error err  if err
+        res.json
+          message: "The password was successfully changed."
+    else
+      JsonRenderer.error "Please auth.", res

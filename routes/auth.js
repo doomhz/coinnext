@@ -1,7 +1,9 @@
 (function() {
-  var User;
+  var JsonRenderer, User;
 
   User = require("../models/user");
+
+  JsonRenderer = require("../lib/json_renderer");
 
   module.exports = function(app) {
     app.get("/signup", function(req, res) {
@@ -64,7 +66,7 @@
         errors: errors
       });
     });
-    return app.post("/change-password", function(req, res) {
+    app.post("/change-password", function(req, res) {
       var password, token;
       token = req.body.token;
       password = req.body.password;
@@ -87,6 +89,27 @@
           return res.end();
         }
       });
+    });
+    return app.post("/set-new-password", function(req, res) {
+      var newPassword, password;
+      password = req.body.password;
+      newPassword = req.body.new_password;
+      if (req.user) {
+        if (User.hashPassword(password) !== req.user.password) {
+          return JsonRenderer.error("The old password is incorrect.", res);
+        }
+        req.user.password = User.hashPassword(newPassword);
+        return req.user.save(function(err, u) {
+          if (err) {
+            console.error(err);
+          }
+          return res.json({
+            message: "The password was successfully changed."
+          });
+        });
+      } else {
+        return JsonRenderer.error("Please auth.", res);
+      }
     });
   };
 

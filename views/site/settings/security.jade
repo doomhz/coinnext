@@ -15,13 +15,15 @@ block content
             h1.con-header-title Security
           .con-body
             h2 Change Password
-            form
+            form#set-new-pass-form(action="/set-new-password", method="post")
+              #error-cnt
+              #notice-cnt
               fieldset
-                input(type="password", placeholder="Current password")
+                input(name="password", type="password", placeholder="Current password")
               fieldset
-                input(type="password", placeholder="New password")
+                input#set-new-pass(name="new_password", type="password", placeholder="New password")
               fieldset
-                input(type="password", placeholder="Confirm password")
+                input(name="repeat_new_password", type="password", placeholder="Confirm password")
               input(type="submit" value="Change Password").btn
             hr
             h2 Two factor authentication
