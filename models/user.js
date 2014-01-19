@@ -102,7 +102,7 @@
       callback = function() {};
     }
     siteUrl = GLOBAL.appConfig().emailer.host;
-    verificationUrl = "" + siteUrl + "/verify/" + this.id;
+    verificationUrl = "" + siteUrl + "/verify/" + this.token;
     data = {
       "site_url": siteUrl,
       "verification_url": verificationUrl

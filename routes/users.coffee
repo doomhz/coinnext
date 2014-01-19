@@ -9,7 +9,8 @@ module.exports = (app)->
       password:  User.hashPassword req.body.password
     user.save (err)->
       return JsonRenderer.error err, res  if err
-      user.sendEmailVerificationLink()
+      user.generateToken ()->
+        user.sendEmailVerificationLink()
       res.json JsonRenderer.user user
 
   app.post "/login", (req, res, next)->

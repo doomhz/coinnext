@@ -114,7 +114,7 @@
     return app.get("/verify/:token", function(req, res) {
       var token;
       token = req.params.token;
-      return User.findById(token, function(err, user) {
+      return User.findByToken(token, function(err, user) {
         if (user) {
           user.email_verified = true;
           return user.save(function(err, u) {

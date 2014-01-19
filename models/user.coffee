@@ -63,7 +63,7 @@ UserSchema.methods.sendPasswordLink = (callback = ()->)->
 
 UserSchema.methods.sendEmailVerificationLink = (callback = ()->)->
   siteUrl = GLOBAL.appConfig().emailer.host
-  verificationUrl = "#{siteUrl}/verify/#{@id}"
+  verificationUrl = "#{siteUrl}/verify/#{@token}"
   data =
     "site_url": siteUrl
     "verification_url": verificationUrl

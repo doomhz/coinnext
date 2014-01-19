@@ -66,7 +66,7 @@ module.exports = (app)->
 
   app.get "/verify/:token", (req, res)->
     token = req.params.token
-    User.findById token, (err, user)->
+    User.findByToken token, (err, user)->
       if user
         user.email_verified = true
         user.save (err, u)->
