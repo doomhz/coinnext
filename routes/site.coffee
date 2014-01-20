@@ -83,6 +83,10 @@ module.exports = (app)->
     res.render "static/privacy",
       title: 'Privacy'
 
+  app.get "/legal/cookie", (req, res)->
+    res.render "static/cookie",
+      title: 'Cookie'
+
   app.get "/fees", (req, res)->
     res.render "static/fees",
       title: 'Fees'

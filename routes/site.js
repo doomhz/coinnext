@@ -109,6 +109,11 @@
         title: 'Privacy'
       });
     });
+    app.get("/legal/cookie", function(req, res) {
+      return res.render("static/cookie", {
+        title: 'Cookie'
+      });
+    });
     app.get("/fees", function(req, res) {
       return res.render("static/fees", {
         title: 'Fees'
