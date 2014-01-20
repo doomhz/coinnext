@@ -19,11 +19,20 @@ block content
               #error-cnt
               #notice-cnt
               fieldset
-                input(name="password", type="password", placeholder="Current password")
+                .input-prepend
+                  span.add-on
+                    i.icon-lock
+                  input(name="password", type="password", placeholder="Current password")
               fieldset
-                input#set-new-pass(name="new_password", type="password", placeholder="New password")
+                .input-prepend
+                  span.add-on
+                    i.icon-lock
+                  input#set-new-pass(name="new_password", type="password", placeholder="New password")
               fieldset
-                input(name="repeat_new_password", type="password", placeholder="Confirm password")
+                .input-prepend
+                  span.add-on
+                    i.icon-lock
+                  input(name="repeat_new_password", type="password", placeholder="Confirm password")
               input(type="submit" value="Change Password").btn
             hr
             h2 Two factor authentication

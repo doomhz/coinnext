@@ -29,7 +29,9 @@ $red = #da4444
   a
     display block
     clearfix()
-    padding 10px
+    height 29px
+    padding 6px
+    margin 3px
 
 .market-ticker-coins
   ul
@@ -46,21 +48,20 @@ $red = #da4444
   clearfix()
   border-bottom 1px solid #ecedef
   border-top 1px solid #ecedef
-  
+  position relative
   cursor pointer
-  height 38px
   margin-bottom -1px
   margin-top -1px
   &.active
-    color #fff
-    margin 4px 3px
-    border-radius 1px
-    border 0
-    background $blue
-    font-weight bold
-    .rate
-    &:hover
-      color #fff !important
+    a
+      color #fff
+      border-radius 1px
+      border 0
+      background $blue
+      font-weight bold
+      .rate
+      &:hover
+        color #fff !important
   &:hover
     color $blue
   &.up
