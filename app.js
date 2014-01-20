@@ -92,3 +92,4 @@ require('./routes/wallets')(app);
 require('./routes/payments')(app);
 require('./routes/transactions')(app);
 require('./routes/orders')(app);
+require('./routes/chat')(app);

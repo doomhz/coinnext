@@ -1,5 +1,6 @@
 //= require vendor/jquery-1.10.2
 //= require vendor/underscore
+//= require vendor/underscore.string
 //= require vendor/backbone
 //= require vendor/qrcode
 //= require vendor/ba-tiny-pubsub
@@ -26,7 +27,12 @@
 //= require app/views/trade
 //= require app/views/orders
 
+//= require chat/models/chat_message
+//= require chat/collections/chat_messages
+//= require chat/views/chat
+
 //= require app/error_logger
 
 //= require auth_bootstrap
 //= require app_bootstrap
+//= require chat_bootstrap

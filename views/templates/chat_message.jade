@@ -1,0 +1,3 @@
+script(type="text/template", id="chat-message-tpl")
+  li(class="message <%= message.get('username') === 'admin' ? 'admin' : '' %>")
+    span(class="sender", data-username="<%= message.get('username') %>") <%= _.str.truncate(message.get('username'), 10) %>: <%= _.str.escapeHTML(message.get('message')) %>

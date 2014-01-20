@@ -3,9 +3,10 @@ _ = require "underscore"
 JsonRenderer =
 
   user: (user)->
-    id:      user.id
-    email:   user.email
-    created: user.created
+    id:         user.id
+    email:      user.email
+    username:   user.email.substr 0, user.email.indexOf("@")
+    created:    user.created
     gauth_data: user.gauth_data
 
   wallet: (wallet)->

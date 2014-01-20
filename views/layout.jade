@@ -27,5 +27,7 @@ html(lang='en')
     block content
     include site/_footer
 
+    include templates/chat_message
+
     script(src="/socket.io/socket.io.js")
     != js('application')
