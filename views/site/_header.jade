@@ -10,7 +10,7 @@ header.page-head
           li: a(href='/funds', class=(title === 'Funds' ? 'active' : '')) Funds
           li.dropdown
             a(href="/settings", class=(page === 'Settings' ? 'active' : '')).dropdown-toggle
-              | addischol@gmail.com
+              | #{user.email}
               .caret
             ul.dropdown-menu
               li: a(href="/settings") Settings
