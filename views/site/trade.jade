@@ -143,20 +143,21 @@ block content
                       button Sell #{wallet1.currency}
 
         // Open Orders
-        section#open-orders.container
-          .con-header
-            h3.con-header-title Open Orders
-          .table-wrap
-            table.trade-data
-              thead
-                tr
-                  th Date
-                  th Type
-                  th Price
-                  th #{wallet1.currency}
-                  th #{wallet2.currency}
-                  th Action
-              tbody#open-orders-cnt(data-currency1="#{wallet1.currency}", data-currency2="#{wallet2.currency}")
+        - if (user)
+          section#open-orders.container
+            .con-header
+              h3.con-header-title Open Orders
+            .table-wrap
+              table.trade-data
+                thead
+                  tr
+                    th Date
+                    th Type
+                    th Price
+                    th #{wallet1.currency}
+                    th #{wallet2.currency}
+                    th Action
+                tbody#open-orders-cnt(data-currency1="#{wallet1.currency}", data-currency2="#{wallet2.currency}")
         
         // Order Book
         section#order-book.wrap

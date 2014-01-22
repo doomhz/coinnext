@@ -39,16 +39,12 @@
       }
     });
     app.get("/orders", function(req, res) {
-      if (req.user) {
-        return Order.findByOptions(req.query, function(err, orders) {
-          if (err) {
-            return JsonRenderer.error("Sorry, could not get open orders...", res);
-          }
-          return res.json(JsonRenderer.orders(orders));
-        });
-      } else {
-        return JsonRenderer.error("Please auth.", res);
-      }
+      return Order.findByOptions(req.query, function(err, orders) {
+        if (err) {
+          return JsonRenderer.error("Sorry, could not get open orders...", res);
+        }
+        return res.json(JsonRenderer.orders(orders));
+      });
     });
     return app.del("/orders/:id", function(req, res) {
       if (req.user) {

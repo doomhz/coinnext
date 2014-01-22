@@ -21,12 +21,9 @@ module.exports = (app)->
       JsonRenderer.error "Please auth.", res
 
   app.get "/orders", (req, res)->
-    if req.user
-      Order.findByOptions req.query, (err, orders)->
-        return JsonRenderer.error "Sorry, could not get open orders...", res  if err
-        res.json JsonRenderer.orders orders
-    else
-      JsonRenderer.error "Please auth.", res
+    Order.findByOptions req.query, (err, orders)->
+      return JsonRenderer.error "Sorry, could not get open orders...", res  if err
+      res.json JsonRenderer.orders orders
 
   app.del "/orders/:id", (req, res)->
     if req.user
