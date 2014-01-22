@@ -20,18 +20,30 @@ module.exports = (app)->
     currencies = Wallet.getCurrencies()
     return res.redirect "/"  if currencies.indexOf(currency1) is -1 or currencies.indexOf(currency2) is -1
     MarketStats.getStats (err, marketStats)->
-      Wallet.findUserWalletByCurrency req.user.id, currency1, (err, wallet1)->
-        Wallet.findUserWalletByCurrency req.user.id, currency2, (err, wallet2)->
-          res.redirect "/funds"  if not wallet1 or not wallet2
-          res.render "site/trade",
-            title: "Trade #{currency1} to #{currency2}"
-            user: req.user
-            currency1: currency1
-            currency2: currency2
-            wallet1: wallet1
-            wallet2: wallet2
-            currencies: Wallet.getCurrencyNames()
-            marketStats: marketStats
+      if req.user
+        Wallet.findUserWalletByCurrency req.user.id, currency1, (err, wallet1)->
+          Wallet.findUserWalletByCurrency req.user.id, currency2, (err, wallet2)->
+            res.redirect "/funds"  if not wallet1 or not wallet2
+            res.render "site/trade",
+              title: "Trade #{currency1} to #{currency2}"
+              user: req.user
+              currency1: currency1
+              currency2: currency2
+              wallet1: wallet1
+              wallet2: wallet2
+              currencies: Wallet.getCurrencyNames()
+              marketStats: marketStats
+      else
+        res.render "site/trade",
+          title: "Trade #{currency1} to #{currency2}"
+          currency1: currency1
+          currency2: currency2
+          wallet1: new Wallet
+            currency: currency1
+          wallet2: new Wallet
+            currency: currency2
+          currencies: Wallet.getCurrencyNames()
+          marketStats: marketStats
 
   app.get "/funds", (req, res)->
     Wallet.findUserWallets req.user.id, (err, wallets)->
