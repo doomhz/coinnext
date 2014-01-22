@@ -72,7 +72,7 @@ class App.TradeView extends App.MasterView
     $result = $("#buy-amount-result")
     if _.isNumber(spendAmount) and not _.isNaN(spendAmount)
       fee = parseFloat $result.data("fee")
-      lastPrice = @model.get("#{@currency1}_#{@currency2}").last_price
+      lastPrice = 0.02776 #@model.get("#{@currency1}_#{@currency2}").last_price
       total = _.str.roundToThree spendAmount / lastPrice - fee
       #console.log spendAmount, fee, lastPrice, total
       $result.text total
@@ -85,7 +85,7 @@ class App.TradeView extends App.MasterView
     $result = $("#sell-amount-result")
     if _.isNumber(spendAmount) and not _.isNaN(spendAmount)
       fee = parseFloat $result.data("fee")
-      lastPrice = @model.get("#{@currency1}_#{@currency2}").last_price
+      lastPrice = 0.02776 #@model.get("#{@currency1}_#{@currency2}").last_price
       total = _.str.roundToThree spendAmount * lastPrice - fee
       #console.log spendAmount, fee, lastPrice, total
       $result.text total

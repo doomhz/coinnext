@@ -2,7 +2,7 @@
   var MarketStats, MarketStatsSchema, exports;
 
   MarketStatsSchema = new Schema({
-    BTC_LTC: {
+    LTC_BTC: {
       label: {
         type: String,
         "default": "LTC"
@@ -36,7 +36,7 @@
         "default": 0
       }
     },
-    BTC_PPC: {
+    PPC_BTC: {
       label: {
         type: String,
         "default": "PPC"
@@ -82,14 +82,14 @@
       if (!marketStats) {
         return MarketStats.create({}, function(err, marketStats) {
           return callback(err, {
-            BTC_LTC: marketStats.BTC_LTC,
-            BTC_PPC: marketStats.BTC_PPC
+            LTC_BTC: marketStats.LTC_BTC,
+            PPC_BTC: marketStats.PPC_BTC
           });
         });
       } else {
         return callback(err, {
-          BTC_LTC: marketStats.BTC_LTC,
-          BTC_PPC: marketStats.BTC_PPC
+          LTC_BTC: marketStats.LTC_BTC,
+          PPC_BTC: marketStats.PPC_BTC
         });
       }
     });

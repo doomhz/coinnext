@@ -12,7 +12,7 @@ module.exports = (app)->
         currencies: Wallet.getCurrencyNames()
 
   app.get "/trade", (req, res)->
-    res.redirect "/trade/BTC/LTC"
+    res.redirect "/trade/LTC/BTC"
 
   app.get "/trade/:currency1/:currency2", (req, res)->
     currency1 = req.params.currency1

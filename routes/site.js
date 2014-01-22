@@ -17,7 +17,7 @@
       });
     });
     app.get("/trade", function(req, res) {
-      return res.redirect("/trade/BTC/LTC");
+      return res.redirect("/trade/LTC/BTC");
     });
     app.get("/trade/:currency1/:currency2", function(req, res) {
       var currencies, currency1, currency2;

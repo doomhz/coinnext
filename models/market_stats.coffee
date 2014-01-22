@@ -1,5 +1,5 @@
 MarketStatsSchema = new Schema
-  BTC_LTC:
+  LTC_BTC:
     label:
       type: String
       default: "LTC"
@@ -24,7 +24,7 @@ MarketStatsSchema = new Schema
     growth_ratio:
       type: Number
       default: 0
-  BTC_PPC:
+  PPC_BTC:
     label:
       type: String
       default: "PPC"
@@ -57,12 +57,12 @@ MarketStatsSchema.statics.getStats = (callback = ()->)->
     if not marketStats
       MarketStats.create {}, (err, marketStats)->
         callback err,
-          BTC_LTC: marketStats.BTC_LTC
-          BTC_PPC: marketStats.BTC_PPC
+          LTC_BTC: marketStats.LTC_BTC
+          PPC_BTC: marketStats.PPC_BTC
     else
       callback err,
-          BTC_LTC: marketStats.BTC_LTC
-          BTC_PPC: marketStats.BTC_PPC
+          LTC_BTC: marketStats.LTC_BTC
+          PPC_BTC: marketStats.PPC_BTC
 
 MarketStats = mongoose.model "MarketStats", MarketStatsSchema
 exports = module.exports = MarketStats
