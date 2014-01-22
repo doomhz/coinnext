@@ -2,6 +2,7 @@ class App.TradeView extends App.MasterView
 
   events:
     "click .market-switcher": "onMarketSwitch"
+    "click .header-balance .amount": "onAmountClick"
     "submit .order-form": "onOrderSubmit"
 
   initialize: ()->
@@ -31,3 +32,8 @@ class App.TradeView extends App.MasterView
         $form.find("[name='unit_price']").val ""
       error: (m, xhr)->
         $.publish "error", xhr
+
+  onAmountClick: (ev)->
+    ev.preventDefault()
+    $target = $(ev.target)
+    @$("##{$target.data('type')}-amount-input").val($target.data('amount'))
