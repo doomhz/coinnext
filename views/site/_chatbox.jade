@@ -1,5 +1,8 @@
 #globalchat.chatbox
   ul#messages-list.message-list
   .message-post
-    input#chat-message-box(type="text", placeholder="Type here to chat...").chat-message-input
-    button#send-message-bt Send
+    - if (user)
+      input#chat-message-box(type="text", placeholder="Type here to chat...").chat-message-input
+      button#send-message-bt Send
+    - else
+      p.login-required You need to be logged in to chat. <a href="/login">Login</a>
