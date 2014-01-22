@@ -1,26 +1,14 @@
 extends ../layout
 
 block content
-  #trade.main-content(role='main')
+  #trade.main-content(role='main', data-currency1="#{wallet1.currency}", data-currency2="#{wallet2.currency}")
     .wrapper
       .col-left
         include _market-ticker
       .col-right
         - var coinStats = marketStats[currency1 + "_" + currency2];
-        .coin-stats
-          table.trade-data
-            tr.last-price
-              th Last Price:
-              td #{coinStats.last_price} #{currency1} <span class="change down">#{coinStats.growth_ratio}%</span>
-            tr.high-price
-              th 24hr High:
-              td #{coinStats.day_high} #{currency1}
-            tr.low-price
-              th 24hr Low:
-              td #{coinStats.day_low} #{currency1}
-            tr.volume
-              th Volume:
-              td #{coinStats.volume2} #{currency2} / #{coinStats.volume1} #{currency1}
+        #coin-stats.coin-stats
+        
         include _chatbox
 
       .col-center
@@ -51,18 +39,18 @@ block content
                     input(name="buy_currency", type="hidden", value="#{wallet1.currency}")
                     label I want to Spend:
                     .currency-input
-                      input(type="text", name="amount", id="buy-amount-input")
+                      input(type="text", name="amount", id="buy-amount-input", autocomplete="off")
                       .overlay-amount #{wallet2.currency}
                     table.order-overview
                       tr.subtotal
                         th Total:
-                        td <span class="amount">#{wallet1.balance} #{wallet2.currency}</span>
+                        td <span class="amount">#{wallet2.balance} #{wallet2.currency}</span>
                       tr.fee
                         th Fee:
-                        td <span class="amount">0.002 #{wallet2.currency}</span>
+                        td <span class="amount">#{wallet2.fee} #{wallet2.currency}</span>
                       tr.to-receive
                         th Approx. #{wallet1.currency} to receive:
-                        td <span class="amount">0 #{wallet1.currency}</span>
+                        td <span id="buy-amount-result" class="amount" data-fee="#{wallet2.fee}">0</span> #{wallet1.currency}
                     .confirm-order
                       button Buy #{wallet1.currency}
                 #limit-buy-box.limit-order
@@ -127,7 +115,7 @@ block content
                     input(name="buy_currency", type="hidden", value="#{wallet1.currency}")
                     label I want to Sell:
                     .currency-input
-                      input(type="text", name="amount", id="sell-amount-input")
+                      input(type="text", name="amount", id="sell-amount-input", autocomplete="off")
                       .overlay-amount #{wallet1.currency}
                     table.order-overview
                       tr.subtotal 
@@ -135,10 +123,10 @@ block content
                         td <span class="amount">#{wallet1.balance} #{wallet1.currency}</span>
                       tr.fee
                         th Fee:
-                        td <span class="amount">0 #{wallet1.currency}</span>
+                        td <span class="amount">#{wallet1.fee} #{wallet1.currency}</span>
                       tr.to-receive
                         th Approx. #{wallet2.currency} to receive:
-                        td <span class="amount">0 #{wallet2.currency}</span>
+                        td <span id="sell-amount-result" class="amount" data-fee="#{wallet2.fee}">0</span> #{wallet2.currency}
                     .confirm-order
                       button Sell #{wallet1.currency}
 
@@ -203,6 +191,8 @@ block content
                   th #{wallet2.currency}
               tbody#closed-orders-cnt(data-currency1="#{wallet1.currency}", data-currency2="#{wallet2.currency}")
 
+  include ../templates/market_ticker
+  include ../templates/coin_stats
   include ../templates/open_order
   include ../templates/site_open_order
   include ../templates/site_closed_order

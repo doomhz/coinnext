@@ -2,6 +2,9 @@ $(document).ready ()->
 
   $.tmpload.defaults.tplWrapper = _.template
 
+  _.str.roundToThree = (number)->
+    Math.round(parseFloat(number) * 1000) / 1000
+
   errorLogger = new App.ErrorLogger
 
   user = new App.UserModel
@@ -93,6 +96,9 @@ $(document).ready ()->
   if $trade.length
     trade = new App.TradeView
       el: $trade
+      model: new App.MarketStatsModel
+      currency1: $trade.data "currency1"
+      currency2: $trade.data "currency2"
     trade.render()
 
     $openOrders = $("#open-orders-cnt")

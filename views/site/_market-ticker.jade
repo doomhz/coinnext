@@ -3,15 +3,7 @@
     .con-header
       h2.con-header-title Exchange / BTC
       // a(href='').edit-ticker <i class='icon-list-ul'></i>
-    nav.market-ticker-coins
-      ul
-        - each info, type in marketStats
-          li(class="market-ticker-coin #{info.growth ? 'up' : 'down'}")
-            // a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
-            a(href="/trade/#{type.replace('_', '/')}")
-              .label #{info.label}
-              .rate #{info.last_price}
-              .move-coin <i class="icon-reorder"></i>
+    nav#market-ticker.market-ticker-coins
 
     .add-coin
       select

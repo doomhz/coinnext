@@ -14,6 +14,7 @@
 //= require app/models/payment
 //= require app/models/transaction
 //= require app/models/order
+//= require app/models/market_stats
 
 //= require app/collections/wallets
 //= require app/collections/transactions

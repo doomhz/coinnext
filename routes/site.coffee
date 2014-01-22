@@ -67,6 +67,11 @@ module.exports = (app)->
         else
           res.redirect "/"
 
+  app.get "/market_stats", (req, res)->
+    MarketStats.getStats (err, marketStats)->
+      res.json marketStats
+
+
   # Settings
   app.get "/settings", (req, res)->
     res.render "site/settings/settings",

@@ -35,6 +35,10 @@
       "default": 0,
       index: true
     },
+    fee: {
+      type: Number,
+      "default": 0.002
+    },
     created:  ({
       type: Date ,
       "default": Date.now ,

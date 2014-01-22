@@ -93,6 +93,11 @@
         });
       });
     });
+    app.get("/market_stats", function(req, res) {
+      return MarketStats.getStats(function(err, marketStats) {
+        return res.json(marketStats);
+      });
+    });
     app.get("/settings", function(req, res) {
       return res.render("site/settings/settings", {
         title: 'Settings',
