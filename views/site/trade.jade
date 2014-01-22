@@ -34,7 +34,7 @@ block content
             #buy-box.order-box
               .con-header
                 h3.con-header-title Buy #{wallet1.currency}
-                .header-balance <a href="/funds/#{wallet2.currency}" class="amount">#{wallet2.balance} #{wallet2.currency}</a> Available
+                .header-balance <a href="#{wallet2.user_id ? '/funds/' + wallet2.currency : '/signup'}" class="amount">#{wallet2.balance} #{wallet2.currency}</a> Available
               .order-box-body
                 .market-type
                   label
@@ -90,7 +90,7 @@ block content
             #sell-box.order-box
               .con-header
                 h3.con-header-title Sell #{wallet1.currency}
-                .header-balance <a href="/funds/#{wallet2.currency}" class="amount">#{wallet1.balance} #{wallet1.currency}</a> Available
+                .header-balance <a href="#{wallet1.user_id ? '/funds/' + wallet1.currency : '/signup'}" class="amount">#{wallet1.balance} #{wallet1.currency}</a> Available
               .order-box-body
                 .market-type
                   label

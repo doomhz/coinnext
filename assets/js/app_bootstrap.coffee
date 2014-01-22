@@ -104,7 +104,7 @@ $(document).ready ()->
         currency1: $openOrders.data "currency1"
         currency2: $openOrders.data "currency2"
         userId: CONFIG.currentUser.id
-    openOrders.render()
+    openOrders.render()  if CONFIG.currentUser.id
 
     $openSellOrders = $("#open-sell-orders-cnt")
     openSellOrders = new App.OrdersView
@@ -115,7 +115,7 @@ $(document).ready ()->
         action: "sell"
         currency1: $openSellOrders.data "currency1"
         currency2: $openSellOrders.data "currency2"
-    openSellOrders.render()
+    openSellOrders.render()  if CONFIG.currentUser.id
 
     $openBuyOrders = $("#open-buy-orders-cnt")
     openBuyOrders = new App.OrdersView
@@ -126,7 +126,7 @@ $(document).ready ()->
         action: "buy"
         currency1: $openBuyOrders.data "currency1"
         currency2: $openBuyOrders.data "currency2"
-    openBuyOrders.render()
+    openBuyOrders.render()  if CONFIG.currentUser.id
 
     $closedOrders = $("#closed-orders-cnt")
     closedOrders = new App.OrdersView
@@ -136,5 +136,5 @@ $(document).ready ()->
         type: "closed"
         currency1: $openBuyOrders.data "currency1"
         currency2: $openBuyOrders.data "currency2"
-    closedOrders.render()
+    closedOrders.render()  if CONFIG.currentUser.id
 
