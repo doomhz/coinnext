@@ -37,16 +37,6 @@
                 <![endif]-->
                 <br /><br />
                 <div style= "font-family: Helvetica, Arial, sans-serif; font-size: 12px; color:#b3b3b1;">Or verify using this url: <a href= "{{verification_url}}" style= "color: #549cd5; text-decoration: underline;">{{verification_url}}</a></div>
-                <span itemscope itemtype="http://schema.org/EmailMessage">
-                  <meta itemprop="description" content="We need to confirm your email address." />
-                  <span itemprop="action" itemscope itemtype="http://schema.org/ConfirmAction">
-                    <meta itemprop="name" content="Confirm Email" />
-                    <span itemprop="handler" itemscope itemtype="http://schema.org/HttpActionHandler">
-                      <link itemprop="method" href="http://schema.org/HttpRequestMethod/POST" />
-                      <link itemprop="url" href="{{verification_url}}" />
-                    </span>
-                  </span>
-                </span>
                 <br /><br />
                 <span>Sincerely, The Coinnext Team</span>
                 <br /><br />
@@ -64,5 +54,14 @@
         </td>
       </tr>
     </table>
+    <div itemscope itemtype="http://schema.org/EmailMessage">
+      <meta itemprop="description" content="We need to confirm your email address."/>
+      <div itemprop="action" itemscope itemtype="http://schema.org/ConfirmAction">
+        <meta itemprop="name" content="Confirm Email"/>
+        <div itemprop="handler" itemscope itemtype="http://schema.org/HttpActionHandler">
+          <link itemprop="url" href="{{verification_url}}"/>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
