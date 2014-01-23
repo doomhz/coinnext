@@ -7,7 +7,11 @@ block content
       .auth-box
         h1 Account Verification
         - if (verified)
-          p Your account was successfully verified.
+          p.msg 
+            | Your account was successfully verified.
+            br
+            |  <a href="/">Return to home page.</a>
+
         - else
-          p Your account could not be verified.
+          p.msg Your account could not be verified.
           
