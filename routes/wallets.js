@@ -23,6 +23,32 @@
         return JsonRenderer.error("Please auth.", res);
       }
     });
+    app.put("/wallets/:id", function(req, res) {
+      if (req.user) {
+        return Wallet.findUserWallet(req.user.id, req.params.id, function(err, wallet) {
+          if (err) {
+            console.error(err);
+          }
+          if (err) {
+            return JsonRenderer.error("Wrong wallet.", res);
+          }
+          if (wallet.address) {
+            return res.json(JsonRenderer.wallet(wallet));
+          }
+          return wallet.generateAddress(function(err, wl) {
+            if (err) {
+              console.error(err);
+            }
+            if (err) {
+              return JsonRenderer.error("Could not generate address.", res);
+            }
+            return res.json(JsonRenderer.wallet(wl));
+          });
+        });
+      } else {
+        return JsonRenderer.error("Please auth.", res);
+      }
+    });
     return app.get("/wallets", function(req, res) {
       if (req.user) {
         return Wallet.findUserWallets(req.user.id, function(err, wallets) {

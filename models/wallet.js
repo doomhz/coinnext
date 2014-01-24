@@ -174,7 +174,9 @@
           if (err) {
             return callback(err, wallet);
           }
-          return wallet.generateAddress(callback);
+          return wallet.generateAddress(function(e, w) {
+            return Wallet.findUserWalletByCurrency(userId, currency, callback);
+          });
         });
       } else {
         return callback(err, existentWallet);

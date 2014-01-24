@@ -107,7 +107,8 @@ WalletSchema.statics.findOrCreateUserWalletByCurrency = (userId, currency, callb
         currency: currency
       newWallet.save (err, wallet)->
         return callback err, wallet  if err
-        wallet.generateAddress callback
+        wallet.generateAddress (e, w)->
+          Wallet.findUserWalletByCurrency userId, currency, callback
     else
       callback err, existentWallet
 

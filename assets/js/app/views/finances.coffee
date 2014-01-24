@@ -2,8 +2,8 @@ class App.FinancesView extends App.MasterView
 
   events:
     "submit #add-wallet-form": "onAddWallet"
-    "click .deposit-bt": "onDeposit"
     "click #show-qr-bt": "onShowQrAddress"
+    "click #generate-address": "onGenerateAddress"
     "submit #withdraw-form": "onPay"
 
   initialize: ()->
@@ -14,8 +14,13 @@ class App.FinancesView extends App.MasterView
 
   renderCopyButton: ()->
     $copyButton = @$("#copy-address")
-    new ZeroClipboard $copyButton[0],
-      moviePath: "#{window.location.origin}/ZeroClipboard.swf"
+    $showQrBt = @$("#show-qr-bt")
+    if $copyButton.length and $copyButton.data("clipboard-text").length
+      new ZeroClipboard $copyButton[0],
+        moviePath: "#{window.location.origin}/ZeroClipboard.swf"
+    else
+      $copyButton.hide()
+      $showQrBt.hide()
 
   renderQrAddress: ($qrCnt)->
     $qrCnt.empty()
@@ -32,16 +37,6 @@ class App.FinancesView extends App.MasterView
       error: (m, xhr)->
         $.publish "error", xhr
 
-  onDeposit: (ev)->
-    ev.preventDefault()
-    $target = $(ev.target)
-    wallet = @collection.get $target.data "id"
-    wallet.save {address: "pending"},
-      success: ()=>
-        @renderWallet wallet
-      error: (m, xhr)->
-        $.publish "error", xhr
-
   onShowQrAddress: (ev)->
     ev.preventDefault()
     $qrCnt = @$("#qr-address-cnt")
@@ -49,6 +44,29 @@ class App.FinancesView extends App.MasterView
       @renderQrAddress $qrCnt
     else
       $qrCnt.toggle()
+
+  onGenerateAddress: (ev)->
+    ev.preventDefault()
+    $target = $(ev.target)
+    wallet = new App.WalletModel
+      id: $target.data "id"
+    wallet.save {address: "pending"},
+      success: ()=>
+        $copyButton = @$("#copy-address")
+        $addressRow = @$("#address-row")
+        $qrAddressCnt = @$("#qr-address-cnt")
+        $showQrBt = @$("#show-qr-bt")
+        $copyButton.attr "data-clipboard-text", wallet.get("address")
+        $copyButton.data "clipboard-text", wallet.get("address")
+        $addressRow.text wallet.get("address")
+        $qrAddressCnt.attr "data-address", wallet.get("address")
+        $qrAddressCnt.data "address", wallet.get("address")
+        $copyButton.show()
+        $showQrBt.show()
+        @renderCopyButton()
+        @$("#generate-address").remove()
+      error: (m, xhr)->
+        $.publish "error", xhr    
 
   onPay: (ev)->
     ev.preventDefault()

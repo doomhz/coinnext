@@ -13,6 +13,19 @@ module.exports = (app)->
     else
       JsonRenderer.error "Please auth.", res
 
+  app.put "/wallets/:id", (req, res)->
+    if req.user
+      Wallet.findUserWallet req.user.id, req.params.id, (err, wallet)->
+        console.error err  if err
+        return JsonRenderer.error "Wrong wallet.", res  if err
+        return res.json JsonRenderer.wallet wallet  if wallet.address
+        wallet.generateAddress (err, wl)->
+          console.error err  if err
+          return JsonRenderer.error "Could not generate address.", res  if err
+          res.json JsonRenderer.wallet wl
+    else
+      JsonRenderer.error "Please auth.", res
+
   app.get "/wallets", (req, res)->
     if req.user
       Wallet.findUserWallets req.user.id, (err, wallets)->
