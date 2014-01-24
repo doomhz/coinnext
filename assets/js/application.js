@@ -3,6 +3,7 @@
 //= require vendor/underscore.string
 //= require vendor/backbone
 //= require vendor/qrcode
+//= require vendor/pace.min
 //= require vendor/ba-tiny-pubsub
 //= require vendor/jquery.validate
 //= require vendor/jquery.tmpload
