@@ -18,7 +18,7 @@ module.exports = (app)->
               return JsonRenderer.error "Sorry, could not open an order...", res  if err
               res.json JsonRenderer.order order
     else
-      JsonRenderer.error "Please auth.", res
+      JsonRenderer.error "You need to be logged in to place an order.", res
 
   app.get "/orders", (req, res)->
     Order.findByOptions req.query, (err, orders)->
@@ -34,4 +34,4 @@ module.exports = (app)->
             order.remove ()->
               res.json JsonRenderer.orders order
     else
-      JsonRenderer.error "Please auth.", res
+      JsonRenderer.error "You need to be logged in to place an order.", res

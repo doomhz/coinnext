@@ -39,7 +39,7 @@ div.ie6.center {
 
 /** Normal Style Positions **/
 div.jGrowl {
-  position:     absolute;
+  position:     fixed;
 }
 
 div.jGrowl.top-left {
@@ -49,7 +49,7 @@ div.jGrowl.top-left {
 
 div.jGrowl.top-right {
   right:        0px;
-  top:        60px;
+  top:        0px;
 }
 
 div.jGrowl.bottom-left {

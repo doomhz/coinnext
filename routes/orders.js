@@ -35,7 +35,7 @@
           });
         });
       } else {
-        return JsonRenderer.error("Please auth.", res);
+        return JsonRenderer.error("You need to be logged in to place an order.", res);
       }
     });
     app.get("/orders", function(req, res) {
@@ -64,7 +64,7 @@
           });
         });
       } else {
-        return JsonRenderer.error("Please auth.", res);
+        return JsonRenderer.error("You need to be logged in to place an order.", res);
       }
     });
   };

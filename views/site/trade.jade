@@ -52,7 +52,7 @@ block content
                         th Approx. #{wallet1.currency} to receive:
                         td <span id="buy-amount-result" class="amount" data-fee="#{wallet2.fee}">0</span> #{wallet1.currency}
                     .confirm-order
-                      button Buy #{wallet1.currency}
+                      button Buy #{wallet1.currency_name}
                 #limit-buy-box.limit-order
                   form#limit-buy-form.order-form
                     input(name="type", type="hidden", value="limit")
@@ -72,7 +72,7 @@ block content
                         th Total:
                         td <span class="amount">#{wallet2.balance} #{wallet2.currency}</span>
                     .confirm-order
-                      button Buy #{wallet1.currency}
+                      button Buy #{wallet1.currency_name}
 
           .two-col-wrap
             #sell-box.order-box
@@ -106,7 +106,7 @@ block content
                         th Total:
                         td <span class="amount">#{wallet2.balance} #{wallet2.currency}</span>
                     .confirm-order
-                      button Sell #{wallet1.currency}
+                      button Sell #{wallet1.currency_name}
                 #market-sell-box.market-order
                   form#market-sell-form.order-form
                     input(name="type", type="hidden", value="market")
@@ -128,7 +128,7 @@ block content
                         th Approx. #{wallet2.currency} to receive:
                         td <span id="sell-amount-result" class="amount" data-fee="#{wallet2.fee}">0</span> #{wallet2.currency}
                     .confirm-order
-                      button Sell #{wallet1.currency}
+                      button Sell #{wallet1.currency_name}
 
         // Open Orders
         - if (user)
