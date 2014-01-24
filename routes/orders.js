@@ -1,5 +1,5 @@
 (function() {
-  var JsonRenderer, Order, Wallet;
+  var JsonRenderer, Order, Wallet, _;
 
   Order = require("../models/order");
 
@@ -7,33 +7,43 @@
 
   JsonRenderer = require("../lib/json_renderer");
 
+  _ = require("underscore");
+
   module.exports = function(app) {
+    var isValidTradeAmount;
     app.post("/orders", function(req, res) {
       var data;
       if (req.user) {
-        data = req.body;
-        data.user_id = req.user.id;
-        return Wallet.findUserWalletByCurrency(req.user.id, data.buy_currency, function(err, buyWallet) {
-          if (err || !buyWallet) {
-            return JsonRenderer.error("Wallet " + data.buy_currency + " does not exist.", res);
+        if (req.user.canTrade()) {
+          data = req.body;
+          data.user_id = req.user.id;
+          if (!isValidTradeAmount(data.amount)) {
+            return JsonRenderer.error("Please submit a valid amount bigger than 0.", res);
           }
-          return Wallet.findUserWalletByCurrency(req.user.id, data.sell_currency, function(err, wallet) {
-            if (err || !wallet) {
-              return JsonRenderer.error("Wallet " + data.sell_currency + " does not exist.", res);
+          return Wallet.findOrCreateUserWalletByCurrency(req.user.id, data.buy_currency, function(err, buyWallet) {
+            if (err || !buyWallet) {
+              return JsonRenderer.error("Wallet " + data.buy_currency + " does not exist.", res);
             }
-            return wallet.holdBalance(parseFloat(data.amount), function(err, wallet) {
+            return Wallet.findOrCreateUserWalletByCurrency(req.user.id, data.sell_currency, function(err, wallet) {
               if (err || !wallet) {
-                return JsonRenderer.error("Not enough " + data.sell_currency + " to open an order.", res);
+                return JsonRenderer.error("Wallet " + data.sell_currency + " does not exist.", res);
               }
-              return Order.create(data, function(err, order) {
-                if (err) {
-                  return JsonRenderer.error("Sorry, could not open an order...", res);
+              return wallet.holdBalance(parseFloat(data.amount), function(err, wallet) {
+                if (err || !wallet) {
+                  return JsonRenderer.error("Not enough " + data.sell_currency + " to open an order.", res);
                 }
-                return res.json(JsonRenderer.order(order));
+                return Order.create(data, function(err, order) {
+                  if (err) {
+                    return JsonRenderer.error("Sorry, could not open an order...", res);
+                  }
+                  return res.json(JsonRenderer.order(order));
+                });
               });
             });
           });
-        });
+        } else {
+          return JsonRenderer.error("Sorry, but you can not trade. Did you verify your account?", res);
+        }
       } else {
         return JsonRenderer.error("Please auth.", res);
       }
@@ -46,7 +56,7 @@
         return res.json(JsonRenderer.orders(orders));
       });
     });
-    return app.del("/orders/:id", function(req, res) {
+    app.del("/orders/:id", function(req, res) {
       if (req.user) {
         return Order.findOne({
           user_id: req.user.id,
@@ -67,6 +77,9 @@
         return JsonRenderer.error("Please auth.", res);
       }
     });
+    return isValidTradeAmount = function(amount) {
+      return _.isNumber(amount) && !_.isNaN(amount) && amount > 0;
+    };
   };
 
 }).call(this);

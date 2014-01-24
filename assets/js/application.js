@@ -27,6 +27,7 @@
 //= require app/views/transactions_history
 //= require app/views/trade
 //= require app/views/orders
+//= require app/views/market_ticker
 
 //= require chat/models/chat_message
 //= require chat/collections/chat_messages

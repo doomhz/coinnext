@@ -19,6 +19,13 @@ $(document).ready ()->
         $.get $qrGenBt.attr("href"), ()->
           window.location.reload()
 
+  $marketTicker = $("#market-ticker")
+  if $marketTicker.length
+    marketTicker = new App.MarketTickerView
+      el: $marketTicker
+      model: new App.MarketStatsModel
+    marketTicker.render()
+
   # Funds page
   $finances = $("#finances")
   if $finances.length

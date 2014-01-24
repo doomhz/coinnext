@@ -159,6 +159,29 @@
     }, callback);
   };
 
+  WalletSchema.statics.findOrCreateUserWalletByCurrency = function(userId, currency, callback) {
+    if (callback == null) {
+      callback = function() {};
+    }
+    return Wallet.findUserWalletByCurrency(userId, currency, function(err, existentWallet) {
+      var newWallet;
+      if (!existentWallet) {
+        newWallet = new Wallet({
+          user_id: userId,
+          currency: currency
+        });
+        return newWallet.save(function(err, wallet) {
+          if (err) {
+            return callback(err, wallet);
+          }
+          return wallet.generateAddress(callback);
+        });
+      } else {
+        return callback(err, existentWallet);
+      }
+    });
+  };
+
   WalletSchema.statics.findUserWallets = function(userId, callback) {
     if (callback == null) {
       callback = function() {};

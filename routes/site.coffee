@@ -22,8 +22,13 @@ module.exports = (app)->
     MarketStats.getStats (err, marketStats)->
       if req.user
         Wallet.findUserWalletByCurrency req.user.id, currency1, (err, wallet1)->
+          if not wallet1
+            wallet1 = new Wallet
+              currency: currency1
           Wallet.findUserWalletByCurrency req.user.id, currency2, (err, wallet2)->
-            res.redirect "/funds"  if not wallet1 or not wallet2
+            if not wallet2
+              wallet2 = new Wallet
+                currency: currency2
             res.render "site/trade",
               title: "Trade #{currency1} to #{currency2}"
               user: req.user

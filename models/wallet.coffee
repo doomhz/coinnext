@@ -99,6 +99,18 @@ WalletSchema.statics.getCurrencyNames = ()->
 WalletSchema.statics.findUserWalletByCurrency = (userId, currency, callback = ()->)->
   Wallet.findOne {user_id: userId, currency: currency}, callback
 
+WalletSchema.statics.findOrCreateUserWalletByCurrency = (userId, currency, callback = ()->)->
+  Wallet.findUserWalletByCurrency userId, currency, (err, existentWallet)->
+    if not existentWallet
+      newWallet = new Wallet
+        user_id: userId
+        currency: currency
+      newWallet.save (err, wallet)->
+        return callback err, wallet  if err
+        wallet.generateAddress callback
+    else
+      callback err, existentWallet
+
 WalletSchema.statics.findUserWallets = (userId, callback = ()->)->
   Wallet.find({user_id: userId}).sort({created: "desc"}).exec callback
 
