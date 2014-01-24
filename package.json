@@ -10,7 +10,7 @@
     "express": "~>3"
     , "mongoose": "latest"
     , "stylus": "latest"
-    , "jade": "<1.0"
+    , "jade": "latest"
     , "coffee-script": "latest"
     , "connect-assets": "2.x"
     , "gzippo": "latest"

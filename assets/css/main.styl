@@ -14,6 +14,9 @@ $bgcolor = #f6f7f8
 
 @import 'framework'
 
+html
+  background #0a1527
+
 body
   min-width 1000px
   background $bgcolor
@@ -38,6 +41,19 @@ video
 
 textarea
   resize vertical
+
+/* Pace */
+.pace .pace-progress
+  background $blue
+  position absolute
+  z-index 2000
+  top 49px
+  left 0
+  height 2px
+  transition width 1s
+
+.pace-inactive
+  display none
 
 /* Header */
 .page-head
@@ -123,7 +139,6 @@ textarea
       btn($teal)
       height 25px
       line-height 25px
-      border-radius 1px
       margin 12px 5px
       padding 0 20px
       font-size 12px
@@ -156,7 +171,7 @@ hr
 .col-main
   margin-left 260px
 
-@media only screen and (max-width: 1024px) and (min-width: 768px)
+@media only screen and (max-width: 768px)
   .col-aside
     float: none
     width: 100%

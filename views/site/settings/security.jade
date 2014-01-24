@@ -12,9 +12,8 @@ block content
       .col-main
         .container
           .con-header
-            h1.con-header-title Security
+            h1.con-header-title Change Password
           .con-body
-            h2 Change Password
             form#set-new-pass-form(action="/set-new-password", method="post")
               #error-cnt
               #notice-cnt
@@ -33,9 +32,15 @@ block content
                   span.add-on
                     i.icon-lock
                   input(name="repeat_new_password", type="password", placeholder="Confirm password")
-              input(type="submit" value="Change Password").btn
-            hr
-            h2 Two factor authentication
+              fieldset.actions
+                input(type="submit" value="Change Password").btn
+                span 
+                  a(href="/send-password") Lost your password?
+        
+        .container
+          .con-header
+            h1.con-header-title Two-factor authentication
+          .con-body
             p 
               | We offer Google Authenticator as an extra security layer when logging in.
               | <br /> Enabling two-factor authentication greatly increases the security of your account.

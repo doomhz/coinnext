@@ -1,5 +1,5 @@
 /**
- * jGrowl 1.2.10
+ * jGrowl 1.2.12
  *
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
@@ -13,6 +13,17 @@
  *
  * To Do:
  * - Move library settings to containers and allow them to be changed per container
+ *
+ * Changes in 1.2.13
+ * - Fixed clearing interval when the container shuts down
+ *
+ * Changes in 1.2.12
+ * - Added compressed versions using UglifyJS and Sqwish
+ * - Improved README with configuration options explanation
+ * - Added a source map
+ *
+ * Changes in 1.2.11
+ * - Fix artifacts left behind by the shutdown method and text-cleanup
  *
  * Changes in 1.2.10
  * - Fix beforeClose to be called in click event
@@ -138,8 +149,6 @@
       var args = arguments;
 
       return this.each(function() {
-        var self = this;
-
         /** Create a jGrowl Instance on the Container if it does not exist **/
         if ( $(this).data('jGrowl.instance') == undefined ) {
           $(this).data('jGrowl.instance', $.extend( new $.fn.jGrowl(), { notifications: [], element: null, interval: null } ));
@@ -161,46 +170,46 @@
     /** Default JGrowl Settings **/
     defaults: {
       pool:       0,
-      header:     '',
-      group:      '',
-      sticky:     false,
-      position:     'top-right',
+      header:       '',
+      group:        '',
+      sticky:       false,
+      position:       'top-right',
       glue:       'after',
-      theme:      'default',
-      themeState:   'highlight',
-      corners:    '10px',
-      check:      250,
+      theme:        'default',
+      themeState:     'highlight',
+      corners:      '10px',
+      check:        250,
       life:       3000,
-      closeDuration:  'normal',
-      openDuration:   'normal',
-      easing:     'swing',
-      closer:     true,
-      closeTemplate: '&times;',
-      closerTemplate: '<div>Close All</div>',
-      log:      function(e,m,o) {},
-      beforeOpen:   function(e,m,o) {},
-      afterOpen:    function(e,m,o) {},
-      open:       function(e,m,o) {},
-      beforeClose:  function(e,m,o) {},
-      close:      function(e,m,o) {},
-      animateOpen:  {
-        opacity:  'show'
+      closeDuration:    'normal',
+      openDuration:     'normal',
+      easing:       'swing',
+      closer:       true,
+      closeTemplate:    '&times;',
+      closerTemplate:   '<div>Close All</div>',
+      log:        function() {},
+      beforeOpen:     function() {},
+      afterOpen:      function() {},
+      open:       function() {},
+      beforeClose:    function() {},
+      close:        function() {},
+      animateOpen:    {
+        opacity:   'show'
       },
-      animateClose:   {
-        opacity:  'hide'
+      animateClose:     {
+        opacity:   'hide'
       }
     },
 
     notifications: [],
 
     /** jGrowl Container Node **/
-    element:  null,
+    element:   null,
 
     /** Interval Function **/
     interval:   null,
 
     /** Create a Notification **/
-    create:   function( message , o ) {
+    create:  function( message , o ) {
       var o = $.extend({}, this.defaults, o);
 
       /* To keep backward compatibility with 1.24 and earlier, honor 'speed' if the user has set it */
@@ -214,7 +223,7 @@
       o.log.apply( this.element , [this.element,message,o] );
     },
 
-    render:     function( notification ) {
+    render:    function( notification ) {
       var self = this;
       var message = notification.message;
       var o = notification.options;
@@ -223,14 +232,14 @@
       o.themeState = (o.themeState == '') ? '' : 'ui-state-' + o.themeState;
 
       var notification = $('<div/>')
-            .addClass('jGrowl-notification ' + o.themeState + ' ui-corner-all' + ((o.group != undefined && o.group != '') ? ' ' + o.group : ''))
-            .append($('<div/>').addClass('jGrowl-close').html(o.closeTemplate))
-            .append($('<div/>').addClass('jGrowl-header').html(o.header))
-            .append($('<div/>').addClass('jGrowl-message').html(message))
-            .data("jGrowl", o).addClass(o.theme).children('div.jGrowl-close').bind("click.jGrowl", function() {
-              $(this).parent().trigger('jGrowl.beforeClose');
-            })
-            .parent();
+        .addClass('jGrowl-notification ' + o.themeState + ' ui-corner-all' + ((o.group != undefined && o.group != '') ? ' ' + o.group : ''))
+        .append($('<div/>').addClass('jGrowl-close').html(o.closeTemplate))
+        .append($('<div/>').addClass('jGrowl-header').html(o.header))
+        .append($('<div/>').addClass('jGrowl-message').html(message))
+        .data("jGrowl", o).addClass(o.theme).children('div.jGrowl-close').bind("click.jGrowl", function() {
+          $(this).parent().trigger('jGrowl.beforeClose');
+        })
+        .parent();
 
 
       /** Notification Actions **/
@@ -239,11 +248,11 @@
       }).bind("mouseout.jGrowl", function() {
         $('div.jGrowl-notification', self.element).data("jGrowl.pause", false);
       }).bind('jGrowl.beforeOpen', function() {
-        if ( o.beforeOpen.apply( notification , [notification,message,o,self.element] ) != false ) {
+        if ( o.beforeOpen.apply( notification , [notification,message,o,self.element] ) !== false ) {
           $(this).trigger('jGrowl.open');
         }
       }).bind('jGrowl.open', function() {
-        if ( o.open.apply( notification , [notification,message,o,self.element] ) != false ) {
+        if ( o.open.apply( notification , [notification,message,o,self.element] ) !== false ) {
           if ( o.glue == 'after' ) {
             $('div.jGrowl-notification:last', self.element).after(notification);
           } else {
@@ -255,7 +264,7 @@
             if ($.support.opacity === false)
               this.style.removeAttribute('filter');
 
-            if ( $(this).data("jGrowl") != null ) // Happens when a notification is closing before it's open.
+            if ( $(this).data("jGrowl") !== null ) // Happens when a notification is closing before it's open.
               $(this).data("jGrowl").created = new Date();
 
             $(this).trigger('jGrowl.afterOpen');
@@ -264,7 +273,7 @@
       }).bind('jGrowl.afterOpen', function() {
         o.afterOpen.apply( notification , [notification,message,o,self.element] );
       }).bind('jGrowl.beforeClose', function() {
-        if ( o.beforeClose.apply( notification , [notification,message,o,self.element] ) != false )
+        if ( o.beforeClose.apply( notification , [notification,message,o,self.element] ) !== false )
           $(this).trigger('jGrowl.close');
       }).bind('jGrowl.close', function() {
         // Pause the notification, lest during the course of animation another close event gets called.
@@ -284,7 +293,7 @@
 
       /** Add a Global Closer if more than one notification exists **/
       if ( $('div.jGrowl-notification:parent', self.element).size() > 1 &&
-         $('div.jGrowl-closer', self.element).size() == 0 && this.defaults.closer != false ) {
+         $('div.jGrowl-closer', self.element).size() == 0 && this.defaults.closer !== false ) {
         $(this.defaults.closerTemplate).addClass('jGrowl-closer ' + this.defaults.themeState + ' ui-corner-all').addClass(this.defaults.theme)
           .appendTo(self.element).animate(this.defaults.animateOpen, this.defaults.speed, this.defaults.easing)
           .bind("click.jGrowl", function() {
@@ -300,10 +309,10 @@
     /** Update the jGrowl Container, removing old jGrowl notifications **/
     update:  function() {
       $(this.element).find('div.jGrowl-notification:parent').each( function() {
-        if ( $(this).data("jGrowl") != undefined && $(this).data("jGrowl").created != undefined &&
+        if ( $(this).data("jGrowl") != undefined && $(this).data("jGrowl").created !== undefined &&
            ($(this).data("jGrowl").created.getTime() + parseInt($(this).data("jGrowl").life))  < (new Date()).getTime() &&
-           $(this).data("jGrowl").sticky != true &&
-           ($(this).data("jGrowl.pause") == undefined || $(this).data("jGrowl.pause") != true) ) {
+           $(this).data("jGrowl").sticky !== true &&
+           ($(this).data("jGrowl.pause") == undefined || $(this).data("jGrowl.pause") !== true) ) {
 
           // Pause the notification, lest during the course of animation another close event gets called.
           $(this).trigger('jGrowl.beforeClose');
@@ -335,11 +344,14 @@
 
     /** Shutdown jGrowl, removing it and clearing the interval **/
     shutdown:   function() {
-      $(this.element).removeClass('jGrowl').find('div.jGrowl-notification').remove();
-      clearInterval( this.interval );
+      $(this.element).removeClass('jGrowl')
+        .find('div.jGrowl-notification').trigger('jGrowl.close')
+        .parent().empty()
+
+      clearInterval(this.interval);
     },
 
-    close:  function() {
+    close:   function() {
       $(this.element).find('div.jGrowl-notification').each(function(){
         $(this).trigger('jGrowl.beforeClose');
       });

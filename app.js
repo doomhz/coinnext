@@ -34,6 +34,7 @@ var app = express();
 if (environment === "production") {
   app.use(connectDomain());
 }
+connectAssetsOptions.helperContext = app.locals
 app.enable("trust proxy");
 app.configure(function () {
   app.set('port', process.env.PORT || 5000);

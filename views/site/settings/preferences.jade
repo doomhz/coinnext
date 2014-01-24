@@ -10,10 +10,13 @@ block content
           li: a(href='/settings/security') Security
 
       .col-main
-        h1.page-title Preferences
-        .content
-          form
-            fieldset
-              input(type="checkbox" name="disable_chat" id="disable_chat")
-              label(for="disable_chat") Disable chat
+        .container
+          .con-header
+            h1.con-header-title Preferences
+          .con-body
+            form
+              fieldset.checkbox
+                label(for="disable_chat")
+                  input(type="checkbox" name="disable_chat" id="disable_chat")
+                  | Disable chat
 

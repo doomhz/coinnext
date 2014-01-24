@@ -23,7 +23,8 @@ class Emailer
     attachments = @getAttachments(html)
     messageData =
       to: @options.to.email
-      from: GLOBAL.appConfig().emailer.from
+      #from: GLOBAL.appConfig().emailer.from
+      from: "JSLogger Reporter <no-reply@jslogger.com>"
       subject: @options.subject
       html: html
       generateTextFromHTML: true
@@ -32,7 +33,14 @@ class Emailer
     transport.sendMail messageData, callback
 
   getTransport: ()->
-    emailer.createTransport "SMTP", GLOBAL.appConfig().emailer.transport
+    #emailer.createTransport "SMTP", GLOBAL.appConfig().emailer.transport
+    emailer.createTransport "SMTP",
+      host: "email-smtp.us-east-1.amazonaws.com"
+      port: 465
+      secureConnection: true
+      auth:
+        user: "AKIAJOFBBXEA644BT5TQ"
+        pass: "AsHcx3VF6LZ0RhHxBc+EhYJnUSTwJ8HcbGUa7Tl5bzuC"
 
   getHtml: (templateName, data)->
     templatePath = "./views/emails/#{templateName}.html"

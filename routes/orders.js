@@ -45,7 +45,7 @@
           return JsonRenderer.error("Sorry, but you can not trade. Did you verify your account?", res);
         }
       } else {
-        return JsonRenderer.error("Please auth.", res);
+        return JsonRenderer.error("You need to be logged in to place an order.", res);
       }
     });
     app.get("/orders", function(req, res) {
@@ -74,7 +74,7 @@
           });
         });
       } else {
-        return JsonRenderer.error("Please auth.", res);
+        return JsonRenderer.error("You need to be logged in to place an order.", res);
       }
     });
     return isValidTradeAmount = function(amount) {

@@ -23,7 +23,7 @@ module.exports = (app)->
       else
         JsonRenderer.error "Sorry, but you can not trade. Did you verify your account?", res
     else
-      JsonRenderer.error "Please auth.", res
+      JsonRenderer.error "You need to be logged in to place an order.", res
 
   app.get "/orders", (req, res)->
     Order.findByOptions req.query, (err, orders)->
@@ -39,7 +39,7 @@ module.exports = (app)->
             order.remove ()->
               res.json JsonRenderer.orders order
     else
-      JsonRenderer.error "Please auth.", res
+      JsonRenderer.error "You need to be logged in to place an order.", res
 
 
   isValidTradeAmount = (amount)->
