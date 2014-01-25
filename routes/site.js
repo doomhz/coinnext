@@ -146,9 +146,14 @@
         title: 'Fees'
       });
     });
-    return app.get("/company", function(req, res) {
+    app.get("/company", function(req, res) {
       return res.render("static/company", {
         title: 'Company'
+      });
+    });
+    return app.get("/whitehat", function(req, res) {
+      return res.render("static/whitehat", {
+        title: 'White Hat'
       });
     });
   };

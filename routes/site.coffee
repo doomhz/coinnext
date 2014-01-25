@@ -116,3 +116,7 @@ module.exports = (app)->
   app.get "/company", (req, res)->
     res.render "static/company",
       title: 'Company'
+
+  app.get "/whitehat", (req, res)->
+    res.render "static/whitehat",
+      title: 'White Hat'
