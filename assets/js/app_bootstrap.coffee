@@ -72,7 +72,7 @@ $(document).ready ()->
         el: $closedOrders
         tpl: "wallet-closed-order-tpl"
         collection: new App.OrdersCollection null,
-          type: "closed"
+          type: "completed"
           currency1: $closedOrders.data "currency1"
           userId: CONFIG.currentUser.id
       closedOrders.render()
@@ -93,7 +93,7 @@ $(document).ready ()->
         el: $overviewClosedOrders
         tpl: "wallet-closed-order-tpl"
         collection: new App.OrdersCollection null,
-          type: "closed"
+          type: "completed"
           userId: CONFIG.currentUser.id
       overviewClosedOrders.render()
 
