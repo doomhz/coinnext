@@ -1,5 +1,6 @@
 restify = require "restify"
 Order = require "../../models/order"
+wallet = require "../../models/wallet"
 
 module.exports = (app)->
 
@@ -31,18 +32,32 @@ module.exports = (app)->
         else
           return next(new restify.ConflictError "Engine error - #{engineError}")
 
-  app.put "/complete_order/:order_id/:status", (req, res, next)->
+  app.put "/complete_order/:order_id/:status/:sold_amount/:received_amount", (req, res, next)->
+    # TODO: Confirm this with Charles
     orderId = req.params.order_id
     status = req.params.status
-    Order.findById orderId, (err, order)->
-      Order.update {_id: orderId}, {status: status}, (err, result)->
-        # TODO: Remove on hold wallet money and increase the other currency wallet balance?
-        if not err
-          res.send
-            id:     orderId
-            status: status
+    soldAmount = req.params.sold_amount
+    receivedAmount = req.params.received_amount
+    if status is "completed"
+      Order.findById orderId, (err, order)->
+        if order
+          Wallet.findUserWalletByCurrency order.user_id, order.buy_currency, (err, buyWallet)->
+            Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, sellWallet)->
+              sellWallet.holdBalance soldAmount, (err, sellWallet)->
+                buyWallet.addBalance receiveAmount, (err, buyWallet)->
+                  Order.update {_id: orderId}, {status: status}, (err, result)->
+                    if not err
+                      res.send
+                        id:     orderId
+                        status: status
+                    else
+                      return next(new restify.ConflictError err)
         else
-          return next(new restify.ConflictError err)
+          return next(new restify.ConflictError "Wrong order - #{orderId}")
+    else
+      res.send
+        id:     orderId
+        status: status
 
 
   sendToEngine = (data, callback)->

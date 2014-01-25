@@ -1,5 +1,7 @@
 (function() {
-  var Order, OrderSchema, exports;
+  var Order, OrderSchema, exports, _;
+
+  _ = require("underscore");
 
   OrderSchema = new Schema({
     user_id: {
@@ -131,6 +133,23 @@
       callback("Wrong action", []);
     }
     return dbQuery.exec(callback);
+  };
+
+  OrderSchema.statics.isValidTradeAmount = function(amount) {
+    return _.isNumber(amount) && !_.isNaN(amount) && amount > 0;
+  };
+
+  OrderSchema.statics.calculateHoldBalance = function(action, amount, unitPrice) {
+    var amountToBuy, amountToSell;
+    if (action === "buy") {
+      amountToBuy = parseFloat(amount) * parseFloat(unitPrice);
+      return amountToBuy;
+    }
+    if (action === "sell") {
+      amountToSell = parseFloat(amount);
+      return amountToSell;
+    }
+    return false;
   };
 
   Order = mongoose.model("Order", OrderSchema);

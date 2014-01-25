@@ -1,3 +1,5 @@
+_ = require "underscore"
+
 OrderSchema = new Schema
   user_id:
     type: String
@@ -80,6 +82,18 @@ OrderSchema.statics.findByOptions = (options = {}, callback)->
   else
     callback "Wrong action", []
   dbQuery.exec callback
+
+OrderSchema.statics.isValidTradeAmount = (amount)->
+  _.isNumber(amount) and not _.isNaN(amount) and amount > 0
+
+OrderSchema.statics.calculateHoldBalance = (action, amount, unitPrice)->
+  if action is "buy"
+    amountToBuy = parseFloat(amount) * parseFloat(unitPrice)
+    return amountToBuy
+  if action is "sell"
+    amountToSell = parseFloat(amount)
+    return amountToSell
+  false
 
 Order = mongoose.model("Order", OrderSchema)
 exports = module.exports = Order

@@ -111,8 +111,8 @@ block content
                   form#market-sell-form.order-form
                     input(name="type", type="hidden", value="market")
                     input(name="action", type="hidden", value="sell")
-                    input(name="sell_currency", type="hidden", value="#{wallet2.currency}")
-                    input(name="buy_currency", type="hidden", value="#{wallet1.currency}")
+                    input(name="sell_currency", type="hidden", value="#{wallet1.currency}")
+                    input(name="buy_currency", type="hidden", value="#{wallet2.currency}")
                     label I want to Sell:
                     .currency-input
                       input(type="text", name="amount", id="sell-amount-input", autocomplete="off")
@@ -174,7 +174,7 @@ block content
                     th Price
                     th #{wallet1.currency}
                     th #{wallet2.currency}
-                tbody#open-buy-orders-cnt(data-currency1="#{wallet2.currency}", data-currency2="#{wallet1.currency}")
+                tbody#open-buy-orders-cnt(data-currency1="#{wallet1.currency}", data-currency2="#{wallet2.currency}")
 
         // Trade History
         section#trade-history.trade-history.container
