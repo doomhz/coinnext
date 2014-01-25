@@ -3,23 +3,48 @@ extends ../layout
 block content
   .main-content.auth(role='main')
     .wrapper
-      .auth-box
-        h1 Create Account
-        form#signup-form(action="/user")
-          #error-cnt
-          .control-group
-            .input-prepend
-              span.add-on
-                i.icon-envelope
-              input#signup-email(type="email", name="email", placeholder="Email", tabindex="1")
-            .input-prepend
-              span.add-on
-                i.icon-lock
-              input#signup-password(type="password", name="password" placeholder="Password", tabindex="2")
-            .input-prepend
-              span.add-on
-                i.icon-lock
-              input(type="password", name="repeat_password" placeholder="Confirm Password", tabindex="3")
-          input#login-btn(type="submit", value="Create Account", tabindex="4")
-          p.terms
-            | By creating an account, you agree to<br /> our <a href="/legal/terms">Terms of Service</a> and <a href="/legal/privacy">Privacy Policy</a>.
+      .auth-wrap
+        .auth-features-box
+          ul
+            li
+              i.icon-bolt
+              h2 Lightning Fast
+              p
+                | Our trading engine matches thousands of orders per second without breaking a sweat.
+            li
+              i.icon-thumbs-up
+              h2 Reliable
+              p
+                | Fast turnaround on deposits, withdrawals and support.
+            li
+              i.icon-shield
+              h2 Bank Level Secure
+              p
+                | The highest security measures are in place to safeguard your money.
+            li
+              i.icon-support
+              h2 Customer Service
+              p
+                | Our support team is available 24/7 to help you with any questions you may have.
+
+
+        .auth-box
+          h1 Create Account
+          form#signup-form(action="/user")
+            #error-cnt
+            .control-group
+              .input-prepend
+                span.add-on
+                  i.icon-envelope
+                input#signup-email(type="email", name="email", placeholder="Email", tabindex="1")
+              .input-prepend
+                span.add-on
+                  i.icon-lock
+                input#signup-password(type="password", name="password" placeholder="Password", tabindex="2")
+              .input-prepend
+                span.add-on
+                  i.icon-lock
+                input(type="password", name="repeat_password" placeholder="Confirm Password", tabindex="3")
+            input#login-btn(type="submit", value="Create Account", tabindex="4")
+            p.terms
+              | By creating an account, you agree to<br /> our <a href="/legal/terms">Terms of Service</a> and <a href="/legal/privacy">Privacy Policy</a>.
