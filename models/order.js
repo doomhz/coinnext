@@ -35,8 +35,13 @@
     },
     status: {
       type: String,
-      "enum": ["open", "partial", "closed"],
+      "enum": ["open", "partial", "completed"],
       "default": "open",
+      index: true
+    },
+    published: {
+      type: Boolean,
+      "default": false,
       index: true
     },
     created: {
@@ -55,6 +60,25 @@
     , "Invalid unit price"
   */
 
+
+  OrderSchema.methods.publish = function(callback) {
+    var _this = this;
+    if (callback == null) {
+      callback = function() {};
+    }
+    return GLOBAL.walletsClient.send("publish_order", [this.id], function(err, res, body) {
+      if (err) {
+        console.error(err);
+        return callback(err, res, body);
+      }
+      if (body && body.published) {
+        return Order.findById(_this.id, callback);
+      } else {
+        console.error("Could not publish the order - " + (JSON.stringify(body)));
+        return callback("Could not publish the order to the network");
+      }
+    });
+  };
 
   OrderSchema.statics.findByOptions = function(options, callback) {
     var currencies, dbQuery;
@@ -76,13 +100,13 @@
     }
     if (options.action === "buy") {
       dbQuery.where({
-        buy_currency: options.currency2,
-        sell_currency: options.currency1
+        buy_currency: options.currency1,
+        sell_currency: options.currency2
       });
     } else if (options.action === "sell") {
       dbQuery.where({
-        buy_currency: options.currency1,
-        sell_currency: options.currency2
+        buy_currency: options.currency2,
+        sell_currency: options.currency1
       });
     } else if (!options.action) {
       currencies = [];

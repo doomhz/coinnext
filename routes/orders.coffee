@@ -17,9 +17,12 @@ module.exports = (app)->
             return JsonRenderer.error "Wallet #{data.sell_currency} does not exist.", res  if err or not wallet
             wallet.holdBalance parseFloat(data.amount), (err, wallet)->
               return JsonRenderer.error "Not enough #{data.sell_currency} to open an order.", res  if err or not wallet
-              Order.create data, (err, order)->
+              Order.create data, (err, newOrder)->
                 return JsonRenderer.error "Sorry, could not open an order...", res  if err
-                res.json JsonRenderer.order order
+                newOrder.publish (err, order)->
+                  console.log "Could not publish newlly created order - #{err}"  if err
+                  return res.json JsonRenderer.order newOrder  if err
+                  res.json JsonRenderer.order order
       else
         JsonRenderer.error "Sorry, but you can not trade. Did you verify your account?", res
     else

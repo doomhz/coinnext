@@ -71,6 +71,7 @@ JsonRenderer =
     fee:           order.fee
     unit_price:    order.unit_price
     status:        order.status
+    published:     order.published
     created:       order.created
 
   orders: (orders)->

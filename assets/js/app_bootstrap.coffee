@@ -146,7 +146,7 @@ $(document).ready ()->
       el: $closedOrders
       tpl: "site-closed-order-tpl"
       collection: new App.OrdersCollection null,
-        type: "closed"
+        type: "completed"
         currency1: $openBuyOrders.data "currency1"
         currency2: $openBuyOrders.data "currency2"
     closedOrders.render()

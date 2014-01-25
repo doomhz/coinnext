@@ -24,8 +24,12 @@ OrderSchema = new Schema
     type: Number
   status:
     type: String
-    enum: ["open", "partial", "closed"]
+    enum: ["open", "partial", "completed"]
     default: "open"
+    index: true
+  published:
+    type: Boolean
+    default: false
     index: true
   created:
     type: Date
@@ -41,6 +45,17 @@ OrderSchema.path("unit_price").validate ()->
   , "Invalid unit price"
 ###
 
+OrderSchema.methods.publish = (callback = ()->)->
+  GLOBAL.walletsClient.send "publish_order", [@id], (err, res, body)=>
+    if err
+      console.error err
+      return callback err, res, body
+    if body and body.published
+      Order.findById @id, callback
+    else
+      console.error "Could not publish the order - #{JSON.stringify(body)}"
+      callback "Could not publish the order to the network"
+
 OrderSchema.statics.findByOptions = (options = {}, callback)->
   dbQuery = Order.find
     status: options.status
@@ -48,12 +63,12 @@ OrderSchema.statics.findByOptions = (options = {}, callback)->
   dbQuery.where({user_id: options.user_id})  if options.user_id
   if options.action is "buy"
     dbQuery.where
-      buy_currency: options.currency2
-      sell_currency: options.currency1
-  else if options.action is "sell"
-    dbQuery.where
       buy_currency: options.currency1
       sell_currency: options.currency2
+  else if options.action is "sell"
+    dbQuery.where
+      buy_currency: options.currency2
+      sell_currency: options.currency1
   else if not options.action
     currencies = []
     currencies.push options.currency1  if options.currency1

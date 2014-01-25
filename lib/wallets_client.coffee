@@ -6,6 +6,7 @@ class WalletsClient
 
   commands:
     "create_account": "post"
+    "publish_order":  "post"
 
   constructor: (options = {})->
     @host = options.host if options.host

@@ -32,11 +32,19 @@
                 if (err || !wallet) {
                   return JsonRenderer.error("Not enough " + data.sell_currency + " to open an order.", res);
                 }
-                return Order.create(data, function(err, order) {
+                return Order.create(data, function(err, newOrder) {
                   if (err) {
                     return JsonRenderer.error("Sorry, could not open an order...", res);
                   }
-                  return res.json(JsonRenderer.order(order));
+                  return newOrder.publish(function(err, order) {
+                    if (err) {
+                      console.log("Could not publish newlly created order - " + err);
+                    }
+                    if (err) {
+                      return res.json(JsonRenderer.order(newOrder));
+                    }
+                    return res.json(JsonRenderer.order(order));
+                  });
                 });
               });
             });
