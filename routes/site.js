@@ -30,9 +30,16 @@
       return MarketStats.getStats(function(err, marketStats) {
         if (req.user) {
           return Wallet.findUserWalletByCurrency(req.user.id, currency1, function(err, wallet1) {
+            if (!wallet1) {
+              wallet1 = new Wallet({
+                currency: currency1
+              });
+            }
             return Wallet.findUserWalletByCurrency(req.user.id, currency2, function(err, wallet2) {
-              if (!wallet1 || !wallet2) {
-                res.redirect("/funds");
+              if (!wallet2) {
+                wallet2 = new Wallet({
+                  currency: currency2
+                });
               }
               return res.render("site/trade", {
                 title: "Trade " + currency1 + " to " + currency2,

@@ -1,22 +1,27 @@
 Order = require "../models/order"
 Wallet = require "../models/wallet"
 JsonRenderer = require "../lib/json_renderer"
+_ = require "underscore"
 
 module.exports = (app)->
 
   app.post "/orders", (req, res)->
     if req.user
-      data = req.body
-      data.user_id = req.user.id
-      Wallet.findUserWalletByCurrency req.user.id, data.buy_currency, (err, buyWallet)->
-        return JsonRenderer.error "Wallet #{data.buy_currency} does not exist.", res  if err or not buyWallet
-        Wallet.findUserWalletByCurrency req.user.id, data.sell_currency, (err, wallet)->
-          return JsonRenderer.error "Wallet #{data.sell_currency} does not exist.", res  if err or not wallet
-          wallet.holdBalance parseFloat(data.amount), (err, wallet)->
-            return JsonRenderer.error "Not enough #{data.sell_currency} to open an order.", res  if err or not wallet
-            Order.create data, (err, order)->
-              return JsonRenderer.error "Sorry, could not open an order...", res  if err
-              res.json JsonRenderer.order order
+      if req.user.canTrade()
+        data = req.body
+        data.user_id = req.user.id
+        return JsonRenderer.error "Please submit a valid amount bigger than 0.", res  if not isValidTradeAmount data.amount
+        Wallet.findOrCreateUserWalletByCurrency req.user.id, data.buy_currency, (err, buyWallet)->
+          return JsonRenderer.error "Wallet #{data.buy_currency} does not exist.", res  if err or not buyWallet
+          Wallet.findOrCreateUserWalletByCurrency req.user.id, data.sell_currency, (err, wallet)->
+            return JsonRenderer.error "Wallet #{data.sell_currency} does not exist.", res  if err or not wallet
+            wallet.holdBalance parseFloat(data.amount), (err, wallet)->
+              return JsonRenderer.error "Not enough #{data.sell_currency} to open an order.", res  if err or not wallet
+              Order.create data, (err, order)->
+                return JsonRenderer.error "Sorry, could not open an order...", res  if err
+                res.json JsonRenderer.order order
+      else
+        JsonRenderer.error "Sorry, but you can not trade. Did you verify your account?", res
     else
       JsonRenderer.error "You need to be logged in to place an order.", res
 
@@ -35,3 +40,7 @@ module.exports = (app)->
               res.json JsonRenderer.orders order
     else
       JsonRenderer.error "You need to be logged in to place an order.", res
+
+
+  isValidTradeAmount = (amount)->
+    _.isNumber(amount) and not _.isNaN(amount) and amount > 0

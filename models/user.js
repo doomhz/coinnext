@@ -133,6 +133,10 @@
     });
   };
 
+  UserSchema.methods.canTrade = function() {
+    return this.email_verified;
+  };
+
   UserSchema.statics.findByToken = function(token, callback) {
     if (callback == null) {
       callback = function() {};

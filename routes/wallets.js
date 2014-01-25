@@ -10,26 +10,40 @@
       var currency;
       currency = req.body.currency;
       if (req.user) {
-        return Wallet.findUserWalletByCurrency(req.user.id, currency, function(err, wallet) {
-          if (!wallet) {
-            wallet = new Wallet({
-              user_id: req.user.id,
-              currency: currency
-            });
-            return wallet.save(function(err, wallet) {
-              if (err) {
-                return JsonRenderer.error("Sorry, can not create a wallet at this time...", res);
-              }
-              return wallet.generateAddress(function(err, wl) {
-                if (err) {
-                  console.error(err);
-                }
-                return res.json(JsonRenderer.wallet(wl || wallet));
-              });
-            });
-          } else {
-            return JsonRenderer.error("A wallet of this currency already exists.", res);
+        return Wallet.findOrCreateUserWalletByCurrency(req.user.id, currency, function(err, wallet) {
+          if (err) {
+            console.error(err);
           }
+          if (err) {
+            return JsonRenderer.error("Could not create wallet.", res);
+          }
+          return res.json(JsonRenderer.wallet(wallet));
+        });
+      } else {
+        return JsonRenderer.error("Please auth.", res);
+      }
+    });
+    app.put("/wallets/:id", function(req, res) {
+      if (req.user) {
+        return Wallet.findUserWallet(req.user.id, req.params.id, function(err, wallet) {
+          if (err) {
+            console.error(err);
+          }
+          if (err) {
+            return JsonRenderer.error("Wrong wallet.", res);
+          }
+          if (wallet.address) {
+            return res.json(JsonRenderer.wallet(wallet));
+          }
+          return wallet.generateAddress(function(err, wl) {
+            if (err) {
+              console.error(err);
+            }
+            if (err) {
+              return JsonRenderer.error("Could not generate address.", res);
+            }
+            return res.json(JsonRenderer.wallet(wl));
+          });
         });
       } else {
         return JsonRenderer.error("Please auth.", res);

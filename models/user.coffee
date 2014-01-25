@@ -82,6 +82,9 @@ UserSchema.methods.generateToken = (callback = ()->)->
   @save (err, u)->
     callback(u.token)
 
+UserSchema.methods.canTrade = ()->
+  @email_verified
+
 UserSchema.statics.findByToken = (token, callback = ()->)->
   User.findOne({token: token}).exec (err, user)->
     callback(err, user)

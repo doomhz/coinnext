@@ -2,6 +2,8 @@ class App.TradeView extends App.MasterView
 
   model: null
 
+  tpl: "coin-stats-tpl"
+
   currency1: null
 
   currency2: null
@@ -22,21 +24,17 @@ class App.TradeView extends App.MasterView
     @model.fetch
       success: ()=>
         @renderTradeStats()
-        @renderMaketTicker()
       error: ()=>
 
   renderTradeStats: ()->
-    @tpl = "coin-stats-tpl"
     stats = @model.get "#{@currency1}_#{@currency2}"
     @$("#coin-stats").html @template
       coinStats: stats
       currency1: @currency1
       currency2: @currency2
 
-  renderMaketTicker: ()->
-    @tpl = "market-ticker-tpl"
-    @$("#market-ticker").html @template
-      marketStats: @model
+  isValidAmount: (amount)->
+    _.isNumber(amount) and not _.isNaN(amount) and amount > 0
 
   onMarketSwitch: (ev)->
     $target = $(ev.target)
@@ -46,12 +44,14 @@ class App.TradeView extends App.MasterView
   onOrderSubmit: (ev)->
     ev.preventDefault()
     $form = $(ev.target)
+    amount = parseFloat $form.find("[name='amount']").val()
+    return $.publish "error", "Please submit a valid amount bigger than 0."  if not @isValidAmount amount
     order = new App.OrderModel
       type: $form.find("[name='type']").val()
       action: $form.find("[name='action']").val()
       sell_currency: $form.find("[name='sell_currency']").val()
       buy_currency: $form.find("[name='buy_currency']").val()
-      amount: $form.find("[name='amount']").val()
+      amount: amount
       unit_price: $form.find("[name='unit_price']").val()
     order.save null,
       success: ()->
@@ -64,15 +64,17 @@ class App.TradeView extends App.MasterView
   onAmountClick: (ev)->
     ev.preventDefault()
     $target = $(ev.target)
-    @$("##{$target.data('type')}-amount-input").val($target.data('amount'))
+    $input = @$("##{$target.data('type')}-amount-input")
+    $input.val($target.data('amount'))
+    $input.trigger "keyup"
 
   onBuyAmountChange: (ev)->
     $target = $(ev.target)
     spendAmount = parseFloat $target.val()
     $result = $("#buy-amount-result")
-    if _.isNumber(spendAmount) and not _.isNaN(spendAmount)
+    if @isValidAmount spendAmount
       fee = parseFloat $result.data("fee")
-      lastPrice = 0.02776 #@model.get("#{@currency1}_#{@currency2}").last_price
+      @model.get("#{@currency1}_#{@currency2}").last_price
       total = _.str.roundToThree spendAmount / lastPrice - fee
       #console.log spendAmount, fee, lastPrice, total
       $result.text total
@@ -83,9 +85,9 @@ class App.TradeView extends App.MasterView
     $target = $(ev.target)
     spendAmount = parseFloat $target.val()
     $result = $("#sell-amount-result")
-    if _.isNumber(spendAmount) and not _.isNaN(spendAmount)
+    if @isValidAmount spendAmount
       fee = parseFloat $result.data("fee")
-      lastPrice = 0.02776 #@model.get("#{@currency1}_#{@currency2}").last_price
+      lastPrice = @model.get("#{@currency1}_#{@currency2}").last_price
       total = _.str.roundToThree spendAmount * lastPrice - fee
       #console.log spendAmount, fee, lastPrice, total
       $result.text total
