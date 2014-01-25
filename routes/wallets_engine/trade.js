@@ -59,41 +59,34 @@
       status = req.params.status;
       soldAmount = req.params.sold_amount;
       receivedAmount = req.params.received_amount;
-      if (status === "completed") {
-        return Order.findById(orderId, function(err, order) {
-          if (order) {
-            return Wallet.findUserWalletByCurrency(order.user_id, order.buy_currency, function(err, buyWallet) {
-              return Wallet.findUserWalletByCurrency(order.user_id, order.sell_currency, function(err, sellWallet) {
-                return sellWallet.holdBalance(soldAmount, function(err, sellWallet) {
-                  return buyWallet.addBalance(receiveAmount, function(err, buyWallet) {
-                    return Order.update({
-                      _id: orderId
-                    }, {
-                      status: status
-                    }, function(err, result) {
-                      if (!err) {
-                        return res.send({
-                          id: orderId,
-                          status: status
-                        });
-                      } else {
-                        return next(new restify.ConflictError(err));
-                      }
-                    });
+      return Order.findById(orderId, function(err, order) {
+        if (order) {
+          return Wallet.findUserWalletByCurrency(order.user_id, order.buy_currency, function(err, buyWallet) {
+            return Wallet.findUserWalletByCurrency(order.user_id, order.sell_currency, function(err, sellWallet) {
+              return sellWallet.holdBalance(-soldAmount, function(err, sellWallet) {
+                return buyWallet.addBalance(receiveAmount, function(err, buyWallet) {
+                  return Order.update({
+                    _id: orderId
+                  }, {
+                    status: status
+                  }, function(err, result) {
+                    if (!err) {
+                      return res.send({
+                        id: orderId,
+                        status: status
+                      });
+                    } else {
+                      return next(new restify.ConflictError(err));
+                    }
                   });
                 });
               });
             });
-          } else {
-            return next(new restify.ConflictError("Wrong order - " + orderId));
-          }
-        });
-      } else {
-        return res.send({
-          id: orderId,
-          status: status
-        });
-      }
+          });
+        } else {
+          return next(new restify.ConflictError("Wrong order - " + orderId));
+        }
+      });
     });
     return sendToEngine = function(data, callback) {
       var engineError, response;

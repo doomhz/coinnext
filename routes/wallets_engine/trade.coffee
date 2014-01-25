@@ -37,27 +37,22 @@ module.exports = (app)->
     orderId = req.params.order_id
     status = req.params.status
     soldAmount = req.params.sold_amount
-    receivedAmount = req.params.received_amount
-    if status is "completed"
-      Order.findById orderId, (err, order)->
-        if order
-          Wallet.findUserWalletByCurrency order.user_id, order.buy_currency, (err, buyWallet)->
-            Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, sellWallet)->
-              sellWallet.holdBalance soldAmount, (err, sellWallet)->
-                buyWallet.addBalance receiveAmount, (err, buyWallet)->
-                  Order.update {_id: orderId}, {status: status}, (err, result)->
-                    if not err
-                      res.send
-                        id:     orderId
-                        status: status
-                    else
-                      return next(new restify.ConflictError err)
-        else
-          return next(new restify.ConflictError "Wrong order - #{orderId}")
-    else
-      res.send
-        id:     orderId
-        status: status
+    receivedAmount = req.params.received_amount    
+    Order.findById orderId, (err, order)->
+      if order
+        Wallet.findUserWalletByCurrency order.user_id, order.buy_currency, (err, buyWallet)->
+          Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, sellWallet)->
+            sellWallet.holdBalance -soldAmount, (err, sellWallet)->
+              buyWallet.addBalance receiveAmount, (err, buyWallet)->
+                Order.update {_id: orderId}, {status: status}, (err, result)->
+                  if not err
+                    res.send
+                      id:     orderId
+                      status: status
+                  else
+                    return next(new restify.ConflictError err)
+      else
+        return next(new restify.ConflictError "Wrong order - #{orderId}")
 
 
   sendToEngine = (data, callback)->
