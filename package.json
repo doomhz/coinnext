@@ -37,6 +37,7 @@
     , "nodemailer": "latest"
     , "restify": "latest"
     , "request": "latest"
+    , "amqp": "latest"
   },
   "devDependencies": {
     "mocha": "latest"

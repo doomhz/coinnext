@@ -4,6 +4,23 @@
     "redis": {
       "db": "coinnext_auth_dev"
     },
+    "amqp": {
+      "connection": {
+        "host": "localhost",
+        "port": 5672,
+        "login": "guest",
+        "password": "guest",
+        "authMechanism": "AMQPLAIN",
+        "vhost": "/",
+        "ssl": {
+          "enabled": false
+        }
+      },
+      "queues": {
+        "open_orders": "open-orders",
+        "completed_orders": "completed-orders"
+      }
+    },
     "salt": "coinnextsecret#1999",
     "emailer": {
       "host": "http://localhost:5000",
@@ -79,6 +96,23 @@
     "mongo_uri": "mongodb://localhost/coinnext_test",
     "redis": {
       "db": "coinnext_auth_test"
+    },
+    "amqp": {
+      "connection": {
+        "host": "localhost",
+        "port": 5672,
+        "login": "guest",
+        "password": "guest",
+        "authMechanism": "AMQPLAIN",
+        "vhost": "/",
+        "ssl": {
+          "enabled": false
+        }
+      },
+      "queues": {
+        "open_orders": "open-orders",
+        "completed_orders": "completed-orders"
+      }
     },
     "salt": "coinnextsecret#1999",
     "emailer": {
@@ -165,6 +199,23 @@
       "user": "",
       "pass": "",
       "db": "coinnext_auth"
+    },
+    "amqp": {
+      "connection": {
+        "host": "localhost",
+        "port": 5672,
+        "login": "guest",
+        "password": "guest",
+        "authMechanism": "AMQPLAIN",
+        "vhost": "/",
+        "ssl": {
+          "enabled": false
+        }
+      },
+      "queues": {
+        "open_orders": "open-orders",
+        "completed_orders": "completed-orders"
+      }
     },
     "salt": "coinnextsecret#1999",
     "emailer": {
