@@ -25,11 +25,13 @@ body
   font 14px "Helvetica Neue", Helvetica, Arial, sans-serif
 
 ::-moz-selection
-  background #b3d4fc
+  color #fff
+  background $blue
   text-shadow none
 
 ::selection
-  background #b3d4fc
+  color #fff
+  background $blue
   text-shadow none
 
 audio
@@ -67,6 +69,7 @@ textarea
 .site-logo
   float left
   margin 12px 10px 12px 0
+  user-select none
   transition opacity .2s ease-out
   &:hover
     opacity .8
