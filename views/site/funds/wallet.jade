@@ -43,10 +43,10 @@ block content
                 .coin-deposit-address
                   code#address-row #{wallet.address}
                   .coin-deposit-actions
-                      - if (!wallet.address)
-                        button#generate-address(data-id="#{wallet.id}") Generate address
-                      button#show-qr-bt Show QR
-                      button#copy-address(data-clipboard-text="#{wallet.address ? wallet.address : ''}") Copy
+                    - if (!wallet.address)
+                      button#generate-address(data-id="#{wallet.id}") Generate address
+                    button#show-qr-bt Show QR
+                    button#copy-address(data-clipboard-text="#{wallet.address ? wallet.address : ''}") Copy
                 #qr-address-cnt.qr-address(data-address="#{wallet.address ? wallet.address : ''}")
                 ul.terms
                   li Minimal deposit amount is 0.0001  #{wallet.currency}.

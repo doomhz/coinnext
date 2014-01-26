@@ -83,6 +83,7 @@ btn(color)
   background color
   padding 10px 20px
   border 0
+  display inline-block
   font-weight bold
   user-select none
   -webkit-font-smoothing antialiased
@@ -118,7 +119,7 @@ p
   margin 0 0 10px 0
 
 .wrapper
-  max-width 1600px
+  max-width 1200px
   margin 0 auto
   padding 0 15px
 
@@ -133,6 +134,8 @@ p
   border 1px solid $border-color
   overflow hidden
   border-radius 3px
+  &:last-of-type:not(:only-of-type)
+    margin-bottom 0
 
 .con-header
   clearfix()
@@ -147,9 +150,13 @@ p
   color $darkblue
   display inline
   text-shadow 0 1px 0 #fff
+  vertical-align middle
   font-size 16px
   line-height 16px
   font-weight 700
+  i
+    top 1px
+    position relative
 
 .con-body
   padding 10px

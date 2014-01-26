@@ -146,9 +146,19 @@
         title: 'Fees'
       });
     });
-    return app.get("/company", function(req, res) {
+    app.get("/company", function(req, res) {
       return res.render("static/company", {
         title: 'Company'
+      });
+    });
+    app.get("/security", function(req, res) {
+      return res.render("static/security", {
+        title: 'Security'
+      });
+    });
+    return app.get("/whitehat", function(req, res) {
+      return res.render("static/whitehat", {
+        title: 'White Hat'
       });
     });
   };
