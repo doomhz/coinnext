@@ -1,5 +1,5 @@
 (function() {
-  var Order, TradeQueue, Wallet, restify;
+  var Order, TradeQueue, Wallet, restify, trader;
 
   restify = require("restify");
 
@@ -9,15 +9,16 @@
 
   TradeQueue = require("../../lib/trade_queue");
 
+  trader = null;
+
   module.exports = function(app) {
-    var onOrderCompleted, tq, trader;
-    trader = null;
+    var onOrderCompleted, tq;
     app.post("/publish_order/:order_id", function(req, res, next) {
       var orderId;
       orderId = req.params.order_id;
       console.log(orderId);
       return Order.findById(orderId, function(err, order) {
-        var marketType, orderCurrency, queueData;
+        var amount, marketType, orderCurrency, queueData, unitPrice;
         if (err) {
           return next(new restify.ConflictError(err));
         }
@@ -26,15 +27,16 @@
         }
         marketType = ("" + order.action + "_" + order.type).toUpperCase();
         orderCurrency = order["" + order.action + "_currency"];
+        amount = order.amount * 100000000;
+        unitPrice = order.unit_price ? order.unit_price * 100000000 : order.unit_price;
         queueData = {
           eventType: "order",
-          eventUserId: order.user_id,
           data: {
-            orderId: orderId,
+            orderId: order.engine_id,
             orderType: marketType,
-            orderAmount: order.amount,
+            orderAmount: amount,
             orderCurrency: orderCurrency,
-            orderLimitPrice: order.unit_price
+            orderLimitPrice: unitPrice
           }
         };
         trader.publishOrder(queueData, function(queueError, response) {
@@ -56,27 +58,34 @@
         });
       });
     });
-    onOrderCompleted = function(result) {
-      var orderId, receivedAmount, soldAmount, status;
-      if (result.eventType === "orderResult") {
-        orderId = result.data.orderId;
+    onOrderCompleted = function(message) {
+      var engineId, receivedAmount, result, soldAmount, status;
+      console.log("incoming result ", message);
+      result = null;
+      try {
+        result = JSON.parse(message.data.toString());
+      } catch (_error) {}
+      console.log(result);
+      if (result && result.eventType === "orderResult") {
+        engineId = result.data.orderId;
         status = result.data.orderState;
-        soldAmount = result.data.soldAmount;
-        receivedAmount = result.data.receivedAmount;
-        return Order.findById(orderId, function(err, order) {
+        soldAmount = parseFloat(result.data.soldAmount) / 100000000;
+        receivedAmount = parseFloat(result.data.receivedAmount) / 100000000;
+        return Order.findByEngineId(engineId, function(err, order) {
           if (order) {
             return Wallet.findUserWalletByCurrency(order.user_id, order.buy_currency, function(err, buyWallet) {
               return Wallet.findUserWalletByCurrency(order.user_id, order.sell_currency, function(err, sellWallet) {
                 return sellWallet.holdBalance(-soldAmount, function(err, sellWallet) {
                   return buyWallet.addBalance(receivedAmount, function(err, buyWallet) {
                     return Order.update({
-                      _id: orderId
+                      _id: order.id
                     }, {
                       status: status
                     }, function(err, res) {
                       if (err) {
                         return console.error("Could not complete order " + result + " - " + err);
                       }
+                      return console.log("Completed order " + order.id);
                     });
                   });
                 });

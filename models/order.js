@@ -1,11 +1,17 @@
 (function() {
-  var Order, OrderSchema, exports, _;
+  var Order, OrderSchema, autoIncrement, exports, _;
 
   _ = require("underscore");
+
+  autoIncrement = require("mongoose-auto-increment");
 
   OrderSchema = new Schema({
     user_id: {
       type: String,
+      index: true
+    },
+    engine_id: {
+      type: Number,
       index: true
     },
     type: {
@@ -54,6 +60,13 @@
   });
 
   OrderSchema.set("autoIndex", false);
+
+  autoIncrement.initialize(mongoose);
+
+  OrderSchema.plugin(autoIncrement.plugin, {
+    model: "Order",
+    field: "engine_id"
+  });
 
   /*
   OrderSchema.path("unit_price").validate ()->
@@ -133,6 +146,12 @@
       callback("Wrong action", []);
     }
     return dbQuery.exec(callback);
+  };
+
+  OrderSchema.statics.findByEngineId = function(engineId, callback) {
+    return Order.findOne({
+      engine_id: engineId
+    }, callback);
   };
 
   OrderSchema.statics.isValidTradeAmount = function(amount) {

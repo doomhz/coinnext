@@ -1,8 +1,12 @@
-_ = require "underscore"
+_             = require "underscore"
+autoIncrement = require "mongoose-auto-increment"
 
 OrderSchema = new Schema
   user_id:
     type: String
+    index: true
+  engine_id:
+    type: Number
     index: true
   type:
     type: String
@@ -39,6 +43,11 @@ OrderSchema = new Schema
     index: true
 
 OrderSchema.set("autoIndex", false)
+
+autoIncrement.initialize mongoose
+OrderSchema.plugin autoIncrement.plugin,
+  model: "Order"
+  field: "engine_id"
 
 ###
 OrderSchema.path("unit_price").validate ()->
@@ -82,6 +91,9 @@ OrderSchema.statics.findByOptions = (options = {}, callback)->
   else
     callback "Wrong action", []
   dbQuery.exec callback
+
+OrderSchema.statics.findByEngineId = (engineId, callback)->
+  Order.findOne {engine_id: engineId}, callback
 
 OrderSchema.statics.isValidTradeAmount = (amount)->
   _.isNumber(amount) and not _.isNaN(amount) and amount > 0
