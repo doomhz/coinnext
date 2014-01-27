@@ -9,16 +9,15 @@
 
   module.exports = function(app) {
     app.post("/orders", function(req, res) {
-      var data, holdBalance;
+      var data;
       if (req.user) {
         if (req.user.canTrade()) {
           data = req.body;
           data.user_id = req.user.id;
-          holdBalance = Order.calculateHoldBalance(data.action, data.amount, data.unit_price);
           if (!Order.isValidTradeAmount(data.amount)) {
             return JsonRenderer.error("Please submit a valid amount bigger than 0.", res);
           }
-          if (!Order.isValidTradeAmount(holdBalance)) {
+          if (!Order.isValidTradeAmount(data.amount)) {
             return JsonRenderer.error("Please submit a valid pay amount.", res);
           }
           return Wallet.findOrCreateUserWalletByCurrency(req.user.id, data.buy_currency, function(err, buyWallet) {
@@ -29,7 +28,7 @@
               if (err || !wallet) {
                 return JsonRenderer.error("Wallet " + data.sell_currency + " does not exist.", res);
               }
-              return wallet.holdBalance(holdBalance, function(err, wallet) {
+              return wallet.holdBalance(data.amount, function(err, wallet) {
                 if (err || !wallet) {
                   return JsonRenderer.error("Not enough " + data.sell_currency + " to open an order.", res);
                 }

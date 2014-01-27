@@ -9,14 +9,13 @@ module.exports = (app)->
       if req.user.canTrade()
         data = req.body
         data.user_id = req.user.id
-        holdBalance = Order.calculateHoldBalance data.action, data.amount, data.unit_price
         return JsonRenderer.error "Please submit a valid amount bigger than 0.", res  if not Order.isValidTradeAmount data.amount
-        return JsonRenderer.error "Please submit a valid pay amount.", res  if not Order.isValidTradeAmount holdBalance
+        return JsonRenderer.error "Please submit a valid pay amount.", res  if not Order.isValidTradeAmount data.amount
         Wallet.findOrCreateUserWalletByCurrency req.user.id, data.buy_currency, (err, buyWallet)->
           return JsonRenderer.error "Wallet #{data.buy_currency} does not exist.", res  if err or not buyWallet
           Wallet.findOrCreateUserWalletByCurrency req.user.id, data.sell_currency, (err, wallet)->
             return JsonRenderer.error "Wallet #{data.sell_currency} does not exist.", res  if err or not wallet
-            wallet.holdBalance holdBalance, (err, wallet)->
+            wallet.holdBalance data.amount, (err, wallet)->
               return JsonRenderer.error "Not enough #{data.sell_currency} to open an order.", res  if err or not wallet
               Order.create data, (err, newOrder)->
                 return JsonRenderer.error "Sorry, could not open an order...", res  if err
