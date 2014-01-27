@@ -38,7 +38,6 @@ module.exports = (app)->
       #  return next(new restify.ConflictError "Trade queue error - #{queueError}")
 
   onOrderCompleted = (message)->
-    # TODO: Confirm this with Charles
     console.log "incoming result ", message
     result = null
     try
