@@ -55,10 +55,10 @@ module.exports = (app)->
               sellWallet.holdBalance -soldAmount, (err, sellWallet)->
                 buyWallet.addBalance receivedAmount, (err, buyWallet)->
                   Order.update {_id: order.id}, {status: status}, (err, res)->
-                    return console.error "Could not complete order #{result} - #{err}"  if err
-                    console.log "Completed order #{order.id}"
+                    return console.error "Could not process order ", result, err  if err
+                    console.log "Processed order #{order.id} ", result
         else
-          console.error "Wrong order to complete - #{result}"
+          console.error "Wrong order to complete ", result
 
 
   tq = new TradeQueue

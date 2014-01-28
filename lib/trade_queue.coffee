@@ -12,6 +12,18 @@ class TradeQueue
 
   exchange: null
 
+  exchangeOptions:
+    type: "direct"
+    passive: false
+    durable: true
+    autoDelete: false
+
+  queueOptions:
+    pasive: false
+    durable: true
+    exclusive: false
+    autoDelete: false
+
   constructor: (options)->
     @connectionData = options.connection
     @openOrdersQueueName = options.openOrdersQueueName
@@ -23,25 +35,15 @@ class TradeQueue
     @connection = amqp.createConnection @connectionData
     @connection.on "ready", ()=>
       console.log "queue connected"
-      exchangeOptions =
-        type: "direct"
-        passive: false
-        durable: true
-        autoDelete: false
-      queueOptions =
-        pasive: false
-        durable: true
-        exclusive: false
-        autoDelete: false
-      @exchange = @connection.exchange "coinx_exchange", exchangeOptions
-      @connection.queue @openOrdersQueueName, queueOptions, (openOrdersQueue)=>
+      @exchange = @connection.exchange "coinx_exchange", @exchangeOptions
+      @connection.queue @openOrdersQueueName, @queueOptions, (openOrdersQueue)=>
         openOrdersQueue.bind @exchange, "coinx_pending_indata"
-        @connection.queue @completedOrdersQueueName, queueOptions, (completedOrdersQueue)=>
+        @connection.queue @completedOrdersQueueName, @queueOptions, (completedOrdersQueue)=>
           completedOrdersQueue.bind @exchange, "coinx_pending_outdata"
           completedOrdersQueue.subscribe @onComplete
           @onConnect @  if @onConnect
     @connection.on "error", ()=>
-      console.error arguments
+      console.error "queue error ", arguments
 
   publishOrder: (body, callback)->
     console.log "Publishing to queue ", body

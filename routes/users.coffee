@@ -35,19 +35,6 @@ module.exports = (app)->
     req.user.generateGAuthData ()->
       res.json JsonRenderer.user req.user
 
-  app.post "/user_event", (req, res, next)->
-    userId = req.body.user_id
-    eventType = req.body.type
-    data = req.body.data
-    if GLOBAL.usersSocket
-      try
-        for sId, socket of GLOBAL.usersSocket.sockets
-          socket.emit eventType, data  if socket.user_id is userId
-        res.json({})
-      catch e
-        console.error "Could not emit to socket namespace /users #{userId}: #{e}"
-        JsonRenderer.error "Could not emit to socket namespace /users #{userId}", res
-
   login = (req, res, next)->
     passport.authenticate("local", (err, user, info)->
       return JsonRenderer.error err, res, 401  if err
@@ -59,8 +46,3 @@ module.exports = (app)->
           return JsonRenderer.error "Invalid Google Authenticator code", res, 401
         res.json JsonRenderer.user req.user
     )(req, res, next)
-
-
-  GLOBAL.usersSocket = GLOBAL.io.of("/users").on "connection", (socket)->
-    socket.on "listen", (data)->
-      socket.user_id = data.id

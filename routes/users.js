@@ -51,29 +51,7 @@
         return res.json(JsonRenderer.user(req.user));
       });
     });
-    app.post("/user_event", function(req, res, next) {
-      var data, e, eventType, sId, socket, userId, _ref;
-      userId = req.body.user_id;
-      eventType = req.body.type;
-      data = req.body.data;
-      if (GLOBAL.usersSocket) {
-        try {
-          _ref = GLOBAL.usersSocket.sockets;
-          for (sId in _ref) {
-            socket = _ref[sId];
-            if (socket.user_id === userId) {
-              socket.emit(eventType, data);
-            }
-          }
-          return res.json({});
-        } catch (_error) {
-          e = _error;
-          console.error("Could not emit to socket namespace /users " + userId + ": " + e);
-          return JsonRenderer.error("Could not emit to socket namespace /users " + userId, res);
-        }
-      }
-    });
-    login = function(req, res, next) {
+    return login = function(req, res, next) {
       return passport.authenticate("local", function(err, user, info) {
         if (err) {
           return JsonRenderer.error(err, res, 401);
@@ -93,11 +71,6 @@
         });
       })(req, res, next);
     };
-    return GLOBAL.usersSocket = GLOBAL.io.of("/users").on("connection", function(socket) {
-      return socket.on("listen", function(data) {
-        return socket.user_id = data.id;
-      });
-    });
   };
 
 }).call(this);

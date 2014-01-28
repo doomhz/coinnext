@@ -30,6 +30,7 @@
     , "jslogger": "latest"
     , "date-utils": "latest"
     , "socket.io": "latest"
+    , "socket.io-client": "latest"
     , "connect-domain": "latest"
     , "winston": "latest"
     , "async": "latest"

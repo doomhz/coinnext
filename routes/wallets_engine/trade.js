@@ -83,16 +83,16 @@
                       status: status
                     }, function(err, res) {
                       if (err) {
-                        return console.error("Could not complete order " + result + " - " + err);
+                        return console.error("Could not process order ", result, err);
                       }
-                      return console.log("Completed order " + order.id);
+                      return console.log("Processed order " + order.id + " ", result);
                     });
                   });
                 });
               });
             });
           } else {
-            return console.error("Wrong order to complete - " + result);
+            return console.error("Wrong order to complete ", result);
           }
         });
       }

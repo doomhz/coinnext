@@ -9,7 +9,6 @@ var RedisStore = require('connect-redis')(express);
 var connectDomain = require('connect-domain');
 var gzippo = require('gzippo');
 var fs = require('fs');
-var io = require('socket.io');
 var helmet = require('helmet');
 var WalletsClient = require('./lib/wallets_client');
 var environment = process.env.NODE_ENV || 'development';
@@ -75,10 +74,8 @@ app.configure('production', function(){
 });
 
 var server = http.createServer(app);
-var ioOptions = {
-  log: environment === "production" ? false : false
-};
-GLOBAL.io = io.listen(server, ioOptions);
+
+GLOBAL.sockets = require("./lib/sockets")(server, environment);
 
 server.listen(app.get('port'), function(){
   console.log("Coinnext is running on port %d in %s mode", app.get("port"), app.settings.env);

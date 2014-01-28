@@ -30,7 +30,7 @@ OrderSchema = new Schema
     type: Number
   status:
     type: String
-    enum: ["open", "partial", "completed"]
+    enum: ["open", "partiallyCompleted", "completed"]
     default: "open"
     index: true
   published:
@@ -68,8 +68,12 @@ OrderSchema.methods.publish = (callback = ()->)->
       callback "Could not publish the order to the network"
 
 OrderSchema.statics.findByOptions = (options = {}, callback)->
-  dbQuery = Order.find
-    status: options.status
+  dbQuery = Order.find({})
+  if options.status is "open"
+    dbQuery.where("status").in(["partiallyCompleted", "open"])
+  if options.status is "completed"
+    dbQuery.where
+      status: options.status
   dbQuery.where({action: options.action})    if ["buy", "sell"].indexOf(options.action) > -1
   dbQuery.where({user_id: options.user_id})  if options.user_id
   if options.action is "buy"

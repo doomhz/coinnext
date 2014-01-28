@@ -43,7 +43,7 @@
     },
     status: {
       type: String,
-      "enum": ["open", "partial", "completed"],
+      "enum": ["open", "partiallyCompleted", "completed"],
       "default": "open",
       index: true
     },
@@ -100,9 +100,15 @@
     if (options == null) {
       options = {};
     }
-    dbQuery = Order.find({
-      status: options.status
-    });
+    dbQuery = Order.find({});
+    if (options.status === "open") {
+      dbQuery.where("status")["in"](["partiallyCompleted", "open"]);
+    }
+    if (options.status === "completed") {
+      dbQuery.where({
+        status: options.status
+      });
+    }
     if (["buy", "sell"].indexOf(options.action) > -1) {
       dbQuery.where({
         action: options.action
