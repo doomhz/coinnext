@@ -165,48 +165,50 @@
       });
     });
     loadEntireAccountBalance = function(wallet, callback) {
-      var _this = this;
       if (callback == null) {
         callback = function() {};
       }
-      return GLOBAL.wallets[wallet.currency].getBalance(wallet.account, function(err, balance) {
-        if (err) {
-          console.error("Could not get balance for " + wallet.account, err);
-          return callback(err, _this);
-        } else {
-          if (balance !== 0) {
-            return GLOBAL.wallets[wallet.currency].chargeAccount(wallet.account, -balance, function(err, success) {
-              if (err) {
-                console.error("Could not charge " + wallet.account + " " + balance + " BTC", err);
-                return callback(err, _this);
-              } else {
-                return wallet.addBalance(balance, callback);
-              }
-            });
+      return GLOBAL.wallets[wallet.currency].getBalance(wallet.account, (function(_this) {
+        return function(err, balance) {
+          if (err) {
+            console.error("Could not get balance for " + wallet.account, err);
+            return callback(err, _this);
           } else {
-            return Wallet.findById(wallet.id, callback);
+            if (balance !== 0) {
+              return GLOBAL.wallets[wallet.currency].chargeAccount(wallet.account, -balance, function(err, success) {
+                if (err) {
+                  console.error("Could not charge " + wallet.account + " " + balance + " BTC", err);
+                  return callback(err, _this);
+                } else {
+                  return wallet.addBalance(balance, callback);
+                }
+              });
+            } else {
+              return Wallet.findById(wallet.id, callback);
+            }
           }
-        }
-      });
+        };
+      })(this));
     };
     return processPayment = function(payment, callback) {
-      var account,
-        _this = this;
+      var account;
       if (callback == null) {
         callback = function() {};
       }
       account = GLOBAL.wallets[payment.currency].account;
-      return GLOBAL.wallets[payment.currency].sendToAddress(payment.address, account, payment.amount, function(err, response) {
-        if (response == null) {
-          response = "";
-        }
-        if (err) {
-          console.error("Could not withdraw to " + payment.address + " from " + account + " " + payment.amount + " BTC", err);
-          return payment.errored(err, callback);
-        } else {
-          return payment.process(response, callback);
-        }
-      });
+      return GLOBAL.wallets[payment.currency].sendToAddress(payment.address, account, payment.amount, (function(_this) {
+        return function(err, response) {
+          if (response == null) {
+            response = "";
+          }
+          if (err) {
+            console.error("Could not withdraw to " + payment.address + " from " + account + " " + payment.amount + " BTC", err);
+            return payment.errored(err, callback);
+          } else {
+            return payment.process(response, callback);
+          }
+        };
+      })(this));
     };
   };
 

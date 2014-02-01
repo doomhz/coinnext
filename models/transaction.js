@@ -56,8 +56,8 @@
     }
     details = transactionData.details[0] || {};
     data = {
-      user_id: wallet ? wallet.user_id : void 0,
-      wallet_id: wallet ? wallet._id : void 0,
+      user_id: (wallet ? wallet.user_id : void 0),
+      wallet_id: (wallet ? wallet._id : void 0),
       currency: currency,
       account: details.account,
       fee: details.fee,

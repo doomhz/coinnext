@@ -1,9 +1,11 @@
 (function() {
-  var MarketStats, Wallet;
+  var MarketStats, Order, Wallet;
 
   Wallet = require("../models/wallet");
 
   MarketStats = require("../models/market_stats");
+
+  Order = require("../models/order");
 
   module.exports = function(app) {
     app.get("/", function(req, res) {
@@ -28,46 +30,50 @@
         return res.redirect("/");
       }
       return MarketStats.getStats(function(err, marketStats) {
-        if (req.user) {
-          return Wallet.findUserWalletByCurrency(req.user.id, currency1, function(err, wallet1) {
-            if (!wallet1) {
-              wallet1 = new Wallet({
-                currency: currency1
-              });
-            }
-            return Wallet.findUserWalletByCurrency(req.user.id, currency2, function(err, wallet2) {
-              if (!wallet2) {
-                wallet2 = new Wallet({
-                  currency: currency2
+        return Order.getMarketPrice(currency1, currency2, function(err, marketPrice) {
+          if (req.user) {
+            return Wallet.findUserWalletByCurrency(req.user.id, currency1, function(err, wallet1) {
+              if (!wallet1) {
+                wallet1 = new Wallet({
+                  currency: currency1
                 });
               }
-              return res.render("site/trade", {
-                title: "Trade " + currency1 + " to " + currency2,
-                user: req.user,
-                currency1: currency1,
-                currency2: currency2,
-                wallet1: wallet1,
-                wallet2: wallet2,
-                currencies: Wallet.getCurrencyNames(),
-                marketStats: marketStats
+              return Wallet.findUserWalletByCurrency(req.user.id, currency2, function(err, wallet2) {
+                if (!wallet2) {
+                  wallet2 = new Wallet({
+                    currency: currency2
+                  });
+                }
+                return res.render("site/trade", {
+                  title: "Trade " + currency1 + " to " + currency2,
+                  user: req.user,
+                  currency1: currency1,
+                  currency2: currency2,
+                  wallet1: wallet1,
+                  wallet2: wallet2,
+                  currencies: Wallet.getCurrencyNames(),
+                  marketStats: marketStats,
+                  marketPrice: marketPrice
+                });
               });
             });
-          });
-        } else {
-          return res.render("site/trade", {
-            title: "Trade " + currency1 + " to " + currency2,
-            currency1: currency1,
-            currency2: currency2,
-            wallet1: new Wallet({
-              currency: currency1
-            }),
-            wallet2: new Wallet({
-              currency: currency2
-            }),
-            currencies: Wallet.getCurrencyNames(),
-            marketStats: marketStats
-          });
-        }
+          } else {
+            return res.render("site/trade", {
+              title: "Trade " + currency1 + " to " + currency2,
+              currency1: currency1,
+              currency2: currency2,
+              wallet1: new Wallet({
+                currency: currency1
+              }),
+              wallet2: new Wallet({
+                currency: currency2
+              }),
+              currencies: Wallet.getCurrencyNames(),
+              marketStats: marketStats,
+              marketPrice: marketPrice
+            });
+          }
+        });
       });
     });
     app.get("/funds", function(req, res) {

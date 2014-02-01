@@ -36,8 +36,8 @@ TransactionSchema.set("autoIndex", false)
 TransactionSchema.statics.addFromWallet = (transactionData, currency, wallet, callback = ()->)->
   details = transactionData.details[0] or {}
   data =
-    user_id:       wallet.user_id  if wallet
-    wallet_id:     wallet._id  if wallet
+    user_id:       (wallet.user_id if wallet)
+    wallet_id:     (wallet._id if wallet)
     currency:      currency
     account:       details.account
     fee:           details.fee

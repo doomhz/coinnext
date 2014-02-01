@@ -57,27 +57,27 @@
   });
 
   WalletSchema.methods.generateAddress = function(callback) {
-    var _this = this;
     if (callback == null) {
       callback = function() {};
     }
-    return GLOBAL.walletsClient.send("create_account", [this.account, this.currency], function(err, res, body) {
-      if (err) {
-        console.error(err);
-        return callback(err, res, body);
-      }
-      if (body && body.address) {
-        _this.address = body.address;
-        return _this.save(callback);
-      } else {
-        console.error("Could not generate address - " + (JSON.stringify(body)));
-        return callback("Invalid address");
-      }
-    });
+    return GLOBAL.walletsClient.send("create_account", [this.account, this.currency], (function(_this) {
+      return function(err, res, body) {
+        if (err) {
+          console.error(err);
+          return callback(err, res, body);
+        }
+        if (body && body.address) {
+          _this.address = body.address;
+          return _this.save(callback);
+        } else {
+          console.error("Could not generate address - " + (JSON.stringify(body)));
+          return callback("Invalid address");
+        }
+      };
+    })(this));
   };
 
   WalletSchema.methods.addBalance = function(newBalance, callback) {
-    var _this = this;
     if (callback == null) {
       callback = function() {};
     }
@@ -88,14 +88,16 @@
         $inc: {
           balance: newBalance
         }
-      }, function(err) {
-        if (err) {
-          console.log("Could not add the wallet balance " + newBalance + " for " + _this._id + ": " + err);
-        }
-        return Wallet.findById(_this._id, function(err, wl) {
-          return callback(err, wl);
-        });
-      });
+      }, (function(_this) {
+        return function(err) {
+          if (err) {
+            console.log("Could not add the wallet balance " + newBalance + " for " + _this._id + ": " + err);
+          }
+          return Wallet.findById(_this._id, function(err, wl) {
+            return callback(err, wl);
+          });
+        };
+      })(this));
     } else {
       console.log("Could not add wallet balance " + newBalance + " for " + this._id);
       return callback(null, this);
@@ -103,34 +105,35 @@
   };
 
   WalletSchema.methods.holdBalance = function(balance, callback) {
-    var _this = this;
     if (callback == null) {
       callback = function() {};
     }
     if (!_.isNaN(balance) && _.isNumber(balance) && this.canWithdraw(balance)) {
-      return this.addBalance(-balance, function(err) {
-        if (!err) {
-          return Wallet.update({
-            _id: _this._id
-          }, {
-            $inc: {
-              hold_balance: balance
-            }
-          }, function(err) {
-            if (err) {
-              console.log("Could not add the wallet hold balance " + balance + " for " + _this._id + ": " + err);
-            }
+      return this.addBalance(-balance, (function(_this) {
+        return function(err) {
+          if (!err) {
+            return Wallet.update({
+              _id: _this._id
+            }, {
+              $inc: {
+                hold_balance: balance
+              }
+            }, function(err) {
+              if (err) {
+                console.log("Could not add the wallet hold balance " + balance + " for " + _this._id + ": " + err);
+              }
+              return Wallet.findById(_this._id, function(err, wl) {
+                return callback(err, wl);
+              });
+            });
+          } else {
+            console.log("Could not hold wallet balance " + balance + " for " + _this._id + ", not enough funds?");
             return Wallet.findById(_this._id, function(err, wl) {
               return callback(err, wl);
             });
-          });
-        } else {
-          console.log("Could not hold wallet balance " + balance + " for " + _this._id + ", not enough funds?");
-          return Wallet.findById(_this._id, function(err, wl) {
-            return callback(err, wl);
-          });
-        }
-      });
+          }
+        };
+      })(this));
     } else {
       console.log("Could not add wallet hold balance " + balance + " for " + this._id);
       return callback("Invalid balance " + balance, this);

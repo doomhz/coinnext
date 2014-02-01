@@ -1,5 +1,6 @@
 Wallet = require "../models/wallet"
 MarketStats = require "../models/market_stats"
+Order = require "../models/order"
 
 module.exports = (app)->
 
@@ -20,35 +21,38 @@ module.exports = (app)->
     currencies = Wallet.getCurrencies()
     return res.redirect "/"  if currencies.indexOf(currency1) is -1 or currencies.indexOf(currency2) is -1
     MarketStats.getStats (err, marketStats)->
-      if req.user
-        Wallet.findUserWalletByCurrency req.user.id, currency1, (err, wallet1)->
-          if not wallet1
-            wallet1 = new Wallet
+      Order.getMarketPrice currency1, currency2, (err, marketPrice)->
+        if req.user
+          Wallet.findUserWalletByCurrency req.user.id, currency1, (err, wallet1)->
+            if not wallet1
+              wallet1 = new Wallet
+                currency: currency1
+            Wallet.findUserWalletByCurrency req.user.id, currency2, (err, wallet2)->
+              if not wallet2
+                wallet2 = new Wallet
+                  currency: currency2
+              res.render "site/trade",
+                title: "Trade #{currency1} to #{currency2}"
+                user: req.user
+                currency1: currency1
+                currency2: currency2
+                wallet1: wallet1
+                wallet2: wallet2
+                currencies: Wallet.getCurrencyNames()
+                marketStats: marketStats
+                marketPrice: marketPrice
+        else
+          res.render "site/trade",
+            title: "Trade #{currency1} to #{currency2}"
+            currency1: currency1
+            currency2: currency2
+            wallet1: new Wallet
               currency: currency1
-          Wallet.findUserWalletByCurrency req.user.id, currency2, (err, wallet2)->
-            if not wallet2
-              wallet2 = new Wallet
-                currency: currency2
-            res.render "site/trade",
-              title: "Trade #{currency1} to #{currency2}"
-              user: req.user
-              currency1: currency1
-              currency2: currency2
-              wallet1: wallet1
-              wallet2: wallet2
-              currencies: Wallet.getCurrencyNames()
-              marketStats: marketStats
-      else
-        res.render "site/trade",
-          title: "Trade #{currency1} to #{currency2}"
-          currency1: currency1
-          currency2: currency2
-          wallet1: new Wallet
-            currency: currency1
-          wallet2: new Wallet
-            currency: currency2
-          currencies: Wallet.getCurrencyNames()
-          marketStats: marketStats
+            wallet2: new Wallet
+              currency: currency2
+            currencies: Wallet.getCurrencyNames()
+            marketStats: marketStats
+            marketPrice: marketPrice
 
   app.get "/funds", (req, res)->
     Wallet.findUserWallets req.user.id, (err, wallets)->

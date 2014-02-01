@@ -39,7 +39,8 @@
       type: Number
     },
     unit_price: {
-      type: Number
+      type: Number,
+      index: true
     },
     status: {
       type: String,
@@ -68,31 +69,32 @@
     field: "engine_id"
   });
 
+
   /*
   OrderSchema.path("unit_price").validate ()->
       console.log @
       return false
     , "Invalid unit price"
-  */
-
+   */
 
   OrderSchema.methods.publish = function(callback) {
-    var _this = this;
     if (callback == null) {
       callback = function() {};
     }
-    return GLOBAL.walletsClient.send("publish_order", [this.id], function(err, res, body) {
-      if (err) {
-        console.error(err);
-        return callback(err, res, body);
-      }
-      if (body && body.published) {
-        return Order.findById(_this.id, callback);
-      } else {
-        console.error("Could not publish the order - " + (JSON.stringify(body)));
-        return callback("Could not publish the order to the network");
-      }
-    });
+    return GLOBAL.walletsClient.send("publish_order", [this.id], (function(_this) {
+      return function(err, res, body) {
+        if (err) {
+          console.error(err);
+          return callback(err, res, body);
+        }
+        if (body && body.published) {
+          return Order.findById(_this.id, callback);
+        } else {
+          console.error("Could not publish the order - " + (JSON.stringify(body)));
+          return callback("Could not publish the order to the network");
+        }
+      };
+    })(this));
   };
 
   OrderSchema.statics.findByOptions = function(options, callback) {
@@ -162,6 +164,38 @@
 
   OrderSchema.statics.isValidTradeAmount = function(amount) {
     return _.isNumber(amount) && !_.isNaN(amount) && amount > 0;
+  };
+
+  OrderSchema.statics.getMarketPrice = function(currency1, currency2, callback) {
+    return Order.findOne({
+      sell_currency: currency1,
+      buy_currency: currency2,
+      action: "sell"
+    }).where("status")["in"](["partiallyCompleted", "open"]).sort({
+      unit_price: "asc"
+    }).exec(function(err, sellOrder) {
+      if (err) {
+        return callback(err);
+      }
+      return Order.findOne({
+        buy_currency: currency1,
+        sell_currency: currency2,
+        action: "buy"
+      }).where("status")["in"](["partiallyCompleted", "open"]).sort({
+        unit_price: "desc"
+      }).exec(function(err, buyOrder) {
+        var buyPrice, sellPrice;
+        if (err) {
+          return callback(err);
+        }
+        sellPrice = sellOrder ? sellOrder.unit_price : 0;
+        buyPrice = buyOrder ? buyOrder.unit_price : 0;
+        return callback(null, {
+          sell: sellPrice,
+          buy: buyPrice
+        });
+      });
+    });
   };
 
   Order = mongoose.model("Order", OrderSchema);

@@ -71,10 +71,10 @@ class App.TradeView extends App.MasterView
   onBuyAmountChange: (ev)->
     $target = $(ev.target)
     spendAmount = parseFloat $target.val()
-    $result = $("#buy-amount-result")
+    $result = @$("#buy-amount-result")
     if @isValidAmount spendAmount
       fee = parseFloat $result.data("fee")
-      @model.get("#{@currency1}_#{@currency2}").last_price
+      lastPrice = parseFloat @$("#market-buy-unit-price").val()
       total = _.str.roundToThree spendAmount / lastPrice - fee
       #console.log spendAmount, fee, lastPrice, total
       $result.text total
@@ -84,10 +84,10 @@ class App.TradeView extends App.MasterView
   onSellAmountChange: (ev)->
     $target = $(ev.target)
     spendAmount = parseFloat $target.val()
-    $result = $("#sell-amount-result")
+    $result = @$("#sell-amount-result")
     if @isValidAmount spendAmount
       fee = parseFloat $result.data("fee")
-      lastPrice = @model.get("#{@currency1}_#{@currency2}").last_price
+      lastPrice = parseFloat @$("#market-sell-unit-price").val()
       total = _.str.roundToThree spendAmount * lastPrice - fee
       #console.log spendAmount, fee, lastPrice, total
       $result.text total
