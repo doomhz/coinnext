@@ -1,11 +1,13 @@
 (function() {
-  var Order, TradeQueue, Wallet, restify, trader;
+  var MarketStats, Order, TradeQueue, Wallet, restify, trader;
 
   restify = require("restify");
 
   Order = require("../../models/order");
 
   Wallet = require("../../models/wallet");
+
+  MarketStats = require("../../models/market_stats");
 
   TradeQueue = require("../../lib/trade_queue");
 
@@ -60,12 +62,10 @@
     });
     onOrderCompleted = function(message) {
       var engineId, receivedAmount, result, soldAmount, status;
-      console.log("incoming result ", message);
       result = null;
       try {
         result = JSON.parse(message.data.toString());
       } catch (_error) {}
-      console.log(result);
       if (result && result.eventType === "orderResult") {
         engineId = result.data.orderId;
         status = result.data.orderState;
@@ -77,13 +77,14 @@
               return Wallet.findUserWalletByCurrency(order.user_id, order.sell_currency, function(err, sellWallet) {
                 return sellWallet.holdBalance(-soldAmount, function(err, sellWallet) {
                   return buyWallet.addBalance(receivedAmount, function(err, buyWallet) {
-                    return Order.update({
-                      _id: order.id
-                    }, {
-                      status: status
-                    }, function(err, res) {
+                    order.status = status;
+                    order.result_amount = receivedAmount;
+                    return order.save(function(err, order) {
                       if (err) {
                         return console.error("Could not process order ", result, err);
+                      }
+                      if (order.status === "completed") {
+                        MarketStats.trackFromOrder(order);
                       }
                       return console.log("Processed order " + order.id + " ", result);
                     });

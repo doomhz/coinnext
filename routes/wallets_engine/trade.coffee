@@ -1,6 +1,7 @@
 restify = require "restify"
 Order = require "../../models/order"
 Wallet = require "../../models/wallet"
+MarketStats = require "../../models/market_stats"
 TradeQueue = require "../../lib/trade_queue"
 trader = null
 
@@ -38,11 +39,11 @@ module.exports = (app)->
       #  return next(new restify.ConflictError "Trade queue error - #{queueError}")
 
   onOrderCompleted = (message)->
-    console.log "incoming result ", message
+    #console.log "incoming result ", message
     result = null
     try
       result = JSON.parse(message.data.toString())
-    console.log result
+    #console.log result
     if result and result.eventType is "orderResult"
       engineId = result.data.orderId
       status = result.data.orderState
@@ -54,8 +55,11 @@ module.exports = (app)->
             Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, sellWallet)->
               sellWallet.holdBalance -soldAmount, (err, sellWallet)->
                 buyWallet.addBalance receivedAmount, (err, buyWallet)->
-                  Order.update {_id: order.id}, {status: status}, (err, res)->
+                  order.status = status
+                  order.result_amount = receivedAmount
+                  order.save (err, order)->
                     return console.error "Could not process order ", result, err  if err
+                    MarketStats.trackFromOrder order  if order.status is "completed"
                     console.log "Processed order #{order.id} ", result
         else
           console.error "Wrong order to complete ", result

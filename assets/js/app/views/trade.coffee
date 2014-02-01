@@ -57,7 +57,6 @@ class App.TradeView extends App.MasterView
       success: ()->
         $.publish "new-order", order
         $form.find("[name='amount']").val ""
-        $form.find("[name='unit_price']").val ""
       error: (m, xhr)->
         $.publish "error", xhr
 
@@ -70,12 +69,12 @@ class App.TradeView extends App.MasterView
 
   onBuyAmountChange: (ev)->
     $target = $(ev.target)
-    spendAmount = parseFloat $target.val()
+    buyAmount = parseFloat $target.val()
     $result = @$("#buy-amount-result")
-    if @isValidAmount spendAmount
+    if @isValidAmount buyAmount
       fee = parseFloat $result.data("fee")
       lastPrice = parseFloat @$("#market-buy-unit-price").val()
-      total = _.str.roundToThree spendAmount / lastPrice - fee
+      total = _.str.roundToThree buyAmount * lastPrice - fee
       #console.log spendAmount, fee, lastPrice, total
       $result.text total
     else

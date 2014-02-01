@@ -38,10 +38,10 @@ block content
                     input(name="sell_currency", type="hidden", value="#{wallet2.currency}")
                     input(name="buy_currency", type="hidden", value="#{wallet1.currency}")
                     input#market-buy-unit-price(name="unit_price", type="hidden", value="#{marketPrice.sell}")
-                    label I want to Spend:
+                    label I want to buy:
                     .currency-input
                       input(type="text", name="amount", id="buy-amount-input", autocomplete="off")
-                      .overlay-amount #{wallet2.currency}
+                      .overlay-amount #{wallet1.currency}
                     table.order-overview
                       tr.subtotal
                         th Subtotal:
@@ -50,8 +50,8 @@ block content
                         th Fee:
                         td <span class="amount">#{wallet2.fee} #{wallet2.currency}</span>
                       tr.to-receive
-                        th Approx. #{wallet1.currency} to receive:
-                        td <span id="buy-amount-result" class="amount" data-fee="#{wallet2.fee}">0</span> #{wallet1.currency}
+                        th Approx. #{wallet2.currency} to spend:
+                        td <span id="buy-amount-result" class="amount" data-fee="#{wallet2.fee}">0</span> #{wallet2.currency}
                     .confirm-order
                       button Buy #{wallet1.currency_name}
                 #limit-buy-box.limit-order

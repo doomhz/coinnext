@@ -35,6 +35,9 @@
     amount: {
       type: Number
     },
+    result_amount: {
+      type: Number
+    },
     fee: {
       type: Number
     },

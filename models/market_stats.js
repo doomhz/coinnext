@@ -2,73 +2,42 @@
   var MarketStats, MarketStatsSchema, exports;
 
   MarketStatsSchema = new Schema({
-    LTC_BTC: {
-      label: {
-        type: String,
-        "default": "LTC"
-      },
-      last_price: {
-        type: Number,
-        "default": 0
-      },
-      day_high: {
-        type: Number,
-        "default": 0
-      },
-      day_low: {
-        type: Number,
-        "default": 0
-      },
-      volume1: {
-        type: Number,
-        "default": 0
-      },
-      volume2: {
-        type: Number,
-        "default": 0
-      },
-      growth: {
-        type: Boolean,
-        "default": false
-      },
-      growth_ratio: {
-        type: Number,
-        "default": 0
+    type: {
+      type: String,
+      index: {
+        unique: true
       }
     },
-    PPC_BTC: {
-      label: {
-        type: String,
-        "default": "PPC"
-      },
-      last_price: {
-        type: Number,
-        "default": 0
-      },
-      day_high: {
-        type: Number,
-        "default": 0
-      },
-      day_low: {
-        type: Number,
-        "default": 0
-      },
-      volume1: {
-        type: Number,
-        "default": 0
-      },
-      volume2: {
-        type: Number,
-        "default": 0
-      },
-      growth: {
-        type: Boolean,
-        "default": false
-      },
-      growth_ratio: {
-        type: Number,
-        "default": 0
-      }
+    label: {
+      type: String
+    },
+    last_price: {
+      type: Number,
+      "default": 0
+    },
+    day_high: {
+      type: Number,
+      "default": 0
+    },
+    day_low: {
+      type: Number,
+      "default": 0
+    },
+    volume1: {
+      type: Number,
+      "default": 0
+    },
+    volume2: {
+      type: Number,
+      "default": 0
+    },
+    growth: {
+      type: Boolean,
+      "default": false
+    },
+    growth_ratio: {
+      type: Number,
+      "default": 0
     }
   });
 
@@ -78,19 +47,36 @@
     if (callback == null) {
       callback = function() {};
     }
-    return MarketStats.findOne({}, function(err, marketStats) {
-      if (!marketStats) {
-        return MarketStats.create({}, function(err, marketStats) {
-          return callback(err, {
-            LTC_BTC: marketStats.LTC_BTC,
-            PPC_BTC: marketStats.PPC_BTC
-          });
-        });
-      } else {
-        return callback(err, {
-          LTC_BTC: marketStats.LTC_BTC,
-          PPC_BTC: marketStats.PPC_BTC
-        });
+    return MarketStats.find({}, function(err, marketStats) {
+      var stat, stats, _i, _len;
+      stats = {};
+      for (_i = 0, _len = marketStats.length; _i < _len; _i++) {
+        stat = marketStats[_i];
+        stats[stat.type] = stat;
+      }
+      return callback(err, stats);
+    });
+  };
+
+  MarketStatsSchema.statics.trackFromOrder = function(order) {
+    var type;
+    type = order.action === "buy" ? "" + order.buy_currency + "_" + order.sell_currency : "" + order.sell_currency + "_" + order.buy_currency;
+    return MarketStats.findOne({
+      type: type
+    }, function(err, marketStats) {
+      if (order.action === "buy") {
+        marketStats.growth = marketStats.last_price <= order.unit_price;
+        marketStats.growth_ratio = (order.unit_price - marketStats.last_price) * (marketStats.last_price / 100);
+        marketStats.last_price = order.unit_price;
+        if (order.unit_price > marketStats.day_high) {
+          marketStats.day_high = order.unit_price;
+        }
+        if (order.unit_price > marketStats.day_low) {
+          marketStats.day_low = order.unit_price;
+        }
+        marketStats.volume1 += order.amount;
+        marketStats.volume2 += order.result_amount;
+        return marketStats.save();
       }
     });
   };
