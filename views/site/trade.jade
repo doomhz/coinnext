@@ -155,7 +155,7 @@ block content
             #sell-orders.order-book
               .con-header
                 h3.con-header-title Sell Orders
-                .order-book-total Total: 0893892039 PPC
+                .order-book-total Total: #{marketStats[wallet1.currency + '_' + wallet2.currency].volume1} #{wallet1.currency}
               .table-wrap
                 table.trade-data
                   thead
@@ -169,7 +169,7 @@ block content
             #buy-orders.order-book
               .con-header
                 h3.con-header-title Buy Orders
-                .order-book-total Total: 673 BTC
+                .order-book-total Total: #{marketStats[wallet1.currency + '_' + wallet2.currency].volume2} #{wallet2.currency}
               table.trade-data
                 thead
                   tr

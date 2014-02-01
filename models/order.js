@@ -35,8 +35,13 @@
     amount: {
       type: Number
     },
+    sold_amount: {
+      type: Number,
+      "default": 0
+    },
     result_amount: {
-      type: Number
+      type: Number,
+      "default": 0
     },
     fee: {
       type: Number

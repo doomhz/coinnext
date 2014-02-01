@@ -78,7 +78,8 @@
                 return sellWallet.holdBalance(-soldAmount, function(err, sellWallet) {
                   return buyWallet.addBalance(receivedAmount, function(err, buyWallet) {
                     order.status = status;
-                    order.result_amount = receivedAmount;
+                    order.sold_amount += soldAmount;
+                    order.result_amount += receivedAmount;
                     return order.save(function(err, order) {
                       if (err) {
                         return console.error("Could not process order ", result, err);

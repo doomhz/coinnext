@@ -24,8 +24,12 @@ OrderSchema = new Schema
     index: true
   amount:
     type: Number
+  sold_amount:
+    type: Number
+    default: 0
   result_amount:
     type: Number
+    default: 0
   fee:
     type: Number
   unit_price:

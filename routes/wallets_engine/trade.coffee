@@ -56,7 +56,8 @@ module.exports = (app)->
               sellWallet.holdBalance -soldAmount, (err, sellWallet)->
                 buyWallet.addBalance receivedAmount, (err, buyWallet)->
                   order.status = status
-                  order.result_amount = receivedAmount
+                  order.sold_amount += soldAmount
+                  order.result_amount += receivedAmount
                   order.save (err, order)->
                     return console.error "Could not process order ", result, err  if err
                     MarketStats.trackFromOrder order  if order.status is "completed"
