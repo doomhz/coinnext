@@ -11,9 +11,12 @@ class ClientSocket
     @path = options.path  if options.path
 
   send: (data)->
-    clientSocket = ioClient.connect("#{@host}/#{@path}")
-    clientSocket.on "connect", (s)->
-      clientSocket.emit "external-event", data
-      clientSocket.socket.disconnect()
+    if not @socket
+      @socket = ioClient.connect("#{@host}/#{@path}")
+      @socket.on "connect", (s)=>
+        @socket.emit "external-event", data
+        #socket.socket.disconnect()
+    else
+      @socket.emit "external-event", data
 
 exports = module.exports = ClientSocket

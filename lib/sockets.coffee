@@ -14,11 +14,20 @@ initSockets = (server, env)->
     socket.on "listen", (data)->
       socket.user_id = data.id
     socket.on "external-event", (data)->
+      console.log data
       try
         for sId, socket of sockets.usersSocket.sockets
           socket.emit data.type, data.eventData  if socket.user_id is data.user_id
       catch e
         console.error "Could not emit to socket namespace /users #{userId}: #{e}"
+
+  sockets.ordersSocket = sockets.io.of("/orders").on "connection", (socket)->
+    socket.on "external-event", (data)->
+      try
+        for sId, socket of sockets.ordersSocket.sockets
+          socket.emit data.type, data.eventData
+      catch e
+        console.error "Could not emit to socket namespace /orders: #{e}"
 
   sockets.chatSocket = sockets.io.of("/chat").on "connection", (socket)->
     socket.on "join", (data)->

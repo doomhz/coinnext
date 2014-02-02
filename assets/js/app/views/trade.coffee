@@ -16,7 +16,6 @@ class App.TradeView extends App.MasterView
     "keyup #sell-amount-input": "onSellAmountChange"
 
   initialize: (options = {})->
-    $.subscribe "new-balance", @onNewBalance
     @currency1 = options.currency1
     @currency2 = options.currency2
 
@@ -55,7 +54,6 @@ class App.TradeView extends App.MasterView
       unit_price: $form.find("[name='unit_price']").val()
     order.save null,
       success: ()->
-        $.publish "new-order", order
         $form.find("[name='amount']").val ""
       error: (m, xhr)->
         $.publish "error", xhr

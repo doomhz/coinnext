@@ -74,6 +74,17 @@ OrderSchema.methods.publish = (callback = ()->)->
       console.error "Could not publish the order - #{JSON.stringify(body)}"
       callback "Could not publish the order to the network"
 
+OrderSchema.methods.cancel = (callback = ()->)->
+  GLOBAL.walletsClient.send "cancel_order", [@id], (err, res, body)=>
+    if err
+      console.error err
+      return callback err, res, body
+    if body and body.canceled
+      callback()
+    else
+      console.error "Could not cancel the order - #{JSON.stringify(body)}"
+      callback "Could not cancel the order on the network"
+
 OrderSchema.statics.findByOptions = (options = {}, callback)->
   dbQuery = Order.find({})
   if options.status is "open"

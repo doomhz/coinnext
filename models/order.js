@@ -105,6 +105,26 @@
     })(this));
   };
 
+  OrderSchema.methods.cancel = function(callback) {
+    if (callback == null) {
+      callback = function() {};
+    }
+    return GLOBAL.walletsClient.send("cancel_order", [this.id], (function(_this) {
+      return function(err, res, body) {
+        if (err) {
+          console.error(err);
+          return callback(err, res, body);
+        }
+        if (body && body.canceled) {
+          return callback();
+        } else {
+          console.error("Could not cancel the order - " + (JSON.stringify(body)));
+          return callback("Could not cancel the order on the network");
+        }
+      };
+    })(this));
+  };
+
   OrderSchema.statics.findByOptions = function(options, callback) {
     var currencies, dbQuery;
     if (options == null) {

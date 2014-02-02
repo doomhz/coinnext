@@ -37,9 +37,9 @@ module.exports = (app)->
     if req.user
       Order.findOne {user_id: req.user.id, _id: req.params.id}, (err, order)->
         return JsonRenderer.error "Sorry, could not delete orders...", res  if err or not order
-        Wallet.findUserWalletByCurrency req.user.id, order.sell_currency, (err, wallet)->
-          wallet.holdBalance -order.amount, (err, wallet)->
-            order.remove ()->
-              res.json JsonRenderer.orders order
+        order.cancel (err)->
+          console.log "Could not cancel order - #{err}"  if err
+          return res.json JsonRenderer.order order  if err
+          res.json {}
     else
       JsonRenderer.error "You need to be logged in to place an order.", res

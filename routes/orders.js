@@ -73,12 +73,14 @@
           if (err || !order) {
             return JsonRenderer.error("Sorry, could not delete orders...", res);
           }
-          return Wallet.findUserWalletByCurrency(req.user.id, order.sell_currency, function(err, wallet) {
-            return wallet.holdBalance(-order.amount, function(err, wallet) {
-              return order.remove(function() {
-                return res.json(JsonRenderer.orders(order));
-              });
-            });
+          return order.cancel(function(err) {
+            if (err) {
+              console.log("Could not cancel order - " + err);
+            }
+            if (err) {
+              return res.json(JsonRenderer.order(order));
+            }
+            return res.json({});
           });
         });
       } else {

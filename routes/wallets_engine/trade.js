@@ -1,5 +1,5 @@
 (function() {
-  var MarketStats, Order, TradeQueue, Wallet, restify, trader;
+  var ClientSocket, MarketStats, Order, TradeQueue, Wallet, orderSocket, restify, trader;
 
   restify = require("restify");
 
@@ -12,6 +12,13 @@
   TradeQueue = require("../../lib/trade_queue");
 
   trader = null;
+
+  ClientSocket = require("../../lib/client_socket");
+
+  orderSocket = new ClientSocket({
+    host: GLOBAL.appConfig().users.hostname,
+    path: "orders"
+  });
 
   module.exports = function(app) {
     var onOrderCompleted, tq;
@@ -44,19 +51,64 @@
         trader.publishOrder(queueData, function(queueError, response) {
           return console.log(arguments);
         });
-        return Order.update({
-          _id: orderId
-        }, {
-          published: true
-        }, function(err, result) {
+        order.published = true;
+        return order.save(function(err, order) {
           if (!err) {
-            return res.send({
+            res.send({
               id: orderId,
               published: true
+            });
+            return orderSocket.send({
+              type: "order-published",
+              eventData: order.toJSON()
             });
           } else {
             return next(new restify.ConflictError(err));
           }
+        });
+      });
+    });
+    app.del("/cancel_order/:order_id", function(req, res, next) {
+      var orderId;
+      orderId = req.params.order_id;
+      console.log(orderId);
+      return Order.findById(orderId, function(err, order) {
+        var queueData;
+        if (err) {
+          return next(new restify.ConflictError(err));
+        }
+        if (!trader) {
+          return next(new restify.ConflictError("Trade queue down"));
+        }
+        queueData = {
+          eventType: "event",
+          data: {
+            action: "cancelOrder",
+            orderId: order.engine_id
+          }
+        };
+        trader.publishOrder(queueData, function(queueError, response) {
+          return console.log(arguments);
+        });
+        return Wallet.findUserWalletByCurrency(order.user_id, order.sell_currency, function(err, wallet) {
+          return wallet.holdBalance(-order.amount, function(err, wallet) {
+            return order.remove(function(err) {
+              if (!err) {
+                res.send({
+                  id: orderId,
+                  canceled: true
+                });
+                return orderSocket.send({
+                  type: "order-canceled",
+                  eventData: {
+                    id: orderId
+                  }
+                });
+              } else {
+                return next(new restify.ConflictError(err));
+              }
+            });
+          });
         });
       });
     });
@@ -86,6 +138,10 @@
                       }
                       if (order.status === "completed") {
                         MarketStats.trackFromOrder(order);
+                        orderSocket.send({
+                          type: "order-completed",
+                          eventData: order.toJSON()
+                        });
                       }
                       return console.log("Processed order " + order.id + " ", result);
                     });

@@ -4,6 +4,10 @@ Wallet = require "../../models/wallet"
 MarketStats = require "../../models/market_stats"
 TradeQueue = require "../../lib/trade_queue"
 trader = null
+ClientSocket = require "../../lib/client_socket"
+orderSocket = new ClientSocket
+  host: GLOBAL.appConfig().users.hostname
+  path: "orders"
 
 module.exports = (app)->
 
@@ -28,15 +32,46 @@ module.exports = (app)->
       trader.publishOrder queueData, (queueError, response)->
         console.log arguments
       #if not queueError
-      Order.update {_id: orderId}, {published: true}, (err, result)->
+      order.published = true
+      order.save (err, order)->
         if not err
           res.send
             id:        orderId
             published: true
+          orderSocket.send
+            type: "order-published"
+            eventData: order.toJSON()
         else
           return next(new restify.ConflictError err)
       #else
       #  return next(new restify.ConflictError "Trade queue error - #{queueError}")
+
+  app.del "/cancel_order/:order_id", (req, res, next)->
+    orderId = req.params.order_id
+    console.log orderId
+    Order.findById orderId, (err, order)->
+      return next(new restify.ConflictError err)  if err
+      return next(new restify.ConflictError "Trade queue down")  if not trader
+      queueData =
+        eventType: "event"
+        data:
+          action: "cancelOrder"
+          orderId: order.engine_id
+      trader.publishOrder queueData, (queueError, response)->
+        console.log arguments
+      Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, wallet)->
+        wallet.holdBalance -order.amount, (err, wallet)->
+          order.remove (err)->
+            if not err
+              res.send
+                id:        orderId
+                canceled: true
+              orderSocket.send
+                type: "order-canceled"
+                eventData:
+                  id: orderId
+            else
+              return next(new restify.ConflictError err)
 
   onOrderCompleted = (message)->
     #console.log "incoming result ", message
@@ -60,7 +95,11 @@ module.exports = (app)->
                   order.result_amount += receivedAmount
                   order.save (err, order)->
                     return console.error "Could not process order ", result, err  if err
-                    MarketStats.trackFromOrder order  if order.status is "completed"
+                    if order.status is "completed"
+                      MarketStats.trackFromOrder order
+                      orderSocket.send
+                        type: "order-completed"
+                        eventData: order.toJSON()
                     console.log "Processed order #{order.id} ", result
         else
           console.error "Wrong order to complete ", result
