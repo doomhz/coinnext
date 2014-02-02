@@ -13,5 +13,3 @@ class App.UserModel extends Backbone.Model
             @socket.emit "listen", {id: @id}
           @socket.on "new-balance", (data)=>
             $.publish "new-balance", data
-          @socket.on "new-order", (data)=>
-            $.publish "new-order", data

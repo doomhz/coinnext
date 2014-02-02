@@ -151,19 +151,19 @@ $(document).ready ()->
         currency2: $openBuyOrders.data "currency2"
     closedOrders.render()
 
-    ordersSocket = io.connect "#{CONFIG.users.hostname}/orders"
-    ordersSocket.on "connect", ()->
-    ordersSocket.on "order-published", (data)->
-      #console.log data
-      order = new App.OrderModel data
-      $.publish "new-order", order
-    ordersSocket.on "order-completed", (data)->
-      #console.log data
-      order = new App.OrderModel data
-      $.publish "order-completed", order
-    ordersSocket.on "order-canceled", (data)->
-      #console.log data
-      $.publish "order-canceled", data
-    ordersSocket.on "market-stats-updated", (data)->
-      #console.log data
-      $.publish "market-stats-updated", data
+  ordersSocket = io.connect "#{CONFIG.users.hostname}/orders"
+  ordersSocket.on "connect", ()->
+  ordersSocket.on "order-published", (data)->
+    #console.log data
+    order = new App.OrderModel data
+    $.publish "new-order", order
+  ordersSocket.on "order-completed", (data)->
+    #console.log data
+    order = new App.OrderModel data
+    $.publish "order-completed", order
+  ordersSocket.on "order-canceled", (data)->
+    #console.log data
+    $.publish "order-canceled", data
+  ordersSocket.on "market-stats-updated", (data)->
+    #console.log data
+    $.publish "market-stats-updated", data

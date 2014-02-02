@@ -6,6 +6,7 @@ class App.MarketTickerView extends App.MasterView
 
   initialize: (options = {})->
     $.subscribe "new-balance", @onNewBalance
+    $.subscribe "market-stats-updated", @onMarketStatsUpdated
 
   render: ()->
     @model.fetch
@@ -16,3 +17,6 @@ class App.MarketTickerView extends App.MasterView
   renderMaketTicker: ()->
     @$el.html @template
       marketStats: @model
+
+  onMarketStatsUpdated: (ev, data)=>
+    @render()
