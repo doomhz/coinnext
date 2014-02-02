@@ -106,7 +106,7 @@ module.exports = (app)->
           Wallet.findById wallet.id, callback
 
   processPayment = (payment, callback = ()->)->
-    account = GLOBAL.wallets[payment.currency].account
+    account = null
     GLOBAL.wallets[payment.currency].sendToAddress payment.address, account, payment.amount, (err, response = "")=>
       if err
         console.error "Could not withdraw to #{payment.address} from #{account} #{payment.amount} BTC", err

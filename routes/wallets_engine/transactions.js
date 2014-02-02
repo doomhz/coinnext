@@ -195,7 +195,7 @@
       if (callback == null) {
         callback = function() {};
       }
-      account = GLOBAL.wallets[payment.currency].account;
+      account = null;
       return GLOBAL.wallets[payment.currency].sendToAddress(payment.address, account, payment.amount, (function(_this) {
         return function(err, response) {
           if (response == null) {

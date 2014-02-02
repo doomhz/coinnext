@@ -66,7 +66,10 @@ class BtcWallet
 
   sendToAddress: (address, fromAccount, amount, callback)->
     amount = @convert @currency, "BTC", amount
-    @client.sendFrom fromAccount, address, amount, @confirmations, callback
+    if fromAccount
+      @client.sendFrom fromAccount, address, amount, @confirmations, callback
+    else
+      @client.sendToAddress address, amount, callback
 
   convert: (fromCurrency, toCurrency, amount)->
     parseFloat(parseFloat(amount * @convertionRates["#{fromCurrency}_#{toCurrency}"]).toFixed(9))
