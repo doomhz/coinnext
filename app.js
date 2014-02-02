@@ -87,6 +87,7 @@ if (environment === "staging") {
   var auth = express.basicAuth(function(user, pass) {     
     return (user === GLOBAL.appConfig().site_auth.user && pass === GLOBAL.appConfig().site_auth.pass);
 }, "Coinnext Staging");
+  app.get('*', auth);
 }
 
 
