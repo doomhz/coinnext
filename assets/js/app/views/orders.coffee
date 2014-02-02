@@ -27,7 +27,7 @@ class App.OrdersView extends App.MasterView
   onOrderCompleted: (ev, order)=>
     $existentOrder = @$("[data-id='#{order.id}']")
     if $existentOrder.length
-      $existentOrder.css "background-color", "yellow"
+      $existentOrder.addClass "highlight"
       setTimeout ()->
           $existentOrder.remove()  if $existentOrder.length
         , 1000

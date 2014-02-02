@@ -9,7 +9,10 @@ async = require "async"
 task "db:ensure_indexes", "Create indexes for all the collections", ()->
   require('./models/db_connect_mongo')
   _s         = require "underscore.string"
-  modelNames = ["User"]
+  modelNames = [
+    "User", "Chat", "MarketStats", "Order", "Payment",
+    "Transaction", "Wallet"
+  ]
   for modelName in modelNames
     model = require "./models/#{_s.underscored(modelName)}"
     model.ensureIndexes()
