@@ -137,7 +137,12 @@
                         return console.error("Could not process order ", result, err);
                       }
                       if (order.status === "completed") {
-                        MarketStats.trackFromOrder(order);
+                        MarketStats.trackFromOrder(order, function(err, mkSt) {
+                          return orderSocket.send({
+                            type: "market-stats-updated",
+                            eventData: mkSt.toJSON()
+                          });
+                        });
                         orderSocket.send({
                           type: "order-completed",
                           eventData: order.toJSON()

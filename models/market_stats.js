@@ -58,8 +58,11 @@
     });
   };
 
-  MarketStatsSchema.statics.trackFromOrder = function(order) {
+  MarketStatsSchema.statics.trackFromOrder = function(order, callback) {
     var type;
+    if (callback == null) {
+      callback = function() {};
+    }
     type = order.action === "buy" ? "" + order.buy_currency + "_" + order.sell_currency : "" + order.sell_currency + "_" + order.buy_currency;
     return MarketStats.findOne({
       type: type
@@ -76,7 +79,7 @@
         }
         marketStats.volume1 += order.amount;
         marketStats.volume2 += order.result_amount;
-        return marketStats.save();
+        return marketStats.save(callback);
       }
     });
   };

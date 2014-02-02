@@ -96,7 +96,10 @@ module.exports = (app)->
                   order.save (err, order)->
                     return console.error "Could not process order ", result, err  if err
                     if order.status is "completed"
-                      MarketStats.trackFromOrder order
+                      MarketStats.trackFromOrder order, (err, mkSt)->
+                        orderSocket.send
+                          type: "market-stats-updated"
+                          eventData: mkSt.toJSON()
                       orderSocket.send
                         type: "order-completed"
                         eventData: order.toJSON()

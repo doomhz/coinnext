@@ -164,3 +164,6 @@ $(document).ready ()->
     ordersSocket.on "order-canceled", (data)->
       #console.log data
       $.publish "order-canceled", data
+    ordersSocket.on "market-stats-updated", (data)->
+      #console.log data
+      $.publish "market-stats-updated", data

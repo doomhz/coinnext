@@ -18,6 +18,7 @@ class App.TradeView extends App.MasterView
   initialize: (options = {})->
     @currency1 = options.currency1
     @currency2 = options.currency2
+    $.subscribe "market-stats-updated", @onMarketStatsUpdated
 
   render: ()->
     @model.fetch
@@ -90,3 +91,6 @@ class App.TradeView extends App.MasterView
       $result.text total
     else
       $result.text 0
+
+  onMarketStatsUpdated: (ev, data)=>
+    @render()

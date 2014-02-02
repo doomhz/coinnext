@@ -36,7 +36,7 @@ MarketStatsSchema.statics.getStats = (callback = ()->)->
       stats[stat.type] = stat
     callback err, stats
 
-MarketStatsSchema.statics.trackFromOrder = (order)->
+MarketStatsSchema.statics.trackFromOrder = (order, callback = ()->)->
   type = if order.action is "buy" then "#{order.buy_currency}_#{order.sell_currency}" else "#{order.sell_currency}_#{order.buy_currency}"
   MarketStats.findOne {type: type}, (err, marketStats)->
     if order.action is "buy"
@@ -47,7 +47,7 @@ MarketStatsSchema.statics.trackFromOrder = (order)->
       marketStats.day_low = order.unit_price  if order.unit_price > marketStats.day_low
       marketStats.volume1 += order.amount
       marketStats.volume2 += order.result_amount
-      marketStats.save()
+      marketStats.save callback
 
 MarketStats = mongoose.model "MarketStats", MarketStatsSchema
 exports = module.exports = MarketStats
