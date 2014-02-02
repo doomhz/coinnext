@@ -15,13 +15,12 @@ class ClientSocket
       @socket = ioClient.connect("#{@host}/#{@path}")
       @socket.on "connect", (s)=>
         @socket.emit "external-event", data
-        #socket.socket.disconnect()
     else
       @socket.emit "external-event", data
 
   close: ()->
     try
-      @socket.socket.disconnect()
+      @socket.socket.disconnect()  if @socket
     catch e
       console.error "Could not close client socket #{@path}", e
 
