@@ -82,6 +82,14 @@ server.listen(app.get('port'), function(){
 });
 
 
+//User validation
+if (environment === "staging") {
+  var auth = express.basicAuth(function(user, pass) {     
+    return (user === GLOBAL.appConfig().site_auth.user && pass === GLOBAL.appConfig().site_auth.pass);
+}, "Coinnext Staging");
+}
+
+
 // Routes
 require('./routes/site')(app);
 require('./routes/auth')(app);
