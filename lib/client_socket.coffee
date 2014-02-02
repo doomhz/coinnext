@@ -19,4 +19,10 @@ class ClientSocket
     else
       @socket.emit "external-event", data
 
+  close: ()->
+    try
+      @socket.socket.disconnect()
+    catch e
+      console.error "Could not close client socket #{@path}", e
+
 exports = module.exports = ClientSocket

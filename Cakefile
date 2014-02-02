@@ -30,3 +30,22 @@ task "db:seed_market_stats", "Seed default market stats", ()->
     async.mapSeries marketStats, saveMarket, (err, result)->
       console.log result
       mongoose.connection.close()
+
+task "test_sockets", "Send socket messages", ()->
+  userSocket.send
+    type: "test"
+    eventData:
+      a: 1
+  setTimeout ()->
+      userSocket.send
+        type: "test"
+        eventData:
+          a: 1
+    , 1000
+  setTimeout ()->
+      userSocket.send
+        type: "test"
+        eventData:
+          a: 1
+      userSocket.close()
+    , 1000

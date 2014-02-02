@@ -14,7 +14,6 @@ initSockets = (server, env)->
     socket.on "listen", (data)->
       socket.user_id = data.id
     socket.on "external-event", (data)->
-      console.log data
       try
         for sId, socket of sockets.usersSocket.sockets
           socket.emit data.type, data.eventData  if socket.user_id is data.user_id
