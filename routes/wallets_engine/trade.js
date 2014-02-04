@@ -132,6 +132,9 @@
                     order.status = status;
                     order.sold_amount += soldAmount;
                     order.result_amount += receivedAmount;
+                    if (status === "completed") {
+                      order.close_time = Date.now();
+                    }
                     return order.save(function(err, order) {
                       if (err) {
                         return console.error("Could not process order ", result, err);

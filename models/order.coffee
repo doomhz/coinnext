@@ -44,6 +44,9 @@ OrderSchema = new Schema
     type: Boolean
     default: false
     index: true
+  close_time:
+    type: Date
+    index: true
   created:
     type: Date
     default: Date.now

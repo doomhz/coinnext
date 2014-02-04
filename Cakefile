@@ -31,6 +31,17 @@ task "db:seed_market_stats", "Seed default market stats", ()->
       console.log result
       mongoose.connection.close()
 
+task "trade:aggregate_last_stats", "Aggregate latest market stats", ()->
+  require('./models/db_connect_mongo')
+  TradeStats = require "./models/trade_stats"
+  Order = require "./models/order"
+  now = Date.now()
+  tenMin = 600000
+  endTime =  now - now % tenMin
+  startTime = endTime - tenMin
+  Order.find {status: "completed", close_time: {$gte: startTime, $lte: endTime}}, (err, orders)->
+    
+
 task "test_sockets", "Send socket messages", ()->
   userSocket.send
     type: "test"

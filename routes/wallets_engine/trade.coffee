@@ -93,6 +93,7 @@ module.exports = (app)->
                   order.status = status
                   order.sold_amount += soldAmount
                   order.result_amount += receivedAmount
+                  order.close_time = Date.now()  if status is "completed"
                   order.save (err, order)->
                     return console.error "Could not process order ", result, err  if err
                     if order.status is "completed"
