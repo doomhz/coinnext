@@ -173,14 +173,7 @@
           user_id: userId,
           currency: currency
         });
-        return newWallet.save(function(err, wallet) {
-          if (err) {
-            return callback(err, wallet);
-          }
-          return wallet.generateAddress(function(e, w) {
-            return Wallet.findUserWalletByCurrency(userId, currency, callback);
-          });
-        });
+        return newWallet.save(callback);
       } else {
         return callback(err, existentWallet);
       }

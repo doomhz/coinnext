@@ -120,7 +120,6 @@ class App.TradeView extends App.MasterView
         }
       ]
 
-
   isValidAmount: (amount)->
     _.isNumber(amount) and not _.isNaN(amount) and amount > 0
 
