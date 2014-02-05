@@ -20,9 +20,16 @@ TradeStatsSchema = new Schema
     default: 0
   start_time:
     type: Date
+    index: true
+  end_time:
+    type: Date
 
 
 TradeStatsSchema.set("autoIndex", false)
+
+TradeStatsSchema.statics.getLastStats = (type, callback = ()->)->
+  aDayAgo = Date.now - 86400000
+  TradeStats.find({type: type, start_time: {$gt: aDayAgo}}).sort({start_time: "asc"}).exec callback
 
 TradeStats = mongoose.model "TradeStats", TradeStatsSchema
 exports = module.exports = TradeStats

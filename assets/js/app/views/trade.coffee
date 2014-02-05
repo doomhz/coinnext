@@ -8,6 +8,8 @@ class App.TradeView extends App.MasterView
 
   currency2: null
 
+  tradeStats: null
+
   events:
     "click .market-switcher": "onMarketSwitch"
     "click .header-balance .amount": "onAmountClick"
@@ -18,6 +20,8 @@ class App.TradeView extends App.MasterView
   initialize: (options = {})->
     @currency1 = options.currency1
     @currency2 = options.currency2
+    @chartStats = new App.TradeStatsCollection
+      type: "#{@currency1}_#{@currency2}"
     $.subscribe "market-stats-updated", @onMarketStatsUpdated
 
   render: ()->
@@ -32,6 +36,90 @@ class App.TradeView extends App.MasterView
       coinStats: stats
       currency1: @currency1
       currency2: @currency2
+
+  renderChartStats: ()->
+    @chartStats.fetch
+      success: ()=>
+        @renderChart @chartStats.toJSON()
+
+  renderChart: (data)->
+    # split the data set into ohlc and volume
+    ohlc = []
+    volume = []
+    dataLength = data.length
+    i = 0
+    while i < dataLength
+      ohlc.push [
+        data[i].start_time # the date
+        data[i].open_price # open
+        data[i].high_price # high
+        data[i].low_price # low
+        data[i].close_price # close
+      ]
+      volume.push [
+        data[i].start_time # the date
+        data[i].volume # the volume
+      ]
+      i++
+
+    # set the allowed units for data grouping
+    groupingUnits = [
+      [
+        "week" # unit name
+        [1] # allowed multiples
+      ]
+      [
+        "month"
+        [
+          1
+          2
+          3
+          4
+          6
+        ]
+      ]
+    ]
+
+    # create the chart
+    @$("#trade-chart").highcharts "StockChart",
+      rangeSelector:
+        selected: 1
+      title:
+        text: "AAPL Historical"
+      yAxis: [
+        {
+          title:
+            text: "OHLC"
+          height: 200
+          lineWidth: 2
+        }
+        {
+          title:
+            text: "Volume"
+          top: 300
+          height: 100
+          offset: 0
+          lineWidth: 2
+        }
+      ]
+      series: [
+        {
+          type: "candlestick"
+          name: "AAPL"
+          data: ohlc
+          dataGrouping:
+            units: groupingUnits
+        }
+        {
+          type: "column"
+          name: "Volume"
+          data: volume
+          yAxis: 1
+          dataGrouping:
+            units: groupingUnits
+        }
+      ]
+
 
   isValidAmount: (amount)->
     _.isNumber(amount) and not _.isNaN(amount) and amount > 0

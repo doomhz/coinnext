@@ -107,6 +107,7 @@ $(document).ready ()->
       currency1: $trade.data "currency1"
       currency2: $trade.data "currency2"
     trade.render()
+    trade.renderChartStats()
 
     $openOrders = $("#open-orders-cnt")
     openOrders = new App.OrdersView

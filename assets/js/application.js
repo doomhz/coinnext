@@ -9,6 +9,8 @@
 //= require vendor/jquery.tmpload
 //= require vendor/jquery.jgrowl
 //= require vendor/ZeroClipboard
+//= require vendor/highstock
+//= require vendor/highstock.exporting
 
 //= require app/models/user
 //= require app/models/wallet
@@ -21,6 +23,7 @@
 //= require app/collections/transactions
 //= require app/collections/payments
 //= require app/collections/orders
+//= require app/collections/trade_stats
 
 //= require app/views/master
 //= require app/views/finances

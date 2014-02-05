@@ -1,9 +1,11 @@
 (function() {
-  var MarketStats, Order, Wallet;
+  var MarketStats, Order, TradeStats, Wallet;
 
   Wallet = require("../models/wallet");
 
   MarketStats = require("../models/market_stats");
+
+  TradeStats = require("../models/trade_stats");
 
   Order = require("../models/order");
 
@@ -109,6 +111,14 @@
     app.get("/market_stats", function(req, res) {
       return MarketStats.getStats(function(err, marketStats) {
         return res.json(marketStats);
+      });
+    });
+    app.get("/trade_stats/:market_type", function(req, res) {
+      return TradeStats.getLastStats(req.params.market_type, function(err, tradeStats) {
+        if (tradeStats == null) {
+          tradeStats = [];
+        }
+        return res.json(tradeStats);
       });
     });
     app.get("/settings", function(req, res) {

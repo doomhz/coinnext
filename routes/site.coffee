@@ -1,5 +1,6 @@
 Wallet = require "../models/wallet"
 MarketStats = require "../models/market_stats"
+TradeStats = require "../models/trade_stats"
 Order = require "../models/order"
 
 module.exports = (app)->
@@ -79,6 +80,10 @@ module.exports = (app)->
   app.get "/market_stats", (req, res)->
     MarketStats.getStats (err, marketStats)->
       res.json marketStats
+
+  app.get "/trade_stats/:market_type", (req, res)->
+    TradeStats.getLastStats req.params.market_type, (err, tradeStats = [])->
+      res.json tradeStats
 
 
   # Settings
