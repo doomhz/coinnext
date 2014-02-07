@@ -72,19 +72,22 @@ class App.TradeView extends App.MasterView
         enabled: false
       navigator:
         enabled: false
-      title:
-        text: "24 hours prices and volumes"
+
+      exporting:
+        buttons: [
+          printButton:
+            enabled: false
+          exportButton:
+            enabled: false
+        ]
+      credits:
+        enabled: false
+
       yAxis: [
         {
-          title:
-            text: "Price"
-          lineWidth: 2
+          lineWidth: 0
         }
         {
-          title:
-            text: "Volume"
-            style:
-              color: "#DDD"
           gridLineWidth: 0
           opposite: true
         }
@@ -95,19 +98,33 @@ class App.TradeView extends App.MasterView
           millisecond: '%H:%M'
       tooltip:
         shared: true
+        shadow: false
+        backgroundColor: "#ffffff"
+        borderColor: "#d1d5dd"
+        formatter: ()->
+          s = Highcharts.dateFormat('%b %e %Y %H:%M', this.x) + "<br />"
+          
+          s += "<b>Open:</b> " + @points[1].point.open + "<br />"+"<b>High:</b> " + @points[1].point.high + "<br />"+"<b>Low:</b> " + @points[1].point.low + "<br />"+"<b>Close:</b> " + @points[1].point.close + "<br />"+"<b>Volume:</b> " + @points[0].point.y   
+            
+          return s
       series: [
         {
           type: "column"
           name: "Volume"
           data: volume
           yAxis: 1
-          color: "#DDD"
+          color: "#dddddd"
         }
         {
           type: "candlestick"
           name: "Price"
           data: ohlc
           yAxis: 0
+          color: "#3eae5f"
+          upColor: "#da4444"
+          lineColor: "#3eae5f"
+          upLineColor: "#da4444"
+          borderWidth: 0
         }
       ]
 

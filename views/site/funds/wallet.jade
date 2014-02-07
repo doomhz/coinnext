@@ -37,7 +37,7 @@ block content
           .two-col-wrap
             .transaction-con.container
               .con-header
-                h3.con-header-title Deposit #{currencies[wallet.currency]}
+                h3.con-header-title <i class="icon-circle-arrow-down"></i> Deposit #{currencies[wallet.currency]}
               .con-body
                 label To deposit bitcoins, send to this address:
                 .coin-deposit-address
@@ -54,7 +54,7 @@ block content
           .two-col-wrap
             .transaction-con.container
               .con-header
-                h3.con-header-title Withdraw #{currencies[wallet.currency]}
+                h3.con-header-title <i class="icon-circle-arrow-up"></i> Withdraw #{currencies[wallet.currency]}
                 .header-balance <a href="#" class="amount">#{wallet.balance}  #{wallet.currency}</a> Available
               .con-body
                 form#withdraw-form
