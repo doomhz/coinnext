@@ -8,9 +8,9 @@ module.exports = (app)->
 
   app.post "/trade_stats", (req, res, next)->
     now = Date.now()
-    tenMin = 600000
-    endTime =  now - now % tenMin
-    startTime = endTime - tenMin
+    halfHour = 1800000
+    endTime =  now - now % halfHour
+    startTime = endTime - halfHour
     markets = {}
     Order.find({status: "completed", close_time: {$gte: startTime, $lte: endTime}}).sort({close_time: "asc"}).exec (err, orders)->
       for order in orders

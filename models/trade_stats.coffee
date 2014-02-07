@@ -28,7 +28,8 @@ TradeStatsSchema = new Schema
 TradeStatsSchema.set("autoIndex", false)
 
 TradeStatsSchema.statics.getLastStats = (type, callback = ()->)->
-  aDayAgo = Date.now - 86400000
+  halfHour = 1800000
+  aDayAgo = Date.now() - 86400000 - halfHour
   TradeStats.find({type: type, start_time: {$gt: aDayAgo}}).sort({start_time: "asc"}).exec callback
 
 TradeStats = mongoose.model "TradeStats", TradeStatsSchema

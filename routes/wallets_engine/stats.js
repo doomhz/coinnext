@@ -13,11 +13,11 @@
 
   module.exports = function(app) {
     return app.post("/trade_stats", function(req, res, next) {
-      var endTime, markets, now, startTime, tenMin;
+      var endTime, halfHour, markets, now, startTime;
       now = Date.now();
-      tenMin = 600000;
-      endTime = now - now % tenMin;
-      startTime = endTime - tenMin;
+      halfHour = 1800000;
+      endTime = now - now % halfHour;
+      startTime = endTime - halfHour;
       markets = {};
       return Order.find({
         status: "completed",

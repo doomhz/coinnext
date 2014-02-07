@@ -40,11 +40,12 @@
   TradeStatsSchema.set("autoIndex", false);
 
   TradeStatsSchema.statics.getLastStats = function(type, callback) {
-    var aDayAgo;
+    var aDayAgo, halfHour;
     if (callback == null) {
       callback = function() {};
     }
-    aDayAgo = Date.now - 86400000;
+    halfHour = 1800000;
+    aDayAgo = Date.now() - 86400000 - halfHour;
     return TradeStats.find({
       type: type,
       start_time: {

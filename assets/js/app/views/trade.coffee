@@ -20,7 +20,7 @@ class App.TradeView extends App.MasterView
   initialize: (options = {})->
     @currency1 = options.currency1
     @currency2 = options.currency2
-    @chartStats = new App.TradeStatsCollection
+    @chartStats = new App.TradeStatsCollection null,
       type: "#{@currency1}_#{@currency2}"
     $.subscribe "market-stats-updated", @onMarketStatsUpdated
 
@@ -46,18 +46,20 @@ class App.TradeView extends App.MasterView
     # split the data set into ohlc and volume
     ohlc = []
     volume = []
+    xAxis = []
     dataLength = data.length
     i = 0
     while i < dataLength
+      startTime = new Date(data[i].start_time).getTime()
       ohlc.push [
-        data[i].start_time # the date
+        startTime # the date
         data[i].open_price # open
         data[i].high_price # high
         data[i].low_price # low
         data[i].close_price # close
       ]
       volume.push [
-        data[i].start_time # the date
+        startTime # the date
         data[i].volume # the volume
       ]
       i++
@@ -65,7 +67,7 @@ class App.TradeView extends App.MasterView
     # create the chart
     @$("#trade-chart").highcharts "StockChart",
       rangeSelector:
-        selected: 1
+        enabled: false
       scrollbar:
         enabled: false
       navigator:
@@ -87,6 +89,10 @@ class App.TradeView extends App.MasterView
           opposite: true
         }
       ]
+      xAxis:
+        type: "time"
+        dateTimeLabelFormats:
+          millisecond: '%H:%M'
       tooltip:
         shared: true
       series: [
