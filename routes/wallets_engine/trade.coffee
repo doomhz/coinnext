@@ -31,20 +31,15 @@ module.exports = (app)->
           orderLimitPrice: unitPrice
       trader.publishOrder queueData, (queueError, response)->
         console.log arguments
-      #if not queueError
       order.published = true
       order.save (err, order)->
-        if not err
-          res.send
-            id:        orderId
-            published: true
-          orderSocket.send
-            type: "order-published"
-            eventData: order.toJSON()
-        else
-          return next(new restify.ConflictError err)
-      #else
-      #  return next(new restify.ConflictError "Trade queue error - #{queueError}")
+        return next(new restify.ConflictError err)  if err
+        res.send
+          id:        orderId
+          published: true
+        orderSocket.send
+          type: "order-published"
+          eventData: order.toJSON()
 
   app.del "/cancel_order/:order_id", (req, res, next)->
     orderId = req.params.order_id
@@ -62,16 +57,15 @@ module.exports = (app)->
       Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, wallet)->
         wallet.holdBalance -order.amount, (err, wallet)->
           order.remove (err)->
-            if not err
-              res.send
-                id:        orderId
-                canceled: true
-              orderSocket.send
-                type: "order-canceled"
-                eventData:
-                  id: orderId
-            else
-              return next(new restify.ConflictError err)
+            return next(new restify.ConflictError err)  if err
+            res.send
+              id:        orderId
+              canceled: true
+            orderSocket.send
+              type: "order-canceled"
+              eventData:
+                id: orderId
+              
 
   onOrderCompleted = (message)->
     #console.log "incoming result ", message
@@ -85,28 +79,26 @@ module.exports = (app)->
       soldAmount = parseFloat(result.data.soldAmount) / 100000000
       receivedAmount = parseFloat(result.data.receivedAmount) / 100000000
       Order.findByEngineId engineId, (err, order)->
-        if order
-          Wallet.findUserWalletByCurrency order.user_id, order.buy_currency, (err, buyWallet)->
-            Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, sellWallet)->
-              sellWallet.holdBalance -soldAmount, (err, sellWallet)->
-                buyWallet.addBalance receivedAmount, (err, buyWallet)->
-                  order.status = status
-                  order.sold_amount += soldAmount
-                  order.result_amount += receivedAmount
-                  order.close_time = Date.now()  if status is "completed"
-                  order.save (err, order)->
-                    return console.error "Could not process order ", result, err  if err
-                    if order.status is "completed"
-                      MarketStats.trackFromOrder order, (err, mkSt)->
-                        orderSocket.send
-                          type: "market-stats-updated"
-                          eventData: mkSt.toJSON()
+        return console.error "Wrong order to complete ", result  if not order
+        Wallet.findUserWalletByCurrency order.user_id, order.buy_currency, (err, buyWallet)->
+          Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, sellWallet)->
+            sellWallet.holdBalance -soldAmount, (err, sellWallet)->
+              buyWallet.addBalance receivedAmount, (err, buyWallet)->
+                order.status = status
+                order.sold_amount += soldAmount
+                order.result_amount += receivedAmount
+                order.close_time = Date.now()  if status is "completed"
+                order.save (err, order)->
+                  return console.error "Could not process order ", result, err  if err
+                  if order.status is "completed"
+                    MarketStats.trackFromOrder order, (err, mkSt)->
                       orderSocket.send
-                        type: "order-completed"
-                        eventData: order.toJSON()
-                    console.log "Processed order #{order.id} ", result
-        else
-          console.error "Wrong order to complete ", result
+                        type: "market-stats-updated"
+                        eventData: mkSt.toJSON()
+                    orderSocket.send
+                      type: "order-completed"
+                      eventData: order.toJSON()
+                  console.log "Processed order #{order.id} ", result          
 
 
   tq = new TradeQueue

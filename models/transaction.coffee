@@ -61,5 +61,9 @@ TransactionSchema.statics.findPendingByIds = (ids, callback)->
   return callback(null, [])  if ids.length is 0
   Transaction.where("txid").in(ids).where("confirmations").lt(3).exec callback
 
+TransactionSchema.statics.isValidFormat = (category)->
+  acceptedCategories = ["send", "receive"]
+  acceptedCategories.indexOf(category) > -1
+
 Transaction = mongoose.model("Transaction", TransactionSchema)
 exports = module.exports = Transaction

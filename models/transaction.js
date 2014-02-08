@@ -101,6 +101,12 @@
     return Transaction.where("txid")["in"](ids).where("confirmations").lt(3).exec(callback);
   };
 
+  TransactionSchema.statics.isValidFormat = function(category) {
+    var acceptedCategories;
+    acceptedCategories = ["send", "receive"];
+    return acceptedCategories.indexOf(category) > -1;
+  };
+
   Transaction = mongoose.model("Transaction", TransactionSchema);
 
   exports = module.exports = Transaction;

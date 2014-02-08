@@ -10,21 +10,21 @@
       var account, currency;
       account = req.params.account;
       currency = req.params.currency;
-      if (GLOBAL.wallets[currency]) {
-        return GLOBAL.wallets[currency].generateAddress(account, function(err, address) {
-          if (!err) {
-            return res.send({
-              account: account,
-              address: address
-            });
-          } else {
-            console.error(err);
-            return next(new restify.ConflictError("Could not generate address."));
-          }
-        });
-      } else {
+      if (!GLOBAL.wallets[currency]) {
         return next(new restify.ConflictError("Wrong Currency."));
       }
+      return GLOBAL.wallets[currency].generateAddress(account, function(err, address) {
+        if (err) {
+          console.error(err);
+        }
+        if (err) {
+          return next(new restify.ConflictError("Could not generate address."));
+        }
+        return res.send({
+          account: account,
+          address: address
+        });
+      });
     });
   };
 
