@@ -1,5 +1,5 @@
 (function() {
-  var MarketStats, Order, TradeStats, Wallet;
+  var MarketStats, Order, TradeStats, Wallet, _str;
 
   Wallet = require("../models/wallet");
 
@@ -8,6 +8,8 @@
   TradeStats = require("../models/trade_stats");
 
   Order = require("../models/order");
+
+  _str = require("../lib/underscore_string");
 
   module.exports = function(app) {
     app.get("/", function(req, res) {
@@ -55,7 +57,8 @@
                   wallet2: wallet2,
                   currencies: Wallet.getCurrencyNames(),
                   marketStats: marketStats,
-                  marketPrice: marketPrice
+                  marketPrice: marketPrice,
+                  _str: _str
                 });
               });
             });
@@ -72,7 +75,8 @@
               }),
               currencies: Wallet.getCurrencyNames(),
               marketStats: marketStats,
-              marketPrice: marketPrice
+              marketPrice: marketPrice,
+              _str: _str
             });
           }
         });

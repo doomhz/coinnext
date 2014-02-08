@@ -2,6 +2,7 @@ Wallet = require "../models/wallet"
 MarketStats = require "../models/market_stats"
 TradeStats = require "../models/trade_stats"
 Order = require "../models/order"
+_str = require "../lib/underscore_string"
 
 module.exports = (app)->
 
@@ -42,6 +43,7 @@ module.exports = (app)->
                 currencies: Wallet.getCurrencyNames()
                 marketStats: marketStats
                 marketPrice: marketPrice
+                _str: _str
         else
           res.render "site/trade",
             title: "Trade #{currency1} to #{currency2}"
@@ -54,6 +56,7 @@ module.exports = (app)->
             currencies: Wallet.getCurrencyNames()
             marketStats: marketStats
             marketPrice: marketPrice
+            _str: _str
 
   app.get "/funds", (req, res)->
     Wallet.findUserWallets req.user.id, (err, wallets)->

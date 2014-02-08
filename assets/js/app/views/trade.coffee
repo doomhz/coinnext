@@ -15,7 +15,9 @@ class App.TradeView extends App.MasterView
     "click .header-balance .amount": "onAmountClick"
     "submit .order-form": "onOrderSubmit"
     "keyup #buy-amount-input": "onBuyAmountChange"
+    "keyup #buy-unit-price": "onBuyAmountChange"
     "keyup #sell-amount-input": "onSellAmountChange"
+    "keyup #sell-unit-price": "onSellAmountChange"
 
   initialize: (options = {})->
     @currency1 = options.currency1
@@ -163,29 +165,47 @@ class App.TradeView extends App.MasterView
 
   onBuyAmountChange: (ev)->
     $target = $(ev.target)
-    buyAmount = parseFloat $target.val()
-    $result = @$("#buy-amount-result")
-    if @isValidAmount buyAmount
-      fee = parseFloat $result.data("fee")
-      lastPrice = parseFloat @$("#market-buy-unit-price").val()
-      total = _.str.roundToThree buyAmount * lastPrice - fee
-      #console.log spendAmount, fee, lastPrice, total
+    $form = $target.parents("form")
+    buyAmount = parseFloat $form.find("#buy-amount-input").val()
+    $result = $form.find("#buy-amount-result")
+    $fee = $form.find("#buy-fee")
+    $subTotal = $form.find("#buy-subtotal")
+    fee = parseFloat $fee.data("fee")
+    lastPrice = parseFloat $form.find("#buy-unit-price").val()
+    if @isValidAmount(buyAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
+      subTotal = _.str.roundToThree buyAmount * lastPrice
+      totalFee = _.str.roundToThree buyAmount / 100 * fee
+      total = subTotal - totalFee
+      #console.log fee, totalFee, lastPrice, total
+      $fee.text totalFee
+      $subTotal.text subTotal
       $result.text total
     else
       $result.text 0
+      $fee.text 0
+      $subTotal.text 0
 
   onSellAmountChange: (ev)->
     $target = $(ev.target)
-    spendAmount = parseFloat $target.val()
-    $result = @$("#sell-amount-result")
-    if @isValidAmount spendAmount
-      fee = parseFloat $result.data("fee")
-      lastPrice = parseFloat @$("#market-sell-unit-price").val()
-      total = _.str.roundToThree spendAmount * lastPrice - fee
-      #console.log spendAmount, fee, lastPrice, total
+    $form = $target.parents("form")
+    sellAmount = parseFloat $form.find("#sell-amount-input").val()
+    $result = $form.find("#sell-amount-result")
+    $fee = $form.find("#sell-fee")
+    $subTotal = $form.find("#sell-subtotal")
+    fee = parseFloat $fee.data("fee")
+    lastPrice = parseFloat $form.find("#sell-unit-price").val()
+    if @isValidAmount(sellAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
+      subTotal = _.str.roundToThree sellAmount * lastPrice
+      totalFee = _.str.roundToThree subTotal / 100 * fee
+      total = subTotal - totalFee
+      #console.log fee, totalFee, lastPrice, total
+      $fee.text totalFee
+      $subTotal.text subTotal
       $result.text total
     else
       $result.text 0
+      $fee.text 0
+      $subTotal.text 0
 
   onMarketStatsUpdated: (ev, data)=>
     @render()

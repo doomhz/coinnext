@@ -35,7 +35,7 @@ WalletSchema = new Schema
     index: true
   fee:
     type: Number
-    default: 0.002
+    default: 0.2
   created: 
     type: Date 
     default: Date.now 
