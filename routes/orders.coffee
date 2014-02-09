@@ -11,20 +11,19 @@ module.exports = (app)->
     data = req.body
     data.user_id = req.user.id
     return JsonRenderer.error validationError, res  if validationError = notValidOrderData data
-    calculateHoldBalance data, (err, holdBalance)->
-      Wallet.findOrCreateUserWalletByCurrency req.user.id, data.buy_currency, (err, buyWallet)->
-        return JsonRenderer.error "Wallet #{data.buy_currency} does not exist.", res  if err or not buyWallet
-        Wallet.findOrCreateUserWalletByCurrency req.user.id, data.sell_currency, (err, wallet)->
-          return JsonRenderer.error "Wallet #{data.sell_currency} does not exist.", res  if err or not wallet
-          wallet.holdBalance holdBalance, (err, wallet)->
-            return JsonRenderer.error "Not enough #{data.sell_currency} to open an order.", res  if err or not wallet
-            data.hold_amount = holdBalance
-            Order.create data, (err, newOrder)->
-              return JsonRenderer.error "Sorry, could not open an order...", res  if err
-              newOrder.publish (err, order)->
-                console.log "Could not publish newlly created order - #{err}"  if err
-                return res.json JsonRenderer.order newOrder  if err
-                res.json JsonRenderer.order order
+    holdBalance = data.amount
+    Wallet.findOrCreateUserWalletByCurrency req.user.id, data.buy_currency, (err, buyWallet)->
+      return JsonRenderer.error "Wallet #{data.buy_currency} does not exist.", res  if err or not buyWallet
+      Wallet.findOrCreateUserWalletByCurrency req.user.id, data.sell_currency, (err, wallet)->
+        return JsonRenderer.error "Wallet #{data.sell_currency} does not exist.", res  if err or not wallet
+        wallet.holdBalance holdBalance, (err, wallet)->
+          return JsonRenderer.error "Not enough #{data.sell_currency} to open an order.", res  if err or not wallet
+          Order.create data, (err, newOrder)->
+            return JsonRenderer.error "Sorry, could not open an order...", res  if err
+            newOrder.publish (err, order)->
+              console.log "Could not publish newlly created order - #{err}"  if err
+              return res.json JsonRenderer.order newOrder  if err
+              res.json JsonRenderer.order order
 
   app.get "/orders", (req, res)->
     Order.findByOptions req.query, (err, orders)->
@@ -39,19 +38,6 @@ module.exports = (app)->
         console.log "Could not cancel order - #{err}"  if err
         return res.json JsonRenderer.order order  if err
         res.json {}
-
-  calculateHoldBalance = (orderData, callback = ()->)->
-    if orderData.action is "sell"
-      holdBalance = orderData.amount
-      return callback null, holdBalance
-    if orderData.action is "buy"
-      MarketStats.getStats (err, stats)->
-        # TODO: Review calculation
-        marketType = "#{orderData.buy_currency}_#{orderData.sell_currency}"
-        unitPrice = orderData.unit_price  if orderData.type is "limit"
-        unitPrice = stats[marketType].last_price  if orderData.type is "market"
-        holdBalance = orderData.amount * unitPrice
-        callback null, holdBalance
 
   notValidOrderData = (orderData)->
     return "Please submit a valid amount bigger than 0."  if not Order.isValidTradeAmount orderData.amount

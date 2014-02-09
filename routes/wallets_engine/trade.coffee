@@ -55,7 +55,7 @@ module.exports = (app)->
       trader.publishOrder queueData, (queueError, response)->
         console.log arguments
       Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, wallet)->
-        wallet.holdBalance -order.hold_amount, (err, wallet)->
+        wallet.holdBalance -order.amount, (err, wallet)->
           order.remove (err)->
             return next(new restify.ConflictError err)  if err
             res.send

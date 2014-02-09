@@ -10,9 +10,9 @@
   JsonRenderer = require("../lib/json_renderer");
 
   module.exports = function(app) {
-    var calculateHoldBalance, notValidOrderData;
+    var notValidOrderData;
     app.post("/orders", function(req, res) {
-      var data, validationError;
+      var data, holdBalance, validationError;
       if (!req.user) {
         return JsonRenderer.error("You need to be logged in to place an order.", res);
       }
@@ -24,33 +24,31 @@
       if (validationError = notValidOrderData(data)) {
         return JsonRenderer.error(validationError, res);
       }
-      return calculateHoldBalance(data, function(err, holdBalance) {
-        return Wallet.findOrCreateUserWalletByCurrency(req.user.id, data.buy_currency, function(err, buyWallet) {
-          if (err || !buyWallet) {
-            return JsonRenderer.error("Wallet " + data.buy_currency + " does not exist.", res);
+      holdBalance = data.amount;
+      return Wallet.findOrCreateUserWalletByCurrency(req.user.id, data.buy_currency, function(err, buyWallet) {
+        if (err || !buyWallet) {
+          return JsonRenderer.error("Wallet " + data.buy_currency + " does not exist.", res);
+        }
+        return Wallet.findOrCreateUserWalletByCurrency(req.user.id, data.sell_currency, function(err, wallet) {
+          if (err || !wallet) {
+            return JsonRenderer.error("Wallet " + data.sell_currency + " does not exist.", res);
           }
-          return Wallet.findOrCreateUserWalletByCurrency(req.user.id, data.sell_currency, function(err, wallet) {
+          return wallet.holdBalance(holdBalance, function(err, wallet) {
             if (err || !wallet) {
-              return JsonRenderer.error("Wallet " + data.sell_currency + " does not exist.", res);
+              return JsonRenderer.error("Not enough " + data.sell_currency + " to open an order.", res);
             }
-            return wallet.holdBalance(holdBalance, function(err, wallet) {
-              if (err || !wallet) {
-                return JsonRenderer.error("Not enough " + data.sell_currency + " to open an order.", res);
+            return Order.create(data, function(err, newOrder) {
+              if (err) {
+                return JsonRenderer.error("Sorry, could not open an order...", res);
               }
-              data.hold_amount = holdBalance;
-              return Order.create(data, function(err, newOrder) {
+              return newOrder.publish(function(err, order) {
                 if (err) {
-                  return JsonRenderer.error("Sorry, could not open an order...", res);
+                  console.log("Could not publish newlly created order - " + err);
                 }
-                return newOrder.publish(function(err, order) {
-                  if (err) {
-                    console.log("Could not publish newlly created order - " + err);
-                  }
-                  if (err) {
-                    return res.json(JsonRenderer.order(newOrder));
-                  }
-                  return res.json(JsonRenderer.order(order));
-                });
+                if (err) {
+                  return res.json(JsonRenderer.order(newOrder));
+                }
+                return res.json(JsonRenderer.order(order));
               });
             });
           });
@@ -87,30 +85,6 @@
         });
       });
     });
-    calculateHoldBalance = function(orderData, callback) {
-      var holdBalance;
-      if (callback == null) {
-        callback = function() {};
-      }
-      if (orderData.action === "sell") {
-        holdBalance = orderData.amount;
-        return callback(null, holdBalance);
-      }
-      if (orderData.action === "buy") {
-        return MarketStats.getStats(function(err, stats) {
-          var marketType, unitPrice;
-          marketType = "" + orderData.buy_currency + "_" + orderData.sell_currency;
-          if (orderData.type === "limit") {
-            unitPrice = orderData.unit_price;
-          }
-          if (orderData.type === "market") {
-            unitPrice = stats[marketType].last_price;
-          }
-          holdBalance = orderData.amount * unitPrice;
-          return callback(null, holdBalance);
-        });
-      }
-    };
     return notValidOrderData = function(orderData) {
       if (!Order.isValidTradeAmount(orderData.amount)) {
         return "Please submit a valid amount bigger than 0.";

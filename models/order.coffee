@@ -37,9 +37,6 @@ OrderSchema = new Schema
   unit_price:
     type: Number
     index: true
-  hold_amount:
-    type: Number
-    default: 0
   status:
     type: String
     enum: ["open", "partiallyCompleted", "completed"]
