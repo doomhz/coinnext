@@ -115,7 +115,7 @@
       if (!Order.isValidTradeAmount(orderData.amount)) {
         return "Please submit a valid amount bigger than 0.";
       }
-      if (orderData.type === "limit" && !Order.isValidTradeAmount(orderData.unit_price)) {
+      if (orderData.type === "limit" && !Order.isValidTradeAmount(parseFloat(orderData.unit_price))) {
         return "Please submit a valid unit price amount.";
       }
       if (["buy", "sell"].indexOf(orderData.action) === -1) {

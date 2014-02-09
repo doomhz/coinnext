@@ -55,7 +55,7 @@ module.exports = (app)->
 
   notValidOrderData = (orderData)->
     return "Please submit a valid amount bigger than 0."  if not Order.isValidTradeAmount orderData.amount
-    return "Please submit a valid unit price amount."  if orderData.type is "limit" and not Order.isValidTradeAmount orderData.unit_price
+    return "Please submit a valid unit price amount."  if orderData.type is "limit" and not Order.isValidTradeAmount(parseFloat(orderData.unit_price))
     return "Please submit a valid action."  if ["buy", "sell"].indexOf(orderData.action) is -1
     return "Please submit a valid buy currency."  if Wallet.getCurrencies().indexOf(orderData.buy_currency) is -1
     return "Please submit a valid sell currency."  if Wallet.getCurrencies().indexOf(orderData.sell_currency) is -1
