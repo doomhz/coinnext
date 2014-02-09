@@ -84,9 +84,13 @@ server.listen(app.get('port'), function(){
 
 //User validation
 if (environment === "staging") {
-  var auth = express.basicAuth(function(user, pass) {     
-    return (user === GLOBAL.appConfig().site_auth.user && pass === GLOBAL.appConfig().site_auth.pass);
-}, "Coinnext Staging");
+  var auth = function (req, res, next) {
+    if ((req.query.u === GLOBAL.appConfig().site_auth.user) && (req.query.p === GLOBAL.appConfig().site_auth.pass)) {
+      req.session.staging_auth = true;
+    }
+    if (!req.session.staging_auth) return res.redirect("http://www.youtube.com/watch?v=oHg5SJYRHA0");
+    next();
+  }
   app.get('*', auth);
 }
 
