@@ -18,6 +18,7 @@
     , "gzippo": "latest"
     , "bcrypt": "latest"
     , "connect-redis": "latest"
+    , "hiredis": "latest"
     , "passport": "latest"
     , "passport-local": "latest"
     , "sha1": "latest"
