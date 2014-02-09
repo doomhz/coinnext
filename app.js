@@ -24,13 +24,13 @@ require('./lib/auth');
 
 // Setup the middlewares
 var oneYear = 31557600000;
-var gzippoOptions = environment === 'production' ? {clientMaxAge: oneYear, maxAge: oneYear} : {contentTypeMatch: /none/};
-var connectAssetsOptions = environment === 'production' ? {minifyBuilds: true} : {};
-var staticRenderer = environment === 'production' ? gzippo.staticGzip(__dirname + '/public', gzippoOptions) : express.static(__dirname + '/public');
+var gzippoOptions = environment !== 'development' ? {clientMaxAge: oneYear, maxAge: oneYear} : {contentTypeMatch: /none/};
+var connectAssetsOptions = environment !== 'development' ? {minifyBuilds: true} : {};
+var staticRenderer = environment !== 'development' ? gzippo.staticGzip(__dirname + '/public', gzippoOptions) : express.static(__dirname + '/public');
 
 // Setup express
 var app = express();
-if (environment === "production") {
+if (environment !== 'development') {
   app.use(connectDomain());
 }
 connectAssetsOptions.helperContext = app.locals
