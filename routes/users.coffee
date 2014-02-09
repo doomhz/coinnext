@@ -27,10 +27,8 @@ module.exports = (app)->
 
   app.get "/logout", (req, res)->
     req.logout()
-    if req.accepts "html"
-      res.redirect "/"
-    else
-      res.json({})
+    return res.redirect "/"  if req.accepts "html"
+    res.json({})
 
   app.get "/generate_gauth", (req, res)->
     return JsonRenderer.error null, res  if not req.user

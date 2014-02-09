@@ -42,9 +42,8 @@
       req.logout();
       if (req.accepts("html")) {
         return res.redirect("/");
-      } else {
-        return res.json({});
       }
+      return res.json({});
     });
     app.get("/generate_gauth", function(req, res) {
       if (!req.user) {
