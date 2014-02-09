@@ -1,5 +1,7 @@
 (function() {
-  var MarketStats, MarketStatsSchema, exports;
+  var MARKETS, MarketStats, MarketStatsSchema, exports;
+
+  MARKETS = ["LTC_BTC", "PPC_BTC"];
 
   MarketStatsSchema = new Schema({
     type: {
@@ -82,6 +84,21 @@
         return marketStats.save(callback);
       }
     });
+  };
+
+  MarketStatsSchema.statics.getMarkets = function() {
+    return MARKETS;
+  };
+
+  MarketStatsSchema.statics.isValidMarket = function(action, buyCurrency, sellCurrency) {
+    var market;
+    if (action === "buy") {
+      market = "" + buyCurrency + "_" + sellCurrency;
+    }
+    if (action === "sell") {
+      market = "" + sellCurrency + "_" + buyCurrency;
+    }
+    return MarketStats.getMarkets().indexOf(market) > -1;
   };
 
   MarketStats = mongoose.model("MarketStats", MarketStatsSchema);

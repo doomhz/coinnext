@@ -90,7 +90,7 @@
           return console.log(arguments);
         });
         return Wallet.findUserWalletByCurrency(order.user_id, order.sell_currency, function(err, wallet) {
-          return wallet.holdBalance(-order.amount, function(err, wallet) {
+          return wallet.holdBalance(-order.hold_amount, function(err, wallet) {
             return order.remove(function(err) {
               if (err) {
                 return next(new restify.ConflictError(err));

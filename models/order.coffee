@@ -1,6 +1,8 @@
 _             = require "underscore"
 autoIncrement = require "mongoose-auto-increment"
 
+FEE = 0.2
+
 OrderSchema = new Schema
   user_id:
     type: String
@@ -35,6 +37,9 @@ OrderSchema = new Schema
   unit_price:
     type: Number
     index: true
+  hold_amount:
+    type: Number
+    default: 0
   status:
     type: String
     enum: ["open", "partiallyCompleted", "completed"]
