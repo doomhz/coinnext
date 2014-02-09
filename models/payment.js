@@ -1,5 +1,7 @@
 (function() {
-  var Payment, PaymentSchema, exports;
+  var Payment, PaymentSchema, exports, _;
+
+  _ = require("underscore");
 
   PaymentSchema = new Schema({
     user_id: {
@@ -101,6 +103,16 @@
       status: status
     }, callback);
   };
+
+  PaymentSchema.path("amount").validate(function(amount) {
+    return _.isNumber(amount) && !_.isNaN(amount) && amount > 0;
+  }, "Invalid amount.");
+
+  PaymentSchema.path("address").validate(function(address) {
+    var pattern;
+    pattern = /^[1-9A-Za-z]{27,34}/;
+    return pattern.test(address);
+  }, "Invalid address.");
 
   Payment = mongoose.model("Payment", PaymentSchema);
 

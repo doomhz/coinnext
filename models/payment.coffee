@@ -1,3 +1,5 @@
+_ = require "underscore"
+
 PaymentSchema = new Schema
   user_id:
     type: String
@@ -64,6 +66,15 @@ PaymentSchema.methods.errored = (reason, callback = ()->)->
 
 PaymentSchema.statics.findByUserAndWallet = (userId, walletId, status, callback)->
   Payment.find {user_id: userId, wallet_id: walletId, status: status}, callback
+
+PaymentSchema.path("amount").validate (amount)->
+    _.isNumber(amount) and not _.isNaN(amount) and amount > 0
+  , "Invalid amount."
+
+PaymentSchema.path("address").validate (address)->
+    pattern = /^[1-9A-Za-z]{27,34}/
+    pattern.test address
+  , "Invalid address."
 
 Payment = mongoose.model("Payment", PaymentSchema)
 exports = module.exports = Payment

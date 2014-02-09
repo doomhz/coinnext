@@ -119,5 +119,8 @@ WalletSchema.statics.findByAccount = (account, callback = ()->)->
   id = account.replace("wallet_", "")
   Wallet.findById id, callback
 
+WalletSchema.statics.isValidCurrency = (currency)->
+  CURRENCIES.indexOf(currency) > -1
+
 Wallet = mongoose.model "Wallet", WalletSchema
 exports = module.exports = Wallet

@@ -210,6 +210,10 @@
     return Wallet.findById(id, callback);
   };
 
+  WalletSchema.statics.isValidCurrency = function(currency) {
+    return CURRENCIES.indexOf(currency) > -1;
+  };
+
   Wallet = mongoose.model("Wallet", WalletSchema);
 
   exports = module.exports = Wallet;
