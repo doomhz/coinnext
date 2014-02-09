@@ -1,4 +1,5 @@
 User = require '../models/user'
+Wallet = require '../models/wallet'
 JsonRenderer = require '../lib/json_renderer'
 
 module.exports = (app)->
@@ -7,11 +8,12 @@ module.exports = (app)->
     user = new User
       email: req.body.email
       password:  User.hashPassword req.body.password
-    user.save (err)->
+    user.save (err, newUser)->
       return JsonRenderer.error err, res  if err
-      user.generateToken ()->
-        user.sendEmailVerificationLink()
-      res.json JsonRenderer.user user
+      newUser.generateToken ()->
+        newUser.sendEmailVerificationLink()
+        Wallet.findOrCreateUserWalletByCurrency newUser.id, "BTC"
+      res.json JsonRenderer.user newUser
 
   app.post "/login", (req, res, next)->
     login req, res, next

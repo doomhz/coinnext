@@ -1,7 +1,9 @@
 (function() {
-  var JsonRenderer, User;
+  var JsonRenderer, User, Wallet;
 
   User = require('../models/user');
+
+  Wallet = require('../models/wallet');
 
   JsonRenderer = require('../lib/json_renderer');
 
@@ -13,14 +15,15 @@
         email: req.body.email,
         password: User.hashPassword(req.body.password)
       });
-      return user.save(function(err) {
+      return user.save(function(err, newUser) {
         if (err) {
           return JsonRenderer.error(err, res);
         }
-        user.generateToken(function() {
-          return user.sendEmailVerificationLink();
+        newUser.generateToken(function() {
+          newUser.sendEmailVerificationLink();
+          return Wallet.findOrCreateUserWalletByCurrency(newUser.id, "BTC");
         });
-        return res.json(JsonRenderer.user(user));
+        return res.json(JsonRenderer.user(newUser));
       });
     });
     app.post("/login", function(req, res, next) {
