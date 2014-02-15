@@ -83,7 +83,7 @@ server.listen(app.get('port'), function(){
 
 
 //User validation
-if (environment === "staging") {
+if (GLOBAL.appConfig().site_auth) {
   var auth = function (req, res, next) {
     if ((req.query.u === GLOBAL.appConfig().site_auth.user) && (req.query.p === GLOBAL.appConfig().site_auth.pass)) {
       req.session.staging_auth = true;
