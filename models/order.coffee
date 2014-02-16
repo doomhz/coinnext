@@ -116,7 +116,8 @@ OrderSchema.statics.findByOptions = (options = {}, callback)->
     else if currencies.length is 1
       dbQuery.or([{buy_currency: currencies[0]}, {sell_currency: currencies[0]}])
   else
-    callback "Wrong action", []
+    return callback "Wrong action", []
+  dbQuery.sort {created: "desc"}
   dbQuery.exec callback
 
 OrderSchema.statics.findByEngineId = (engineId, callback)->

@@ -26,6 +26,9 @@ TransactionSchema = new Schema
   confirmations:
     type: Number
     index: true
+  balance_loaded:
+    type: Boolean
+    default: false
   created:
     type: Date
     default: Date.now
@@ -52,14 +55,14 @@ TransactionSchema.statics.addFromWallet = (transactionData, currency, wallet, ca
   Transaction.findOneAndUpdate {txid: data.txid}, data, {upsert: true}, callback
 
 TransactionSchema.statics.findPendingByUserAndWallet = (userId, walletId, callback)->
-  Transaction.find({user_id: userId, wallet_id: walletId}).where("confirmations").lt(3).exec callback
+  Transaction.find({user_id: userId, wallet_id: walletId}).where("confirmations").lt(3).sort({created: "desc"}).exec callback
 
 TransactionSchema.statics.findProcessedByUserAndWallet = (userId, walletId, callback)->
-  Transaction.find({user_id: userId, wallet_id: walletId}).where("confirmations").gt(2).exec callback
+  Transaction.find({user_id: userId, wallet_id: walletId}).where("confirmations").gt(2).sort({created: "desc"}).exec callback
 
 TransactionSchema.statics.findPendingByIds = (ids, callback)->
   return callback(null, [])  if ids.length is 0
-  Transaction.where("txid").in(ids).where("confirmations").lt(3).exec callback
+  Transaction.where("txid").in(ids).where("confirmations").lt(3).sort({created: "desc"}).exec callback
 
 TransactionSchema.statics.isValidFormat = (category)->
   acceptedCategories = ["send", "receive"]

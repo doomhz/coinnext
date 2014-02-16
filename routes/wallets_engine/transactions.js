@@ -14,7 +14,7 @@
   Payment = require("../../models/payment");
 
   module.exports = function(app) {
-    var loadEntireAccountBalance, loadTransaction, processPayment;
+    var loadTransaction, processPayment;
     app.put("/transaction/:currency/:tx_id", function(req, res, next) {
       var currency, txId;
       txId = req.params.tx_id;
@@ -66,7 +66,7 @@
               return callback(null, "" + payment.id + " - not processed - " + err);
             }
             return processPayment(payment, function(err, p) {
-              if (p.isProcessed()) {
+              if (!err && p.isProcessed()) {
                 processedUserIds.push(wallet.user_id);
                 return Transaction.update({
                   txid: p.transaction_id
@@ -97,33 +97,6 @@
         });
       });
     });
-    loadEntireAccountBalance = function(wallet, callback) {
-      if (callback == null) {
-        callback = function() {};
-      }
-      return GLOBAL.wallets[wallet.currency].getBalance(wallet.account, (function(_this) {
-        return function(err, balance) {
-          if (err) {
-            console.error("Could not get balance for " + wallet.account, err);
-          }
-          if (err) {
-            return callback(err, _this);
-          }
-          if (balance <= 0) {
-            return Wallet.findById(wallet.id, callback);
-          }
-          return GLOBAL.wallets[wallet.currency].chargeAccount(wallet.account, -balance, function(err, success) {
-            if (err) {
-              console.error("Could not charge " + wallet.account + " " + balance + " BTC", err);
-            }
-            if (err) {
-              return callback(err, _this);
-            }
-            return wallet.addBalance(balance, callback);
-          });
-        };
-      })(this));
-    };
     processPayment = function(payment, callback) {
       var account;
       if (callback == null) {
@@ -131,13 +104,13 @@
       }
       account = null;
       console.log(payment.address);
-      return GLOBAL.wallets[payment.currency].sendToAddress(payment.address, account, payment.amount, (function(_this) {
+      return GLOBAL.wallets[payment.currency].sendToAddress(payment.address, payment.amount, (function(_this) {
         return function(err, response) {
           if (response == null) {
             response = "";
           }
           if (err) {
-            console.error("Could not withdraw to " + payment.address + " from " + account + " " + payment.amount + " BTC", err);
+            console.error("Could not withdraw to " + payment.address + " " + payment.amount + " BTC", err);
           }
           if (err) {
             return payment.errored(err, callback);
@@ -166,13 +139,31 @@
           return callback();
         }
         return Wallet.findByAccount(account, function(err, wallet) {
-          return Transaction.addFromWallet(transaction, currency, wallet, function() {
+          return Transaction.addFromWallet(transaction, currency, wallet, function(err, updatedTransaction) {
             if (wallet) {
-              if (category !== "receive") {
+              if (category !== "receive" || updatedTransaction.balance_loaded || !GLOBAL.wallets[currency].isBalanceConfirmed(updatedTransaction.confirmations)) {
                 return callback();
               }
-              return loadEntireAccountBalance(wallet, function() {
-                return callback();
+              return wallet.addBalance(updatedTransaction.amount, function(err) {
+                if (err) {
+                  console.error("Could not load user balance " + updatedTransaction.amount, err);
+                }
+                if (err) {
+                  return callback();
+                }
+                if (err) {
+                  console.log("Added balance " + updatedTransaction.amount + " to wallet " + wallet.id + " for tx " + updatedTransaction.id, err);
+                }
+                return Transaction.update({
+                  _id: updatedTransaction.id
+                }, {
+                  balance_loaded: true
+                }, function() {
+                  if (err) {
+                    console.log("Balance loading to wallet " + wallet.id + " for tx " + updatedTransaction.id + " finished", err);
+                  }
+                  return callback();
+                });
               });
             } else {
               return Payment.findOne({

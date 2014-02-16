@@ -185,8 +185,11 @@
         ]);
       }
     } else {
-      callback("Wrong action", []);
+      return callback("Wrong action", []);
     }
+    dbQuery.sort({
+      created: "desc"
+    });
     return dbQuery.exec(callback);
   };
 

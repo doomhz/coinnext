@@ -36,7 +36,7 @@ module.exports = (app)->
         wallet.addBalance -payment.amount, (err)->
           return callback null, "#{payment.id} - not processed - #{err}"  if err
           processPayment payment, (err, p)->
-            if p.isProcessed()
+            if not err and p.isProcessed()
               processedUserIds.push wallet.user_id
               Transaction.update {txid: p.transaction_id}, {user_id: p.user_id}, ()->
                 callback null, "#{payment.id} - processed"
@@ -50,21 +50,11 @@ module.exports = (app)->
         res.send("#{new Date()} - #{result}")
 
 
-  loadEntireAccountBalance = (wallet, callback = ()->)->
-    GLOBAL.wallets[wallet.currency].getBalance wallet.account, (err, balance)=>
-      console.error "Could not get balance for #{wallet.account}", err  if err
-      return callback err, @  if err
-      return Wallet.findById wallet.id, callback  if balance <= 0
-      GLOBAL.wallets[wallet.currency].chargeAccount wallet.account, -balance, (err, success)=>
-        console.error "Could not charge #{wallet.account} #{balance} BTC", err  if err
-        return callback err, @  if err
-        wallet.addBalance balance, callback
-
   processPayment = (payment, callback = ()->)->
     account = null
     console.log payment.address
-    GLOBAL.wallets[payment.currency].sendToAddress payment.address, account, payment.amount, (err, response = "")=>
-      console.error "Could not withdraw to #{payment.address} from #{account} #{payment.amount} BTC", err  if err
+    GLOBAL.wallets[payment.currency].sendToAddress payment.address, payment.amount, (err, response = "")=>
+      console.error "Could not withdraw to #{payment.address} #{payment.amount} BTC", err  if err
       return payment.errored err, callback  if err
       payment.process response, callback
 
@@ -78,11 +68,16 @@ module.exports = (app)->
       account = transaction.details[0].account
       return callback()  if not Transaction.isValidFormat category
       Wallet.findByAccount account, (err, wallet)->
-        Transaction.addFromWallet transaction, currency, wallet, ()->
+        Transaction.addFromWallet transaction, currency, wallet, (err, updatedTransaction)->
           if wallet
-            return callback()  if category isnt "receive"
-            loadEntireAccountBalance wallet, ()->
-              callback()
+            return callback()  if category isnt "receive" or updatedTransaction.balance_loaded or not GLOBAL.wallets[currency].isBalanceConfirmed(updatedTransaction.confirmations)
+            wallet.addBalance updatedTransaction.amount, (err)->
+              console.error "Could not load user balance #{updatedTransaction.amount}", err  if err
+              return callback()  if err
+              console.log "Added balance #{updatedTransaction.amount} to wallet #{wallet.id} for tx #{updatedTransaction.id}", err  if err
+              Transaction.update {_id: updatedTransaction.id}, {balance_loaded: true}, ()->
+                console.log "Balance loading to wallet #{wallet.id} for tx #{updatedTransaction.id} finished", err  if err
+                callback()
           else
             Payment.findOne {transaction_id: txId}, (err, payment)->
               return callback()  if not payment

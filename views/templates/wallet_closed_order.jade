@@ -6,4 +6,3 @@ script(type="text/template", id="wallet-closed-order-tpl")
     td.trade-price <%= order.get('unit_price') %>
     td.trade-amount <%= order.get('amount') %>
     td.trade-total <%= order.get('amount') * order.get('unit_price') %>
-    td.trade-action <a href="#" class="action cancel" data-id="<%= order.id %>">Cancel</a>
