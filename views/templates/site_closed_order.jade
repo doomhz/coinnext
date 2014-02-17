@@ -3,5 +3,5 @@ script(type="text/template", id="site-closed-order-tpl")
     td.trade-date <%= order.get('created') %>
     td.trade-type <%= order.get('action') %>
     td.trade-price <%= order.get('unit_price') %>
-    td.trade-amount <%= order.get('amount') %>
-    td.trade-total <%= order.get('amount') * order.get('unit_price') %>
+    td.trade-amount <%= order.get('action') === 'sell' ? order.get('amount') : _.str.roundToThree(order.get('amount') / order.get('unit_price')) %>
+    td.trade-amount <%= order.get('action') === 'sell' ?  order.get('amount') * order.get('unit_price') : order.get('amount') %>

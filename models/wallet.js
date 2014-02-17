@@ -37,7 +37,7 @@
     },
     fee: {
       type: Number,
-      "default": 0.002
+      "default": 0.2
     },
     created:  ({
       type: Date ,
@@ -208,6 +208,10 @@
     }
     id = account.replace("wallet_", "");
     return Wallet.findById(id, callback);
+  };
+
+  WalletSchema.statics.isValidCurrency = function(currency) {
+    return CURRENCIES.indexOf(currency) > -1;
   };
 
   Wallet = mongoose.model("Wallet", WalletSchema);

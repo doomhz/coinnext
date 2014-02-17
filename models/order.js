@@ -1,9 +1,11 @@
 (function() {
-  var Order, OrderSchema, autoIncrement, exports, _;
+  var FEE, Order, OrderSchema, autoIncrement, exports, _;
 
   _ = require("underscore");
 
   autoIncrement = require("mongoose-auto-increment");
+
+  FEE = 0.2;
 
   OrderSchema = new Schema({
     user_id: {
@@ -183,8 +185,11 @@
         ]);
       }
     } else {
-      callback("Wrong action", []);
+      return callback("Wrong action", []);
     }
+    dbQuery.sort({
+      created: "desc"
+    });
     return dbQuery.exec(callback);
   };
 

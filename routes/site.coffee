@@ -2,6 +2,7 @@ Wallet = require "../models/wallet"
 MarketStats = require "../models/market_stats"
 TradeStats = require "../models/trade_stats"
 Order = require "../models/order"
+_str = require "../lib/underscore_string"
 
 module.exports = (app)->
 
@@ -42,6 +43,7 @@ module.exports = (app)->
                 currencies: Wallet.getCurrencyNames()
                 marketStats: marketStats
                 marketPrice: marketPrice
+                _str: _str
         else
           res.render "site/trade",
             title: "Trade #{currency1} to #{currency2}"
@@ -54,8 +56,10 @@ module.exports = (app)->
             currencies: Wallet.getCurrencyNames()
             marketStats: marketStats
             marketPrice: marketPrice
+            _str: _str
 
   app.get "/funds", (req, res)->
+    return res.redirect "/login"  if not req.user
     Wallet.findUserWallets req.user.id, (err, wallets)->
       res.render "site/funds",
         title: 'Funds'
@@ -64,18 +68,17 @@ module.exports = (app)->
         currencies: Wallet.getCurrencyNames()
 
   app.get "/funds/:currency", (req, res)->
+    return res.redirect "/login"  if not req.user
     Wallet.findUserWallets req.user.id, (err, wallets)->
       Wallet.findUserWalletByCurrency req.user.id, req.params.currency, (err, wallet)->
         console.error err  if err
-        if wallet
-          res.render "site/funds/wallet",
-            title: 'Wallet overview'
-            user: req.user
-            wallet: wallet
-            wallets: wallets
-            currencies: Wallet.getCurrencyNames()
-        else
-          res.redirect "/"
+        return res.redirect "/"  if not wallet
+        res.render "site/funds/wallet",
+          title: 'Wallet overview'
+          user: req.user
+          wallet: wallet
+          wallets: wallets
+          currencies: Wallet.getCurrencyNames()
 
   app.get "/market_stats", (req, res)->
     MarketStats.getStats (err, marketStats)->
@@ -88,18 +91,21 @@ module.exports = (app)->
 
   # Settings
   app.get "/settings", (req, res)->
+    return res.redirect "/login"  if not req.user
     res.render "site/settings/settings",
       title: 'Settings'
       page: 'Settings'
       user: req.user
 
   app.get "/settings/preferences", (req, res)->
+    return res.redirect "/login"  if not req.user
     res.render "site/settings/preferences",
       title: 'Preferences - Settings'
       page: 'Settings'
       user: req.user
 
   app.get "/settings/security", (req, res)->
+    return res.redirect "/login"  if not req.user
     res.render "site/settings/security",
       title: 'Security - Settings'
       page: 'Settings'

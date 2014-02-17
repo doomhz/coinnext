@@ -40,6 +40,10 @@
       type: Number,
       index: true
     },
+    balance_loaded: {
+      type: Boolean,
+      "default": false
+    },
     created: {
       type: Date,
       "default": Date.now,
@@ -84,21 +88,33 @@
     return Transaction.find({
       user_id: userId,
       wallet_id: walletId
-    }).where("confirmations").lt(3).exec(callback);
+    }).where("confirmations").lt(3).sort({
+      created: "desc"
+    }).exec(callback);
   };
 
   TransactionSchema.statics.findProcessedByUserAndWallet = function(userId, walletId, callback) {
     return Transaction.find({
       user_id: userId,
       wallet_id: walletId
-    }).where("confirmations").gt(2).exec(callback);
+    }).where("confirmations").gt(2).sort({
+      created: "desc"
+    }).exec(callback);
   };
 
   TransactionSchema.statics.findPendingByIds = function(ids, callback) {
     if (ids.length === 0) {
       return callback(null, []);
     }
-    return Transaction.where("txid")["in"](ids).where("confirmations").lt(3).exec(callback);
+    return Transaction.where("txid")["in"](ids).where("confirmations").lt(3).sort({
+      created: "desc"
+    }).exec(callback);
+  };
+
+  TransactionSchema.statics.isValidFormat = function(category) {
+    var acceptedCategories;
+    acceptedCategories = ["send", "receive"];
+    return acceptedCategories.indexOf(category) > -1;
   };
 
   Transaction = mongoose.model("Transaction", TransactionSchema);

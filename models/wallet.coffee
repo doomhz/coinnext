@@ -35,7 +35,7 @@ WalletSchema = new Schema
     index: true
   fee:
     type: Number
-    default: 0.002
+    default: 0.2
   created: 
     type: Date 
     default: Date.now 
@@ -106,9 +106,6 @@ WalletSchema.statics.findOrCreateUserWalletByCurrency = (userId, currency, callb
         user_id: userId
         currency: currency
       newWallet.save callback
-        #return callback err, wallet  if err
-        #wallet.generateAddress (e, w)->
-        #  Wallet.findUserWalletByCurrency userId, currency, callback
     else
       callback err, existentWallet
 
@@ -121,6 +118,9 @@ WalletSchema.statics.findUserWallet = (userId, walletId, callback = ()->)->
 WalletSchema.statics.findByAccount = (account, callback = ()->)->
   id = account.replace("wallet_", "")
   Wallet.findById id, callback
+
+WalletSchema.statics.isValidCurrency = (currency)->
+  CURRENCIES.indexOf(currency) > -1
 
 Wallet = mongoose.model "Wallet", WalletSchema
 exports = module.exports = Wallet

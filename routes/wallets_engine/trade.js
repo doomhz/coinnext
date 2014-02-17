@@ -53,18 +53,17 @@
         });
         order.published = true;
         return order.save(function(err, order) {
-          if (!err) {
-            res.send({
-              id: orderId,
-              published: true
-            });
-            return orderSocket.send({
-              type: "order-published",
-              eventData: order.toJSON()
-            });
-          } else {
+          if (err) {
             return next(new restify.ConflictError(err));
           }
+          res.send({
+            id: orderId,
+            published: true
+          });
+          return orderSocket.send({
+            type: "order-published",
+            eventData: order.toJSON()
+          });
         });
       });
     });
@@ -93,20 +92,19 @@
         return Wallet.findUserWalletByCurrency(order.user_id, order.sell_currency, function(err, wallet) {
           return wallet.holdBalance(-order.amount, function(err, wallet) {
             return order.remove(function(err) {
-              if (!err) {
-                res.send({
-                  id: orderId,
-                  canceled: true
-                });
-                return orderSocket.send({
-                  type: "order-canceled",
-                  eventData: {
-                    id: orderId
-                  }
-                });
-              } else {
+              if (err) {
                 return next(new restify.ConflictError(err));
               }
+              res.send({
+                id: orderId,
+                canceled: true
+              });
+              return orderSocket.send({
+                type: "order-canceled",
+                eventData: {
+                  id: orderId
+                }
+              });
             });
           });
         });
@@ -124,42 +122,41 @@
         soldAmount = parseFloat(result.data.soldAmount) / 100000000;
         receivedAmount = parseFloat(result.data.receivedAmount) / 100000000;
         return Order.findByEngineId(engineId, function(err, order) {
-          if (order) {
-            return Wallet.findUserWalletByCurrency(order.user_id, order.buy_currency, function(err, buyWallet) {
-              return Wallet.findUserWalletByCurrency(order.user_id, order.sell_currency, function(err, sellWallet) {
-                return sellWallet.holdBalance(-soldAmount, function(err, sellWallet) {
-                  return buyWallet.addBalance(receivedAmount, function(err, buyWallet) {
-                    order.status = status;
-                    order.sold_amount += soldAmount;
-                    order.result_amount += receivedAmount;
-                    if (status === "completed") {
-                      order.close_time = Date.now();
+          if (!order) {
+            return console.error("Wrong order to complete ", result);
+          }
+          return Wallet.findUserWalletByCurrency(order.user_id, order.buy_currency, function(err, buyWallet) {
+            return Wallet.findUserWalletByCurrency(order.user_id, order.sell_currency, function(err, sellWallet) {
+              return sellWallet.holdBalance(-soldAmount, function(err, sellWallet) {
+                return buyWallet.addBalance(receivedAmount, function(err, buyWallet) {
+                  order.status = status;
+                  order.sold_amount += soldAmount;
+                  order.result_amount += receivedAmount;
+                  if (status === "completed") {
+                    order.close_time = Date.now();
+                  }
+                  return order.save(function(err, order) {
+                    if (err) {
+                      return console.error("Could not process order ", result, err);
                     }
-                    return order.save(function(err, order) {
-                      if (err) {
-                        return console.error("Could not process order ", result, err);
-                      }
-                      if (order.status === "completed") {
-                        MarketStats.trackFromOrder(order, function(err, mkSt) {
-                          return orderSocket.send({
-                            type: "market-stats-updated",
-                            eventData: mkSt.toJSON()
-                          });
+                    if (order.status === "completed") {
+                      MarketStats.trackFromOrder(order, function(err, mkSt) {
+                        return orderSocket.send({
+                          type: "market-stats-updated",
+                          eventData: mkSt.toJSON()
                         });
-                        orderSocket.send({
-                          type: "order-completed",
-                          eventData: order.toJSON()
-                        });
-                      }
-                      return console.log("Processed order " + order.id + " ", result);
-                    });
+                      });
+                      orderSocket.send({
+                        type: "order-completed",
+                        eventData: order.toJSON()
+                      });
+                    }
+                    return console.log("Processed order " + order.id + " ", result);
                   });
                 });
               });
             });
-          } else {
-            return console.error("Wrong order to complete ", result);
-          }
+          });
         });
       }
     };

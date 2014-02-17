@@ -87,7 +87,7 @@ JsonRenderer =
       message = err
     else if _.isObject(err) and err.name is "ValidationError"
       for key, val of err.errors
-        if val.path is "email" and val.message is "unique"
+        if val.path is "email" and val.type is "user defined"
           message += "E-mail is already taken. "
         else
           message += "#{val.message} "

@@ -17,19 +17,17 @@ module.exports = (app)->
 
   app.post "/send-password", (req, res)->
     email = req.body.email
-    if email
-      User.findOne({email: email}).exec (err, user)->
-        if user
-          user.generateToken ()->
-            user.sendPasswordLink ()->
-              res.writeHead(303, {"Location": "/send-password?success=true"})
-              res.end()
-        else
-          res.writeHead(303, {"Location": "/send-password?error=wrong-user"})
-          res.end()
-    else
+    if not email
       res.writeHead(303, {"Location": "/send-password"})
-      res.end()
+      return res.end()
+    User.findOne({email: email}).exec (err, user)->
+      if not user
+        res.writeHead(303, {"Location": "/send-password?error=wrong-user"})
+        res.end()
+      user.generateToken ()->
+        user.sendPasswordLink ()->
+          res.writeHead(303, {"Location": "/send-password?success=true"})
+          res.end()
 
   app.get "/change-password/:token", (req, res)->
     token = req.params.token
@@ -41,35 +39,30 @@ module.exports = (app)->
     token = req.body.token
     password = req.body.password
     User.findByToken token, (err, user)->
-      if user
-        user.password = User.hashPassword password
-        user.save (err, u)->
-          console.error err  if err
-          res.writeHead(303, {"Location": "/login"})
-          res.end()
-      else
+      if not user
         res.writeHead(303, {"Location": "/change-password/#{token}?error=wrong-token"})
+        res.end()
+      user.password = User.hashPassword password
+      user.save (err, u)->
+        console.error err  if err
+        res.writeHead(303, {"Location": "/login"})
         res.end()
 
   app.post "/set-new-password", (req, res)->
     password = req.body.password
     newPassword = req.body.new_password
-    if req.user
-      return JsonRenderer.error "The old password is incorrect.", res  if User.hashPassword(password) isnt req.user.password
-      req.user.password = User.hashPassword newPassword
-      req.user.save (err, u)->
-        console.error err  if err
-        res.json
-          message: "The password was successfully changed."
-    else
-      JsonRenderer.error "Please auth.", res
+    return JsonRenderer.error "Please auth.", res  if not req.user
+    return JsonRenderer.error "The old password is incorrect.", res  if User.hashPassword(password) isnt req.user.password
+    req.user.password = User.hashPassword newPassword
+    req.user.save (err, u)->
+      console.error err  if err
+      res.json
+        message: "The password was successfully changed."
 
   app.get "/verify/:token", (req, res)->
     token = req.params.token
     User.findByToken token, (err, user)->
-      if user
-        user.email_verified = true
-        user.save (err, u)->
-          res.render "auth/verify", {title: "Verify Account - Coinnext.com", verified: true}
-      else
-        res.render "auth/verify", {title: "Verify Account - Coinnext.com", verified: false}
+      return res.render "auth/verify", {title: "Verify Account - Coinnext.com", verified: false}  if not user
+      user.email_verified = true
+      user.save (err, u)->
+        res.render "auth/verify", {title: "Verify Account - Coinnext.com", verified: true}

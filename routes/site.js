@@ -1,5 +1,5 @@
 (function() {
-  var MarketStats, Order, TradeStats, Wallet;
+  var MarketStats, Order, TradeStats, Wallet, _str;
 
   Wallet = require("../models/wallet");
 
@@ -8,6 +8,8 @@
   TradeStats = require("../models/trade_stats");
 
   Order = require("../models/order");
+
+  _str = require("../lib/underscore_string");
 
   module.exports = function(app) {
     app.get("/", function(req, res) {
@@ -55,7 +57,8 @@
                   wallet2: wallet2,
                   currencies: Wallet.getCurrencyNames(),
                   marketStats: marketStats,
-                  marketPrice: marketPrice
+                  marketPrice: marketPrice,
+                  _str: _str
                 });
               });
             });
@@ -72,13 +75,17 @@
               }),
               currencies: Wallet.getCurrencyNames(),
               marketStats: marketStats,
-              marketPrice: marketPrice
+              marketPrice: marketPrice,
+              _str: _str
             });
           }
         });
       });
     });
     app.get("/funds", function(req, res) {
+      if (!req.user) {
+        return res.redirect("/login");
+      }
       return Wallet.findUserWallets(req.user.id, function(err, wallets) {
         return res.render("site/funds", {
           title: 'Funds',
@@ -89,22 +96,24 @@
       });
     });
     app.get("/funds/:currency", function(req, res) {
+      if (!req.user) {
+        return res.redirect("/login");
+      }
       return Wallet.findUserWallets(req.user.id, function(err, wallets) {
         return Wallet.findUserWalletByCurrency(req.user.id, req.params.currency, function(err, wallet) {
           if (err) {
             console.error(err);
           }
-          if (wallet) {
-            return res.render("site/funds/wallet", {
-              title: 'Wallet overview',
-              user: req.user,
-              wallet: wallet,
-              wallets: wallets,
-              currencies: Wallet.getCurrencyNames()
-            });
-          } else {
+          if (!wallet) {
             return res.redirect("/");
           }
+          return res.render("site/funds/wallet", {
+            title: 'Wallet overview',
+            user: req.user,
+            wallet: wallet,
+            wallets: wallets,
+            currencies: Wallet.getCurrencyNames()
+          });
         });
       });
     });
@@ -122,6 +131,9 @@
       });
     });
     app.get("/settings", function(req, res) {
+      if (!req.user) {
+        return res.redirect("/login");
+      }
       return res.render("site/settings/settings", {
         title: 'Settings',
         page: 'Settings',
@@ -129,6 +141,9 @@
       });
     });
     app.get("/settings/preferences", function(req, res) {
+      if (!req.user) {
+        return res.redirect("/login");
+      }
       return res.render("site/settings/preferences", {
         title: 'Preferences - Settings',
         page: 'Settings',
@@ -136,6 +151,9 @@
       });
     });
     app.get("/settings/security", function(req, res) {
+      if (!req.user) {
+        return res.redirect("/login");
+      }
       return res.render("site/settings/security", {
         title: 'Security - Settings',
         page: 'Settings',

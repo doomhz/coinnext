@@ -6,14 +6,10 @@ module.exports = (app)->
   app.post "/create_account/:account/:currency", (req, res, next)->
     account   = req.params.account
     currency = req.params.currency
-    if GLOBAL.wallets[currency]
-      GLOBAL.wallets[currency].generateAddress account, (err, address)->
-        if not err
-          return res.send
-            account: account
-            address: address
-        else
-          console.error err
-          return next(new restify.ConflictError "Could not generate address.")
-    else
-      return next(new restify.ConflictError "Wrong Currency.")
+    return return next(new restify.ConflictError "Wrong Currency.")  if not GLOBAL.wallets[currency]
+    GLOBAL.wallets[currency].generateAddress account, (err, address)->
+      console.error err  if err
+      return next(new restify.ConflictError "Could not generate address.")  if err
+      res.send
+        account: account
+        address: address

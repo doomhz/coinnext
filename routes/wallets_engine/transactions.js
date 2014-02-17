@@ -14,47 +14,15 @@
   Payment = require("../../models/payment");
 
   module.exports = function(app) {
-    var loadEntireAccountBalance, processPayment;
+    var loadTransaction, processPayment;
     app.put("/transaction/:currency/:tx_id", function(req, res, next) {
       var currency, txId;
       txId = req.params.tx_id;
       currency = req.params.currency;
       console.log(txId);
       console.log(currency);
-      return GLOBAL.wallets[currency].getTransaction(txId, function(err, transaction) {
-        if (err) {
-          console.error(err);
-        }
-        if (transaction && transaction.details[0].category !== "move") {
-          return Wallet.findByAccount(transaction.details[0].account, function(err, wallet) {
-            return Transaction.addFromWallet(transaction, currency, wallet, function() {
-              if (wallet) {
-                return loadEntireAccountBalance(wallet, function() {
-                  return res.end();
-                });
-              } else {
-                return Payment.findOne({
-                  transaction_id: txId
-                }, function(err, payment) {
-                  if (payment) {
-                    return Transaction.update({
-                      txid: txId
-                    }, {
-                      user_id: payment.user_id,
-                      wallet_id: payment.wallet_id
-                    }, function() {
-                      return res.end();
-                    });
-                  } else {
-                    return res.end();
-                  }
-                });
-              }
-            });
-          });
-        } else {
-          return res.end();
-        }
+      return loadTransaction(txId, currency, function() {
+        return res.end();
       });
     });
     app.post("/load_latest_transactions/:currency", function(req, res, next) {
@@ -66,49 +34,17 @@
           console.error(err);
         }
         loadTransactionCallback = function(transaction, callback) {
-          return GLOBAL.wallets[currency].getTransaction(transaction.txid, function(err, transaction) {
-            if (transaction && transaction.details[0].category !== "move") {
-              return Wallet.findByAccount(transaction.details[0].account, function(err, wallet) {
-                return Transaction.addFromWallet(transaction, currency, wallet, function() {
-                  if (wallet) {
-                    return loadEntireAccountBalance(wallet, function() {
-                      return callback();
-                    });
-                  } else {
-                    return Payment.findOne({
-                      transaction_id: transaction.txid
-                    }, function(err, payment) {
-                      if (payment) {
-                        return Transaction.update({
-                          txid: transaction.txid
-                        }, {
-                          user_id: payment.user_id,
-                          wallet_id: payment.wallet_id
-                        }, function() {
-                          return callback();
-                        });
-                      } else {
-                        return callback();
-                      }
-                    });
-                  }
-                });
-              });
-            } else {
-              return callback();
-            }
-          });
+          return loadTransaction(transaction, currency, callback);
         };
-        if (transactions) {
-          return async.mapSeries(transactions, loadTransactionCallback, function(err, result) {
-            if (err) {
-              console.error(err);
-            }
-            return res.send("" + (new Date()) + " - Processed " + result.length + " transactions");
-          });
-        } else {
+        if (!transactions) {
           return res.send("" + (new Date()) + " - Nothing to process");
         }
+        return async.mapSeries(transactions, loadTransactionCallback, function(err, result) {
+          if (err) {
+            console.error(err);
+          }
+          return res.send("" + (new Date()) + " - Processed " + result.length + " transactions");
+        });
       });
     });
     app.post("/process_pending_payments", function(req, res, next) {
@@ -116,39 +52,36 @@
       processedUserIds = [];
       processPaymentCallback = function(payment, callback) {
         return Wallet.findById(payment.wallet_id, function(err, wallet) {
-          if (wallet) {
-            if (processedUserIds.indexOf(wallet.user_id) === -1) {
-              if (wallet.canWithdraw(payment.amount)) {
-                return wallet.addBalance(-payment.amount, function(err) {
-                  if (!err) {
-                    return processPayment(payment, function(err, p) {
-                      if (p.isProcessed()) {
-                        processedUserIds.push(wallet.user_id);
-                        return Transaction.update({
-                          txid: p.transaction_id
-                        }, {
-                          user_id: p.user_id
-                        }, function() {
-                          return callback(null, "" + payment.id + " - processed");
-                        });
-                      } else {
-                        wallet.addBalance(payment.amount, function() {});
-                        return callback(null, "" + payment.id + " - not processed - " + err);
-                      }
-                    });
-                  } else {
-                    return callback(null, "" + payment.id + " - not processed - " + err);
-                  }
-                });
-              } else {
-                return callback(null, "" + payment.id + " - not processed - no funds");
-              }
-            } else {
-              return callback(null, "" + payment.id + " - user already had a processed payment");
-            }
-          } else {
+          if (!wallet) {
             return callback(null, "" + payment.id + " - wallet " + payment.wallet_id + " not found");
           }
+          if (processedUserIds.indexOf(wallet.user_id) > -1) {
+            return callback(null, "" + payment.id + " - user already had a processed payment");
+          }
+          if (!wallet.canWithdraw(payment.amount)) {
+            return callback(null, "" + payment.id + " - not processed - no funds");
+          }
+          return wallet.addBalance(-payment.amount, function(err) {
+            if (err) {
+              return callback(null, "" + payment.id + " - not processed - " + err);
+            }
+            return processPayment(payment, function(err, p) {
+              if (!err && p.isProcessed()) {
+                processedUserIds.push(wallet.user_id);
+                return Transaction.update({
+                  txid: p.transaction_id
+                }, {
+                  user_id: p.user_id
+                }, function() {
+                  return callback(null, "" + payment.id + " - processed");
+                });
+              } else {
+                return wallet.addBalance(payment.amount, function() {
+                  return callback(null, "" + payment.id + " - not processed - " + err);
+                });
+              }
+            });
+          });
         });
       };
       return Payment.find({
@@ -164,51 +97,94 @@
         });
       });
     });
-    loadEntireAccountBalance = function(wallet, callback) {
-      if (callback == null) {
-        callback = function() {};
-      }
-      return GLOBAL.wallets[wallet.currency].getBalance(wallet.account, (function(_this) {
-        return function(err, balance) {
-          if (err) {
-            console.error("Could not get balance for " + wallet.account, err);
-            return callback(err, _this);
-          } else {
-            if (balance !== 0) {
-              return GLOBAL.wallets[wallet.currency].chargeAccount(wallet.account, -balance, function(err, success) {
-                if (err) {
-                  console.error("Could not charge " + wallet.account + " " + balance + " BTC", err);
-                  return callback(err, _this);
-                } else {
-                  return wallet.addBalance(balance, callback);
-                }
-              });
-            } else {
-              return Wallet.findById(wallet.id, callback);
-            }
-          }
-        };
-      })(this));
-    };
-    return processPayment = function(payment, callback) {
+    processPayment = function(payment, callback) {
       var account;
       if (callback == null) {
         callback = function() {};
       }
       account = null;
-      return GLOBAL.wallets[payment.currency].sendToAddress(payment.address, account, payment.amount, (function(_this) {
+      console.log(payment.address);
+      return GLOBAL.wallets[payment.currency].sendToAddress(payment.address, payment.amount, (function(_this) {
         return function(err, response) {
           if (response == null) {
             response = "";
           }
           if (err) {
-            console.error("Could not withdraw to " + payment.address + " from " + account + " " + payment.amount + " BTC", err);
-            return payment.errored(err, callback);
-          } else {
-            return payment.process(response, callback);
+            console.error("Could not withdraw to " + payment.address + " " + payment.amount + " BTC", err);
           }
+          if (err) {
+            return payment.errored(err, callback);
+          }
+          return payment.process(response, callback);
         };
       })(this));
+    };
+    return loadTransaction = function(transactionOrId, currency, callback) {
+      var txId;
+      txId = typeof transactionOrId === "string" ? transactionOrId : transactionOrId.txid;
+      if (!txId) {
+        return callback();
+      }
+      return GLOBAL.wallets[currency].getTransaction(txId, function(err, transaction) {
+        var account, category;
+        if (err) {
+          console.error(err);
+        }
+        if (err) {
+          return callback();
+        }
+        category = transaction.details[0].category;
+        account = transaction.details[0].account;
+        if (!Transaction.isValidFormat(category)) {
+          return callback();
+        }
+        return Wallet.findByAccount(account, function(err, wallet) {
+          return Transaction.addFromWallet(transaction, currency, wallet, function(err, updatedTransaction) {
+            if (wallet) {
+              if (category !== "receive" || updatedTransaction.balance_loaded || !GLOBAL.wallets[currency].isBalanceConfirmed(updatedTransaction.confirmations)) {
+                return callback();
+              }
+              return wallet.addBalance(updatedTransaction.amount, function(err) {
+                if (err) {
+                  console.error("Could not load user balance " + updatedTransaction.amount, err);
+                }
+                if (err) {
+                  return callback();
+                }
+                if (err) {
+                  console.log("Added balance " + updatedTransaction.amount + " to wallet " + wallet.id + " for tx " + updatedTransaction.id, err);
+                }
+                return Transaction.update({
+                  _id: updatedTransaction.id
+                }, {
+                  balance_loaded: true
+                }, function() {
+                  if (err) {
+                    console.log("Balance loading to wallet " + wallet.id + " for tx " + updatedTransaction.id + " finished", err);
+                  }
+                  return callback();
+                });
+              });
+            } else {
+              return Payment.findOne({
+                transaction_id: txId
+              }, function(err, payment) {
+                if (!payment) {
+                  return callback();
+                }
+                return Transaction.update({
+                  txid: txId
+                }, {
+                  user_id: payment.user_id,
+                  wallet_id: payment.wallet_id
+                }, function() {
+                  return callback();
+                });
+              });
+            }
+          });
+        });
+      });
     };
   };
 

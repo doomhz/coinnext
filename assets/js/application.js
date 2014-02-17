@@ -30,6 +30,7 @@
 //= require app/views/pending_transactions
 //= require app/views/transactions_history
 //= require app/views/trade
+//= require app/views/trade_chart
 //= require app/views/orders
 //= require app/views/market_ticker
 

@@ -1,3 +1,7 @@
+MARKETS = [
+  "LTC_BTC", "PPC_BTC"
+]
+
 MarketStatsSchema = new Schema
   type:
     type: String
@@ -48,6 +52,14 @@ MarketStatsSchema.statics.trackFromOrder = (order, callback = ()->)->
       marketStats.volume1 += order.amount
       marketStats.volume2 += order.result_amount
       marketStats.save callback
+
+MarketStatsSchema.statics.getMarkets = ()->
+  MARKETS
+
+MarketStatsSchema.statics.isValidMarket = (action, buyCurrency, sellCurrency)->
+  market = "#{buyCurrency}_#{sellCurrency}"  if action is "buy"
+  market = "#{sellCurrency}_#{buyCurrency}"  if action is "sell"
+  MarketStats.getMarkets().indexOf(market) > -1
 
 MarketStats = mongoose.model "MarketStats", MarketStatsSchema
 exports = module.exports = MarketStats

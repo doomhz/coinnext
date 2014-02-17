@@ -24,13 +24,13 @@ require('./lib/auth');
 
 // Setup the middlewares
 var oneYear = 31557600000;
-var gzippoOptions = environment === 'production' ? {clientMaxAge: oneYear, maxAge: oneYear} : {contentTypeMatch: /none/};
-var connectAssetsOptions = environment === 'production' ? {minifyBuilds: true} : {};
-var staticRenderer = environment === 'production' ? gzippo.staticGzip(__dirname + '/public', gzippoOptions) : express.static(__dirname + '/public');
+var gzippoOptions = environment !== 'development' ? {clientMaxAge: oneYear, maxAge: oneYear} : {contentTypeMatch: /none/};
+var connectAssetsOptions = environment !== 'development' ? {minifyBuilds: true} : {};
+var staticRenderer = environment !== 'development' ? gzippo.staticGzip(__dirname + '/public', gzippoOptions) : express.static(__dirname + '/public');
 
 // Setup express
 var app = express();
-if (environment === "production") {
+if (environment !== 'development') {
   app.use(connectDomain());
 }
 connectAssetsOptions.helperContext = app.locals
@@ -83,10 +83,14 @@ server.listen(app.get('port'), function(){
 
 
 //User validation
-if (environment === "staging") {
-  var auth = express.basicAuth(function(user, pass) {     
-    return (user === GLOBAL.appConfig().site_auth.user && pass === GLOBAL.appConfig().site_auth.pass);
-}, "Coinnext Staging");
+if (GLOBAL.appConfig().site_auth) {
+  var auth = function (req, res, next) {
+    if ((req.query.u === GLOBAL.appConfig().site_auth.user) && (req.query.p === GLOBAL.appConfig().site_auth.pass)) {
+      req.session.staging_auth = true;
+    }
+    if (!req.session.staging_auth) return res.redirect("http://www.youtube.com/watch?v=oHg5SJYRHA0");
+    next();
+  }
   app.get('*', auth);
 }
 

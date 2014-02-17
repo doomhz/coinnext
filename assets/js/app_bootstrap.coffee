@@ -107,7 +107,12 @@ $(document).ready ()->
       currency1: $trade.data "currency1"
       currency2: $trade.data "currency2"
     trade.render()
-    trade.renderChartStats()
+
+    tradeChart = new App.TradeChartView
+      el: $trade.find("#trade-chart")
+      collection: new App.TradeStatsCollection null,
+        type: "#{$trade.data('currency1')}_#{$trade.data('currency2')}"
+    tradeChart.render()
 
     $openOrders = $("#open-orders-cnt")
     openOrders = new App.OrdersView
