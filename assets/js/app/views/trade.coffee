@@ -99,10 +99,9 @@ class App.TradeView extends App.MasterView
       tooltip:
         shared: true
         shadow: false
-        backgroundColor: "#ffffff"
         borderColor: "#d1d5dd"
         formatter: ()->
-          s = Highcharts.dateFormat('%b %e %Y %H:%M', this.x) + "<br />"
+          s = "<b>"+Highcharts.dateFormat('%b %e %Y %H:%M', this.x) + "</b><br />"
           
           s += "<b>Open:</b> " + @points[1].point.open + "<br />"+"<b>High:</b> " + @points[1].point.high + "<br />"+"<b>Low:</b> " + @points[1].point.low + "<br />"+"<b>Close:</b> " + @points[1].point.close + "<br />"+"<b>Volume:</b> " + @points[0].point.y   
             
