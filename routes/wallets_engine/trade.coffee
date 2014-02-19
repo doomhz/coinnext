@@ -70,6 +70,7 @@ module.exports = (app)->
       orderSocket.send
         type: "order-test-external"
         eventData: {a:1}
+      console.log "sent"
     , 3000
 
   onOrderCompleted = (message)->

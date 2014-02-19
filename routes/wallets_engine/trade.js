@@ -111,12 +111,13 @@
       });
     });
     setInterval(function() {
-      return orderSocket.send({
+      orderSocket.send({
         type: "order-test-external",
         eventData: {
           a: 1
         }
       });
+      return console.log("sent");
     }, 3000);
     onOrderCompleted = function(message) {
       var engineId, receivedAmount, result, soldAmount, status;
