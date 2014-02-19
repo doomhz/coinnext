@@ -8,6 +8,7 @@ class ClientSocket
 
   constructor: (options = {})->
     @host = options.host  if options.host
+    @host = "http://#{@host}"  if @host.indexOf("http") is -1
     @path = options.path  if options.path
 
   send: (data)->
