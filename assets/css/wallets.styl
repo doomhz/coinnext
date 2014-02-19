@@ -104,12 +104,7 @@
     margin-right 1%
     line-height 28px
     font-weight bold
-
-.coin-deposit-actions
-  white-space nowrap
-  float right
   button
-    float right
     white-space nowrap
     margin 3px
     background #fff
@@ -124,11 +119,20 @@
     font-size 12px
     transition all .1s linear
     &:hover
-    &.zeroclipboard-is-hover
       color $blue
       border-color $blue
     &:active
       color $darkblue
+
+.coin-deposit-actions
+  white-space nowrap
+  float right
+  button
+    float right
+    display none
+    &.zeroclipboard-is-hover
+      color $blue
+      border-color $blue
     &:last-child
       margin-right 0
 
