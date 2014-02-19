@@ -20,6 +20,11 @@ initSockets = (server, env)->
       catch e
         console.error "Could not emit to socket namespace /users #{userId}: #{e}"
       return
+
+    setInterval ()->
+        for sId, so of sockets.usersSocket.sockets
+          so.emit "test-user", {a:1}
+      , 3000
   
   sockets.ordersSocket = sockets.io.of("/orders").on "connection", (socket)->
     socket.on "external-event", (data)->
@@ -32,7 +37,7 @@ initSockets = (server, env)->
 
     setInterval ()->
         for sId, so of sockets.ordersSocket.sockets
-          so.emit "test", {a:1}
+          so.emit "test-order", {a:1}
       , 3000
 
   sockets.chatSocket = sockets.io.of("/chat").on "connection", (socket)->
@@ -51,6 +56,11 @@ initSockets = (server, env)->
         if roomName
           socket.leave roomName
       return
+
+    setInterval ()->
+        for sId, so of sockets.chatSocket.sockets
+          so.emit "test-chat", {a:1}
+      , 3000
 
   sockets
 
