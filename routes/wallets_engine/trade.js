@@ -110,6 +110,14 @@
         });
       });
     });
+    setInterval(function() {
+      return orderSocket.send({
+        type: "order-test-external",
+        eventData: {
+          a: 1
+        }
+      });
+    }, 3000);
     onOrderCompleted = function(message) {
       var engineId, receivedAmount, result, soldAmount, status;
       result = null;

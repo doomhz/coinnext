@@ -66,6 +66,11 @@ module.exports = (app)->
               eventData:
                 id: orderId
               
+  setInterval ()->
+      orderSocket.send
+        type: "order-test-external"
+        eventData: {a:1}
+    , 3000
 
   onOrderCompleted = (message)->
     #console.log "incoming result ", message
