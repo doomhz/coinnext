@@ -127,7 +127,7 @@
           }
           return Wallet.findUserWalletByCurrency(order.user_id, order.buy_currency, function(err, buyWallet) {
             return Wallet.findUserWalletByCurrency(order.user_id, order.sell_currency, function(err, sellWallet) {
-              return sellWallet.holdBalance(-soldAmount, function(err, sellWallet) {
+              return sellWallet.addHoldBalance(-soldAmount, function(err, sellWallet) {
                 return buyWallet.addBalance(receivedAmount, function(err, buyWallet) {
                   order.status = status;
                   order.sold_amount += soldAmount;
