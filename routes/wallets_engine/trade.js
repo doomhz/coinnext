@@ -16,7 +16,7 @@
   ClientSocket = require("../../lib/client_socket");
 
   orderSocket = new ClientSocket({
-    host: "http://localhost:5000",
+    host: GLOBAL.appConfig().app_host,
     path: "orders"
   });
 
@@ -110,15 +110,6 @@
         });
       });
     });
-    setInterval(function() {
-      orderSocket.send({
-        type: "order-test-external",
-        eventData: {
-          a: 1
-        }
-      });
-      return console.log("sent");
-    }, 3000);
     onOrderCompleted = function(message) {
       var engineId, receivedAmount, result, soldAmount, status;
       result = null;

@@ -6,8 +6,7 @@ TradeQueue = require "../../lib/trade_queue"
 trader = null
 ClientSocket = require "../../lib/client_socket"
 orderSocket = new ClientSocket
-  #host: GLOBAL.appConfig().users.hostname
-  host: "http://localhost:5000"
+  host: GLOBAL.appConfig().app_host
   path: "orders"
 
 module.exports = (app)->
@@ -67,12 +66,6 @@ module.exports = (app)->
               eventData:
                 id: orderId
               
-  setInterval ()->
-      orderSocket.send
-        type: "order-test-external"
-        eventData: {a:1}
-      console.log "sent"
-    , 3000
 
   onOrderCompleted = (message)->
     #console.log "incoming result ", message
