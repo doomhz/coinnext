@@ -6,7 +6,8 @@ TradeQueue = require "../../lib/trade_queue"
 trader = null
 ClientSocket = require "../../lib/client_socket"
 orderSocket = new ClientSocket
-  host: GLOBAL.appConfig().users.hostname
+  #host: GLOBAL.appConfig().users.hostname
+  host: "http://localhost:5000"
   path: "orders"
 
 module.exports = (app)->
