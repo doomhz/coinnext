@@ -26,6 +26,7 @@ initSockets = (server, env)->
       try
         for sId, so of sockets.ordersSocket.sockets
           so.emit data.type, data.eventData
+        console.log "sent"
       catch e
         console.error "Could not emit to socket namespace /orders: #{e}"
       @

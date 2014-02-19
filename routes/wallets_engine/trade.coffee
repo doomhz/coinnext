@@ -65,7 +65,13 @@ module.exports = (app)->
               type: "order-canceled"
               eventData:
                 id: orderId
-              
+
+  setInterval ()->
+      orderSocket.send
+        type: "test-order"
+        eventData: {a:1}
+      console.log "sent"
+    , 3000
 
   onOrderCompleted = (message)->
     #console.log "incoming result ", message
