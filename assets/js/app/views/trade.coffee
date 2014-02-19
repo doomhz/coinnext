@@ -103,7 +103,7 @@ class App.TradeView extends App.MasterView
     if @isValidAmount(buyAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
       subTotal = _.str.roundToThree buyAmount * lastPrice
       totalFee = _.str.roundToThree buyAmount / 100 * fee
-      total = subTotal - totalFee
+      total = buyAmount - totalFee
       #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee
       $subTotal.text subTotal
