@@ -4,7 +4,7 @@ $(document).ready ()->
 
   _.str.roundTo = (number, decimals = 8)->
     multiplier = Math.pow(10, decimals)
-    Math.round(parseFloat(number) * multiplier) / 1000
+    Math.round(parseFloat(number) * multiplier) / multiplier
 
   errorLogger = new App.ErrorLogger
 
