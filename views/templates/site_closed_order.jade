@@ -1,7 +1,7 @@
 script(type="text/template", id="site-closed-order-tpl")
   tr(class="<%= order.get('action') %>", data-id="<%= order.id %>")
-    td.trade-date <%= order.get('created') %>
+    td.trade-date <%= order.getCreatedDate() %>
     td.trade-type <%= order.get('action') %>
     td.trade-price <%= order.get('unit_price') %>
-    td.trade-amount <%= order.get('action') === 'sell' ? order.get('amount') : _.str.roundTo(order.get('amount') / order.get('unit_price'), 8) %>
-    td.trade-amount <%= order.get('action') === 'sell' ?  order.get('amount') * order.get('unit_price') : order.get('amount') %>
+    td.trade-amount <%= _.str.satoshiRound(order.calculateFirstAmount()) %>
+    td.trade-total <%= _.str.satoshiRound(order.calculateSecondAmount()) %>

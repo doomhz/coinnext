@@ -9,6 +9,7 @@ class App.OrdersView extends App.MasterView
 
   initialize: (options = {})->
     @tpl = options.tpl  if options.tpl
+    @$totalsEl = options.$totalsEl  if options.$totalsEl
     $.subscribe "new-order", @onNewOrder
     $.subscribe "order-completed", @onOrderCompleted
     $.subscribe "order-canceled", @onOrderCanceled
@@ -19,6 +20,10 @@ class App.OrdersView extends App.MasterView
         @collection.each (order)=>
           @$el.append @template
             order: order
+        @renderVolume()  if @$totalsEl
+
+  renderVolume: ()->
+    @$totalsEl.text @collection.calculateVolume()
 
   onNewOrder: (ev, order)=>
     @$el.empty()

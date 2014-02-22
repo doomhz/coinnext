@@ -63,6 +63,7 @@ module.exports = (app)->
         user: req.user
         wallets: wallets
         currencies: Wallet.getCurrencyNames()
+        _str: _str
 
   app.get "/funds/:currency", (req, res)->
     return res.redirect "/login"  if not req.user
@@ -76,6 +77,7 @@ module.exports = (app)->
           wallet: wallet
           wallets: wallets
           currencies: Wallet.getCurrencyNames()
+          _str: _str
 
   app.get "/market_stats", (req, res)->
     MarketStats.getStats (err, marketStats)->

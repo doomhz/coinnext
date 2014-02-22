@@ -6,6 +6,9 @@ $(document).ready ()->
     multiplier = Math.pow(10, decimals)
     Math.round(parseFloat(number) * multiplier) / multiplier
 
+  _.str.satoshiRound = (number)->
+    _.str.roundTo number, 8
+
   errorLogger = new App.ErrorLogger
 
   user = new App.UserModel
@@ -130,6 +133,7 @@ $(document).ready ()->
     openSellOrders = new App.OrdersView
       el: $openSellOrders
       tpl: "site-open-order-tpl"
+      $totalsEl: $trade.find("#open-sell-volume-total")
       collection: new App.OrdersCollection null,
         type: "open"
         action: "sell"
@@ -141,6 +145,7 @@ $(document).ready ()->
     openBuyOrders = new App.OrdersView
       el: $openBuyOrders
       tpl: "site-open-order-tpl"
+      $totalsEl: $trade.find("#open-buy-volume-total")
       collection: new App.OrdersCollection null,
         type: "open"
         action: "buy"

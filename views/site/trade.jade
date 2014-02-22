@@ -167,7 +167,7 @@ block content
             #sell-orders.order-book
               .con-header
                 h3.con-header-title Sell Orders
-                .order-book-total Total: #{coinStats.volume1} #{wallet1.currency}
+                .order-book-total Total: <span id="open-sell-volume-total">0</span> #{wallet1.currency}
               .table-wrap
                 table.trade-data
                   thead
@@ -181,7 +181,7 @@ block content
             #buy-orders.order-book
               .con-header
                 h3.con-header-title Buy Orders
-                .order-book-total Total: #{coinStats.volume2} #{wallet2.currency}
+                .order-book-total Total: <span id="open-buy-volume-total">0</span> #{wallet2.currency}
               table.trade-data
                 thead
                   tr

@@ -87,7 +87,8 @@
           title: 'Funds',
           user: req.user,
           wallets: wallets,
-          currencies: Wallet.getCurrencyNames()
+          currencies: Wallet.getCurrencyNames(),
+          _str: _str
         });
       });
     });
@@ -108,7 +109,8 @@
             user: req.user,
             wallet: wallet,
             wallets: wallets,
-            currencies: Wallet.getCurrencyNames()
+            currencies: Wallet.getCurrencyNames(),
+            _str: _str
           });
         });
       });
