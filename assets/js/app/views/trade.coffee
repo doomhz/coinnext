@@ -72,15 +72,15 @@ class App.TradeView extends App.MasterView
   onMarketBuyAmountChange: (ev)->
     $target = $(ev.target)
     $form = $target.parents("form")
-    buyAmount = parseFloat $form.find("#buy-amount-input").val()
+    spendAmount = parseFloat $form.find("#spend-amount-input").val()
     $result = $form.find("#buy-amount-result")
     $fee = $form.find("#buy-fee")
     $subTotal = $form.find("#buy-subtotal")
     fee = parseFloat $fee.data("fee")
     lastPrice = parseFloat $form.find("#buy-unit-price").val()
-    if @isValidAmount(buyAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
-      subTotal = _.str.roundToThree buyAmount / lastPrice
-      totalFee = _.str.roundToThree subTotal / 100 * fee
+    if @isValidAmount(spendAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
+      subTotal = _.str.roundTo spendAmount / lastPrice, 8
+      totalFee = _.str.roundTo subTotal / 100 * fee, 8
       total = subTotal - totalFee
       #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee
@@ -101,8 +101,8 @@ class App.TradeView extends App.MasterView
     fee = parseFloat $fee.data("fee")
     lastPrice = parseFloat $form.find("#buy-unit-price").val()
     if @isValidAmount(buyAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
-      subTotal = _.str.roundToThree buyAmount * lastPrice
-      totalFee = _.str.roundToThree buyAmount / 100 * fee
+      subTotal = _.str.roundTo buyAmount * lastPrice, 8
+      totalFee = _.str.roundTo buyAmount / 100 * fee, 8
       total = buyAmount - totalFee
       #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee
@@ -123,8 +123,8 @@ class App.TradeView extends App.MasterView
     fee = parseFloat $fee.data("fee")
     lastPrice = parseFloat $form.find("#sell-unit-price").val()
     if @isValidAmount(sellAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
-      subTotal = _.str.roundToThree sellAmount * lastPrice
-      totalFee = _.str.roundToThree subTotal / 100 * fee
+      subTotal = _.str.roundTo sellAmount * lastPrice, 8
+      totalFee = _.str.roundTo subTotal / 100 * fee, 8
       total = subTotal - totalFee
       #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee

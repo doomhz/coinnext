@@ -2,8 +2,9 @@ $(document).ready ()->
 
   $.tmpload.defaults.tplWrapper = _.template
 
-  _.str.roundToThree = (number)->
-    Math.round(parseFloat(number) * 1000) / 1000
+  _.str.roundTo = (number, decimals = 8)->
+    multiplier = Math.pow(10, decimals)
+    Math.round(parseFloat(number) * multiplier) / 1000
 
   errorLogger = new App.ErrorLogger
 
