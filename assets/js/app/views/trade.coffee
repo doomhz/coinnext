@@ -72,14 +72,14 @@ class App.TradeView extends App.MasterView
   onMarketBuyAmountChange: (ev)->
     $target = $(ev.target)
     $form = $target.parents("form")
-    spendAmount = parseFloat $form.find("#spend-amount-input").val()
+    buyAmount = parseFloat $form.find("#buy-amount-input").val()
     $result = $form.find("#buy-amount-result")
     $fee = $form.find("#buy-fee")
     $subTotal = $form.find("#buy-subtotal")
     fee = parseFloat $fee.data("fee")
     lastPrice = parseFloat $form.find("#buy-unit-price").val()
-    if @isValidAmount(spendAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
-      subTotal = _.str.roundToThree spendAmount / lastPrice
+    if @isValidAmount(buyAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
+      subTotal = _.str.roundToThree buyAmount / lastPrice
       totalFee = _.str.roundToThree subTotal / 100 * fee
       total = subTotal - totalFee
       #console.log fee, totalFee, lastPrice, total

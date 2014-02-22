@@ -76,7 +76,7 @@
         if (order.unit_price > marketStats.day_high) {
           marketStats.day_high = order.unit_price;
         }
-        if (order.unit_price > marketStats.day_low) {
+        if (order.unit_price < marketStats.day_low) {
           marketStats.day_low = order.unit_price;
         }
         marketStats.volume1 += order.amount;

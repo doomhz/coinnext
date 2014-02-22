@@ -48,7 +48,7 @@ MarketStatsSchema.statics.trackFromOrder = (order, callback = ()->)->
       marketStats.growth_ratio = (order.unit_price - marketStats.last_price) * (marketStats.last_price / 100)
       marketStats.last_price = order.unit_price
       marketStats.day_high = order.unit_price  if order.unit_price > marketStats.day_high
-      marketStats.day_low = order.unit_price  if order.unit_price > marketStats.day_low
+      marketStats.day_low = order.unit_price  if order.unit_price < marketStats.day_low
       marketStats.volume1 += order.amount
       marketStats.volume2 += order.result_amount
       marketStats.save callback
