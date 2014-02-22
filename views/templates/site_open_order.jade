@@ -1,5 +1,5 @@
 script(type="text/template", id="site-open-order-tpl")
   tr(data-action="<%= order.get('action') %>", data-id="<%= order.id %>")
     td.trade-price <%= order.get('unit_price') %>
-    td.trade-amount <%= order.get('action') === 'sell' ? order.get('amount') : _.str.roundToThree(order.get('amount') / order.get('unit_price')) %>
+    td.trade-amount <%= order.get('action') === 'sell' ? order.get('amount') : _.str.roundTo(order.get('amount') / order.get('unit_price'), 8) %>
     td.trade-amount <%= order.get('action') === 'sell' ?  order.get('amount') * order.get('unit_price') : order.get('amount') %>
