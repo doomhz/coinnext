@@ -207,8 +207,9 @@
     return Order.findOne({
       sell_currency: currency1,
       buy_currency: currency2,
-      action: "sell"
-    }).where("status")["in"](["partiallyCompleted", "open"]).sort({
+      action: "sell",
+      status: "completed"
+    }).sort({
       unit_price: "asc"
     }).exec(function(err, sellOrder) {
       if (err) {
@@ -217,8 +218,9 @@
       return Order.findOne({
         buy_currency: currency1,
         sell_currency: currency2,
-        action: "buy"
-      }).where("status")["in"](["partiallyCompleted", "open"]).sort({
+        action: "buy",
+        status: "completed"
+      }).sort({
         unit_price: "desc"
       }).exec(function(err, buyOrder) {
         var buyPrice, sellPrice;
