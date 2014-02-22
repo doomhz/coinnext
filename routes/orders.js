@@ -25,6 +25,9 @@
         return JsonRenderer.error(validationError, res);
       }
       holdBalance = data.amount;
+      if (data.type === "limit" && data.action === "buy") {
+        holdBalance = parseFloat(data.amount * data.unit_price);
+      }
       return Wallet.findOrCreateUserWalletByCurrency(req.user.id, data.buy_currency, function(err, buyWallet) {
         if (err || !buyWallet) {
           return JsonRenderer.error("Wallet " + data.buy_currency + " does not exist.", res);

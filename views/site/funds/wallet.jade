@@ -12,13 +12,13 @@ block content
           table.trade-data
             tr
               th Balance
-              td #{wallet.balance} #{wallet.currency}
+              td #{_str.satoshiRound(wallet.balance + wallet.hold_balance)} #{wallet.currency}
             tr
               th Available
-              td #{wallet.balance} #{wallet.currency}
+              td #{_str.satoshiRound(wallet.balance)} #{wallet.currency}
             tr
               th On Hold
-              td #{wallet.hold_balance} #{wallet.currency}
+              td #{_str.satoshiRound(wallet.hold_balance)} #{wallet.currency}
             
 
         // Pending Transactions
@@ -56,7 +56,7 @@ block content
             .transaction-con.container
               .con-header
                 h3.con-header-title <i class="icon-circle-arrow-up"></i> Withdraw #{currencies[wallet.currency]}
-                .header-balance <a href="#" class="amount">#{wallet.balance}  #{wallet.currency}</a> Available
+                .header-balance <a href="#" class="amount">#{_str.satoshiRound(wallet.balance)}  #{wallet.currency}</a> Available
               .con-body
                 form#withdraw-form
                   input(type="hidden", name="wallet_id", value="#{wallet.id}")

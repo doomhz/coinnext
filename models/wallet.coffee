@@ -71,14 +71,21 @@ WalletSchema.methods.addBalance = (newBalance, callback = ()->)->
     console.log "Could not add wallet balance #{newBalance} for #{@_id}"
     callback(null, @)
 
+WalletSchema.methods.addHoldBalance = (newBalance, callback = ()->)->
+  if not _.isNaN(newBalance) and _.isNumber(newBalance)
+    Wallet.update {_id: @_id}, {$inc: {hold_balance: newBalance}}, (err)=>
+      console.log "Could not add the wallet hold balance #{newBalance} for #{@_id}: #{err}"  if err
+      Wallet.findById @_id, (err, wl)=>
+        callback err, wl
+  else
+    console.log "Could not add wallet hold balance #{newBalance} for #{@_id}"
+    callback(null, @)
+
 WalletSchema.methods.holdBalance = (balance, callback = ()->)->
   if not _.isNaN(balance) and _.isNumber(balance) and @canWithdraw(balance)
     @addBalance -balance, (err)=>
       if not err
-        Wallet.update {_id: @_id}, {$inc: {hold_balance: balance}}, (err)=>
-          console.log "Could not add the wallet hold balance #{balance} for #{@_id}: #{err}"  if err
-          Wallet.findById @_id, (err, wl)=>
-            callback err, wl
+        @addHoldBalance balance, callback
       else
         console.log "Could not hold wallet balance #{balance} for #{@_id}, not enough funds?"
         Wallet.findById @_id, (err, wl)=>

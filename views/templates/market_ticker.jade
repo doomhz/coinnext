@@ -5,6 +5,6 @@ script(type="text/template", id="market-ticker-tpl")
       // a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
       a(href="/trade/<%= type.replace('_', '/') %>")
         .label <%= info.label %>
-        .rate <%= info.growth_ratio %>
+        .rate <%= _.str.satoshiRound(info.growth_ratio) %>
         .move-coin <i class="icon-reorder"></i>
     |<% }); %>

@@ -17,6 +17,14 @@
       type: Number,
       "default": 0
     },
+    last_buy_price: {
+      type: Number,
+      "default": 0
+    },
+    last_sell_price: {
+      type: Number,
+      "default": 0
+    },
     day_high: {
       type: Number,
       "default": 0
@@ -73,10 +81,16 @@
         marketStats.growth = marketStats.last_price <= order.unit_price;
         marketStats.growth_ratio = (order.unit_price - marketStats.last_price) * (marketStats.last_price / 100);
         marketStats.last_price = order.unit_price;
+        if (order.action === "sell") {
+          marketStats.last_sell_price = order.unit_price;
+        }
+        if (order.action === "buy") {
+          marketStats.last_buy_price = order.unit_price;
+        }
         if (order.unit_price > marketStats.day_high) {
           marketStats.day_high = order.unit_price;
         }
-        if (order.unit_price > marketStats.day_low) {
+        if (order.unit_price < marketStats.day_low) {
           marketStats.day_low = order.unit_price;
         }
         marketStats.volume1 += order.amount;

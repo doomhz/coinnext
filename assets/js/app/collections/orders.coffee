@@ -24,3 +24,9 @@ class window.App.OrdersCollection extends Backbone.Collection
     @currency1 = options.currency1
     @currency2 = options.currency2
     @userId    = options.userId
+
+  calculateVolume: ()->
+    total = 0
+    @each (order)->
+      total += order.calculateFirstAmount()
+    total

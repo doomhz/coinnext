@@ -68,6 +68,8 @@ JsonRenderer =
     buy_currency:  order.buy_currency
     sell_currency: order.sell_currency
     amount:        order.amount
+    sold_amount:   order.sold_amount
+    result_amount: order.result_amount
     fee:           order.fee
     unit_price:    order.unit_price
     status:        order.status

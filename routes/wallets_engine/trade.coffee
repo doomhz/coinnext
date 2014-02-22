@@ -6,7 +6,7 @@ TradeQueue = require "../../lib/trade_queue"
 trader = null
 ClientSocket = require "../../lib/client_socket"
 orderSocket = new ClientSocket
-  host: GLOBAL.appConfig().users.hostname
+  host: GLOBAL.appConfig().app_host
   path: "orders"
 
 module.exports = (app)->
@@ -65,7 +65,7 @@ module.exports = (app)->
               type: "order-canceled"
               eventData:
                 id: orderId
-              
+
 
   onOrderCompleted = (message)->
     #console.log "incoming result ", message
@@ -82,7 +82,7 @@ module.exports = (app)->
         return console.error "Wrong order to complete ", result  if not order
         Wallet.findUserWalletByCurrency order.user_id, order.buy_currency, (err, buyWallet)->
           Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, sellWallet)->
-            sellWallet.holdBalance -soldAmount, (err, sellWallet)->
+            sellWallet.addHoldBalance -soldAmount, (err, sellWallet)->
               buyWallet.addBalance receivedAmount, (err, buyWallet)->
                 order.status = status
                 order.sold_amount += soldAmount

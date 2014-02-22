@@ -12,6 +12,7 @@ module.exports = (app)->
     data.user_id = req.user.id
     return JsonRenderer.error validationError, res  if validationError = notValidOrderData data
     holdBalance = data.amount
+    holdBalance = parseFloat(data.amount * data.unit_price)  if data.type is "limit" and data.action is "buy"
     Wallet.findOrCreateUserWalletByCurrency req.user.id, data.buy_currency, (err, buyWallet)->
       return JsonRenderer.error "Wallet #{data.buy_currency} does not exist.", res  if err or not buyWallet
       Wallet.findOrCreateUserWalletByCurrency req.user.id, data.sell_currency, (err, wallet)->

@@ -34,52 +34,48 @@
         return res.redirect("/");
       }
       return MarketStats.getStats(function(err, marketStats) {
-        return Order.getMarketPrice(currency1, currency2, function(err, marketPrice) {
-          if (req.user) {
-            return Wallet.findUserWalletByCurrency(req.user.id, currency1, function(err, wallet1) {
-              if (!wallet1) {
-                wallet1 = new Wallet({
-                  currency: currency1
+        if (req.user) {
+          return Wallet.findUserWalletByCurrency(req.user.id, currency1, function(err, wallet1) {
+            if (!wallet1) {
+              wallet1 = new Wallet({
+                currency: currency1
+              });
+            }
+            return Wallet.findUserWalletByCurrency(req.user.id, currency2, function(err, wallet2) {
+              if (!wallet2) {
+                wallet2 = new Wallet({
+                  currency: currency2
                 });
               }
-              return Wallet.findUserWalletByCurrency(req.user.id, currency2, function(err, wallet2) {
-                if (!wallet2) {
-                  wallet2 = new Wallet({
-                    currency: currency2
-                  });
-                }
-                return res.render("site/trade", {
-                  title: "Trade " + currency1 + " to " + currency2,
-                  user: req.user,
-                  currency1: currency1,
-                  currency2: currency2,
-                  wallet1: wallet1,
-                  wallet2: wallet2,
-                  currencies: Wallet.getCurrencyNames(),
-                  marketStats: marketStats,
-                  marketPrice: marketPrice,
-                  _str: _str
-                });
+              return res.render("site/trade", {
+                title: "Trade " + currency1 + " to " + currency2,
+                user: req.user,
+                currency1: currency1,
+                currency2: currency2,
+                wallet1: wallet1,
+                wallet2: wallet2,
+                currencies: Wallet.getCurrencyNames(),
+                marketStats: marketStats,
+                _str: _str
               });
             });
-          } else {
-            return res.render("site/trade", {
-              title: "Trade " + currency1 + " to " + currency2,
-              currency1: currency1,
-              currency2: currency2,
-              wallet1: new Wallet({
-                currency: currency1
-              }),
-              wallet2: new Wallet({
-                currency: currency2
-              }),
-              currencies: Wallet.getCurrencyNames(),
-              marketStats: marketStats,
-              marketPrice: marketPrice,
-              _str: _str
-            });
-          }
-        });
+          });
+        } else {
+          return res.render("site/trade", {
+            title: "Trade " + currency1 + " to " + currency2,
+            currency1: currency1,
+            currency2: currency2,
+            wallet1: new Wallet({
+              currency: currency1
+            }),
+            wallet2: new Wallet({
+              currency: currency2
+            }),
+            currencies: Wallet.getCurrencyNames(),
+            marketStats: marketStats,
+            _str: _str
+          });
+        }
       });
     });
     app.get("/funds", function(req, res) {
@@ -91,7 +87,8 @@
           title: 'Funds',
           user: req.user,
           wallets: wallets,
-          currencies: Wallet.getCurrencyNames()
+          currencies: Wallet.getCurrencyNames(),
+          _str: _str
         });
       });
     });
@@ -112,7 +109,8 @@
             user: req.user,
             wallet: wallet,
             wallets: wallets,
-            currencies: Wallet.getCurrencyNames()
+            currencies: Wallet.getCurrencyNames(),
+            _str: _str
           });
         });
       });
