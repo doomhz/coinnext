@@ -40,7 +40,7 @@ block content
                     input#buy-unit-price(name="unit_price", type="hidden", value="#{marketPrice.sell}")
                     label I want to spend:
                     .currency-input
-                      input#spend-amount-input(type="text", name="amount", autocomplete="off")
+                      input#spend-amount-input(type="text", name="amount", autocomplete="off", maxlength="12")
                       .overlay-amount #{wallet2.currency}
                     table.order-overview
                       tr.subtotal
@@ -62,7 +62,7 @@ block content
                     input(name="buy_currency", type="hidden", value="#{wallet1.currency}")
                     label Amount to Buy:
                     .currency-input
-                      input#buy-amount-input(type="text", name="amount")
+                      input#buy-amount-input(type="text", name="amount", maxlength="12")
                       .overlay-amount #{wallet1.currency}
                     label Price per #{wallet1.currency}:
                     .currency-input
@@ -103,7 +103,7 @@ block content
                     input#sell-unit-price(name="unit_price", type="hidden", value="#{marketPrice.buy}")
                     label I want to Sell:
                     .currency-input
-                      input#sell-amount-input(type="text", name="amount", autocomplete="off")
+                      input#sell-amount-input(type="text", name="amount", autocomplete="off", maxlength="12")
                       .overlay-amount #{wallet1.currency}
                     table.order-overview
                       tr.subtotal 
@@ -125,7 +125,7 @@ block content
                     input(name="buy_currency", type="hidden", value="#{wallet2.currency}")
                     label Amount to Sell:
                     .currency-input
-                      input#sell-amount-input(type="text", name="amount")
+                      input#sell-amount-input(type="text", name="amount", maxlength="12")
                       .overlay-amount #{wallet1.currency}
                     label Price per #{wallet1.currency}:
                     .currency-input
