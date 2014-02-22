@@ -12,6 +12,12 @@ MarketStatsSchema = new Schema
   last_price:
     type: Number
     default: 0
+  last_buy_price:
+    type: Number
+    default: 0
+  last_sell_price:
+    type: Number
+    default: 0
   day_high:
     type: Number
     default: 0
@@ -47,6 +53,8 @@ MarketStatsSchema.statics.trackFromOrder = (order, callback = ()->)->
       marketStats.growth = marketStats.last_price <= order.unit_price
       marketStats.growth_ratio = (order.unit_price - marketStats.last_price) * (marketStats.last_price / 100)
       marketStats.last_price = order.unit_price
+      marketStats.last_sell_price = order.unit_price  if order.action is "sell"
+      marketStats.last_buy_price = order.unit_price  if order.action is "buy"
       marketStats.day_high = order.unit_price  if order.unit_price > marketStats.day_high
       marketStats.day_low = order.unit_price  if order.unit_price < marketStats.day_low
       marketStats.volume1 += order.amount

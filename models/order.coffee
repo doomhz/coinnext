@@ -126,18 +126,5 @@ OrderSchema.statics.findByEngineId = (engineId, callback)->
 OrderSchema.statics.isValidTradeAmount = (amount)->
   _.isNumber(amount) and not _.isNaN(amount) and amount > 0
 
-OrderSchema.statics.getMarketPrice = (currency1, currency2, callback)->
-  Order.findOne({sell_currency: currency1, buy_currency: currency2, action: "sell", status: "completed"})
-  .sort({unit_price: "asc"}).exec (err, sellOrder)->
-    return callback err  if err
-    Order.findOne({buy_currency: currency1, sell_currency: currency2, action: "buy", status: "completed"})
-    .sort({unit_price: "desc"}).exec (err, buyOrder)->
-      return callback err  if err
-      sellPrice = if sellOrder then sellOrder.unit_price else 0
-      buyPrice = if buyOrder then buyOrder.unit_price else 0
-      callback null,
-        sell: sellPrice
-        buy: buyPrice
-
 Order = mongoose.model("Order", OrderSchema)
 exports = module.exports = Order

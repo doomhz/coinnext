@@ -22,7 +22,7 @@ block content
             #buy-box.order-box
               .con-header
                 h3.con-header-title <i class="icon-circle-arrow-down"></i> Buy #{wallet1.currency}
-                .header-balance <a href="#" class="amount" data-amount="#{_str.roundToThree(wallet2.balance)}" data-type="buy">#{_str.roundToThree(wallet2.balance)} #{wallet2.currency}</a> Available
+                .header-balance <a href="#" class="amount" data-amount="#{_str.satoshiRound(wallet2.balance)}" data-type="buy">#{_str.satoshiRound(wallet2.balance)} #{wallet2.currency}</a> Available
               .order-box-body
                 .market-type
                   label
@@ -37,7 +37,7 @@ block content
                     input(name="action", type="hidden", value="buy")
                     input(name="sell_currency", type="hidden", value="#{wallet2.currency}")
                     input(name="buy_currency", type="hidden", value="#{wallet1.currency}")
-                    input#buy-unit-price(name="unit_price", type="hidden", value="#{marketPrice.last_price}")
+                    input#buy-unit-price(name="unit_price", type="hidden", value="#{coinStats.last_buy_price}")
                     label I want to spend:
                     .currency-input
                       input#spend-amount-input(type="text", name="amount", autocomplete="off")
@@ -66,7 +66,7 @@ block content
                       .overlay-amount #{wallet1.currency}
                     label Price per #{wallet1.currency}:
                     .currency-input
-                      input#buy-unit-price(type="text", name="unit_price", value="#{marketPrice.last_price}")
+                      input#buy-unit-price(type="text", name="unit_price", value="#{coinStats.last_buy_price}")
                       .overlay-amount #{wallet2.currency}
                     table.order-overview
                       tr.subtotal
@@ -85,7 +85,7 @@ block content
             #sell-box.order-box
               .con-header
                 h3.con-header-title <i class="icon-circle-arrow-up"></i> Sell #{wallet1.currency}
-                .header-balance <a href="#" class="amount" data-amount="#{_str.roundToThree(wallet1.balance)}" data-type="sell">#{_str.roundToThree(wallet1.balance)} #{wallet1.currency}</a> Available
+                .header-balance <a href="#" class="amount" data-amount="#{_str.satoshiRound(wallet1.balance)}" data-type="sell">#{_str.satoshiRound(wallet1.balance)} #{wallet1.currency}</a> Available
               .order-box-body
                 .market-type
                   label
@@ -100,7 +100,7 @@ block content
                     input(name="action", type="hidden", value="sell")
                     input(name="sell_currency", type="hidden", value="#{wallet1.currency}")
                     input(name="buy_currency", type="hidden", value="#{wallet2.currency}")
-                    input#sell-unit-price(name="unit_price", type="hidden", value="#{marketPrice.buy}")
+                    input#sell-unit-price(name="unit_price", type="hidden", value="#{coinStats.last_buy_price}")
                     label I want to Sell:
                     .currency-input
                       input#sell-amount-input(type="text", name="amount", autocomplete="off")
@@ -129,7 +129,7 @@ block content
                       .overlay-amount #{wallet1.currency}
                     label Price per #{wallet1.currency}:
                     .currency-input
-                      input#sell-unit-price(type="text", name="unit_price", value="#{marketPrice.buy}")
+                      input#sell-unit-price(type="text", name="unit_price", value="#{coinStats.last_buy_price}")
                       .overlay-amount #{wallet2.currency}
                     table.order-overview
                       tr.subtotal 
@@ -167,7 +167,7 @@ block content
             #sell-orders.order-book
               .con-header
                 h3.con-header-title Sell Orders
-                .order-book-total Total: #{marketStats[wallet1.currency + '_' + wallet2.currency].volume1} #{wallet1.currency}
+                .order-book-total Total: #{coinStats.volume1} #{wallet1.currency}
               .table-wrap
                 table.trade-data
                   thead
@@ -181,7 +181,7 @@ block content
             #buy-orders.order-book
               .con-header
                 h3.con-header-title Buy Orders
-                .order-book-total Total: #{marketStats[wallet1.currency + '_' + wallet2.currency].volume2} #{wallet2.currency}
+                .order-book-total Total: #{coinStats.volume2} #{wallet2.currency}
               table.trade-data
                 thead
                   tr
