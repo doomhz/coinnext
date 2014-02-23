@@ -12,13 +12,13 @@ block content
           table.trade-data
             tr
               th Balance
-              td #{_str.satoshiRound(wallet.balance + wallet.hold_balance)} #{wallet.currency}
+              td <span data-wallet-balance-id="#{wallet.id}">#{_str.satoshiRound(wallet.balance + wallet.hold_balance)}</span> #{wallet.currency}
             tr
               th Available
-              td #{_str.satoshiRound(wallet.balance)} #{wallet.currency}
+              td <span data-wallet-available-balance-id="#{wallet.id}">#{_str.satoshiRound(wallet.balance)}</span> #{wallet.currency}
             tr
               th On Hold
-              td #{_str.satoshiRound(wallet.hold_balance)} #{wallet.currency}
+              td <span data-wallet-hold-balance-id="#{wallet.id}">#{_str.satoshiRound(wallet.hold_balance)}</span> #{wallet.currency}
             
 
         // Pending Transactions

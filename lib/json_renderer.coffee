@@ -10,12 +10,13 @@ JsonRenderer =
     gauth_data: user.gauth_data
 
   wallet: (wallet)->
-    id:       wallet.id
-    user_id:  wallet.user_id
-    currency: wallet.currency
-    balance:  wallet.balance
-    address:  wallet.address
-    created:  wallet.created
+    id:            wallet.id
+    user_id:       wallet.user_id
+    currency:      wallet.currency
+    balance:       wallet.balance
+    hold_balance:  wallet.hold_balance
+    address:       wallet.address
+    created:       wallet.created
 
   wallets: (wallets)->
     data = []

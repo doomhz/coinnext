@@ -1,6 +1,10 @@
 script(type="text/template", id="wallet-open-order-tpl")
   tr(class="<%= order.get('action') %>", data-id="<%= order.id %>")
+    | <% if (order.get('action') === 'sell') { %>
+    td.trade-date <a href="/trade/<%= order.get('sell_currency') %>/<%= order.get('buy_currency') %>"><%= order.get('sell_currency') %>/<%= order.get('buy_currency') %></a>
+    | <% } else { %>
     td.trade-date <a href="/trade/<%= order.get('buy_currency') %>/<%= order.get('sell_currency') %>"><%= order.get('buy_currency') %>/<%= order.get('sell_currency') %></a>
+    | <% } %>
     td.trade-type <%= order.getCreatedDate() %>
     td.trade-type <%= order.get('action') %>
     td.trade-price <%= order.get('unit_price') %>

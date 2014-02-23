@@ -22,7 +22,7 @@ block content
             #buy-box.order-box
               .con-header
                 h3.con-header-title <i class="icon-circle-arrow-down"></i> Buy #{wallet1.currency}
-                .header-balance <a href="#" class="amount" data-amount="#{_str.satoshiRound(wallet2.balance)}" data-type="buy">#{_str.satoshiRound(wallet2.balance)} #{wallet2.currency}</a> Available
+                .header-balance <a href="#" class="amount" data-amount="#{_str.satoshiRound(wallet2.balance)}" data-type="buy"><span data-wallet-balance-id="#{wallet2.id}">#{_str.satoshiRound(wallet2.balance)}</span> #{wallet2.currency}</a> Available
               .order-box-body
                 .market-type
                   label
@@ -85,7 +85,7 @@ block content
             #sell-box.order-box
               .con-header
                 h3.con-header-title <i class="icon-circle-arrow-up"></i> Sell #{wallet1.currency}
-                .header-balance <a href="#" class="amount" data-amount="#{_str.satoshiRound(wallet1.balance)}" data-type="sell">#{_str.satoshiRound(wallet1.balance)} #{wallet1.currency}</a> Available
+                .header-balance <a href="#" class="amount" data-amount="#{_str.satoshiRound(wallet1.balance)}" data-type="sell"><span data-wallet-balance-id="#{wallet1.id}">#{_str.satoshiRound(wallet1.balance)}</span> #{wallet1.currency}</a> Available
               .order-box-body
                 .market-type
                   label

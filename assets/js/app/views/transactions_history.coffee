@@ -5,7 +5,8 @@ class App.TransactionsHistoryView extends App.MasterView
   collection: null
 
   initialize: (options = {})->
-    $.subscribe "new-balance", @onNewBalance
+    $.subscribe "payment-processed", @onPaymentProcessed
+    $.subscribe "transaction-update", @onTransactionUpdate
 
   render: ()->
     @collection.fetch
@@ -14,5 +15,10 @@ class App.TransactionsHistoryView extends App.MasterView
           @$el.append @template
             transaction: transaction
 
-  onNewBalance: (ev, data)=>
-    #TODO: Implement
+  onTransactionUpdate: (ev, transaction)=>
+    @$el.empty()
+    @render()  if not @$("[data-id='#{transaction.id}']").length
+
+  onPaymentProcessed: (ev, payment)=>
+    @$el.empty()
+    @render()  if not @$("[data-id='#{payment.id}']").length

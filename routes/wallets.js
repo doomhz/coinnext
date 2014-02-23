@@ -50,6 +50,20 @@
         });
       });
     });
+    app.get("/wallets/:id", function(req, res) {
+      if (!req.user) {
+        return JsonRenderer.error("Please auth.", res);
+      }
+      return Wallet.findUserWallet(req.user.id, req.params.id, function(err, wallet) {
+        if (err) {
+          console.error(err);
+        }
+        if (err) {
+          return JsonRenderer.error("Wrong wallet.", res);
+        }
+        return res.json(JsonRenderer.wallet(wallet));
+      });
+    });
     return app.get("/wallets", function(req, res) {
       if (!req.user) {
         return JsonRenderer.error("Please auth.", res);

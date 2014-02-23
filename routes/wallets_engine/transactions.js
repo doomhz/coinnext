@@ -1,5 +1,5 @@
 (function() {
-  var Payment, Transaction, User, Wallet, async, restify;
+  var ClientSocket, JsonRenderer, Payment, Transaction, User, Wallet, async, restify, usersSocket;
 
   restify = require("restify");
 
@@ -12,6 +12,15 @@
   Transaction = require("../../models/transaction");
 
   Payment = require("../../models/payment");
+
+  JsonRenderer = require("../../lib/json_renderer");
+
+  ClientSocket = require("../../lib/client_socket");
+
+  usersSocket = new ClientSocket({
+    host: GLOBAL.appConfig().app_host,
+    path: "users"
+  });
 
   module.exports = function(app) {
     var loadTransaction, processPayment;
@@ -73,7 +82,12 @@
                 }, {
                   user_id: p.user_id
                 }, function() {
-                  return callback(null, "" + payment.id + " - processed");
+                  callback(null, "" + payment.id + " - processed");
+                  return usersSocket.send({
+                    type: "payment-processed",
+                    user_id: payment.user_id,
+                    eventData: JsonRenderer.payment(p)
+                  });
                 });
               } else {
                 return wallet.addBalance(payment.amount, function() {
@@ -141,6 +155,11 @@
         return Wallet.findByAccount(account, function(err, wallet) {
           return Transaction.addFromWallet(transaction, currency, wallet, function(err, updatedTransaction) {
             if (wallet) {
+              usersSocket.send({
+                type: "transaction-update",
+                user_id: updatedTransaction.user_id,
+                eventData: JsonRenderer.transaction(updatedTransaction)
+              });
               if (category !== "receive" || updatedTransaction.balance_loaded || !GLOBAL.wallets[currency].isBalanceConfirmed(updatedTransaction.confirmations)) {
                 return callback();
               }
@@ -162,7 +181,12 @@
                   if (err) {
                     console.log("Balance loading to wallet " + wallet.id + " for tx " + updatedTransaction.id + " finished", err);
                   }
-                  return callback();
+                  callback();
+                  return usersSocket.send({
+                    type: "wallet-balance-loaded",
+                    user_id: wallet.user_id,
+                    eventData: JsonRenderer.wallet(wallet)
+                  });
                 });
               });
             } else {

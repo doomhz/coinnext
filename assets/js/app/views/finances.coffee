@@ -7,7 +7,8 @@ class App.FinancesView extends App.MasterView
     "submit #withdraw-form": "onPay"
 
   initialize: ()->
-    $.subscribe "new-balance", @onNewBalance
+    $.subscribe "payment-processed", @onPaymentProcessed
+    $.subscribe "wallet-balance-loaded", @onWalletBalanceLoaded
 
   render: ()->
     @renderCopyButton()
@@ -18,6 +19,8 @@ class App.FinancesView extends App.MasterView
     if $copyButton.length and $copyButton.data("clipboard-text").length
       new ZeroClipboard $copyButton[0],
         moviePath: "#{window.location.origin}/ZeroClipboard.swf"
+      $copyButton.show()
+      $showQrBt.show()
     else
       $copyButton.hide()
       $showQrBt.hide()
@@ -25,6 +28,15 @@ class App.FinancesView extends App.MasterView
   renderQrAddress: ($qrCnt)->
     $qrCnt.empty()
     new QRCode $qrCnt[0], $qrCnt.data("address")
+
+  renderWalletBalance: (walletId)->
+    wallet = new App.WalletModel
+      id: walletId
+    wallet.fetch
+      success: ()=>
+        @$("[data-wallet-balance-id='#{walletId}']").html _.str.satoshiRound(wallet.get("balance") + wallet.get("hold_balance"))
+        @$("[data-wallet-hold-balance-id='#{walletId}']").text _.str.satoshiRound(wallet.get("hold_balance"))
+        @$("[data-wallet-available-balance-id='#{walletId}']").text _.str.satoshiRound(wallet.get("balance"))
 
   onAddWallet: (ev)->
     ev.preventDefault()
@@ -88,5 +100,8 @@ class App.FinancesView extends App.MasterView
     else
       $.publish "error", "Please submit a proper amount."
 
-  onNewBalance: (ev, data)=>
-    #TODO: Implement
+  onPaymentProcessed: (ev, payment)=>
+    @renderWalletBalance payment.get("wallet_id")
+
+  onWalletBalanceLoaded: (ev, wallet)=>
+    @renderWalletBalance wallet.id
