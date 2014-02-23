@@ -5,7 +5,7 @@
 
   autoIncrement = require("mongoose-auto-increment");
 
-  FEE = 0.2;
+  FEE = 0.02;
 
   OrderSchema = new Schema({
     user_id: {

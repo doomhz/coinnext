@@ -12,6 +12,7 @@ class App.OrdersView extends App.MasterView
     @$totalsEl = options.$totalsEl  if options.$totalsEl
     $.subscribe "new-order", @onNewOrder
     $.subscribe "order-completed", @onOrderCompleted
+    $.subscribe "order-partially-completed", @onOrderPartiallyCompleted
     $.subscribe "order-canceled", @onOrderCanceled
 
   render: ()->
@@ -35,6 +36,17 @@ class App.OrdersView extends App.MasterView
       $existentOrder.addClass "highlight"
       setTimeout ()->
           $existentOrder.remove()  if $existentOrder.length
+        , 1000
+
+  onOrderPartiallyCompleted: (ev, order)=>
+    $existentOrder = @$("[data-id='#{order.id}']")
+    if $existentOrder.length
+      $existentOrder.addClass "highlight"
+      $existentOrder.find(".trade-price").text order.get("unit_price")
+      $existentOrder.find(".trade-amount").text order.calculateFirstAmount()
+      $existentOrder.find(".trade-total").text order.calculateSecondAmount()
+      setTimeout ()->
+          $existentOrder.removeClass "highlight"  if $existentOrder.length
         , 1000
 
   onOrderCanceled: (ev, data)=>

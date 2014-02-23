@@ -2,8 +2,6 @@ fs = require "fs"
 environment = process.env.NODE_ENV or 'development'
 config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', 'utf8'))[environment]
 GLOBAL.appConfig = ()-> config
-ClientSocket = require "./lib/client_socket"
-userSocket = new ClientSocket
 async = require "async"
 _ = require "underscore"
 
@@ -109,20 +107,22 @@ task "db:seed_trade_stats", "Seed default trade stats", ()->
       mongoose.connection.close()
 
 task "test_sockets", "Send socket messages", ()->
-  userSocket.send
-    type: "test"
-    eventData:
-      a: 1
-  setTimeout ()->
-      userSocket.send
-        type: "test"
-        eventData:
-          a: 1
-    , 1000
-  setTimeout ()->
-      userSocket.send
-        type: "test"
-        eventData:
-          a: 1
-      userSocket.close()
-    , 1000
+  JsonRenderer = require "./lib/json_renderer"
+  ClientSocket = require "./lib/client_socket"
+  orderSocket = new ClientSocket
+    host: GLOBAL.appConfig().app_host
+    path: "orders"
+  require('./models/db_connect_mongo')
+  Order = require "./models/order"
+  Order.findById "5308a9944a49327ab9ba0b2b", (err, order)->
+    order.status = "partiallyCompleted"
+    order.unit_price = 0.1
+    order.sold_amount = 5
+    order.result_amount = 0.5
+    orderSocket.send
+      type: "order-partially-completed"
+      eventData: JsonRenderer.order order
+    setTimeout ()->
+        orderSocket.close()
+        mongoose.connection.close()
+      , 1000

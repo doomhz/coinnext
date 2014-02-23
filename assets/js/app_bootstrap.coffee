@@ -173,6 +173,10 @@ $(document).ready ()->
     #console.log data
     order = new App.OrderModel data
     $.publish "order-completed", order
+  ordersSocket.on "order-partially-completed", (data)->
+    #console.log data
+    order = new App.OrderModel data
+    $.publish "order-partially-completed", order
   ordersSocket.on "order-canceled", (data)->
     #console.log data
     $.publish "order-canceled", data

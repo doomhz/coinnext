@@ -1,5 +1,5 @@
 (function() {
-  var ClientSocket, MarketStats, Order, TradeQueue, Wallet, orderSocket, restify, trader;
+  var ClientSocket, JsonRenderer, MarketStats, Order, TradeQueue, Wallet, orderSocket, restify, trader;
 
   restify = require("restify");
 
@@ -12,6 +12,8 @@
   TradeQueue = require("../../lib/trade_queue");
 
   trader = null;
+
+  JsonRenderer = require("../../lib/json_renderer");
 
   ClientSocket = require("../../lib/client_socket");
 
@@ -62,7 +64,7 @@
           });
           return orderSocket.send({
             type: "order-published",
-            eventData: order.toJSON()
+            eventData: JsonRenderer.order(order)
           });
         });
       });
@@ -111,7 +113,7 @@
       });
     });
     onOrderCompleted = function(message) {
-      var engineId, receivedAmount, result, soldAmount, status;
+      var engineId, fee, receivedAmount, result, soldAmount, status, unitPrice;
       result = null;
       try {
         result = JSON.parse(message.data.toString());
@@ -121,6 +123,8 @@
         status = result.data.orderState;
         soldAmount = parseFloat(result.data.soldAmount) / 100000000;
         receivedAmount = parseFloat(result.data.receivedAmount) / 100000000;
+        fee = parseFloat(result.data.orderFee) / 100000000;
+        unitPrice = parseFloat(result.data.orderPPU) / 100000000;
         return Order.findByEngineId(engineId, function(err, order) {
           if (!order) {
             return console.error("Wrong order to complete ", result);
@@ -132,6 +136,8 @@
                   order.status = status;
                   order.sold_amount += soldAmount;
                   order.result_amount += receivedAmount;
+                  order.fee = fee;
+                  order.unit_price = unitPrice;
                   if (status === "completed") {
                     order.close_time = Date.now();
                   }
@@ -148,7 +154,13 @@
                       });
                       orderSocket.send({
                         type: "order-completed",
-                        eventData: order.toJSON()
+                        eventData: JsonRenderer.order(order)
+                      });
+                    }
+                    if (order.status === "partiallyCompleted") {
+                      orderSocket.send({
+                        type: "order-partially-completed",
+                        eventData: JsonRenderer.order(order)
                       });
                     }
                     return console.log("Processed order " + order.id + " ", result);

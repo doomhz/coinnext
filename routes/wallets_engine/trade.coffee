@@ -4,6 +4,7 @@ Wallet = require "../../models/wallet"
 MarketStats = require "../../models/market_stats"
 TradeQueue = require "../../lib/trade_queue"
 trader = null
+JsonRenderer = require "../../lib/json_renderer"
 ClientSocket = require "../../lib/client_socket"
 orderSocket = new ClientSocket
   host: GLOBAL.appConfig().app_host
@@ -39,7 +40,7 @@ module.exports = (app)->
           published: true
         orderSocket.send
           type: "order-published"
-          eventData: order.toJSON()
+          eventData: JsonRenderer.order order
 
   app.del "/cancel_order/:order_id", (req, res, next)->
     orderId = req.params.order_id
@@ -78,6 +79,8 @@ module.exports = (app)->
       status = result.data.orderState
       soldAmount = parseFloat(result.data.soldAmount) / 100000000
       receivedAmount = parseFloat(result.data.receivedAmount) / 100000000
+      fee = parseFloat(result.data.orderFee) / 100000000
+      unitPrice = parseFloat(result.data.orderPPU) / 100000000
       Order.findByEngineId engineId, (err, order)->
         return console.error "Wrong order to complete ", result  if not order
         Wallet.findUserWalletByCurrency order.user_id, order.buy_currency, (err, buyWallet)->
@@ -87,6 +90,8 @@ module.exports = (app)->
                 order.status = status
                 order.sold_amount += soldAmount
                 order.result_amount += receivedAmount
+                order.fee = fee
+                order.unit_price = unitPrice
                 order.close_time = Date.now()  if status is "completed"
                 order.save (err, order)->
                   return console.error "Could not process order ", result, err  if err
@@ -97,7 +102,11 @@ module.exports = (app)->
                         eventData: mkSt.toJSON()
                     orderSocket.send
                       type: "order-completed"
-                      eventData: order.toJSON()
+                      eventData: JsonRenderer.order order
+                  if order.status is "partiallyCompleted"
+                    orderSocket.send
+                      type: "order-partially-completed"
+                      eventData: JsonRenderer.order order
                   console.log "Processed order #{order.id} ", result          
 
 
