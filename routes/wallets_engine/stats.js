@@ -62,7 +62,7 @@
         };
         return async.each(markets, saveMarket, function(err, result) {
           return res.send({
-            message: "TRade stats aggregated from " + (new Date(startTime)) + " to " + (new Date(endTime)),
+            message: "Trade stats aggregated from " + (new Date(startTime)) + " to " + (new Date(endTime)),
             result: result
           });
         });

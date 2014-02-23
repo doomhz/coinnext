@@ -32,5 +32,5 @@ module.exports = (app)->
           cb null, mk.id
       async.each markets, saveMarket, (err, result)->
         res.send
-          message: "TRade stats aggregated from #{new Date(startTime)} to #{new Date(endTime)}"
+          message: "Trade stats aggregated from #{new Date(startTime)} to #{new Date(endTime)}"
           result: result
