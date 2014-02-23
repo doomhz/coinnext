@@ -27,8 +27,19 @@ MarketStatsSchema = new Schema
   growth_ratio:
     type: Number
     default: 0
+  today:
+    type: Date
 
 MarketStatsSchema.set("autoIndex", false)
+
+MarketStatsSchema.methods.resetIfNotToday = ()->
+  today = new Date().getDate()
+  if today isnt @today.getDate()
+    @today = new Date()
+    @day_high = 0
+    @day_low = 0
+    @volume1 = 0
+    @volume2 = 0
 
 MarketStatsSchema.statics.getStats = (callback = ()->)->
   MarketStats.find {}, (err, marketStats)->
@@ -41,10 +52,11 @@ MarketStatsSchema.statics.trackFromOrder = (order, callback = ()->)->
   type = if order.action is "buy" then "#{order.buy_currency}_#{order.sell_currency}" else "#{order.sell_currency}_#{order.buy_currency}"
   if order.action is "sell"
     MarketStats.findOne {type: type}, (err, marketStats)->
+      marketStats.resetIfNotToday()
       marketStats.growth_ratio = MarketStats.calculateGrowthRatio marketStats.last_price, order.unit_price  if order.unit_price isnt marketStats.last_price
       marketStats.last_price = order.unit_price
       marketStats.day_high = order.unit_price  if order.unit_price > marketStats.day_high
-      marketStats.day_low = order.unit_price  if order.unit_price < marketStats.day_low
+      marketStats.day_low = order.unit_price  if order.unit_price < marketStats.day_low or marketStats.day_low is 0
       marketStats.volume1 += order.amount
       marketStats.volume2 += order.result_amount
       marketStats.save callback

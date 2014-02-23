@@ -36,10 +36,25 @@
     growth_ratio: {
       type: Number,
       "default": 0
+    },
+    today: {
+      type: Date
     }
   });
 
   MarketStatsSchema.set("autoIndex", false);
+
+  MarketStatsSchema.methods.resetIfNotToday = function() {
+    var today;
+    today = new Date().getDate();
+    if (today !== this.today.getDate()) {
+      this.today = new Date();
+      this.day_high = 0;
+      this.day_low = 0;
+      this.volume1 = 0;
+      return this.volume2 = 0;
+    }
+  };
 
   MarketStatsSchema.statics.getStats = function(callback) {
     if (callback == null) {
@@ -66,6 +81,7 @@
       return MarketStats.findOne({
         type: type
       }, function(err, marketStats) {
+        marketStats.resetIfNotToday();
         if (order.unit_price !== marketStats.last_price) {
           marketStats.growth_ratio = MarketStats.calculateGrowthRatio(marketStats.last_price, order.unit_price);
         }
@@ -73,7 +89,7 @@
         if (order.unit_price > marketStats.day_high) {
           marketStats.day_high = order.unit_price;
         }
-        if (order.unit_price < marketStats.day_low) {
+        if (order.unit_price < marketStats.day_low || marketStats.day_low === 0) {
           marketStats.day_low = order.unit_price;
         }
         marketStats.volume1 += order.amount;
