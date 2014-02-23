@@ -10,5 +10,6 @@ GLOBAL.Wallet = require('./../../models/wallet');
 GLOBAL.Payment = require('./../../models/payment');
 GLOBAL.Transaction = require('./../../models/transaction');
 GLOBAL.Order = require('./../../models/order');
+GLOBAL.MarketStats = require('./../../models/market_stats');
 
 module.exports.should = require("should");

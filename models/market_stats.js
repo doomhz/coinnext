@@ -67,7 +67,7 @@
         type: type
       }, function(err, marketStats) {
         if (order.unit_price !== marketStats.last_price) {
-          marketStats.growth_ratio = (order.unit_price - marketStats.last_price) * (marketStats.last_price / 100);
+          marketStats.growth_ratio = MarketStats.calculateGrowthRatio(marketStats.last_price, order.unit_price);
         }
         marketStats.last_price = order.unit_price;
         if (order.unit_price > marketStats.day_high) {
@@ -96,6 +96,10 @@
       market = "" + sellCurrency + "_" + buyCurrency;
     }
     return MarketStats.getMarkets().indexOf(market) > -1;
+  };
+
+  MarketStatsSchema.statics.calculateGrowthRatio = function(lastPrice, newPrice) {
+    return parseFloat(newPrice * 100 / lastPrice - 100);
   };
 
   MarketStats = mongoose.model("MarketStats", MarketStatsSchema);

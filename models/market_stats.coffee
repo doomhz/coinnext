@@ -41,7 +41,7 @@ MarketStatsSchema.statics.trackFromOrder = (order, callback = ()->)->
   type = if order.action is "buy" then "#{order.buy_currency}_#{order.sell_currency}" else "#{order.sell_currency}_#{order.buy_currency}"
   if order.action is "sell"
     MarketStats.findOne {type: type}, (err, marketStats)->
-      marketStats.growth_ratio = (order.unit_price - marketStats.last_price) * (marketStats.last_price / 100)  if order.unit_price isnt marketStats.last_price
+      marketStats.growth_ratio = MarketStats.calculateGrowthRatio marketStats.last_price, order.unit_price  if order.unit_price isnt marketStats.last_price
       marketStats.last_price = order.unit_price
       marketStats.day_high = order.unit_price  if order.unit_price > marketStats.day_high
       marketStats.day_low = order.unit_price  if order.unit_price < marketStats.day_low
@@ -56,6 +56,9 @@ MarketStatsSchema.statics.isValidMarket = (action, buyCurrency, sellCurrency)->
   market = "#{buyCurrency}_#{sellCurrency}"  if action is "buy"
   market = "#{sellCurrency}_#{buyCurrency}"  if action is "sell"
   MarketStats.getMarkets().indexOf(market) > -1
+
+MarketStatsSchema.statics.calculateGrowthRatio = (lastPrice, newPrice)->
+  parseFloat newPrice * 100 / lastPrice - 100
 
 MarketStats = mongoose.model "MarketStats", MarketStatsSchema
 exports = module.exports = MarketStats
