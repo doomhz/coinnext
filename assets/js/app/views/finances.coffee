@@ -94,6 +94,7 @@ class App.FinancesView extends App.MasterView
         success: ()->
           $form.find("button").attr "disabled", false
           $.publish "notice", "Your withdrawal will be processed soon."
+          $.publish "payment-submited", payment
         error: (m, xhr)->
           $form.find("button").attr "disabled", false
           $.publish "error", xhr

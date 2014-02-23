@@ -7,6 +7,7 @@ class App.PendingTransactionsView extends App.MasterView
   payments: null
 
   initialize: (options = {})->
+    $.subscribe "payment-submited", @onPaymentSubmited
     $.subscribe "payment-processed", @onPaymentProcessed
     $.subscribe "transaction-update", @onTransactionUpdate
     @payments = options.payments
@@ -34,9 +35,12 @@ class App.PendingTransactionsView extends App.MasterView
             $existentPm.replaceWith $pm
 
   onTransactionUpdate: (ev, transaction)=>
-    @$el.empty()
     @render()
+    @$("[data-id='#{transaction.id}']").remove()  if transaction.get("balance_loaded")
 
   onPaymentProcessed: (ev, payment)=>
-    @$el.empty()
-    @render()  if @$("[data-id='#{payment.id}']").length
+    @render()
+    @$("[data-id='#{payment.id}']").remove()
+
+  onPaymentSubmited: (ev, payment)=>
+    @render()

@@ -43,17 +43,18 @@ JsonRenderer =
     data
 
   transaction: (transaction)->
-    id:            transaction.id
-    user_id:       transaction.user_id
-    wallet_id:     transaction.wallet_id
-    currency:      transaction.currency
-    fee:           transaction.fee
-    address:       transaction.address
-    amount:        transaction.amount
-    category:      transaction.category
-    txid:          transaction.txid
-    confirmations: transaction.confirmations
-    created:       transaction.created
+    id:             transaction.id
+    user_id:        transaction.user_id
+    wallet_id:      transaction.wallet_id
+    currency:       transaction.currency
+    fee:            transaction.fee
+    address:        transaction.address
+    amount:         transaction.amount
+    category:       transaction.category
+    txid:           transaction.txid
+    confirmations:  transaction.confirmations
+    balance_loaded: transaction.balance_loaded
+    created:        transaction.created
 
   transactions: (transactions)->
     data = []
