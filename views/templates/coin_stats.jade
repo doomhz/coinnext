@@ -2,7 +2,7 @@ script(type="text/template", id="coin-stats-tpl")
   table.trade-data
     tr.last-price
       th Last Price:
-      td <%= _.str.satoshiRound(coinStats.last_price) %> <%= currency1 %> <span class="change <%= coinStats.growth ? 'up' : 'down' %>"><%= _.str.satoshiRound(coinStats.growth_ratio) %>%</span>
+      td <%= _.str.satoshiRound(coinStats.last_price) %> <%= currency1 %> <span class="change <%= coinStats.growth_ratio >= 0 ? 'up' : 'down' %>"><%= _.str.roundTo(coinStats.growth_ratio, 2).replace("-", "") %>%</span>
     tr.high-price
       th 24hr High:
       td <%= _.str.satoshiRound(coinStats.day_high) %> <%= currency1 %>

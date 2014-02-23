@@ -37,7 +37,7 @@ block content
                     input(name="action", type="hidden", value="buy")
                     input(name="sell_currency", type="hidden", value="#{wallet2.currency}")
                     input(name="buy_currency", type="hidden", value="#{wallet1.currency}")
-                    input#buy-unit-price(name="unit_price", type="hidden", value="#{coinStats.last_buy_price}")
+                    input#buy-unit-price(name="unit_price", type="hidden", value="#{coinStats.last_price}")
                     label I want to spend:
                     .currency-input
                       input#spend-amount-input(type="text", name="amount", autocomplete="off", maxlength="12")
@@ -66,7 +66,7 @@ block content
                       .overlay-amount #{wallet1.currency}
                     label Price per #{wallet1.currency}:
                     .currency-input
-                      input#buy-unit-price(type="text", name="unit_price", value="#{coinStats.last_buy_price}")
+                      input#buy-unit-price(type="text", name="unit_price", value="#{coinStats.last_price}")
                       .overlay-amount #{wallet2.currency}
                     table.order-overview
                       tr.subtotal
@@ -100,7 +100,7 @@ block content
                     input(name="action", type="hidden", value="sell")
                     input(name="sell_currency", type="hidden", value="#{wallet1.currency}")
                     input(name="buy_currency", type="hidden", value="#{wallet2.currency}")
-                    input#sell-unit-price(name="unit_price", type="hidden", value="#{coinStats.last_buy_price}")
+                    input#sell-unit-price(name="unit_price", type="hidden", value="#{coinStats.last_price}")
                     label I want to Sell:
                     .currency-input
                       input#sell-amount-input(type="text", name="amount", autocomplete="off", maxlength="12")
@@ -129,7 +129,7 @@ block content
                       .overlay-amount #{wallet1.currency}
                     label Price per #{wallet1.currency}:
                     .currency-input
-                      input#sell-unit-price(type="text", name="unit_price", value="#{coinStats.last_buy_price}")
+                      input#sell-unit-price(type="text", name="unit_price", value="#{coinStats.last_price}")
                       .overlay-amount #{wallet2.currency}
                     table.order-overview
                       tr.subtotal 
