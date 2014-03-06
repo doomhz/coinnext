@@ -2,8 +2,8 @@ restify = require "restify"
 async = require "async"
 User = require "../../models/user"
 Wallet = require "../../models/wallet"
-Transaction = require "../../models/transaction"
-Payment = require "../../models/payment"
+Transaction = GLOBAL.db.Transaction
+Payment = GLOBAL.db.Payment
 JsonRenderer = require "../../lib/json_renderer"
 ClientSocket = require "../../lib/client_socket"
 usersSocket = new ClientSocket
@@ -43,7 +43,7 @@ module.exports = (app)->
           processPayment payment, (err, p)->
             if not err and p.isProcessed()
               processedUserIds.push wallet.user_id
-              Transaction.update {txid: p.transaction_id}, {user_id: p.user_id}, ()->
+              Transaction.setUserById p.transaction_id, p.user_id, ()->
                 callback null, "#{payment.id} - processed"
                 usersSocket.send
                   type: "payment-processed"
@@ -53,7 +53,7 @@ module.exports = (app)->
               wallet.addBalance payment.amount, ()->
                 callback null, "#{payment.id} - not processed - #{err}"
           
-    Payment.find({status: "pending"}).sort({created: "asc"}).exec (err, payments)->
+    Payment.findByStatus "pending", (err, payments)->
       async.mapSeries payments, processPaymentCallback, (err, result)->
         console.log err  if err
         res.send("#{new Date()} - #{result}")
@@ -88,7 +88,7 @@ module.exports = (app)->
               console.error "Could not load user balance #{updatedTransaction.amount}", err  if err
               return callback()  if err
               console.log "Added balance #{updatedTransaction.amount} to wallet #{wallet.id} for tx #{updatedTransaction.id}", err  if err
-              Transaction.update {_id: updatedTransaction.id}, {balance_loaded: true}, ()->
+              Transaction.markAsLoaded updatedTransaction.id, ()->
                 console.log "Balance loading to wallet #{wallet.id} for tx #{updatedTransaction.id} finished", err  if err
                 callback()
                 usersSocket.send
@@ -96,7 +96,7 @@ module.exports = (app)->
                   user_id: wallet.user_id
                   eventData: JsonRenderer.wallet wallet
           else
-            Payment.findOne {transaction_id: txId}, (err, payment)->
+            Payment.findByTransaction txId, (err, payment)->
               return callback()  if not payment
-              Transaction.update {txid: txId}, {user_id: payment.user_id, wallet_id: payment.wallet_id}, ()->
+              Transaction.setUserAndWalletById txId, payment.user_id, payment.wallet_id, ()->
                 callback()

@@ -9,9 +9,9 @@
 
   Wallet = require("../../models/wallet");
 
-  Transaction = require("../../models/transaction");
+  Transaction = GLOBAL.db.Transaction;
 
-  Payment = require("../../models/payment");
+  Payment = GLOBAL.db.Payment;
 
   JsonRenderer = require("../../lib/json_renderer");
 
@@ -77,11 +77,7 @@
             return processPayment(payment, function(err, p) {
               if (!err && p.isProcessed()) {
                 processedUserIds.push(wallet.user_id);
-                return Transaction.update({
-                  txid: p.transaction_id
-                }, {
-                  user_id: p.user_id
-                }, function() {
+                return Transaction.setUserById(p.transaction_id, p.user_id, function() {
                   callback(null, "" + payment.id + " - processed");
                   return usersSocket.send({
                     type: "payment-processed",
@@ -98,11 +94,7 @@
           });
         });
       };
-      return Payment.find({
-        status: "pending"
-      }).sort({
-        created: "asc"
-      }).exec(function(err, payments) {
+      return Payment.findByStatus("pending", function(err, payments) {
         return async.mapSeries(payments, processPaymentCallback, function(err, result) {
           if (err) {
             console.log(err);
@@ -173,11 +165,7 @@
                 if (err) {
                   console.log("Added balance " + updatedTransaction.amount + " to wallet " + wallet.id + " for tx " + updatedTransaction.id, err);
                 }
-                return Transaction.update({
-                  _id: updatedTransaction.id
-                }, {
-                  balance_loaded: true
-                }, function() {
+                return Transaction.markAsLoaded(updatedTransaction.id, function() {
                   if (err) {
                     console.log("Balance loading to wallet " + wallet.id + " for tx " + updatedTransaction.id + " finished", err);
                   }
@@ -190,18 +178,11 @@
                 });
               });
             } else {
-              return Payment.findOne({
-                transaction_id: txId
-              }, function(err, payment) {
+              return Payment.findByTransaction(txId, function(err, payment) {
                 if (!payment) {
                   return callback();
                 }
-                return Transaction.update({
-                  txid: txId
-                }, {
-                  user_id: payment.user_id,
-                  wallet_id: payment.wallet_id
-                }, function() {
+                return Transaction.setUserAndWalletById(txId, payment.user_id, payment.wallet_id, function() {
                   return callback();
                 });
               });

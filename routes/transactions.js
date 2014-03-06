@@ -1,9 +1,7 @@
 (function() {
-  var JsonRenderer, Payment, Transaction;
+  var JsonRenderer, Transaction;
 
-  Payment = require("../models/payment");
-
-  Transaction = require("../models/transaction");
+  Transaction = GLOBAL.db.Transaction;
 
   JsonRenderer = require("../lib/json_renderer");
 
@@ -46,9 +44,7 @@
       if (!req.user) {
         return JsonRenderer.error("Please auth.", res);
       }
-      return Transaction.findOne({
-        _id: id
-      }, function(err, transaction) {
+      return Transaction.find(id).complete(function(err, transaction) {
         if (err) {
           console.error(err);
         }

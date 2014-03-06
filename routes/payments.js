@@ -1,7 +1,7 @@
 (function() {
   var JsonRenderer, Payment, Wallet;
 
-  Payment = require("../models/payment");
+  Payment = GLOBAL.db.Payment;
 
   Wallet = require("../models/wallet");
 
@@ -17,21 +17,21 @@
         return JsonRenderer.error("Please auth.", res);
       }
       return Wallet.findUserWallet(req.user.id, walletId, function(err, wallet) {
-        var payment;
+        var data;
         if (!wallet) {
           return JsonRenderer.error("Wrong wallet.", res);
         }
         if (!wallet.canWithdraw(amount)) {
           return JsonRenderer.error("You don't have enough funds.", res);
         }
-        payment = new Payment({
+        data = {
           user_id: req.user.id,
           wallet_id: walletId,
           currency: wallet.currency,
           amount: amount,
           address: address
-        });
-        return payment.save(function(err, pm) {
+        };
+        return Payment.create(data).complete(function(err, pm) {
           if (err) {
             return JsonRenderer.error(err, res);
           }

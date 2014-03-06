@@ -1,5 +1,4 @@
-Payment = require "../models/payment"
-Transaction = require "../models/transaction"
+Transaction = GLOBAL.db.Transaction
 JsonRenderer = require "../lib/json_renderer"
 
 module.exports = (app)->
@@ -23,7 +22,7 @@ module.exports = (app)->
   app.get "/transactions/:id", (req, res)->
     id = req.params.id
     return JsonRenderer.error "Please auth.", res  if not req.user
-    Transaction.findOne {_id: id}, (err, transaction)->
+    Transaction.find(id).complete (err, transaction)->
       console.error err  if err
       return JsonRenderer.error "Sorry, could not find transaction...", res  if err
       res.json JsonRenderer.transaction transaction
