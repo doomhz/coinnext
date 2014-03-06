@@ -67,13 +67,29 @@ $red = #da4444
       color $teal
       transition color .3s ease-out
       &:after
-        content "▲"
+        display inline-block
+        content ""
+        vertical-align middle
+        width 0
+        height 0
+        margin-left 3px
+        border-style solid
+        border-width 0 5px 5px 5px
+        border-color transparent transparent $teal transparent
   &.down
     .rate
       color $red
       transition color .3s ease-out
       &:after
-        content "▼"
+        display inline-block
+        content ""
+        vertical-align middle
+        width 0
+        height 0
+        margin-left 3px
+        border-style solid
+        border-width: 5px 5px 0 5px
+        border-color: $red transparent transparent transparent
   .hide-coin
   .move-coin
     display none
@@ -97,12 +113,18 @@ $red = #da4444
     float right
 
 /* Center */
+.abbreviation
+  border-right 1px solid $border-color
+  display inline-block
+  padding 10px
+  margin -10px
+  margin-right 10px
+
 .coin-stats
   @extends .container
   background #f9f9f9
   .last-price
     font-weight bold
-    color $darkblue
   .up
     color #72b54c
   .down
@@ -137,13 +159,12 @@ $red = #da4444
   background $con-header-bg
   background linear-gradient(#fafafa, $con-header-bg)
   padding 10px
-  color $darkblue
+  color $text-color
   margin 0 0 10px 0
   font-size 16px
   line-height 16px
   font-weight 500
-  border 1px solid $border-color
-  border-radius 3px
+  border-bottom 1px solid $border-color
 
 .market-type
   clearfix()
