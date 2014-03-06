@@ -22,6 +22,8 @@ class App.TradeView extends App.MasterView
     @currency1 = options.currency1
     @currency2 = options.currency2
     $.subscribe "market-stats-updated", @onMarketStatsUpdated
+    $.subscribe "payment-processed", @onPaymentProcessed
+    $.subscribe "wallet-balance-loaded", @onWalletBalanceLoaded
 
   render: ()->
     @model.fetch
@@ -35,6 +37,15 @@ class App.TradeView extends App.MasterView
       coinStats: stats
       currency1: @currency1
       currency2: @currency2
+
+  renderWalletBalance: (walletId)->
+    wallet = new App.WalletModel
+      id: walletId
+    wallet.fetch
+      success: ()=>
+        @$("[data-wallet-balance-id='#{walletId}']").html _.str.satoshiRound(wallet.get("balance") + wallet.get("hold_balance"))
+        @$("[data-wallet-hold-balance-id='#{walletId}']").text _.str.satoshiRound(wallet.get("hold_balance"))
+        @$("[data-wallet-available-balance-id='#{walletId}']").text _.str.satoshiRound(wallet.get("balance"))
 
   isValidAmount: (amount)->
     _.isNumber(amount) and not _.isNaN(amount) and amount > 0
@@ -137,3 +148,9 @@ class App.TradeView extends App.MasterView
 
   onMarketStatsUpdated: (ev, data)=>
     @render()
+
+  onPaymentProcessed: (ev, payment)=>
+    @renderWalletBalance payment.get("wallet_id")
+
+  onWalletBalanceLoaded: (ev, wallet)=>
+    @renderWalletBalance wallet.id

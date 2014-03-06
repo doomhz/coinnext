@@ -12,7 +12,21 @@ $(document).ready ()->
   errorLogger = new App.ErrorLogger
 
   user = new App.UserModel
-  user.listenToEvents()
+  user.fetch
+    success: ()->
+      if user.id
+        usersSocket = io.connect "#{CONFIG.users.hostname}/users"
+        usersSocket.on "connect", ()=>
+          usersSocket.emit "listen", {id: user.id}
+        usersSocket.on "payment-processed", (data)=>
+          payment = new App.PaymentModel data
+          $.publish "payment-processed", payment
+        usersSocket.on "transaction-update", (data)=>
+          transaction = new App.TransactionModel data
+          $.publish "transaction-update", transaction
+        usersSocket.on "wallet-balance-loaded", (data)=>
+          wallet = new App.WalletModel data
+          $.publish "wallet-balance-loaded", wallet
 
   $qrGenBt = $("#qr-gen-bt")
 
@@ -166,20 +180,15 @@ $(document).ready ()->
   ordersSocket = io.connect "#{CONFIG.users.hostname}/orders"
   ordersSocket.on "connect", ()->
   ordersSocket.on "order-published", (data)->
-    #console.log data
     order = new App.OrderModel data
     $.publish "new-order", order
   ordersSocket.on "order-completed", (data)->
-    #console.log data
     order = new App.OrderModel data
     $.publish "order-completed", order
   ordersSocket.on "order-partially-completed", (data)->
-    #console.log data
     order = new App.OrderModel data
     $.publish "order-partially-completed", order
   ordersSocket.on "order-canceled", (data)->
-    #console.log data
     $.publish "order-canceled", data
   ordersSocket.on "market-stats-updated", (data)->
-    #console.log data
     $.publish "market-stats-updated", data

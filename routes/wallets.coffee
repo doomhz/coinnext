@@ -23,6 +23,13 @@ module.exports = (app)->
         return JsonRenderer.error "Could not generate address.", res  if err
         res.json JsonRenderer.wallet wl
 
+  app.get "/wallets/:id", (req, res)->
+    return JsonRenderer.error "Please auth.", res  if not req.user
+    Wallet.findUserWallet req.user.id, req.params.id, (err, wallet)->
+      console.error err  if err
+      return JsonRenderer.error "Wrong wallet.", res  if err
+      return res.json JsonRenderer.wallet wallet
+
   app.get "/wallets", (req, res)->
     return JsonRenderer.error "Please auth.", res  if not req.user
     Wallet.findUserWallets req.user.id, (err, wallets)->

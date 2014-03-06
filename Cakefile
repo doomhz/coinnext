@@ -109,6 +109,23 @@ task "db:seed_trade_stats", "Seed default trade stats", ()->
 task "test_sockets", "Send socket messages", ()->
   JsonRenderer = require "./lib/json_renderer"
   ClientSocket = require "./lib/client_socket"
+  usersSocket = new ClientSocket
+    host: GLOBAL.appConfig().app_host
+    path: "users"
+  require('./models/db_connect_mongo')
+  Wallet = require "./models/wallet"
+  Wallet.findById "52c2f94d83c42a0000000001", (err, wallet)->
+    wallet.balance = 10
+    wallet.hold_balance = 15
+    usersSocket.send
+      type: "wallet-balance-loaded"
+      user_id: wallet.user_id
+      eventData: JsonRenderer.wallet wallet
+    setTimeout ()->
+        usersSocket.close()
+        mongoose.connection.close()
+      , 1000
+  ###
   orderSocket = new ClientSocket
     host: GLOBAL.appConfig().app_host
     path: "orders"
@@ -126,3 +143,4 @@ task "test_sockets", "Send socket messages", ()->
         orderSocket.close()
         mongoose.connection.close()
       , 1000
+  ###

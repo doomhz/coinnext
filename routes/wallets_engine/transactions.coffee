@@ -4,6 +4,11 @@ User = require "../../models/user"
 Wallet = require "../../models/wallet"
 Transaction = require "../../models/transaction"
 Payment = require "../../models/payment"
+JsonRenderer = require "../../lib/json_renderer"
+ClientSocket = require "../../lib/client_socket"
+usersSocket = new ClientSocket
+  host: GLOBAL.appConfig().app_host
+  path: "users"
 
 module.exports = (app)->
 
@@ -40,6 +45,10 @@ module.exports = (app)->
               processedUserIds.push wallet.user_id
               Transaction.update {txid: p.transaction_id}, {user_id: p.user_id}, ()->
                 callback null, "#{payment.id} - processed"
+                usersSocket.send
+                  type: "payment-processed"
+                  user_id: payment.user_id
+                  eventData: JsonRenderer.payment p
             else
               wallet.addBalance payment.amount, ()->
                 callback null, "#{payment.id} - not processed - #{err}"
@@ -70,6 +79,10 @@ module.exports = (app)->
       Wallet.findByAccount account, (err, wallet)->
         Transaction.addFromWallet transaction, currency, wallet, (err, updatedTransaction)->
           if wallet
+            usersSocket.send
+              type: "transaction-update"
+              user_id: updatedTransaction.user_id
+              eventData: JsonRenderer.transaction updatedTransaction
             return callback()  if category isnt "receive" or updatedTransaction.balance_loaded or not GLOBAL.wallets[currency].isBalanceConfirmed(updatedTransaction.confirmations)
             wallet.addBalance updatedTransaction.amount, (err)->
               console.error "Could not load user balance #{updatedTransaction.amount}", err  if err
@@ -78,6 +91,10 @@ module.exports = (app)->
               Transaction.update {_id: updatedTransaction.id}, {balance_loaded: true}, ()->
                 console.log "Balance loading to wallet #{wallet.id} for tx #{updatedTransaction.id} finished", err  if err
                 callback()
+                usersSocket.send
+                  type: "wallet-balance-loaded"
+                  user_id: wallet.user_id
+                  eventData: JsonRenderer.wallet wallet
           else
             Payment.findOne {transaction_id: txId}, (err, payment)->
               return callback()  if not payment
