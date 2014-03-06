@@ -1,7 +1,7 @@
 (function() {
   var Chat;
 
-  Chat = require("../models/chat");
+  Chat = GLOBAL.db.Chat;
 
   module.exports = function(app) {
     return app.get("/chat/messages/:room", function(req, res) {

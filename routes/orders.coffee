@@ -1,6 +1,6 @@
 Order = require "../models/order"
 Wallet = require "../models/wallet"
-MarketStats = require "../models/market_stats"
+MarketStats = GLOBAL.db.MarketStats
 JsonRenderer = require "../lib/json_renderer"
 
 module.exports = (app)->

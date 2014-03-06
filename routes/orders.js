@@ -5,7 +5,7 @@
 
   Wallet = require("../models/wallet");
 
-  MarketStats = require("../models/market_stats");
+  MarketStats = GLOBAL.db.MarketStats;
 
   JsonRenderer = require("../lib/json_renderer");
 

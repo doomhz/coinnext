@@ -41,6 +41,9 @@
     , "restify": "latest"
     , "request": "latest"
     , "amqp": "latest"
+    , "mysql": "latest"
+    , "sequelize": "latest"
+    , "lodash": "latest"
   },
   "devDependencies": {
     "mocha": "latest"

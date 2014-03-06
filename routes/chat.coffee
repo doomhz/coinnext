@@ -1,4 +1,4 @@
-Chat = require "../models/chat"
+Chat = GLOBAL.db.Chat
 
 module.exports = (app)->
 

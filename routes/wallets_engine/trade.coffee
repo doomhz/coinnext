@@ -1,7 +1,7 @@
 restify = require "restify"
 Order = require "../../models/order"
 Wallet = require "../../models/wallet"
-MarketStats = require "../../models/market_stats"
+MarketStats = GLOBAL.db.MarketStats
 TradeQueue = require "../../lib/trade_queue"
 trader = null
 JsonRenderer = require "../../lib/json_renderer"

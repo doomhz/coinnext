@@ -1,6 +1,6 @@
 io = require "socket.io"
-Chat = require "../models/chat"
 _s = require "underscore.string"
+Chat = GLOBAL.db.Chat
 
 sockets = {}
 
@@ -36,9 +36,8 @@ initSockets = (server, env)->
     socket.on "add-message", (data)->
       data.message = _s.truncate _s.trim(data.message), 150
       if data.message.length
-        message = new Chat data
-        message.save()
-        sockets.chatSocket.in(data.room).emit "new-message", message
+        Chat.create(data).success (message)->
+          sockets.chatSocket.in(message.values.room).emit "new-message", message.values
       @
     socket.on "disconnect", (data)->
       for roomNamespace, val of sockets.io.sockets.manager.roomClients[socket.id]

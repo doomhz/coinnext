@@ -1,7 +1,6 @@
 restify = require "restify"
 Order = require "../../models/order"
-TradeStats = require "../../models/trade_stats"
-async = require "async"
+TradeStats = GLOBAL.db.TradeStats
 _ = require "underscore"
 
 module.exports = (app)->
@@ -16,7 +15,7 @@ module.exports = (app)->
       for order in orders
         marketType = "#{order.buy_currency}_#{order.sell_currency}"
         if not markets[marketType]
-          markets[marketType] = new TradeStats
+          markets[marketType] =
             type: marketType
             start_time: startTime
             end_time: endTime
@@ -26,11 +25,7 @@ module.exports = (app)->
         markets[marketType].low_price = order.unit_price  if order.unit_price < markets[marketType].low_price or markets[marketType].low_price is 0
         markets[marketType].volume += order.amount
       markets = _.values markets
-      saveMarket = (market, cb)->
-        market.save (err, mk)->
-          return cb err  if err
-          cb null, mk.id
-      async.each markets, saveMarket, (err, result)->
+      TradeStats.bulkCreate(markets).success (result)->
         res.send
           message: "Trade stats aggregated from #{new Date(startTime)} to #{new Date(endTime)}"
           result: result

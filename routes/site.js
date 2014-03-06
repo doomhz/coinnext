@@ -3,9 +3,9 @@
 
   Wallet = require("../models/wallet");
 
-  MarketStats = require("../models/market_stats");
+  MarketStats = GLOBAL.db.MarketStats;
 
-  TradeStats = require("../models/trade_stats");
+  TradeStats = GLOBAL.db.TradeStats;
 
   Order = require("../models/order");
 
