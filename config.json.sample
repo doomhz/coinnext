@@ -1,5 +1,11 @@
 {
   "development" : {
+    "mysql": {
+      "db": "coinnext_dev",
+      "user": "root",
+      "password": "",
+      "port": 3306
+    },
     "mongo_uri": "mongodb://localhost/coinnext_dev",
     "redis": {
       "db": "coinnext_auth_dev"
@@ -94,6 +100,12 @@
     }
   },
   "test" : {
+    "mysql": {
+      "db": "coinnext_test",
+      "user": "root",
+      "password": "",
+      "port": 3306
+    },
     "mongo_uri": "mongodb://localhost/coinnext_test",
     "redis": {
       "db": "coinnext_auth_test"
@@ -188,6 +200,12 @@
     }
   },
   "production" : {
+    "mysql": {
+      "db": "coinnext_production",
+      "user": "root",
+      "password": "",
+      "port": 3306
+    },
     "mongo": {
       "host": "",
       "port": "",

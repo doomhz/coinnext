@@ -18,6 +18,7 @@ var config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', encoding
 GLOBAL.passport = require('passport');
 GLOBAL.appConfig = function () {return config;};
 GLOBAL.walletsClient = new WalletsClient({host: GLOBAL.appConfig().wallets_host});
+GLOBAL.db = require('./models/mysql/index');
 
 require('./models/db_connect_mongo');
 require('./lib/auth');

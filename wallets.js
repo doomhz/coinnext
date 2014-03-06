@@ -17,6 +17,7 @@ GLOBAL.wallets = []
 GLOBAL.wallets["BTC"] = new BtcWallet();
 GLOBAL.wallets["LTC"] = new LtcWallet();
 GLOBAL.wallets["PPC"] = new PpcWallet();
+GLOBAL.db = require('./models/mysql/index');
 require('./models/db_connect_mongo');
 
 // Setup express

@@ -7,7 +7,7 @@
 
   Wallet = require("../../models/wallet");
 
-  MarketStats = require("../../models/market_stats");
+  MarketStats = GLOBAL.db.MarketStats;
 
   TradeQueue = require("../../lib/trade_queue");
 
