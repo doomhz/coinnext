@@ -17,7 +17,7 @@ $text-color = #2d3441
 @import 'framework'
 
 html
-  background #0a1527
+  background #13294e
 
 body
   min-width 1000px
@@ -203,14 +203,14 @@ hr
   .column
     padding 20px
     margin-right 50px
+    max-width 500px
     float left
     h2
       text-transform uppercase
       font-size 13px
       color $text-color
       font-weight 500
-      padding 2px
-      margin 0
+      margin 0 0 7px 0
     ul
       reset-list()
       li
@@ -221,6 +221,14 @@ hr
           &:hover
             color $blue
             text-decoration none
+    p
+      color $lightgray
+      font-size 13px
+      line-height 16px
+
+    &.risk-disclaimer
+      float right
+      margin-right 0
 
 .page-foot
   clearfix()
