@@ -1,4 +1,4 @@
-Payment = require "../models/payment"
+Payment = GLOBAL.db.Payment
 Wallet = require "../models/wallet"
 JsonRenderer = require "../lib/json_renderer"
 
@@ -12,13 +12,13 @@ module.exports = (app)->
     Wallet.findUserWallet req.user.id, walletId, (err, wallet)->
       return JsonRenderer.error "Wrong wallet.", res  if not wallet
       return JsonRenderer.error "You don't have enough funds.", res  if not wallet.canWithdraw amount
-      payment = new Payment
+      data =
         user_id: req.user.id
         wallet_id: walletId
         currency: wallet.currency
         amount: amount
         address: address
-      payment.save (err, pm)->
+      Payment.create(data).complete (err, pm)->
         return JsonRenderer.error err, res  if err
         res.json JsonRenderer.payment pm
 

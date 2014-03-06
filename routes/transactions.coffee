@@ -1,4 +1,3 @@
-Payment = require "../models/payment"
 Transaction = require "../models/transaction"
 JsonRenderer = require "../lib/json_renderer"
 

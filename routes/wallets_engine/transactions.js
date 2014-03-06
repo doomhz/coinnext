@@ -11,7 +11,7 @@
 
   Transaction = require("../../models/transaction");
 
-  Payment = require("../../models/payment");
+  Payment = GLOBAL.db.Payment;
 
   JsonRenderer = require("../../lib/json_renderer");
 
@@ -98,11 +98,7 @@
           });
         });
       };
-      return Payment.find({
-        status: "pending"
-      }).sort({
-        created: "asc"
-      }).exec(function(err, payments) {
+      return Payment.findByStatus("pending", function(err, payments) {
         return async.mapSeries(payments, processPaymentCallback, function(err, result) {
           if (err) {
             console.log(err);
@@ -190,9 +186,7 @@
                 });
               });
             } else {
-              return Payment.findOne({
-                transaction_id: txId
-              }, function(err, payment) {
+              return Payment.findByTransaction(txId, function(err, payment) {
                 if (!payment) {
                   return callback();
                 }

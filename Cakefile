@@ -4,8 +4,8 @@ config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', 'utf8'))[env
 GLOBAL.appConfig = ()-> config
 GLOBAL.db = require './models/mysql/index'
 
-task "db:ensure_indexes", "Create indexes for all the collections", ()->
-  GLOBAL.db.sequelize.sync({force: true}).complete ()->
+task "db:create_tables", "Create all tables", ()->
+  GLOBAL.db.sequelize.sync().complete ()->
 
 task "db:seed_market_stats", "Seed default market stats", ()->
   MarketStats = GLOBAL.db.MarketStats

@@ -3,7 +3,7 @@ async = require "async"
 User = require "../../models/user"
 Wallet = require "../../models/wallet"
 Transaction = require "../../models/transaction"
-Payment = require "../../models/payment"
+Payment = GLOBAL.db.Payment
 JsonRenderer = require "../../lib/json_renderer"
 ClientSocket = require "../../lib/client_socket"
 usersSocket = new ClientSocket
@@ -53,7 +53,7 @@ module.exports = (app)->
               wallet.addBalance payment.amount, ()->
                 callback null, "#{payment.id} - not processed - #{err}"
           
-    Payment.find({status: "pending"}).sort({created: "asc"}).exec (err, payments)->
+    Payment.findByStatus "pending", (err, payments)->
       async.mapSeries payments, processPaymentCallback, (err, result)->
         console.log err  if err
         res.send("#{new Date()} - #{result}")
@@ -96,7 +96,7 @@ module.exports = (app)->
                   user_id: wallet.user_id
                   eventData: JsonRenderer.wallet wallet
           else
-            Payment.findOne {transaction_id: txId}, (err, payment)->
+            Payment.findByTransaction txId, (err, payment)->
               return callback()  if not payment
               Transaction.update {txid: txId}, {user_id: payment.user_id, wallet_id: payment.wallet_id}, ()->
                 callback()

@@ -1,7 +1,5 @@
 (function() {
-  var JsonRenderer, Payment, Transaction;
-
-  Payment = require("../models/payment");
+  var JsonRenderer, Transaction;
 
   Transaction = require("../models/transaction");
 
