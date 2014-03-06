@@ -2,7 +2,7 @@ restify = require "restify"
 async = require "async"
 User = require "../../models/user"
 Wallet = require "../../models/wallet"
-Transaction = require "../../models/transaction"
+Transaction = GLOBAL.db.Transaction
 Payment = GLOBAL.db.Payment
 JsonRenderer = require "../../lib/json_renderer"
 ClientSocket = require "../../lib/client_socket"
@@ -43,7 +43,7 @@ module.exports = (app)->
           processPayment payment, (err, p)->
             if not err and p.isProcessed()
               processedUserIds.push wallet.user_id
-              Transaction.update {txid: p.transaction_id}, {user_id: p.user_id}, ()->
+              Transaction.setUserById p.transaction_id, p.user_id, ()->
                 callback null, "#{payment.id} - processed"
                 usersSocket.send
                   type: "payment-processed"
@@ -88,7 +88,7 @@ module.exports = (app)->
               console.error "Could not load user balance #{updatedTransaction.amount}", err  if err
               return callback()  if err
               console.log "Added balance #{updatedTransaction.amount} to wallet #{wallet.id} for tx #{updatedTransaction.id}", err  if err
-              Transaction.update {_id: updatedTransaction.id}, {balance_loaded: true}, ()->
+              Transaction.markAsLoaded updatedTransaction.id, ()->
                 console.log "Balance loading to wallet #{wallet.id} for tx #{updatedTransaction.id} finished", err  if err
                 callback()
                 usersSocket.send
@@ -98,5 +98,5 @@ module.exports = (app)->
           else
             Payment.findByTransaction txId, (err, payment)->
               return callback()  if not payment
-              Transaction.update {txid: txId}, {user_id: payment.user_id, wallet_id: payment.wallet_id}, ()->
+              Transaction.setUserAndWalletById txId, payment.user_id, payment.wallet_id, ()->
                 callback()

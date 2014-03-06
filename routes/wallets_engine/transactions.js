@@ -9,7 +9,7 @@
 
   Wallet = require("../../models/wallet");
 
-  Transaction = require("../../models/transaction");
+  Transaction = GLOBAL.db.Transaction;
 
   Payment = GLOBAL.db.Payment;
 
@@ -77,11 +77,7 @@
             return processPayment(payment, function(err, p) {
               if (!err && p.isProcessed()) {
                 processedUserIds.push(wallet.user_id);
-                return Transaction.update({
-                  txid: p.transaction_id
-                }, {
-                  user_id: p.user_id
-                }, function() {
+                return Transaction.setUserById(p.transaction_id, p.user_id, function() {
                   callback(null, "" + payment.id + " - processed");
                   return usersSocket.send({
                     type: "payment-processed",
@@ -169,11 +165,7 @@
                 if (err) {
                   console.log("Added balance " + updatedTransaction.amount + " to wallet " + wallet.id + " for tx " + updatedTransaction.id, err);
                 }
-                return Transaction.update({
-                  _id: updatedTransaction.id
-                }, {
-                  balance_loaded: true
-                }, function() {
+                return Transaction.markAsLoaded(updatedTransaction.id, function() {
                   if (err) {
                     console.log("Balance loading to wallet " + wallet.id + " for tx " + updatedTransaction.id + " finished", err);
                   }
@@ -190,12 +182,7 @@
                 if (!payment) {
                   return callback();
                 }
-                return Transaction.update({
-                  txid: txId
-                }, {
-                  user_id: payment.user_id,
-                  wallet_id: payment.wallet_id
-                }, function() {
+                return Transaction.setUserAndWalletById(txId, payment.user_id, payment.wallet_id, function() {
                   return callback();
                 });
               });
