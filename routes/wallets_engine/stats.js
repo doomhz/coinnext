@@ -1,13 +1,11 @@
 (function() {
-  var Order, TradeStats, async, restify, _;
+  var Order, TradeStats, restify, _;
 
   restify = require("restify");
 
   Order = require("../../models/order");
 
-  TradeStats = require("../../models/trade_stats");
-
-  async = require("async");
+  TradeStats = GLOBAL.db.TradeStats;
 
   _ = require("underscore");
 
@@ -28,16 +26,16 @@
       }).sort({
         close_time: "asc"
       }).exec(function(err, orders) {
-        var marketType, order, saveMarket, _i, _len;
+        var marketType, order, _i, _len;
         for (_i = 0, _len = orders.length; _i < _len; _i++) {
           order = orders[_i];
           marketType = "" + order.buy_currency + "_" + order.sell_currency;
           if (!markets[marketType]) {
-            markets[marketType] = new TradeStats({
+            markets[marketType] = {
               type: marketType,
               start_time: startTime,
               end_time: endTime
-            });
+            };
           }
           if (markets[marketType].open_price === 0) {
             markets[marketType].open_price = order.unit_price;
@@ -52,15 +50,7 @@
           markets[marketType].volume += order.amount;
         }
         markets = _.values(markets);
-        saveMarket = function(market, cb) {
-          return market.save(function(err, mk) {
-            if (err) {
-              return cb(err);
-            }
-            return cb(null, mk.id);
-          });
-        };
-        return async.each(markets, saveMarket, function(err, result) {
+        return TradeStats.bulkCreate(markets).success(function(result) {
           return res.send({
             message: "Trade stats aggregated from " + (new Date(startTime)) + " to " + (new Date(endTime)),
             result: result

@@ -2,52 +2,38 @@ fs = require "fs"
 environment = process.env.NODE_ENV or 'development'
 config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', 'utf8'))[environment]
 GLOBAL.appConfig = ()-> config
-async = require "async"
-_ = require "underscore"
+GLOBAL.db = require './models/mysql/index'
 
 task "db:ensure_indexes", "Create indexes for all the collections", ()->
-  require('./models/db_connect_mongo')
-  GLOBAL.db = require './models/mysql/index'
   GLOBAL.db.sequelize.sync({force: true}).complete ()->
-  _s         = require "underscore.string"
-  modelNames = [
-    "User", "Order", "Payment",
-    "Transaction", "Wallet"
-  ]
-  for modelName in modelNames
-    model = require "./models/#{_s.underscored(modelName)}"
-    model.ensureIndexes()
 
 task "db:seed_market_stats", "Seed default market stats", ()->
-  GLOBAL.db = require './models/mysql/index'
   MarketStats = GLOBAL.db.MarketStats
   marketStats = require './models/seeds/market_stats'
   GLOBAL.db.sequelize.query("TRUNCATE TABLE #{MarketStats.tableName}").complete ()->
     MarketStats.bulkCreate(marketStats).success ()->
       MarketStats.findAll().success (result)->
-        console.log result
+        console.log JSON.stringify result
 
 task "db:seed_trade_stats", "Seed default trade stats", ()->
-  require('./models/db_connect_mongo')
-  TradeStats = require "./models/trade_stats"
+  TradeStats = GLOBAL.db.TradeStats
   tradeStats = require './models/seeds/trade_stats'
-  TradeStats.collection.drop (err) ->
-    now = Date.now()
-    halfHour = 1800000
-    oneDay = 86400000
-    endTime =  now - now % halfHour
-    startTime = endTime - oneDay
-    startTimes =
-      LTC_BTC: startTime
-      PPC_BTC: startTime
-    saveStats = (st, cb)->
-      st.start_time = startTimes[st.type]
-      st.end_time = st.start_time + halfHour
-      startTimes[st.type] = st.end_time
-      TradeStats.create st, cb
-    async.mapSeries tradeStats, saveStats, (err, result)->
-      console.log result
-      mongoose.connection.close()
+  now = Date.now()
+  halfHour = 1800000
+  oneDay = 86400000
+  endTime =  now - now % halfHour
+  startTime = endTime - oneDay
+  startTimes =
+    LTC_BTC: startTime
+    PPC_BTC: startTime
+  for stat in tradeStats
+    stat.start_time = startTimes[stat.type]
+    stat.end_time = stat.start_time + halfHour
+    startTimes[stat.type] = stat.end_time
+  GLOBAL.db.sequelize.query("TRUNCATE TABLE #{TradeStats.tableName}").complete ()->
+    TradeStats.bulkCreate(tradeStats).success ()->
+      TradeStats.findAll().success (result)->
+        console.log JSON.stringify result
 
 task "test_sockets", "Send socket messages", ()->
   JsonRenderer = require "./lib/json_renderer"

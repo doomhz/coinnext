@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) ->
         allowNull: false
         unique: true
       last_price:
-        type: DataTypes.STRING
+        type: DataTypes.FLOAT
         defaultValue: 0
         allowNull: false
       day_high:

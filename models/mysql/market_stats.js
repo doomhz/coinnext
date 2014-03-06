@@ -14,7 +14,7 @@
         unique: true
       },
       last_price: {
-        type: DataTypes.STRING,
+        type: DataTypes.FLOAT,
         defaultValue: 0,
         allowNull: false
       },

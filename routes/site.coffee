@@ -1,6 +1,6 @@
 Wallet = require "../models/wallet"
 MarketStats = GLOBAL.db.MarketStats
-TradeStats = require "../models/trade_stats"
+TradeStats = GLOBAL.db.TradeStats
 Order = require "../models/order"
 _str = require "../lib/underscore_string"
 
