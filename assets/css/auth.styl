@@ -27,6 +27,7 @@
 
 .auth-box
   @extend .container
+  background #fff
   width 300px
   margin 0 auto
   padding 10px
@@ -34,6 +35,7 @@
     font-size 20px
     background linear-gradient(#fafafa, $con-header-bg)
     border-bottom 1px solid $border-color
+    box-shadow inset 0 1px 0 #fff
     text-align center
     margin -10px -10px 10px -10px
     line-height 1
@@ -44,16 +46,19 @@
   input
     width 100%
   .control-group
+    margin 10px auto 5px
     input
       border-radius 1px
       margin-bottom 5px
       
   input[type="submit"]
     btn($teal)
-    margin-top 5px
+    
+    padding 12px
   #error-cnt
   .error
     color #da4444
+    border-color #da4444
     font-size 13px
     margin 0 0 10px 0
     display block
