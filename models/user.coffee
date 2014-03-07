@@ -30,6 +30,11 @@ module.exports = (sequelize, DataTypes) ->
     ,
       underscored: true
       tableName: "users"
+      getterMethods:
+
+        google_auth_data: ()->
+          JSON.parse @gauth_data
+
       classMethods:
         
         findById: (id, callback = ()->)->
@@ -50,11 +55,12 @@ module.exports = (sequelize, DataTypes) ->
           @password is User.hashPassword(password)
 
         generateGAuthData: (callback = ()->)->
-          @gauth_data = speakeasy.generate_key
+          data = speakeasy.generate_key
             name: "coinnext.com"
             length: 20
             google_auth_qr: true
-          @gauth_key = @gauth_data.base32
+          @gauth_data = JSON.stringify data
+          @gauth_key = data.base32
           @save().complete callback
 
         isValidGAuthPass: (pass)->

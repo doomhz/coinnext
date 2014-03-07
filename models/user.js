@@ -43,6 +43,11 @@
     }, {
       underscored: true,
       tableName: "users",
+      getterMethods: {
+        google_auth_data: function() {
+          return JSON.parse(this.gauth_data);
+        }
+      },
       classMethods: {
         findById: function(id, callback) {
           if (callback == null) {
@@ -79,15 +84,17 @@
           return this.password === User.hashPassword(password);
         },
         generateGAuthData: function(callback) {
+          var data;
           if (callback == null) {
             callback = function() {};
           }
-          this.gauth_data = speakeasy.generate_key({
+          data = speakeasy.generate_key({
             name: "coinnext.com",
             length: 20,
             google_auth_qr: true
           });
-          this.gauth_key = this.gauth_data.base32;
+          this.gauth_data = JSON.stringify(data);
+          this.gauth_key = data.base32;
           return this.save().complete(callback);
         },
         isValidGAuthPass: function(pass) {
