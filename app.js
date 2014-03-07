@@ -21,7 +21,6 @@ GLOBAL.walletsClient = new WalletsClient({host: GLOBAL.appConfig().wallets_host}
 GLOBAL.db = require('./models/mysql/index');
 
 require('./lib/auth');
-
 // Setup the middlewares
 var oneYear = 31557600000;
 var gzippoOptions = environment !== 'development' ? {clientMaxAge: oneYear, maxAge: oneYear} : {contentTypeMatch: /none/};

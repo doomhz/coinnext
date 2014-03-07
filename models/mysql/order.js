@@ -95,7 +95,7 @@
           }
           query = {
             where: {},
-            order: [["created", "DESC"]]
+            order: [["created_at", "DESC"]]
           };
           if (options.status === "open") {
             query.where.status = ["partiallyCompleted", "open"];

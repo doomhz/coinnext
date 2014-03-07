@@ -14,7 +14,7 @@
     , "connect-assets": "2.x"
     , "gzippo": "latest"
     , "bcrypt": "latest"
-    , "connect-redis": "latest"
+    , "connect-redis": "1.4.7"
     , "hiredis": "latest"
     , "passport": "latest"
     , "passport-local": "latest"

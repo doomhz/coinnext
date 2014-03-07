@@ -69,7 +69,7 @@ module.exports = (sequelize, DataTypes) ->
           query =
             where: {}
             order: [
-              ["created", "DESC"]
+              ["created_at", "DESC"]
             ]
           if options.status is "open"
             query.where.status = ["partiallyCompleted", "open"]

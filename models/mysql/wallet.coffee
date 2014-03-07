@@ -42,6 +42,15 @@ module.exports = (sequelize, DataTypes) ->
     ,
       underscored: true
       tableName: "wallets"
+
+      getterMethods:
+
+        account: ()->
+          "wallet_#{@id}"
+
+        currency_name: ()->
+          CURRENCY_NAMES[@currency]
+
       classMethods:
 
         findById: (id, callback)->
@@ -64,7 +73,7 @@ module.exports = (sequelize, DataTypes) ->
             where:
               user_id: userId
             order: [
-              ["created", "DESC"]
+              ["created_at", "DESC"]
             ]
           Wallet.findAll(query).complete callback
 
@@ -79,12 +88,6 @@ module.exports = (sequelize, DataTypes) ->
           CURRENCIES.indexOf(currency) > -1
         
       instanceMethods:
-
-        account: ()->
-          "wallet_#{@_id}"
-
-        currency_name: ()->
-          CURRENCY_NAMES[@currency]
 
         generateAddress: (callback = ()->)->
           GLOBAL.walletsClient.send "create_account", [@account, @currency], (err, res, body)=>

@@ -43,6 +43,14 @@
     }, {
       underscored: true,
       tableName: "wallets",
+      getterMethods: {
+        account: function() {
+          return "wallet_" + this.id;
+        },
+        currency_name: function() {
+          return CURRENCY_NAMES[this.currency];
+        }
+      },
       classMethods: {
         findById: function(id, callback) {
           return Wallet.find(id).complete(callback);
@@ -85,7 +93,7 @@
             where: {
               user_id: userId
             },
-            order: [["created", "DESC"]]
+            order: [["created_at", "DESC"]]
           };
           return Wallet.findAll(query).complete(callback);
         },
@@ -113,12 +121,6 @@
         }
       },
       instanceMethods: {
-        account: function() {
-          return "wallet_" + this._id;
-        },
-        currency_name: function() {
-          return CURRENCY_NAMES[this.currency];
-        },
         generateAddress: function(callback) {
           if (callback == null) {
             callback = function() {};
