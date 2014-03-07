@@ -1,5 +1,5 @@
 restify = require "restify"
-Order = require "../../models/order"
+Order = GLOBAL.db.Order
 Wallet = require "../../models/wallet"
 MarketStats = GLOBAL.db.MarketStats
 TradeQueue = require "../../lib/trade_queue"
@@ -25,7 +25,7 @@ module.exports = (app)->
       queueData =
         eventType: "order"
         data:
-          orderId: order.engine_id
+          orderId: order.id
           orderType: marketType #BUY_MARKET, SELL_MARKET, BUY_LIMIT, SELL_LIMIT
           orderAmount: amount
           orderCurrency: orderCurrency
@@ -52,7 +52,7 @@ module.exports = (app)->
         eventType: "event"
         data:
           action: "cancelOrder"
-          orderId: order.engine_id
+          orderId: order.id
       trader.publishOrder queueData, (queueError, response)->
         console.log arguments
       Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, wallet)->
@@ -76,13 +76,13 @@ module.exports = (app)->
       result = JSON.parse(message.data.toString())
     #console.log result
     if result and result.eventType is "orderResult"
-      engineId = result.data.orderId
+      orderId = result.data.orderId
       status = result.data.orderState
       soldAmount = parseFloat(result.data.soldAmount) / 100000000
       receivedAmount = parseFloat(result.data.receivedAmount) / 100000000
       fee = parseFloat(result.data.orderFee) / 100000000
       unitPrice = parseFloat(result.data.orderPPU) / 100000000
-      Order.findByEngineId engineId, (err, order)->
+      Order.findById orderId, (err, order)->
         return console.error "Wrong order to complete ", result  if not order
         Wallet.findUserWalletByCurrency order.user_id, order.buy_currency, (err, buyWallet)->
           Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, sellWallet)->

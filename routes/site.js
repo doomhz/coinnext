@@ -1,13 +1,11 @@
 (function() {
-  var MarketStats, Order, TradeStats, Wallet, _str;
+  var MarketStats, TradeStats, Wallet, _str;
 
   Wallet = require("../models/wallet");
 
   MarketStats = GLOBAL.db.MarketStats;
 
   TradeStats = GLOBAL.db.TradeStats;
-
-  Order = require("../models/order");
 
   _str = require("../lib/underscore_string");
 

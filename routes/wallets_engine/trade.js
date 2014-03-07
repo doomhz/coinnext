@@ -3,7 +3,7 @@
 
   restify = require("restify");
 
-  Order = require("../../models/order");
+  Order = GLOBAL.db.Order;
 
   Wallet = require("../../models/wallet");
 
@@ -43,7 +43,7 @@
         queueData = {
           eventType: "order",
           data: {
-            orderId: order.engine_id,
+            orderId: order.id,
             orderType: marketType,
             orderAmount: amount,
             orderCurrency: orderCurrency,
@@ -85,7 +85,7 @@
           eventType: "event",
           data: {
             action: "cancelOrder",
-            orderId: order.engine_id
+            orderId: order.id
           }
         };
         trader.publishOrder(queueData, function(queueError, response) {
@@ -115,19 +115,19 @@
       });
     });
     onOrderCompleted = function(message) {
-      var engineId, fee, receivedAmount, result, soldAmount, status, unitPrice;
+      var fee, orderId, receivedAmount, result, soldAmount, status, unitPrice;
       result = null;
       try {
         result = JSON.parse(message.data.toString());
       } catch (_error) {}
       if (result && result.eventType === "orderResult") {
-        engineId = result.data.orderId;
+        orderId = result.data.orderId;
         status = result.data.orderState;
         soldAmount = parseFloat(result.data.soldAmount) / 100000000;
         receivedAmount = parseFloat(result.data.receivedAmount) / 100000000;
         fee = parseFloat(result.data.orderFee) / 100000000;
         unitPrice = parseFloat(result.data.orderPPU) / 100000000;
-        return Order.findByEngineId(engineId, function(err, order) {
+        return Order.findById(orderId, function(err, order) {
           if (!order) {
             return console.error("Wrong order to complete ", result);
           }

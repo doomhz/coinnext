@@ -3,7 +3,7 @@
 
   restify = require("restify");
 
-  Order = require("../../models/order");
+  Order = GLOBAL.db.Order;
 
   TradeStats = GLOBAL.db.TradeStats;
 
@@ -17,15 +17,7 @@
       endTime = now - now % halfHour;
       startTime = endTime - halfHour;
       markets = {};
-      return Order.find({
-        status: "completed",
-        close_time: {
-          $gte: startTime,
-          $lte: endTime
-        }
-      }).sort({
-        close_time: "asc"
-      }).exec(function(err, orders) {
+      return Order.findCompletedByTime(startTime, endTime, function(err, orders) {
         var marketType, order, _i, _len;
         for (_i = 0, _len = orders.length; _i < _len; _i++) {
           order = orders[_i];

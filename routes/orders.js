@@ -1,7 +1,7 @@
 (function() {
   var JsonRenderer, MarketStats, Order, Wallet;
 
-  Order = require("../models/order");
+  Order = GLOBAL.db.Order;
 
   Wallet = require("../models/wallet");
 
@@ -40,7 +40,7 @@
             if (err || !wallet) {
               return JsonRenderer.error("Not enough " + data.sell_currency + " to open an order.", res);
             }
-            return Order.create(data, function(err, newOrder) {
+            return Order.create(data).complete(function(err, newOrder) {
               if (err) {
                 return JsonRenderer.error("Sorry, could not open an order...", res);
               }
@@ -70,10 +70,7 @@
       if (!req.user) {
         return JsonRenderer.error("You need to be logged in to delete an order.", res);
       }
-      return Order.findOne({
-        user_id: req.user.id,
-        _id: req.params.id
-      }, function(err, order) {
+      return Order.findByUserAndId(req.params.id, req.user.id, function(err, order) {
         if (err || !order) {
           return JsonRenderer.error("Sorry, could not delete orders...", res);
         }

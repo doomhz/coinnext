@@ -1,5 +1,5 @@
 restify = require "restify"
-Order = require "../../models/order"
+Order = GLOBAL.db.Order
 TradeStats = GLOBAL.db.TradeStats
 _ = require "underscore"
 
@@ -11,7 +11,7 @@ module.exports = (app)->
     endTime =  now - now % halfHour
     startTime = endTime - halfHour
     markets = {}
-    Order.find({status: "completed", close_time: {$gte: startTime, $lte: endTime}}).sort({close_time: "asc"}).exec (err, orders)->
+    Order.findCompletedByTime startTime, endTime, (err, orders)->
       for order in orders
         marketType = "#{order.buy_currency}_#{order.sell_currency}"
         if not markets[marketType]

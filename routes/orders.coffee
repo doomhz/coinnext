@@ -1,4 +1,4 @@
-Order = require "../models/order"
+Order = GLOBAL.db.Order
 Wallet = require "../models/wallet"
 MarketStats = GLOBAL.db.MarketStats
 JsonRenderer = require "../lib/json_renderer"
@@ -19,7 +19,7 @@ module.exports = (app)->
         return JsonRenderer.error "Wallet #{data.sell_currency} does not exist.", res  if err or not wallet
         wallet.holdBalance holdBalance, (err, wallet)->
           return JsonRenderer.error "Not enough #{data.sell_currency} to open an order.", res  if err or not wallet
-          Order.create data, (err, newOrder)->
+          Order.create(data).complete (err, newOrder)->
             return JsonRenderer.error "Sorry, could not open an order...", res  if err
             newOrder.publish (err, order)->
               console.log "Could not publish newlly created order - #{err}"  if err
@@ -33,7 +33,7 @@ module.exports = (app)->
 
   app.del "/orders/:id", (req, res)->
     return JsonRenderer.error "You need to be logged in to delete an order.", res  if not req.user
-    Order.findOne {user_id: req.user.id, _id: req.params.id}, (err, order)->
+    Order.findByUserAndId req.params.id, req.user.id, (err, order)->
       return JsonRenderer.error "Sorry, could not delete orders...", res  if err or not order
       order.cancel (err)->
         console.log "Could not cancel order - #{err}"  if err
