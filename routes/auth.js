@@ -1,7 +1,7 @@
 (function() {
   var JsonRenderer, User;
 
-  User = require("../models/user");
+  User = GLOBAL.db.User;
 
   JsonRenderer = require("../lib/json_renderer");
 
@@ -33,9 +33,7 @@
         });
         return res.end();
       }
-      return User.findOne({
-        email: email
-      }).exec(function(err, user) {
+      return User.findByEmail(email, function(err, user) {
         if (!user) {
           res.writeHead(303, {
             "Location": "/send-password?error=wrong-user"
@@ -75,8 +73,7 @@
           });
           res.end();
         }
-        user.password = User.hashPassword(password);
-        return user.save(function(err, u) {
+        return user.changePassword(password, function(err, u) {
           if (err) {
             console.error(err);
           }
@@ -97,8 +94,7 @@
       if (User.hashPassword(password) !== req.user.password) {
         return JsonRenderer.error("The old password is incorrect.", res);
       }
-      req.user.password = User.hashPassword(newPassword);
-      return req.user.save(function(err, u) {
+      return req.user.changePassword(newPassword, function(err, u) {
         if (err) {
           console.error(err);
         }
@@ -117,8 +113,7 @@
             verified: false
           });
         }
-        user.email_verified = true;
-        return user.save(function(err, u) {
+        return user.setEmailVerified(function(err, u) {
           return res.render("auth/verify", {
             title: "Verify Account - Coinnext.com",
             verified: true

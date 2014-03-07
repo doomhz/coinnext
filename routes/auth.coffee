@@ -1,4 +1,4 @@
-User = require "../models/user"
+User = GLOBAL.db.User
 JsonRenderer = require "../lib/json_renderer"
 
 module.exports = (app)->
@@ -20,7 +20,7 @@ module.exports = (app)->
     if not email
       res.writeHead(303, {"Location": "/send-password"})
       return res.end()
-    User.findOne({email: email}).exec (err, user)->
+    User.findByEmail email, (err, user)->
       if not user
         res.writeHead(303, {"Location": "/send-password?error=wrong-user"})
         res.end()
@@ -42,8 +42,7 @@ module.exports = (app)->
       if not user
         res.writeHead(303, {"Location": "/change-password/#{token}?error=wrong-token"})
         res.end()
-      user.password = User.hashPassword password
-      user.save (err, u)->
+      user.changePassword password, (err, u)->
         console.error err  if err
         res.writeHead(303, {"Location": "/login"})
         res.end()
@@ -53,8 +52,7 @@ module.exports = (app)->
     newPassword = req.body.new_password
     return JsonRenderer.error "Please auth.", res  if not req.user
     return JsonRenderer.error "The old password is incorrect.", res  if User.hashPassword(password) isnt req.user.password
-    req.user.password = User.hashPassword newPassword
-    req.user.save (err, u)->
+    req.user.changePassword newPassword, (err, u)->
       console.error err  if err
       res.json
         message: "The password was successfully changed."
@@ -63,6 +61,5 @@ module.exports = (app)->
     token = req.params.token
     User.findByToken token, (err, user)->
       return res.render "auth/verify", {title: "Verify Account - Coinnext.com", verified: false}  if not user
-      user.email_verified = true
-      user.save (err, u)->
+      user.setEmailVerified (err, u)->
         res.render "auth/verify", {title: "Verify Account - Coinnext.com", verified: true}

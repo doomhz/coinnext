@@ -1,7 +1,7 @@
 (function() {
   var JsonRenderer, User, Wallet;
 
-  User = require('../models/user');
+  User = GLOBAL.db.User;
 
   Wallet = require('../models/wallet');
 
@@ -10,12 +10,12 @@
   module.exports = function(app) {
     var login;
     app.post("/user", function(req, res) {
-      var user;
-      user = new User({
+      var data;
+      data = {
         email: req.body.email,
         password: User.hashPassword(req.body.password)
-      });
-      return user.save(function(err, newUser) {
+      };
+      return User.create(data).complete(function(err, newUser) {
         if (err) {
           return JsonRenderer.error(err, res);
         }

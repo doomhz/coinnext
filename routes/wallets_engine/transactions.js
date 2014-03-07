@@ -1,11 +1,9 @@
 (function() {
-  var ClientSocket, JsonRenderer, Payment, Transaction, User, Wallet, async, restify, usersSocket;
+  var ClientSocket, JsonRenderer, Payment, Transaction, Wallet, async, restify, usersSocket;
 
   restify = require("restify");
 
   async = require("async");
-
-  User = require("../../models/user");
 
   Wallet = require("../../models/wallet");
 

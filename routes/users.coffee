@@ -1,14 +1,14 @@
-User = require '../models/user'
+User = GLOBAL.db.User
 Wallet = require '../models/wallet'
 JsonRenderer = require '../lib/json_renderer'
 
 module.exports = (app)->
   
   app.post "/user", (req, res)->
-    user = new User
+    data =
       email: req.body.email
-      password:  User.hashPassword req.body.password
-    user.save (err, newUser)->
+      password: User.hashPassword req.body.password
+    User.create(data).complete (err, newUser)->
       return JsonRenderer.error err, res  if err
       newUser.generateToken ()->
         newUser.sendEmailVerificationLink()
