@@ -17,7 +17,7 @@ GLOBAL.wallets = []
 GLOBAL.wallets["BTC"] = new BtcWallet();
 GLOBAL.wallets["LTC"] = new LtcWallet();
 GLOBAL.wallets["PPC"] = new PpcWallet();
-GLOBAL.db = require('./models/mysql/index');
+GLOBAL.db = require('./models/index');
 
 // Setup express
 var server = restify.createServer();

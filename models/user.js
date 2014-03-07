@@ -5,7 +5,7 @@
 
   speakeasy = require("speakeasy");
 
-  Emailer = require("../../lib/emailer");
+  Emailer = require("../lib/emailer");
 
   module.exports = function(sequelize, DataTypes) {
     var User;

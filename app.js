@@ -18,7 +18,7 @@ var config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', encoding
 GLOBAL.passport = require('passport');
 GLOBAL.appConfig = function () {return config;};
 GLOBAL.walletsClient = new WalletsClient({host: GLOBAL.appConfig().wallets_host});
-GLOBAL.db = require('./models/mysql/index');
+GLOBAL.db = require('./models/index');
 
 require('./lib/auth');
 // Setup the middlewares
