@@ -49,12 +49,12 @@ app.configure(function () {
       path: '/'
     }
   }));
+  app.use(staticRenderer);
+  app.use(require('connect-assets')(connectAssetsOptions));
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(helmet.xframe('sameorigin'));
   app.use(app.router);
-  app.use(staticRenderer);
-  app.use(require('connect-assets')(connectAssetsOptions));
   app.use(function(err, req, res, next) {
     console.error(err);
     res.send(500, "Oups, seems that there is an error on our side. Your coins are safe and we'll be back shortly...");
