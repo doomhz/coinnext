@@ -6,7 +6,6 @@
       "password": "",
       "port": 3306
     },
-    "mongo_uri": "mongodb://localhost/coinnext_dev",
     "redis": {
       "db": "coinnext_auth_dev"
     },
@@ -106,7 +105,6 @@
       "password": "",
       "port": 3306
     },
-    "mongo_uri": "mongodb://localhost/coinnext_test",
     "redis": {
       "db": "coinnext_auth_test"
     },
@@ -205,13 +203,6 @@
       "user": "root",
       "password": "",
       "port": 3306
-    },
-    "mongo": {
-      "host": "",
-      "port": "",
-      "user": "coinnext_prod",
-      "pass": "",
-      "db": "coinnext_prod"
     },
     "redis": {
       "host": "",

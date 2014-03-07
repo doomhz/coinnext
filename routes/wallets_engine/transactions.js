@@ -5,7 +5,7 @@
 
   async = require("async");
 
-  Wallet = require("../../models/wallet");
+  Wallet = GLOBAL.db.Wallet;
 
   Transaction = GLOBAL.db.Transaction;
 

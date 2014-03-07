@@ -54,22 +54,3 @@ task "test_sockets", "Send socket messages", ()->
         usersSocket.close()
         mongoose.connection.close()
       , 1000
-  ###
-  orderSocket = new ClientSocket
-    host: GLOBAL.appConfig().app_host
-    path: "orders"
-  require('./models/db_connect_mongo')
-  Order = require "./models/order"
-  Order.findById "5308a9944a49327ab9ba0b2b", (err, order)->
-    order.status = "partiallyCompleted"
-    order.unit_price = 0.1
-    order.sold_amount = 5
-    order.result_amount = 0.5
-    orderSocket.send
-      type: "order-partially-completed"
-      eventData: JsonRenderer.order order
-    setTimeout ()->
-        orderSocket.close()
-        mongoose.connection.close()
-      , 1000
-  ###

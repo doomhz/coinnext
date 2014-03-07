@@ -1,7 +1,7 @@
 (function() {
   var MarketStats, TradeStats, Wallet, _str;
 
-  Wallet = require("../models/wallet");
+  Wallet = GLOBAL.db.Wallet;
 
   MarketStats = GLOBAL.db.MarketStats;
 
@@ -35,13 +35,13 @@
         if (req.user) {
           return Wallet.findUserWalletByCurrency(req.user.id, currency1, function(err, wallet1) {
             if (!wallet1) {
-              wallet1 = new Wallet({
+              wallet1 = Wallet.build({
                 currency: currency1
               });
             }
             return Wallet.findUserWalletByCurrency(req.user.id, currency2, function(err, wallet2) {
               if (!wallet2) {
-                wallet2 = new Wallet({
+                wallet2 = Wallet.build({
                   currency: currency2
                 });
               }
@@ -63,10 +63,10 @@
             title: "Trade " + currency1 + " to " + currency2,
             currency1: currency1,
             currency2: currency2,
-            wallet1: new Wallet({
+            wallet1: Wallet.build({
               currency: currency1
             }),
-            wallet2: new Wallet({
+            wallet2: Wallet.build({
               currency: currency2
             }),
             currencies: Wallet.getCurrencyNames(),

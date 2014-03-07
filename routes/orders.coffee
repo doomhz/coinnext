@@ -1,5 +1,5 @@
 Order = GLOBAL.db.Order
-Wallet = require "../models/wallet"
+Wallet = GLOBAL.db.Wallet
 MarketStats = GLOBAL.db.MarketStats
 JsonRenderer = require "../lib/json_renderer"
 

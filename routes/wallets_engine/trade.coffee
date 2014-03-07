@@ -1,6 +1,6 @@
 restify = require "restify"
 Order = GLOBAL.db.Order
-Wallet = require "../../models/wallet"
+Wallet = GLOBAL.db.Wallet
 MarketStats = GLOBAL.db.MarketStats
 TradeQueue = require "../../lib/trade_queue"
 trader = null

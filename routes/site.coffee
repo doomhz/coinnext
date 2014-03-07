@@ -1,4 +1,4 @@
-Wallet = require "../models/wallet"
+Wallet = GLOBAL.db.Wallet
 MarketStats = GLOBAL.db.MarketStats
 TradeStats = GLOBAL.db.TradeStats
 _str = require "../lib/underscore_string"
@@ -25,11 +25,11 @@ module.exports = (app)->
       if req.user
         Wallet.findUserWalletByCurrency req.user.id, currency1, (err, wallet1)->
           if not wallet1
-            wallet1 = new Wallet
+            wallet1 = Wallet.build
               currency: currency1
           Wallet.findUserWalletByCurrency req.user.id, currency2, (err, wallet2)->
             if not wallet2
-              wallet2 = new Wallet
+              wallet2 = Wallet.build
                 currency: currency2
             res.render "site/trade",
               title: "Trade #{currency1} to #{currency2}"
@@ -46,9 +46,9 @@ module.exports = (app)->
           title: "Trade #{currency1} to #{currency2}"
           currency1: currency1
           currency2: currency2
-          wallet1: new Wallet
+          wallet1: Wallet.build
             currency: currency1
-          wallet2: new Wallet
+          wallet2: Wallet.build
             currency: currency2
           currencies: Wallet.getCurrencyNames()
           marketStats: marketStats

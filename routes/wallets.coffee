@@ -1,4 +1,4 @@
-Wallet = require "../models/wallet"
+Wallet = GLOBAL.db.Wallet
 JsonRenderer = require "../lib/json_renderer"
 
 module.exports = (app)->

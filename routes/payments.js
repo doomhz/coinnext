@@ -3,7 +3,7 @@
 
   Payment = GLOBAL.db.Payment;
 
-  Wallet = require("../models/wallet");
+  Wallet = GLOBAL.db.Wallet;
 
   JsonRenderer = require("../lib/json_renderer");
 

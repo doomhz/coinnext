@@ -1,9 +1,7 @@
 (function() {
-  var Wallet, restify;
+  var restify;
 
   restify = require("restify");
-
-  Wallet = require("../../models/wallet");
 
   module.exports = function(app) {
     return app.post("/create_account/:account/:currency", function(req, res, next) {

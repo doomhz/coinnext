@@ -1,5 +1,4 @@
 restify = require "restify"
-Wallet = require "../../models/wallet"
 
 module.exports = (app)->
 

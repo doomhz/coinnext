@@ -1,6 +1,6 @@
 restify = require "restify"
 async = require "async"
-Wallet = require "../../models/wallet"
+Wallet = GLOBAL.db.Wallet
 Transaction = GLOBAL.db.Transaction
 Payment = GLOBAL.db.Payment
 JsonRenderer = require "../../lib/json_renderer"

@@ -8,9 +8,6 @@
   },
   "dependencies": {
     "express": "~>3"
-    , "mongoose": "latest"
-    , "mongoose-unique-validator": "latest"
-    , "mongoose-auto-increment": "latest"
     , "stylus": "latest"
     , "jade": "latest"
     , "coffee-script": "latest"
