@@ -4,12 +4,12 @@ header.page-head
       img(src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==", alt="Coinnext").coinnext-logo
     nav.site-nav
       ul.nav
-        li: a(href='/', class=(title === 'Home' ? 'active' : '')) Home
-        li: a(href='/trade', class=(title === 'Trade' ? 'active' : '')) Trade
+        li: a(href='/', class=(page === 'home' ? 'active' : '')) Home
+        li: a(href='/trade', class=(page === 'trade' ? 'active' : '')) Trade
         - if (user)
-          li: a(href='/funds', class=(title === 'Funds' ? 'active' : '')) Funds
+          li: a(href='/funds', class=(page === 'funds' ? 'active' : '')) Funds
           li.dropdown
-            a(href="/settings", class=(page === 'Settings' ? 'active' : '')).dropdown-toggle
+            a(href="/settings", class=(page === 'settings' ? 'active' : '')).dropdown-toggle
               | #{user.email}
               .caret
             ul.dropdown-menu

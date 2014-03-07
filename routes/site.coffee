@@ -9,6 +9,7 @@ module.exports = (app)->
     MarketStats.getStats (err, marketStats)->
       res.render "site/index",
         title: 'Home'
+        page: "home"
         user: req.user
         marketStats: marketStats
         currencies: Wallet.getCurrencyNames()
@@ -33,6 +34,7 @@ module.exports = (app)->
                 currency: currency2
             res.render "site/trade",
               title: "Trade #{currency1} to #{currency2}"
+              page: "trade"
               user: req.user
               currency1: currency1
               currency2: currency2
@@ -44,6 +46,7 @@ module.exports = (app)->
       else
         res.render "site/trade",
           title: "Trade #{currency1} to #{currency2}"
+          page: "trade"
           currency1: currency1
           currency2: currency2
           wallet1: Wallet.build
@@ -59,6 +62,7 @@ module.exports = (app)->
     Wallet.findUserWallets req.user.id, (err, wallets)->
       res.render "site/funds",
         title: 'Funds'
+        page: "funds"
         user: req.user
         wallets: wallets
         currencies: Wallet.getCurrencyNames()
@@ -72,6 +76,7 @@ module.exports = (app)->
         return res.redirect "/"  if not wallet
         res.render "site/funds/wallet",
           title: 'Wallet overview'
+          page: "funds"
           user: req.user
           wallet: wallet
           wallets: wallets
@@ -92,21 +97,21 @@ module.exports = (app)->
     return res.redirect "/login"  if not req.user
     res.render "site/settings/settings",
       title: 'Settings'
-      page: 'Settings'
+      page: 'settings'
       user: req.user
 
   app.get "/settings/preferences", (req, res)->
     return res.redirect "/login"  if not req.user
     res.render "site/settings/preferences",
       title: 'Preferences - Settings'
-      page: 'Settings'
+      page: 'settings'
       user: req.user
 
   app.get "/settings/security", (req, res)->
     return res.redirect "/login"  if not req.user
     res.render "site/settings/security",
       title: 'Security - Settings'
-      page: 'Settings'
+      page: 'settings'
       user: req.user
 
   # Static Pages
