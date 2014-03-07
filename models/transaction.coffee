@@ -58,7 +58,9 @@ module.exports = (sequelize, DataTypes) ->
             created_at:       new Date(transactionData.time * 1000)
           for key of data
             delete data[key]  if not data[key] and data[key] isnt 0
-          Transaction.findOrCreate({txid: data.txid}, data).complete callback
+          Transaction.findOrCreate({txid: data.txid}, data).complete (err, transaction, created)->
+            return callback err, transaction  if created
+            transaction.updateAttributes(data).complete callback
 
         findPendingByUserAndWallet: (userId, walletId, callback)->
           query =
