@@ -13,7 +13,6 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.TEXT
         allowNull: false
     ,
-      underscored: true
       tableName: "chats"
       classMethods:
         findMessagesByRoom: (room, callback)->

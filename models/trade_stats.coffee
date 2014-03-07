@@ -29,7 +29,6 @@ module.exports = (sequelize, DataTypes) ->
       end_time:
         type: DataTypes.DATE
     ,
-      underscored: true
       tableName: "trade_stats"
       classMethods:
         

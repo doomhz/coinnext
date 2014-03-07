@@ -12,7 +12,22 @@
   authData = GLOBAL.appConfig().mysql;
 
   sequelize = new Sequelize(authData.db, authData.user, authData.password, {
-    port: authData.port
+    port: authData.port,
+    host: authData.host,
+    logging: authData.logging,
+    maxConcurrentQueries: 100,
+    define: {
+      underscored: true,
+      freezeTableName: false,
+      syncOnAssociation: true,
+      charset: "utf8",
+      collate: "utf8_general_ci",
+      timestamps: true
+    },
+    pool: {
+      maxConnections: 10,
+      maxIdleTime: 30
+    }
   });
 
   db = {};

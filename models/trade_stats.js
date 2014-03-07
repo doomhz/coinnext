@@ -38,7 +38,6 @@
         type: DataTypes.DATE
       }
     }, {
-      underscored: true,
       tableName: "trade_stats",
       classMethods: {
         getLastStats: function(type, callback) {

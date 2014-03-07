@@ -41,7 +41,6 @@
         defaultValue: false
       }
     }, {
-      underscored: true,
       tableName: "users",
       getterMethods: {
         google_auth_data: function() {

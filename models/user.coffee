@@ -28,7 +28,6 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.BOOLEAN
         defaultValue: false
     ,
-      underscored: true
       tableName: "users"
       getterMethods:
 

@@ -38,7 +38,6 @@ module.exports = (sequelize, DataTypes) ->
         defaultValue: false
 
     ,
-      underscored: true
       tableName: "transactions"
       classMethods:
         

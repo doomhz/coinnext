@@ -48,7 +48,6 @@
         defaultValue: false
       }
     }, {
-      underscored: true,
       tableName: "transactions",
       classMethods: {
         addFromWallet: function(transactionData, currency, wallet, callback) {

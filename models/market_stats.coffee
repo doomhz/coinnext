@@ -40,7 +40,6 @@ module.exports = (sequelize, DataTypes) ->
       today:
         type: DataTypes.DATE
     ,
-      underscored: true
       tableName: "market_stats"
       classMethods:
         

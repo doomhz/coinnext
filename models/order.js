@@ -1,4 +1,8 @@
 (function() {
+  var _;
+
+  _ = require("underscore");
+
   module.exports = function(sequelize, DataTypes) {
     var Order;
     Order = sequelize.define("Order", {
@@ -74,7 +78,6 @@
         type: DataTypes.DATE
       }
     }, {
-      underscored: true,
       tableName: "orders",
       classMethods: {
         findById: function(id, callback) {
@@ -139,8 +142,8 @@
           return Order.findAll(query).complete(callback);
         },
         findCompletedByTime: function(startTime, endTime, callback) {
-          var order;
-          order = {
+          var query;
+          query = {
             where: {
               status: "completed",
               close_time: {
