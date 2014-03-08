@@ -54,7 +54,7 @@
           return console.log(arguments);
         });
         order.published = true;
-        return order.save(function(err, order) {
+        return order.save().complete(function(err, order) {
           if (err) {
             return next(new restify.ConflictError(err));
           }
@@ -95,7 +95,7 @@
           var remainingHoldBalance;
           remainingHoldBalance = order.amount - order.sold_amount;
           return wallet.holdBalance(-remainingHoldBalance, function(err, wallet) {
-            return order.remove(function(err) {
+            return order.destroy().complete(function(err) {
               if (err) {
                 return next(new restify.ConflictError(err));
               }
@@ -143,7 +143,7 @@
                   if (status === "completed") {
                     order.close_time = Date.now();
                   }
-                  return order.save(function(err, order) {
+                  return order.save().complete(function(err, order) {
                     if (err) {
                       return console.error("Could not process order ", result, err);
                     }

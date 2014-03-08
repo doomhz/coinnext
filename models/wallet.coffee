@@ -40,7 +40,6 @@ module.exports = (sequelize, DataTypes) ->
         defaultValue: 0.2
         allowNull: false
     ,
-      underscored: true
       tableName: "wallets"
 
       getterMethods:

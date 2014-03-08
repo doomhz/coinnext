@@ -47,7 +47,6 @@
         type: DataTypes.DATE
       }
     }, {
-      underscored: true,
       tableName: "market_stats",
       classMethods: {
         getStats: function(callback) {

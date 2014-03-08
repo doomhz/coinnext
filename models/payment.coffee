@@ -38,7 +38,6 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.STRING
 
     ,
-      underscored: true
       tableName: "payments"
       classMethods:
         
@@ -79,22 +78,31 @@ module.exports = (sequelize, DataTypes) ->
         process: (response, callback = ()->)->
           @status = "processed"
           @transaction_id = response
+          @log = ""  if not @log
           @log += ","  if @log.length
-          @log += JSON.stringify(response)
+          try
+            @log += JSON.stringify(response)
+          catch e
           @save().complete callback
 
         cancel: (reason, callback = ()->)->
           @status = "canceled"
           reason = JSON.stringify reason
+          @log = ""  if not @log
           @log += ","  if @log.length
-          @log += JSON.stringify(reason)
+          try
+            @log += JSON.stringify(reason)
+          catch e
           @save().complete (e, p)->
             callback reason, p
 
         errored: (reason, callback = ()->)->
           reason = JSON.stringify reason
+          @log = ""  if not @log
           @log += ","  if @log.length
-          @log += JSON.stringify(reason)
+          try
+            @log += JSON.stringify(reason)
+          catch e
           @save().complete (e, p)->
             callback reason, p
 

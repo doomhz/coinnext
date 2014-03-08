@@ -41,7 +41,6 @@
         allowNull: false
       }
     }, {
-      underscored: true,
       tableName: "wallets",
       getterMethods: {
         account: function() {

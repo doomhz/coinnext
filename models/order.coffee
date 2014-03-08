@@ -1,3 +1,5 @@
+_ = require "underscore"
+
 module.exports = (sequelize, DataTypes) ->
 
   Order = sequelize.define "Order",
@@ -55,7 +57,6 @@ module.exports = (sequelize, DataTypes) ->
       close_time:
         type: DataTypes.DATE
     ,
-      underscored: true
       tableName: "orders"
       classMethods:
         
@@ -97,7 +98,7 @@ module.exports = (sequelize, DataTypes) ->
           Order.findAll(query).complete callback  
 
         findCompletedByTime: (startTime, endTime, callback)->
-          order =
+          query =
             where:
               status: "completed"
               close_time:

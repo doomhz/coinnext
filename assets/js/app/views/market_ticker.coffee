@@ -4,6 +4,8 @@ class App.MarketTickerView extends App.MasterView
 
   tpl: "market-ticker-tpl"
 
+  activeCurrency: null
+
   initialize: (options = {})->
     $.subscribe "new-balance", @onNewBalance
     $.subscribe "market-stats-updated", @onMarketStatsUpdated
@@ -11,12 +13,17 @@ class App.MarketTickerView extends App.MasterView
   render: ()->
     @model.fetch
       success: ()=>
-        @renderMaketTicker()
+        @renderMarketTicker()
       error: ()=>
 
-  renderMaketTicker: ()->
+  renderMarketTicker: ()->
     @$el.html @template
       marketStats: @model
+    @markActive()
+
+  markActive: (currency = null)->
+    @activeCurrency = currency  if currency
+    @$("[data-market-currency='#{@activeCurrency}']").addClass "active"
 
   onMarketStatsUpdated: (ev, data)=>
     @render()

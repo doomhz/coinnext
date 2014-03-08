@@ -48,7 +48,6 @@
         defaultValue: false
       }
     }, {
-      underscored: true,
       tableName: "transactions",
       classMethods: {
         addFromWallet: function(transactionData, currency, wallet, callback) {
@@ -77,7 +76,12 @@
           }
           return Transaction.findOrCreate({
             txid: data.txid
-          }, data).complete(callback);
+          }, data).complete(function(err, transaction, created) {
+            if (created) {
+              return callback(err, transaction);
+            }
+            return transaction.updateAttributes(data).complete(callback);
+          });
         },
         findPendingByUserAndWallet: function(userId, walletId, callback) {
           var query;

@@ -53,7 +53,6 @@
         type: DataTypes.STRING
       }
     }, {
-      underscored: true,
       tableName: "payments",
       classMethods: {
         findByUserAndWallet: function(userId, walletId, status, callback) {
@@ -98,40 +97,64 @@
           return this.status === "pending";
         },
         process: function(response, callback) {
+          var e;
           if (callback == null) {
             callback = function() {};
           }
           this.status = "processed";
           this.transaction_id = response;
+          if (!this.log) {
+            this.log = "";
+          }
           if (this.log.length) {
             this.log += ",";
           }
-          this.log += JSON.stringify(response);
+          try {
+            this.log += JSON.stringify(response);
+          } catch (_error) {
+            e = _error;
+          }
           return this.save().complete(callback);
         },
         cancel: function(reason, callback) {
+          var e;
           if (callback == null) {
             callback = function() {};
           }
           this.status = "canceled";
           reason = JSON.stringify(reason);
+          if (!this.log) {
+            this.log = "";
+          }
           if (this.log.length) {
             this.log += ",";
           }
-          this.log += JSON.stringify(reason);
+          try {
+            this.log += JSON.stringify(reason);
+          } catch (_error) {
+            e = _error;
+          }
           return this.save().complete(function(e, p) {
             return callback(reason, p);
           });
         },
         errored: function(reason, callback) {
+          var e;
           if (callback == null) {
             callback = function() {};
           }
           reason = JSON.stringify(reason);
+          if (!this.log) {
+            this.log = "";
+          }
           if (this.log.length) {
             this.log += ",";
           }
-          this.log += JSON.stringify(reason);
+          try {
+            this.log += JSON.stringify(reason);
+          } catch (_error) {
+            e = _error;
+          }
           return this.save().complete(function(e, p) {
             return callback(reason, p);
           });

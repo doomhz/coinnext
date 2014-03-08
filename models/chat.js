@@ -16,7 +16,6 @@
         allowNull: false
       }
     }, {
-      underscored: true,
       tableName: "chats",
       classMethods: {
         findMessagesByRoom: function(room, callback) {

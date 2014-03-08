@@ -37,4 +37,4 @@ class App.OrderModel extends Backbone.Model
     return parseFloat @get("amount") * @get("unit_price")  if @get("type") is "limit"
 
   getCreatedDate: ()->
-    new Date(@get('created')).format('dd.mm.yy hh:ss')
+    new Date(@get('created_at')).format('dd.mm.yy hh:ss')

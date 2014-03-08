@@ -1,10 +1,10 @@
 script(type="text/template", id="market-ticker-tpl")
   ul
     |<% _.each(marketStats.attributes, function (info, type) { %>
-    li(class="market-ticker-coin <%= info.growth_ratio >= 0 ? 'up' : 'down' %>", data-market-type="<%= type %>")
+    li(class="market-ticker-coin <%= info.growth_ratio >= 0 ? 'up' : 'down' %>", data-market-type="<%= type %>", data-market-currency="<%= info.label %>")
       // a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
       a(href="/trade/<%= type.replace('_', '/') %>")
         .label <%= info.label %>
-        .rate <%= _.str.roundTo(info.growth_ratio, 0) * (info.growth_ratio < 0 ? -1 : 1) %>%
+        .rate <%= _.str.roundTo(info.last_price) %>
         .move-coin <i class="icon-reorder"></i>
     |<% }); %>

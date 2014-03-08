@@ -4,7 +4,9 @@
       "db": "coinnext_dev",
       "user": "root",
       "password": "",
-      "port": 3306
+      "port": 3306,
+      "host": "localhost",
+      "logging": true
     },
     "redis": {
       "db": "coinnext_auth_dev"
@@ -103,7 +105,9 @@
       "db": "coinnext_test",
       "user": "root",
       "password": "",
-      "port": 3306
+      "port": 3306,
+      "host": "localhost",
+      "logging": true
     },
     "redis": {
       "db": "coinnext_auth_test"
@@ -202,7 +206,9 @@
       "db": "coinnext_production",
       "user": "root",
       "password": "",
-      "port": 3306
+      "port": 3306,
+      "host": "localhost",
+      "logging": true
     },
     "redis": {
       "host": "",

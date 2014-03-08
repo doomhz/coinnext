@@ -119,6 +119,8 @@ $(document).ready ()->
   # Trade page
   $trade = $("#trade")
   if $trade.length
+    marketTicker.markActive $trade.data "currency1"  if $marketTicker.length
+    
     trade = new App.TradeView
       el: $trade
       model: new App.MarketStatsModel

@@ -1,3 +1,4 @@
+//= require vendor/modernizr-2.7.1.min
 //= require vendor/jquery-1.10.2
 //= require vendor/date.format
 //= require vendor/underscore

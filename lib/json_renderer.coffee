@@ -6,7 +6,8 @@ JsonRenderer =
     id:         user.id
     email:      user.email
     username:   user.email.substr 0, user.email.indexOf("@")
-    created:    user.created
+    updated_at: user.updated_at
+    created_at: user.created_at
     gauth_data: user.gauth_data
 
   wallet: (wallet)->
@@ -16,7 +17,8 @@ JsonRenderer =
     balance:       wallet.balance
     hold_balance:  wallet.hold_balance
     address:       wallet.address
-    created:       wallet.created
+    updated_at:    wallet.updated_at
+    created_at:    wallet.created_at
 
   wallets: (wallets)->
     data = []
@@ -33,8 +35,8 @@ JsonRenderer =
     amount:         payment.amount
     currency:       payment.currency
     status:         payment.status
-    updated:        payment.updated
-    created:        payment.created
+    updated_at:     payment.updated_at
+    created_at:     payment.created_at
 
   payments: (payments)->
     data = []
@@ -54,7 +56,8 @@ JsonRenderer =
     txid:           transaction.txid
     confirmations:  transaction.confirmations
     balance_loaded: transaction.balance_loaded
-    created:        transaction.created
+    updated_at:     transaction.updated_at
+    created_at:     transaction.created_at
 
   transactions: (transactions)->
     data = []
@@ -76,7 +79,8 @@ JsonRenderer =
     unit_price:    order.unit_price
     status:        order.status
     published:     order.published
-    created:       order.created
+    updated_at:    order.updated_at
+    created_at:    order.created_at
 
   orders: (orders)->
     data = []

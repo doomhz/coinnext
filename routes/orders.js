@@ -45,6 +45,7 @@
                 return JsonRenderer.error("Sorry, could not open an order...", res);
               }
               return newOrder.publish(function(err, order) {
+                console.log(arguments);
                 if (err) {
                   console.log("Could not publish newlly created order - " + err);
                 }

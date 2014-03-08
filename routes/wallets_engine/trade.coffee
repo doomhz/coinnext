@@ -33,7 +33,7 @@ module.exports = (app)->
       trader.publishOrder queueData, (queueError, response)->
         console.log arguments
       order.published = true
-      order.save (err, order)->
+      order.save().complete (err, order)->
         return next(new restify.ConflictError err)  if err
         res.send
           id:        orderId
@@ -58,7 +58,7 @@ module.exports = (app)->
       Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, wallet)->
         remainingHoldBalance = order.amount - order.sold_amount
         wallet.holdBalance -remainingHoldBalance, (err, wallet)->
-          order.remove (err)->
+          order.destroy().complete (err)->
             return next(new restify.ConflictError err)  if err
             res.send
               id:        orderId
@@ -94,7 +94,7 @@ module.exports = (app)->
                 order.fee = fee
                 order.unit_price = unitPrice
                 order.close_time = Date.now()  if status is "completed"
-                order.save (err, order)->
+                order.save().complete (err, order)->
                   return console.error "Could not process order ", result, err  if err
                   if order.status is "completed"
                     MarketStats.trackFromOrder order, (err, mkSt)->

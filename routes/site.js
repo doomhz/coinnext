@@ -14,6 +14,7 @@
       return MarketStats.getStats(function(err, marketStats) {
         return res.render("site/index", {
           title: 'Home',
+          page: "home",
           user: req.user,
           marketStats: marketStats,
           currencies: Wallet.getCurrencyNames()
@@ -47,6 +48,7 @@
               }
               return res.render("site/trade", {
                 title: "Trade " + currency1 + " to " + currency2,
+                page: "trade",
                 user: req.user,
                 currency1: currency1,
                 currency2: currency2,
@@ -61,6 +63,7 @@
         } else {
           return res.render("site/trade", {
             title: "Trade " + currency1 + " to " + currency2,
+            page: "trade",
             currency1: currency1,
             currency2: currency2,
             wallet1: Wallet.build({
@@ -83,6 +86,7 @@
       return Wallet.findUserWallets(req.user.id, function(err, wallets) {
         return res.render("site/funds", {
           title: 'Funds',
+          page: "funds",
           user: req.user,
           wallets: wallets,
           currencies: Wallet.getCurrencyNames(),
@@ -104,6 +108,7 @@
           }
           return res.render("site/funds/wallet", {
             title: 'Wallet overview',
+            page: "funds",
             user: req.user,
             wallet: wallet,
             wallets: wallets,
@@ -132,7 +137,7 @@
       }
       return res.render("site/settings/settings", {
         title: 'Settings',
-        page: 'Settings',
+        page: 'settings',
         user: req.user
       });
     });
@@ -142,7 +147,7 @@
       }
       return res.render("site/settings/preferences", {
         title: 'Preferences - Settings',
-        page: 'Settings',
+        page: 'settings',
         user: req.user
       });
     });
@@ -152,7 +157,7 @@
       }
       return res.render("site/settings/security", {
         title: 'Security - Settings',
-        page: 'Settings',
+        page: 'settings',
         user: req.user
       });
     });
