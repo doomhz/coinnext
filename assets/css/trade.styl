@@ -60,6 +60,15 @@ $red = #da4444
       .rate
       &:hover
         color #fff !important
+  
+  &.active.up
+    .rate:after
+      border-color transparent transparent #fff transparent
+
+  &.active.down
+    .rate:after
+      border-color #fff transparent transparent transparent
+            
   &:hover
     color $blue
   &.up
