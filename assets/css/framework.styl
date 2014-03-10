@@ -11,7 +11,6 @@ input[type="url"]
   padding 10px
   background #fff
   border-radius 2px
-  margin-top -1px
   position relative
   transition all .1s linear
   box-shadow inset 0 1px 1px 0 rgba(#000,.05)
@@ -79,12 +78,14 @@ reset-list()
 
 btn(color)
   color #fff
+  position relative
   border-radius 2px
   background-image linear-gradient(rgba(#fff,.05), transparent)
   background-color color
   padding 7px 12px
   border 0
   font-size 14px
+  text-shadow 0 -1px 0 rgba(0,0,0,0.15)
   line-height 14px
   display inline-block
   font-weight bold
@@ -95,17 +96,18 @@ btn(color)
     color #fff
     background lighten(color, 20%)
     text-decoration none
+  &:active
+    top 1px
 
   if color is white
     background transparent
     color #999
     border 1px solid #d5d5d5
+    text-shadow none
     &:hover
       background-color transparent
       color $blue
       border-color $blue
-    &:active
-      color #14294e
 
 .btn
   btn($teal)

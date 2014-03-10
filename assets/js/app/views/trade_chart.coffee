@@ -49,10 +49,11 @@ class App.TradeChartView extends App.MasterView
         ]
       credits:
         enabled: false
-
+        
       yAxis: [
         {
           lineWidth: 0
+          gridLineColor: "#ecedef"
         }
         {
           gridLineWidth: 0
@@ -60,6 +61,7 @@ class App.TradeChartView extends App.MasterView
         }
       ]
       xAxis:
+        lineColor: "#ecedef"
         type: "time"
         dateTimeLabelFormats:
           millisecond: '%H:%M'
