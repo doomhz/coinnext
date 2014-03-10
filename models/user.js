@@ -1,11 +1,13 @@
 (function() {
-  var Emailer, crypto, speakeasy;
+  var Emailer, crypto, speakeasy, _;
 
   crypto = require("crypto");
 
   speakeasy = require("speakeasy");
 
   Emailer = require("../lib/emailer");
+
+  _ = require("underscore");
 
   module.exports = function(sequelize, DataTypes) {
     var User;
@@ -76,6 +78,12 @@
         },
         hashPassword: function(password) {
           return crypto.createHash("sha1").update("" + password + (GLOBAL.appConfig().salt), "utf8").digest("hex");
+        },
+        createNewUser: function(data, callback) {
+          var userData;
+          userData = _.extend({}, data);
+          userData.password = User.hashPassword(userData.password);
+          return User.create(userData).complete(callback);
         }
       },
       instanceMethods: {

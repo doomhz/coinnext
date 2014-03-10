@@ -21,29 +21,29 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.STRING
         allowNull: false
       amount:
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
         allowNull: false
         validate:
           isFloat: true
           notNull: true
       sold_amount:
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
         validate:
           isFloat: true
       result_amount:
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
         validate:
           isFloat: true
       fee:
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
         validate:
           isFloat: true
       unit_price:
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
         validate:
           isFloat: true

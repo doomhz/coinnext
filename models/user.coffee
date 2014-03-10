@@ -1,6 +1,7 @@
-crypto          = require "crypto"
-speakeasy       = require "speakeasy"
-Emailer         = require "../lib/emailer"
+crypto    = require "crypto"
+speakeasy = require "speakeasy"
+Emailer   = require "../lib/emailer"
+_         = require "underscore"
 
 module.exports = (sequelize, DataTypes) ->
 
@@ -48,6 +49,11 @@ module.exports = (sequelize, DataTypes) ->
         hashPassword: (password)->
           crypto.createHash("sha1").update("#{password}#{GLOBAL.appConfig().salt}", "utf8").digest("hex")
         
+        createNewUser: (data, callback)->
+          userData = _.extend({}, data)
+          userData.password = User.hashPassword userData.password
+          User.create(userData).complete callback
+
       instanceMethods:
         
         isValidPassword: (password)->

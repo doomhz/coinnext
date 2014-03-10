@@ -29,7 +29,7 @@
         allowNull: false
       },
       amount: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.FLOAT.UNSIGNED,
         defaultValue: 0,
         allowNull: false,
         validate: {
@@ -38,28 +38,28 @@
         }
       },
       sold_amount: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.FLOAT.UNSIGNED,
         defaultValue: 0,
         validate: {
           isFloat: true
         }
       },
       result_amount: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.FLOAT.UNSIGNED,
         defaultValue: 0,
         validate: {
           isFloat: true
         }
       },
       fee: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.FLOAT.UNSIGNED,
         defaultValue: 0,
         validate: {
           isFloat: true
         }
       },
       unit_price: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.FLOAT.UNSIGNED,
         defaultValue: 0,
         validate: {
           isFloat: true

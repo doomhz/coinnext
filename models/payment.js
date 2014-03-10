@@ -4,11 +4,11 @@
     Payment = sequelize.define("Payment", {
       user_id: {
         type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: true
+        allowNull: false
       },
       wallet_id: {
         type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: true
+        allowNull: false
       },
       transaction_id: {
         type: DataTypes.STRING,
@@ -32,7 +32,7 @@
         }
       },
       amount: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.FLOAT.UNSIGNED,
         defaultValue: 0,
         allowNull: false,
         validate: {

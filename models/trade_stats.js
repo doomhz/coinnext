@@ -7,27 +7,27 @@
         allowNull: false
       },
       open_price: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.FLOAT.UNSIGNED,
         defaultValue: 0,
         allowNull: false
       },
       close_price: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.FLOAT.UNSIGNED,
         defaultValue: 0,
         allowNull: false
       },
       high_price: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.FLOAT.UNSIGNED,
         defaultValue: 0,
         allowNull: false
       },
       low_price: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.FLOAT.UNSIGNED,
         defaultValue: 0,
         allowNull: false
       },
       volume: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.FLOAT.UNSIGNED,
         defaultValue: 0,
         allowNull: false
       },

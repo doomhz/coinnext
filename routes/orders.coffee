@@ -22,7 +22,6 @@ module.exports = (app)->
           Order.create(data).complete (err, newOrder)->
             return JsonRenderer.error "Sorry, could not open an order...", res  if err
             newOrder.publish (err, order)->
-              console.log arguments
               console.log "Could not publish newlly created order - #{err}"  if err
               return res.json JsonRenderer.order newOrder  if err
               res.json JsonRenderer.order order

@@ -27,4 +27,10 @@ test-w:
 		--growl \
 		$(INTEGRATIONAL_TESTS)
 
-.PHONY: test-integrational test-w test-unit
+test-one:
+	@NODE_ENV=test ./node_modules/.bin/mocha -u bdd -b \
+		--reporter $(REPORTER) \
+		--compilers coffee:coffee-script/register \
+		$f
+
+.PHONY: test-integrational test-w test-unit test-one

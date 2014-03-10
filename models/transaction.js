@@ -19,19 +19,20 @@
         type: DataTypes.STRING
       },
       fee: {
-        type: DataTypes.STRING
+        type: DataTypes.FLOAT.UNSIGNED
       },
       address: {
         type: DataTypes.STRING,
         allowNull: false
       },
       amount: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.FLOAT.UNSIGNED,
         defaultValue: 0,
         allowNull: false
       },
       category: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM,
+        values: ACCEPTED_CATEGORIES,
         allowNull: false
       },
       txid: {

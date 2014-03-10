@@ -14,27 +14,27 @@ module.exports = (sequelize, DataTypes) ->
         allowNull: false
         unique: true
       last_price:
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
         allowNull: false
       day_high:
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
         allowNull: false
       day_low:
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
         allowNull: false
       volume1:
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
         allowNull: false
       volume2:
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
         allowNull: false
       growth_ratio:
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
         allowNull: false
       today:

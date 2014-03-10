@@ -7,8 +7,8 @@ module.exports = (app)->
   app.post "/user", (req, res)->
     data =
       email: req.body.email
-      password: User.hashPassword req.body.password
-    User.create(data).complete (err, newUser)->
+      password: req.body.password
+    User.createNewUser data, (err, newUser)->
       return JsonRenderer.error err, res  if err
       newUser.generateToken ()->
         newUser.sendEmailVerificationLink()

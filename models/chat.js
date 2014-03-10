@@ -4,11 +4,11 @@
     MESSAGES_LIMIT = 10000;
     Chat = sequelize.define("Chat", {
       room: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING,
         allowNull: false
       },
       username: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING,
         allowNull: false
       },
       message: {

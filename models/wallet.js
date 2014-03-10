@@ -26,17 +26,17 @@
         allowNull: false
       },
       balance: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.FLOAT.UNSIGNED,
         defaultValue: 0,
         allowNull: false
       },
       hold_balance: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.FLOAT.UNSIGNED,
         defaultValue: 0,
         allowNull: false
       },
       fee: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.FLOAT.UNSIGNED,
         defaultValue: 0.2,
         allowNull: false
       }

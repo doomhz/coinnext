@@ -13,9 +13,9 @@
       var data;
       data = {
         email: req.body.email,
-        password: User.hashPassword(req.body.password)
+        password: req.body.password
       };
-      return User.create(data).complete(function(err, newUser) {
+      return User.createNewUser(data, function(err, newUser) {
         if (err) {
           return JsonRenderer.error(err, res);
         }

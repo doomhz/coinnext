@@ -3,10 +3,10 @@ module.exports = (sequelize, DataTypes) ->
   Payment = sequelize.define "Payment",
       user_id:
         type: DataTypes.INTEGER.UNSIGNED
-        allowNull: true
+        allowNull: false
       wallet_id:
         type: DataTypes.INTEGER.UNSIGNED
-        allowNull: true
+        allowNull: false
       transaction_id:
         type: DataTypes.STRING
         allowNull: true
@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) ->
             pattern = /^[1-9A-Za-z]{27,34}/
             throw new Error "Invalid address."  if not pattern.test(value)
       amount:
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
         allowNull: false
         validate:
