@@ -157,6 +157,12 @@
         },
         isValidTradeAmount: function(amount) {
           return _.isNumber(amount) && !_.isNaN(amount) && amount > 0;
+        },
+        convertToEngineValue: function(value) {
+          return parseFloat(value) * 100000000;
+        },
+        convertFromEngineValue: function(value) {
+          return parseFloat(value) / 100000000;
         }
       },
       instanceMethods: {

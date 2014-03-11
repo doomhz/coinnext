@@ -104,7 +104,7 @@ module.exports = (sequelize, DataTypes) ->
           if not _.isNaN(newBalance) and _.isNumber(newBalance)
             @increment({balance: newBalance}).complete (err, wl)=>
               console.log "Could not add the wallet balance #{newBalance} for #{@id}: #{err}"  if err
-              callback err, wl
+              Wallet.find(@id).complete callback
           else
             console.log "Could not add wallet balance #{newBalance} for #{@id}"
             callback(null, @)
@@ -113,7 +113,7 @@ module.exports = (sequelize, DataTypes) ->
           if not _.isNaN(newBalance) and _.isNumber(newBalance)
             @increment({hold_balance: newBalance}).complete (err, wl)=>
               console.log "Could not add the wallet hold balance #{newBalance} for #{@id}: #{err}"  if err
-              callback err, wl
+              Wallet.find(@id).complete callback
           else
             console.log "Could not add wallet hold balance #{newBalance} for #{@id}"
             callback(null, @)

@@ -58,14 +58,14 @@ module.exports = (app)->
         res.send("#{new Date()} - #{result}")
 
 
+  # TODO: Move to a separate component
   processPayment = (payment, callback = ()->)->
-    account = null
-    console.log payment.address
-    GLOBAL.wallets[payment.currency].sendToAddress payment.address, payment.amount, (err, response = "")=>
+    GLOBAL.wallets[payment.currency].sendToAddress payment.address, payment.amount, (err, response = "")->
       console.error "Could not withdraw to #{payment.address} #{payment.amount} BTC", err  if err
       return payment.errored err, callback  if err
       payment.process response, callback
 
+  # TODO: Move to a separate component
   loadTransaction = (transactionOrId, currency, callback)->
     txId = if typeof(transactionOrId) is "string" then transactionOrId else transactionOrId.txid
     return callback()  if not txId

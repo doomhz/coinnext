@@ -152,7 +152,7 @@
                 if (err) {
                   console.log("Could not add the wallet balance " + newBalance + " for " + _this.id + ": " + err);
                 }
-                return callback(err, wl);
+                return Wallet.find(_this.id).complete(callback);
               };
             })(this));
           } else {
@@ -172,7 +172,7 @@
                 if (err) {
                   console.log("Could not add the wallet hold balance " + newBalance + " for " + _this.id + ": " + err);
                 }
-                return callback(err, wl);
+                return Wallet.find(_this.id).complete(callback);
               };
             })(this));
           } else {

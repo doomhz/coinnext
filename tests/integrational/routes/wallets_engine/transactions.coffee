@@ -7,15 +7,10 @@ describe "Transactions Api", ->
   wallet = undefined
 
   beforeEach (done)->
-    Wallet.create {currency: "BTC", user_id: "user_id"}, (err, wl)->
-      wallet = wl
-      done()
-
-  afterEach (done)->
-    Transaction.remove ()->
-      Wallet.remove ()->
-        Payment.remove ()->
-          done()
+    GLOBAL.db.sequelize.sync({force: true}).complete ()->
+      GLOBAL.db.Wallet.create({currency: "BTC", user_id: 1}).complete (err, wl)->
+        wallet = wl
+        done()
 
   describe "PUT /transaction/:currency/:tx_id", ()->
     describe "When there is a valid currency and tx id", ()->
@@ -33,7 +28,7 @@ describe "Transactions Api", ->
           .send()
           .expect(200)
           .expect {}, ()->
-            Transaction.findOne {txid: "unique_tx_id"}, (err, tx)->
+            GLOBAL.db.Transaction.findByTxid "unique_tx_id", (err, tx)->
               tx.account.should.eql "account"
               done()
 
@@ -43,7 +38,7 @@ describe "Transactions Api", ->
           .send()
           .expect(200)
           .expect {}, ()->
-            Wallet.findById wallet.id, (err, wl)->
+            GLOBAL.db.Wallet.findById wallet.id, (err, wl)->
               wl.balance.should.eql 1
               done()
 
@@ -51,57 +46,64 @@ describe "Transactions Api", ->
     describe "when the wallet has enough balance", ()->
       it "returns 200 ok and the executed payment ids", (done)->
         wallet.balance = 10
-        wallet.save ()->
-          Payment.create {wallet_id: wallet.id, amount: 10, currency: "BTC"}, (err, pm)->
+        wallet.save().complete ()->
+          GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
             request('http://localhost:6000')
             .post("/process_pending_payments")
             .send()
             .expect(200)
-            .expect ["#{pm.id} - processed"], ()->
-              Payment.findById pm.id, (e, p)->
+            .end (e, res = {})->
+              throw e if e
+              res.body.should.endWith "#{pm.id} - processed"
+              GLOBAL.db.Payment.findById pm.id, (e, p)->
                 p.status.should.eql "processed"
                 done()
 
       it "updates the user_id from the payment", (done)->
         wallet.balance = 10
-        wallet.save ()->
-          Transaction.create {wallet_id: wallet.id, currency: "BTC", txid: "unique_tx_id"}, (err, tx)->
-            Payment.create {wallet_id: wallet.id, amount: 10, currency: "BTC", user_id: "user_id", transaction_id: "txid"}, (err, pm)->
+        wallet.save().complete ()->
+          GLOBAL.db.Transaction.create({wallet_id: wallet.id, currency: "BTC", txid: "unique_tx_id"}).complete (err, tx)->
+            GLOBAL.db.Payment.create({wallet_id: wallet.id, user_id: 1, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
               request('http://localhost:6000')
               .post("/process_pending_payments")
               .send()
-              .expect 200, ()->
-                Transaction.findById tx.id, (e, t)->
-                  t.user_id.should.eql "user_id"
+              .expect 200
+              .end ()->
+                GLOBAL.db.Transaction.findById tx.id, (e, t)->
+                  t.user_id.should.eql 1
                   done()
 
     describe "when the wallet does not have enough balance", ()->
       it "returns 200 ok and the non executed payment ids", (done)->
-        Payment.create {wallet_id: wallet.id, amount: 10, currency: "BTC"}, (err, pm)->
+        GLOBAL.db.Payment.create({wallet_id: wallet.id, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
           request('http://localhost:6000')
           .post("/process_pending_payments")
           .send()
           .expect(200)
-          .expect ["#{pm.id} - not processed - no funds"], ()->
-            Payment.findById pm.id, (e, p)->
+          .end (e, res)->
+            throw e if e
+            res.body.should.endWith "#{pm.id} - not processed - no funds"
+            GLOBAL.db.Payment.findById pm.id, (e, p)->
               p.status.should.eql "pending"
               done()
 
     describe "when there are payments for the same user", ()->
       it "processes only one payment", (done)->
-        Wallet.create {currency: "BTC", user_id: "user_id2", balance: 10}, (err, wallet2)->
+        GLOBAL.db.Wallet.create({currency: "BTC", user_id: 2, balance: 10}).complete (err, wallet2)->
           wallet.balance = 10
-          wallet.save ()->
-            Payment.create {wallet_id: wallet.id, amount: 5, currency: "BTC"}, (err, pm)->
-              Payment.create {wallet_id: wallet.id, amount: 5, currency: "BTC"}, (err, pm2)->
-                Payment.create {wallet_id: wallet2.id, amount: 10, currency: "BTC"}, (err, pm3)->
+          wallet.save().complete ()->
+            GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: 5, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
+              GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: 5, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err2, pm2)->
+                GLOBAL.db.Payment.create({user_id: 2, wallet_id: wallet2.id, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err3, pm3)->
                   request('http://localhost:6000')
                   .post("/process_pending_payments")
                   .send()
                   .expect(200)
-                  .expect ["#{pm.id} - processed", "#{pm2.id} - user already had a processed payment", "#{pm3.id} - processed"], ()->
-                    Payment.findById pm.id, (e, p1)->
-                      Payment.findById pm2.id, (e, p2)->
-                        Payment.findById pm3.id, (e, p3)->
+                  .end (e, res = {})->
+                    throw e if e
+                    res.body.should.endWith "#{pm.id} - processed,#{pm2.id} - user already had a processed payment,#{pm3.id} - processed"
+                    GLOBAL.db.Payment.findById pm.id, (e, p1)->
+                      GLOBAL.db.Payment.findById pm2.id, (e, p2)->
+                        GLOBAL.db.Payment.findById pm3.id, (e, p3)->
                           [p1.status, p2.status, p3.status].toString().should.eql "processed,pending,processed"
                           done()

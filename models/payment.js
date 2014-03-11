@@ -55,6 +55,9 @@
     }, {
       tableName: "payments",
       classMethods: {
+        findById: function(id, callback) {
+          return Payment.find(id).complete(callback);
+        },
         findByUserAndWallet: function(userId, walletId, status, callback) {
           var query;
           query = {

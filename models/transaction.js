@@ -51,6 +51,9 @@
     }, {
       tableName: "transactions",
       classMethods: {
+        findById: function(id, callback) {
+          return Transaction.find(id).complete(callback);
+        },
         addFromWallet: function(transactionData, currency, wallet, callback) {
           var data, details, key;
           if (callback == null) {
@@ -128,14 +131,21 @@
           };
           return Transaction.findAll(query).complete(callback);
         },
+        findByTxid: function(txid, callback) {
+          return Transaction.find({
+            where: {
+              txid: txid
+            }
+          }).complete(callback);
+        },
         isValidFormat: function(category) {
           return ACCEPTED_CATEGORIES.indexOf(category) > -1;
         },
-        setUserById: function(txId, userId, callback) {
+        setUserById: function(txid, userId, callback) {
           return Transaction.update({
             user_id: userId
           }, {
-            txid: txId
+            txid: txid
           }).complete(callback);
         },
         setUserAndWalletById: function(txId, userId, walletId, callback) {

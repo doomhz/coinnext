@@ -40,6 +40,9 @@ module.exports = (sequelize, DataTypes) ->
     ,
       tableName: "payments"
       classMethods:
+
+        findById: (id, callback)->
+          Payment.find(id).complete callback
         
         findByUserAndWallet: (userId, walletId, status, callback)->
           query =

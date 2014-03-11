@@ -38,8 +38,8 @@
         }
         marketType = ("" + order.action + "_" + order.type).toUpperCase();
         orderCurrency = order["" + order.action + "_currency"];
-        amount = order.amount * 100000000;
-        unitPrice = order.unit_price ? order.unit_price * 100000000 : order.unit_price;
+        amount = Order.convertToEngineValue(order.amount);
+        unitPrice = order.unit_price ? Order.convertToEngineValue(order.unit_price) : order.unit_price;
         queueData = {
           eventType: "order",
           data: {
@@ -123,10 +123,10 @@
       if (result && result.eventType === "orderResult") {
         orderId = result.data.orderId;
         status = result.data.orderState;
-        soldAmount = parseFloat(result.data.soldAmount) / 100000000;
-        receivedAmount = parseFloat(result.data.receivedAmount) / 100000000;
-        fee = parseFloat(result.data.orderFee) / 100000000;
-        unitPrice = parseFloat(result.data.orderPPU) / 100000000;
+        soldAmount = Order.convertFromEngineValue(result.data.soldAmount);
+        receivedAmount = Order.convertFromEngineValue(result.data.receivedAmount);
+        fee = Order.convertFromEngineValue(result.data.orderFee);
+        unitPrice = Order.convertFromEngineValue(result.data.orderPPU);
         return Order.findById(orderId, function(err, order) {
           if (!order) {
             return console.error("Wrong order to complete ", result);

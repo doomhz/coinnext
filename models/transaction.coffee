@@ -42,6 +42,9 @@ module.exports = (sequelize, DataTypes) ->
       tableName: "transactions"
       classMethods:
         
+        findById: (id, callback)->
+          Transaction.find(id).complete callback
+
         addFromWallet: (transactionData, currency, wallet, callback = ()->)->
           details = transactionData.details[0] or {}
           data =
@@ -98,11 +101,14 @@ module.exports = (sequelize, DataTypes) ->
             ]
           Transaction.findAll(query).complete callback
 
+        findByTxid: (txid, callback)->
+          Transaction.find({where: {txid: txid}}).complete callback
+
         isValidFormat: (category)->
           ACCEPTED_CATEGORIES.indexOf(category) > -1
 
-        setUserById: (txId, userId, callback)->
-          Transaction.update({user_id: userId}, {txid: txId}).complete callback
+        setUserById: (txid, userId, callback)->
+          Transaction.update({user_id: userId}, {txid: txid}).complete callback
 
         setUserAndWalletById: (txId, userId, walletId, callback)->
           Transaction.update({user_id: userId, wallet_id: walletId}, {txid: txId}).complete callback

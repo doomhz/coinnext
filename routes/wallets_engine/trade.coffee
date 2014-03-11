@@ -20,8 +20,8 @@ module.exports = (app)->
       return next(new restify.ConflictError "Trade queue down")  if not trader
       marketType = "#{order.action}_#{order.type}".toUpperCase()
       orderCurrency = order["#{order.action}_currency"]
-      amount = order.amount * 100000000
-      unitPrice = if order.unit_price then order.unit_price * 100000000 else order.unit_price
+      amount = Order.convertToEngineValue order.amount
+      unitPrice = if order.unit_price then Order.convertToEngineValue order.unit_price else order.unit_price
       queueData =
         eventType: "order"
         data:
@@ -69,6 +69,7 @@ module.exports = (app)->
                 id: orderId
 
 
+  # TODO: Move to a separate component
   onOrderCompleted = (message)->
     #console.log "incoming result ", message
     result = null
@@ -78,10 +79,10 @@ module.exports = (app)->
     if result and result.eventType is "orderResult"
       orderId = result.data.orderId
       status = result.data.orderState
-      soldAmount = parseFloat(result.data.soldAmount) / 100000000
-      receivedAmount = parseFloat(result.data.receivedAmount) / 100000000
-      fee = parseFloat(result.data.orderFee) / 100000000
-      unitPrice = parseFloat(result.data.orderPPU) / 100000000
+      soldAmount = Order.convertFromEngineValue result.data.soldAmount
+      receivedAmount = Order.convertFromEngineValue result.data.receivedAmount
+      fee = Order.convertFromEngineValue result.data.orderFee
+      unitPrice = Order.convertFromEngineValue result.data.orderPPU
       Order.findById orderId, (err, order)->
         return console.error "Wrong order to complete ", result  if not order
         Wallet.findUserWalletByCurrency order.user_id, order.buy_currency, (err, buyWallet)->

@@ -3,13 +3,10 @@ require "./../../helpers/spec_helper"
 describe "Payment", ->
   payment = undefined
 
-  beforeEach ->
-    payment = new Payment
-  
-  afterEach (done)->
-    Payment.remove ()->
+  beforeEach (done)->
+    payment = GLOBAL.db.Payment.build {user_id: 1, wallet_id: 1, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}
+    GLOBAL.db.sequelize.sync({force: true}).complete ()->
       done()
-
 
   describe "isProcessed", ()->
     describe "when the status is processed", ()->
@@ -50,6 +47,7 @@ describe "Payment", ->
   describe "process", ()->
     it "sets the status processed", (done)->
       payment.process "txid", (err, pm)->
+        console.log err
         pm.status.should.eql "processed"
         done()
 
@@ -72,7 +70,7 @@ describe "Payment", ->
 
     it "sets the given result as log", (done)->
       payment.cancel "result", (err, pm)->
-        pm.log.toString().should.eql JSON.stringify("result")
+        pm.log.toString().should.eql "\"\\\"result\\\"\""
         done()
 
 
@@ -84,5 +82,5 @@ describe "Payment", ->
 
     it "sets the given result as log", (done)->
       payment.errored "result", (err, pm)->
-        pm.log.toString().should.eql JSON.stringify("result")
+        pm.log.toString().should.eql "\"\\\"result\\\"\""
         done()

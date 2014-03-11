@@ -102,26 +102,21 @@
       });
     });
     processPayment = function(payment, callback) {
-      var account;
       if (callback == null) {
         callback = function() {};
       }
-      account = null;
-      console.log(payment.address);
-      return GLOBAL.wallets[payment.currency].sendToAddress(payment.address, payment.amount, (function(_this) {
-        return function(err, response) {
-          if (response == null) {
-            response = "";
-          }
-          if (err) {
-            console.error("Could not withdraw to " + payment.address + " " + payment.amount + " BTC", err);
-          }
-          if (err) {
-            return payment.errored(err, callback);
-          }
-          return payment.process(response, callback);
-        };
-      })(this));
+      return GLOBAL.wallets[payment.currency].sendToAddress(payment.address, payment.amount, function(err, response) {
+        if (response == null) {
+          response = "";
+        }
+        if (err) {
+          console.error("Could not withdraw to " + payment.address + " " + payment.amount + " BTC", err);
+        }
+        if (err) {
+          return payment.errored(err, callback);
+        }
+        return payment.process(response, callback);
+      });
     };
     return loadTransaction = function(transactionOrId, currency, callback) {
       var txId;

@@ -112,6 +112,12 @@ module.exports = (sequelize, DataTypes) ->
         isValidTradeAmount: (amount)->
           _.isNumber(amount) and not _.isNaN(amount) and amount > 0
 
+        convertToEngineValue: (value)->
+          parseFloat(value) * 100000000
+
+        convertFromEngineValue: (value)->
+          parseFloat(value) / 100000000
+
       instanceMethods:
         
         publish: (callback = ()->)->

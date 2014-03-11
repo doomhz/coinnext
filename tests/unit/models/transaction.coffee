@@ -2,7 +2,7 @@ require "./../../helpers/spec_helper"
 
 describe "Transaction", ->
   transaction     = undefined
-  wallet          = new Wallet {user_id: "user_id"}
+  wallet          = GLOBAL.db.Wallet.build {user_id: 1}
   trTime          = Date.now() / 1000
   transactionData =
     amount: 1
@@ -16,29 +16,31 @@ describe "Transaction", ->
       category: "send"
     }]
 
-  beforeEach ->
-    transaction = new Transaction
-  
-  afterEach (done)->
-    Transaction.remove ()->
+  beforeEach (done)->
+    transaction = GLOBAL.db.Transaction.build()
+    GLOBAL.db.sequelize.sync({force: true}).complete ()->
       done()
-
+  
 
   describe "addFromWallet", ()->
     describe "when the given transaction does not exist", ()->
       it "creates one", (done)->
-        Transaction.addFromWallet transactionData, "BTC", wallet, (err, tr)->
-          expectedData = "user_id,#{wallet.id},BTC,account,0.0001,address,1,send,unique_tx_id,6,#{new Date(trTime * 1000)}"
-          [tr.user_id, tr.wallet_id, tr.currency, tr.account, tr.fee, tr.address, tr.amount, tr.category, tr.txid, tr.confirmations, tr.created].toString().should.eql expectedData.toString()
+        GLOBAL.db.Transaction.addFromWallet transactionData, "BTC", wallet, (err, tr)->
+          expectedData = {
+            id: 1, currency: "BTC", account: "account", fee: 0.0001, amount: 1, address: "address", category: "send", txid: "unique_tx_id", confirmations: 6
+          }
+          tr.values.should.have.properties expectedData
           done()
 
     describe "when the given transaction already exists", ()->
       it "updates it", (done)->
-        Transaction.addFromWallet transactionData, "BTC", wallet, (err, trOld)->
+        GLOBAL.db.Transaction.addFromWallet transactionData, "BTC", wallet, (err, trOld)->
           newTransactionData = transactionData
           newTransactionData.confirmations = 10
-          Transaction.addFromWallet newTransactionData, "BTC", wallet, (err, tr)->
-            expectedData = "user_id,#{wallet.id},BTC,account,0.0001,address,1,send,unique_tx_id,10,#{new Date(trTime * 1000)}"
-            [tr.user_id, tr.wallet_id, tr.currency, tr.account, tr.fee, tr.address, tr.amount, tr.category, tr.txid, tr.confirmations, tr.created].toString().should.eql expectedData.toString()
+          GLOBAL.db.Transaction.addFromWallet newTransactionData, "BTC", wallet, (err, tr)->
+            expectedData = {
+              id: 1, currency: "BTC", account: "account", fee: 0.0001, amount: 1, address: "address", category: "send", txid: "unique_tx_id", confirmations: 10
+            }
+            tr.values.should.have.properties expectedData
             trOld.id.should.eql tr.id
             done()
