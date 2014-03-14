@@ -1,9 +1,11 @@
 (function() {
-  var JsonRenderer, User, Wallet;
+  var AuthStats, JsonRenderer, User, Wallet;
 
   User = GLOBAL.db.User;
 
   Wallet = GLOBAL.db.Wallet;
+
+  AuthStats = GLOBAL.db.AuthStats;
 
   JsonRenderer = require('../lib/json_renderer');
 
@@ -69,7 +71,11 @@
             req.logout();
             return JsonRenderer.error("Invalid Google Authenticator code", res, 401);
           }
-          return res.json(JsonRenderer.user(req.user));
+          res.json(JsonRenderer.user(req.user));
+          return AuthStats.log({
+            ip: req.ip,
+            user: req.user
+          });
         });
       })(req, res, next);
     };

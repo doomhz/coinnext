@@ -1,5 +1,6 @@
 User = GLOBAL.db.User
 Wallet = GLOBAL.db.Wallet
+AuthStats = GLOBAL.db.AuthStats
 JsonRenderer = require '../lib/json_renderer'
 
 module.exports = (app)->
@@ -45,4 +46,7 @@ module.exports = (app)->
           req.logout()
           return JsonRenderer.error "Invalid Google Authenticator code", res, 401
         res.json JsonRenderer.user req.user
+        AuthStats.log
+          ip: req.ip
+          user: req.user
     )(req, res, next)
