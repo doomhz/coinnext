@@ -1,0 +1,33 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge")
+
+    title #{title ? title : 'Administratie - Coinnext'}
+    
+    meta(name='description', content='')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+
+    != css('admin')
+
+    script.
+      CONFIG = {
+        csrf: "#{csrfToken}"
+      }
+
+  body
+    .navbar
+      .navbar-inner
+        .container
+          a.brand(href="/") <img src="/img/logo.png" alt="Coinnext logo" />
+          ul.nav
+            li
+              a(href="/administratie", title="Stats") Stats
+            li
+              a(href="/administratie/logout", title="Logout") Logout
+    
+    #main-wrapper.container
+      block content
+
+    != js('admin')

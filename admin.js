@@ -9,17 +9,22 @@ var RedisStore = require('connect-redis')(express);
 var connectDomain = require('connect-domain');
 var fs = require('fs');
 var helmet = require('helmet');
-var WalletsClient = require('./lib/wallets_client');
+var BtcWallet = environment === "test" ? require("./tests/helpers/btc_wallet_mock") : require("./lib/btc_wallet");
+var LtcWallet = environment === "test" ? require("./tests/helpers/ltc_wallet_mock") : require("./lib/ltc_wallet");
+var PpcWallet = environment === "test" ? require("./tests/helpers/ppc_wallet_mock") : require("./lib/ppc_wallet");
 var environment = process.env.NODE_ENV || 'development';
 var config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', encoding='utf8'))[environment];
 
 // Configure globals
 GLOBAL.passport = require('passport');
 GLOBAL.appConfig = function () {return config;};
-GLOBAL.walletsClient = new WalletsClient({host: GLOBAL.appConfig().wallets_host});
+GLOBAL.wallets = []
+GLOBAL.wallets["BTC"] = new BtcWallet();
+GLOBAL.wallets["LTC"] = new LtcWallet();
+GLOBAL.wallets["PPC"] = new PpcWallet();
 GLOBAL.db = require('./models/index');
 
-require('./lib/auth');
+require('./lib/admin_auth');
 
 
 // Setup express
@@ -32,7 +37,7 @@ connectAssetsOptions.helperContext = app.locals
 app.enable("trust proxy");
 app.disable('x-powered-by');
 app.configure(function () {
-  app.set('port', process.env.PORT || 5000);
+  app.set('port', process.env.PORT || 6983);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.compress());
@@ -40,7 +45,7 @@ app.configure(function () {
   app.use(express.methodOverride());
   app.use(express.cookieParser());
   app.use(express.session({
-    secret: 'coinnextsecret83',
+    secret: 'coinnextsecretadmin83',
     store: new RedisStore(GLOBAL.appConfig().redis),
     cookie: {
       maxAge: 2592000000,
@@ -79,20 +84,18 @@ app.configure('production', function(){
 
 var server = http.createServer(app);
 
-GLOBAL.sockets = require("./lib/sockets")(server, environment);
-
 server.listen(app.get('port'), function(){
-  console.log("Coinnext is running on port %d in %s mode", app.get("port"), app.settings.env);
+  console.log("Coinnext admin is running on port %d in %s mode", app.get("port"), app.settings.env);
 });
 
 
 //User validation
-if (GLOBAL.appConfig().site_auth) {
+if (GLOBAL.appConfig().admin_auth) {
   var auth = function (req, res, next) {
-    if ((req.query.u === GLOBAL.appConfig().site_auth.user) && (req.query.p === GLOBAL.appConfig().site_auth.pass)) {
-      req.session.staging_auth = true;
+    if ((req.query.u === GLOBAL.appConfig().admin_auth.user) && (req.query.p === GLOBAL.appConfig().admin_auth.pass)) {
+      req.session.admin_auth = true;
     }
-    if (!req.session.staging_auth) return res.redirect("http://www.youtube.com/watch?v=oHg5SJYRHA0");
+    if (!req.session.admin_auth) return res.redirect("http://www.youtube.com/watch?v=oHg5SJYRHA0");
     next();
   }
   app.get('*', auth);
@@ -100,11 +103,4 @@ if (GLOBAL.appConfig().site_auth) {
 
 
 // Routes
-require('./routes/site')(app);
-require('./routes/auth')(app);
-require('./routes/users')(app);
-require('./routes/wallets')(app);
-require('./routes/payments')(app);
-require('./routes/transactions')(app);
-require('./routes/orders')(app);
-require('./routes/chat')(app);
+require('./routes/admin')(app);

@@ -12,7 +12,6 @@
     , "jade": "latest"
     , "coffee-script": "latest"
     , "connect-assets": "2.x"
-    , "gzippo": "latest"
     , "bcrypt": "latest"
     , "connect-redis": "1.4.7"
     , "hiredis": "latest"

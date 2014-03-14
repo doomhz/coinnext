@@ -1,0 +1,42 @@
+extends ../admin
+
+block content
+  h1 Stats
+
+  h4
+    span#btc-bank-balance
+      | 0
+    span
+      |  mBTC
+  h4
+    span#ppc-bank-balance
+      | 0
+    span
+      |  PPC
+  h4
+    span#ltc-bank-balance
+      | 0
+    span
+      |  LTC
+
+
+  br
+
+  p
+    input(type="text", placeholder="ID, email or deposit address", name="user-search")
+    button#find-user-bt.btn Find user
+    br
+    a#search-user-result(target="_blank")
+
+  p
+    a#show-wallet-info(href="#") Show more
+  #wallet-info.hidden
+    p
+      b BTC bank address:
+      |  #{btcBankAddress}
+    p
+      b PPC bank address:
+      |  #{ppcBankAddress}
+    p
+      b LTC bank address:
+      |  #{ltcBankAddress}
