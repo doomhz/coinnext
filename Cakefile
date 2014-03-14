@@ -7,6 +7,10 @@ GLOBAL.db = require './models/index'
 task "db:create_tables", "Create all tables", ()->
   GLOBAL.db.sequelize.sync().complete ()->
 
+task "db:create_tables_force", "Drop and create all tables", ()->
+  return console.log "Not in production!"  if environment is "production"
+  GLOBAL.db.sequelize.sync({force: true}).complete ()->
+
 task "db:seed_market_stats", "Seed default market stats", ()->
   MarketStats = GLOBAL.db.MarketStats
   marketStats = require './models/seeds/market_stats'

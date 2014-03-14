@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) ->
         allowNull: false
       address:
         type: DataTypes.STRING
-        allowNull: false
+        allowNull: true
       balance:
         type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
