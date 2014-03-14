@@ -112,6 +112,21 @@ btn(color)
 .btn
   btn($teal)
 
+.alert
+  overflow hidden
+  padding 15px
+  margin-bottom 10px
+  border-radius 3px
+  p
+    margin-bottom 0
+    text-align center
+  &.warning
+    border 1px solid #efe68c
+    border-bottom 1px solid darken(#efe68c, 20%)
+    background #fcf29d
+    p
+      color #5e5d2e
+
 a
   text-decoration none
   color $blue

@@ -65,9 +65,10 @@ block content
           .table-wrap
             table.trade-data
               tr
-                th IP
                 th Date
+                th IP
               - each stat in authStats
                 tr
-                  td #{stat.ip}
                   td #{stat.created_at.toFormat("DD.MM.YY HH24:MI")}
+                  td #{stat.ip}
+                  
