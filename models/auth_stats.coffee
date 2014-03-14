@@ -13,6 +13,9 @@ module.exports = (sequelize, DataTypes) ->
     ,
       tableName: "auth_stats"
       classMethods:
+
+        findByUser: (userId, callback = ()->)->
+          AuthStats.findAll({where: {user_id: userId}}).complete callback
         
         log: (data, sendByMail = true, callback = ()->)->
           stats =

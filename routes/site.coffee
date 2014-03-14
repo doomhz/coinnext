@@ -1,6 +1,7 @@
 Wallet = GLOBAL.db.Wallet
 MarketStats = GLOBAL.db.MarketStats
 TradeStats = GLOBAL.db.TradeStats
+AuthStats = GLOBAL.db.AuthStats
 _str = require "../lib/underscore_string"
 
 module.exports = (app)->
@@ -109,10 +110,12 @@ module.exports = (app)->
 
   app.get "/settings/security", (req, res)->
     return res.redirect "/login"  if not req.user
-    res.render "site/settings/security",
-      title: 'Security - Settings'
-      page: 'settings'
-      user: req.user
+    AuthStats.findByUser req.user.id, (err, authStats)->
+      res.render "site/settings/security",
+        title: 'Security - Settings'
+        page: 'settings'
+        user: req.user
+        authStats: authStats
 
   # Static Pages
   app.get "/legal/terms", (req, res)->

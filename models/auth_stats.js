@@ -19,6 +19,16 @@
     }, {
       tableName: "auth_stats",
       classMethods: {
+        findByUser: function(userId, callback) {
+          if (callback == null) {
+            callback = function() {};
+          }
+          return AuthStats.findAll({
+            where: {
+              user_id: userId
+            }
+          }).complete(callback);
+        },
         log: function(data, sendByMail, callback) {
           var stats;
           if (sendByMail == null) {

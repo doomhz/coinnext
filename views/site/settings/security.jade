@@ -58,4 +58,14 @@ block content
                   img(src="#{user.google_auth_data.google_auth_qr}")
                 p#qr-code #{user.gauth_key}
             a#qr-gen-bt(href="/generate_gauth") Enable Google Authenticator
-
+          section#auth-stats.container
+            .con-header
+              h3.con-header-title Authorization history
+            table.table-wrap
+              tr
+                th IP
+                th Date
+              - each stat in authStats
+                tr
+                  td #{stat.ip}
+                  td #{stat.created_at.toFormat("DD.MM.YY HH24:MI")}

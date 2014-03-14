@@ -1,11 +1,13 @@
 (function() {
-  var MarketStats, TradeStats, Wallet, _str;
+  var AuthStats, MarketStats, TradeStats, Wallet, _str;
 
   Wallet = GLOBAL.db.Wallet;
 
   MarketStats = GLOBAL.db.MarketStats;
 
   TradeStats = GLOBAL.db.TradeStats;
+
+  AuthStats = GLOBAL.db.AuthStats;
 
   _str = require("../lib/underscore_string");
 
@@ -155,10 +157,13 @@
       if (!req.user) {
         return res.redirect("/login");
       }
-      return res.render("site/settings/security", {
-        title: 'Security - Settings',
-        page: 'settings',
-        user: req.user
+      return AuthStats.findByUser(req.user.id, function(err, authStats) {
+        return res.render("site/settings/security", {
+          title: 'Security - Settings',
+          page: 'settings',
+          user: req.user,
+          authStats: authStats
+        });
       });
     });
     app.get("/legal/terms", function(req, res) {
