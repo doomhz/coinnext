@@ -1,4 +1,5 @@
 $(document).ready ()->
+  
   $.tmpload.defaults.tplWrapper = _.template
 
   window.App = window.App or {}

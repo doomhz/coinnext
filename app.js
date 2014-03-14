@@ -21,23 +21,22 @@ GLOBAL.walletsClient = new WalletsClient({host: GLOBAL.appConfig().wallets_host}
 GLOBAL.db = require('./models/index');
 
 require('./lib/auth');
-// Setup the middlewares
-var oneYear = 31557600000;
-var gzippoOptions = environment !== 'development' ? {clientMaxAge: oneYear, maxAge: oneYear} : {contentTypeMatch: /none/};
-var connectAssetsOptions = environment !== 'development' ? {minifyBuilds: true} : {};
-var staticRenderer = environment !== 'development' ? gzippo.staticGzip(__dirname + '/public', gzippoOptions) : express.static(__dirname + '/public');
+
 
 // Setup express
 var app = express();
 if (environment !== 'development') {
   app.use(connectDomain());
 }
+var connectAssetsOptions = environment !== 'development' ? {minifyBuilds: true} : {};
 connectAssetsOptions.helperContext = app.locals
 app.enable("trust proxy");
+app.disable('x-powered-by');
 app.configure(function () {
   app.set('port', process.env.PORT || 5000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
+  app.use(express.compress());
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser());
@@ -49,11 +48,18 @@ app.configure(function () {
       path: '/'
     }
   }));
-  app.use(staticRenderer);
+  if (environment !== "test") {
+    app.use(express.csrf());
+    app.use(function(req, res, next) {
+      res.locals.csrfToken = req.csrfToken();
+      next();
+    });
+    app.use(helmet.xframe('sameorigin'));
+  }
+  app.use(express.static(__dirname + '/public'));
   app.use(require('connect-assets')(connectAssetsOptions));
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use(helmet.xframe('sameorigin'));
   app.use(app.router);
   app.use(function(err, req, res, next) {
     console.error(err);

@@ -13,6 +13,7 @@ html(lang='en')
 
     script.
       CONFIG = {
+        csrf: "#{csrfToken}",
         users: {
           hostname: "#{GLOBAL.appConfig().users.hostname}"
         },

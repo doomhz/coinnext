@@ -10,6 +10,11 @@ initSockets = (server, env)->
   
   sockets.io = io.listen server, ioOptions
 
+  sockets.io.configure "production", ()->
+    sockets.io.enable "browser client minification"
+    sockets.io.enable "browser client etag"
+    sockets.io.enable "browser client gzip"
+
   sockets.usersSocket = sockets.io.of("/users").on "connection", (socket)->
     socket.on "listen", (data)->
       socket.user_id = data.id
