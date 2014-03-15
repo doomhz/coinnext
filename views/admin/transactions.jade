@@ -1,0 +1,43 @@
+extends ../admin
+
+block content
+  h2 Transactions
+
+  ul#transactions-stats
+    li
+      | Total transactions: #{totalTransactions}
+
+  p
+    - if (from - count >= 0)
+      a(href="/administratie/transactions?from=#{from - count}&user_id=#{userId ? userId : ''}") Prev
+      |  | 
+    a(href="/administratie/transactions?from=#{from + count}&user_id=#{userId ? userId : ''}") Next
+
+  table#transactions.table
+    thead
+      tr
+        th From
+        th To
+        th Amount
+        th Time
+    tbody
+      - each transaction in transactions
+        tr(class="#{transaction.category}")
+          td
+            - if (transaction.account && transaction.account.indexOf("wallet_") > -1 && transaction.wallet_id)
+              a(href="/administratie/wallet/#{transaction.wallet_id}", target="_blank") #{wallet_id}
+            - else
+              | #{transaction.account}
+            br
+            a.transaction-log-toggler(href="#") View log
+            pre.transaction-log.hidden
+              | !{jsonBeautifier.toHTML(transaction)}
+          td #{transaction.otheraccount || transaction.address}
+          td #{_str.satoshiRound(transaction.amount, 3)} #{transaction.currency} #{transaction.balance_loaded ? 'loaded' : ''}
+          td #{transaction.created_at.toFormat("DD MMM YYYY HH24:MI")}
+
+  p
+    - if (from - count >= 0)
+      a(href="/administratie/transactions?from=#{from - count}&user_id=#{userId ? userId : ''}") Prev
+      |  | 
+    a(href="/administratie/transactions?from=#{from + count}&user_id=#{userId ? userId : ''}") Next

@@ -1,11 +1,19 @@
 (function() {
-  var JsonRenderer, User, Wallet, _, _str;
+  var AuthStats, Payment, Transaction, User, Wallet, jsonBeautifier, jsonRenderer, _, _str;
 
   Wallet = GLOBAL.db.Wallet;
 
   User = GLOBAL.db.User;
 
-  JsonRenderer = require("../lib/json_renderer");
+  Transaction = GLOBAL.db.Transaction;
+
+  Payment = GLOBAL.db.Payment;
+
+  AuthStats = GLOBAL.db.AuthStats;
+
+  jsonRenderer = require("../lib/json_renderer");
+
+  jsonBeautifier = require("../lib/json_beautifier");
 
   _ = require("underscore");
 
@@ -33,10 +41,206 @@
       return res.render("admin/stats", {
         title: "Stats - Admin - Satoshibet",
         page: "stats",
-        user: req.user,
+        adminUser: req.user,
         _str: _str,
         _: _,
         currencies: Wallet.getCurrencies()
+      });
+    });
+    app.get("/administratie/users", function(req, res) {
+      var count, from, query;
+      count = req.query.count || 20;
+      from = req.query.from != null ? parseInt(req.query.from) : 0;
+      query = {
+        order: [["updated_at", "DESC"]],
+        limit: count,
+        offset: from
+      };
+      return User.findAndCountAll(query).complete(function(err, result) {
+        if (result == null) {
+          result = {
+            rows: [],
+            count: 0
+          };
+        }
+        return res.render("admin/users", {
+          title: "Users - Admin - Satoshibet",
+          page: "users",
+          adminUser: req.user,
+          _str: _str,
+          _: _,
+          currencies: Wallet.getCurrencies(),
+          users: result.rows,
+          totalUsers: result.count,
+          from: from,
+          count: count
+        });
+      });
+    });
+    app.get("/administratie/user/:id", function(req, res) {
+      return User.findById(req.params.id, function(err, user) {
+        return Wallet.findAll({
+          where: {
+            user_id: req.params.id
+          }
+        }).complete(function(err, wallets) {
+          var query;
+          query = {
+            where: {
+              user_id: req.params.id
+            },
+            order: [["created_at", "DESC"]],
+            limit: 20
+          };
+          return AuthStats.findAll(query).complete(function(err, authStats) {
+            return res.render("admin/user", {
+              title: "User " + user.email + " - " + user.id + " - Admin - Satoshibet",
+              page: "users",
+              adminUser: req.user,
+              _str: _str,
+              _: _,
+              currencies: Wallet.getCurrencies(),
+              user: user,
+              wallets: wallets,
+              authStats: authStats
+            });
+          });
+        });
+      });
+    });
+    app.get("/administratie/wallet/:id", function(req, res) {
+      return Wallet.findById(req.params.id, function(err, wallet) {
+        return res.render("admin/wallet", {
+          title: "Wallet " + wallet.id + " - Admin - Satoshibet",
+          page: "wallets",
+          adminUser: req.user,
+          _str: _str,
+          _: _,
+          currencies: Wallet.getCurrencies(),
+          wallet: wallet
+        });
+      });
+    });
+    app.get("/administratie/wallets", function(req, res) {
+      var count, currency, from, query;
+      count = req.query.count || 20;
+      from = req.query.from != null ? parseInt(req.query.from) : 0;
+      currency = req.query.currency != null ? req.query.currency : "BTC";
+      query = {
+        where: {
+          currency: currency
+        },
+        order: [["balance", "DESC"]],
+        limit: count,
+        offset: from
+      };
+      return Wallet.findAndCountAll(query).complete(function(err, result) {
+        if (result == null) {
+          result = {
+            rows: [],
+            count: 0
+          };
+        }
+        return res.render("admin/wallets", {
+          title: "Wallets - Admin - Satoshibet",
+          page: "wallets",
+          adminUser: req.user,
+          _str: _str,
+          _: _,
+          currencies: Wallet.getCurrencies(),
+          wallets: result.rows,
+          totalWallets: result.count,
+          from: from,
+          count: count,
+          currency: currency
+        });
+      });
+    });
+    app.get("/administratie/transactions", function(req, res) {
+      var count, from, query, userId;
+      userId = req.query.user_id || "";
+      count = req.query.count || 20;
+      from = req.query.from != null ? parseInt(req.query.from) : 0;
+      query = {
+        order: [["created_at", "DESC"]],
+        limit: count,
+        offset: from
+      };
+      if (userId) {
+        query.where = {
+          user_id: userId
+        };
+      }
+      return Transaction.findAndCountAll(query).complete(function(err, result) {
+        if (result == null) {
+          result = {
+            rows: [],
+            count: 0
+          };
+        }
+        return res.render("admin/transactions", {
+          title: "Transactions - Admin - Satoshibet",
+          page: "transactions",
+          adminUser: req.user,
+          _str: _str,
+          _: _,
+          currencies: Wallet.getCurrencies(),
+          transactions: result.rows,
+          totalTransactions: result.count,
+          from: from,
+          count: count,
+          jsonBeautifier: jsonBeautifier
+        });
+      });
+    });
+    app.get("/administratie/payments", function(req, res) {
+      var count, from, query, userId;
+      userId = req.query.user_id || "";
+      count = req.query.count || 20;
+      from = req.query.from != null ? parseInt(req.query.from) : 0;
+      query = {
+        order: [["created_at", "DESC"]],
+        limit: count,
+        offset: from
+      };
+      if (userId) {
+        query.where = {
+          user_id: userId
+        };
+      }
+      return Payment.findAndCountAll(query).complete(function(err, result) {
+        if (result == null) {
+          result = {
+            rows: [],
+            count: 0
+          };
+        }
+        return res.render("admin/payments", {
+          title: "Payments - Admin - Satoshibet",
+          page: "payments",
+          adminUser: req.user,
+          _str: _str,
+          _: _,
+          currencies: Wallet.getCurrencies(),
+          payments: result.rows,
+          totalPayments: result.count,
+          from: from,
+          count: count,
+          jsonBeautifier: jsonBeautifier
+        });
+      });
+    });
+    app.put("/administratie/pay/:id", function(req, res) {
+      res.statusCode = 409;
+      return res.json({
+        error: "Not yet"
+      });
+    });
+    app.post("/administratie/clear_pending_payments", function(req, res) {
+      return Payment.destroy({
+        status: "pending"
+      }).complete(function(err, payment) {
+        return res.json({});
       });
     });
     app.get("/administratie/banksaldo/:currency", function(req, res) {

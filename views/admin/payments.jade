@@ -1,0 +1,48 @@
+extends ../admin
+
+block content
+  h2 Payments
+
+  p
+    button#clear-pending-payments.btn.btn-danger Clear pending
+
+  p
+    - if (from - count >= 0)
+      a(href="/administratie/payments?from=#{from - count}&user_id=#{userId ? userId : ''}") Prev
+      |  | 
+    a(href="/general_admiral_sergeant/payments?from=#{from + count}&user_id=#{userId ? userId : ''}") Next
+
+  table#payments.table
+    thead
+      tr
+        th User
+        th Address
+        th Amount
+        th Status
+        th Time
+    tbody
+      - each payment in payments
+        tr
+          td
+            a(href="/administratie/user/#{payment.user_id}", target="_blank") #{payment.user_id}
+            br
+            a.payment-log-toggler(href="#") View log
+            pre.payment-log.hidden
+              | !{jsonBeautifier.toHTML(payment.log)}
+              br
+              | IP: #{payment.remote_ip}
+          td #{payment.address}
+          td #{_str.roundTo(payment.amount)} #{payment.currency}
+          td
+            span.payment-status #{payment.status}
+            - if (!payment.isProcessed() && !payment.isCanceled())
+              br
+              button.pay.btn.btn-warning(data-id="#{payment.id}")
+                | Pay
+          td #{payment.created_at.toFormat("DD MMM YYYY HH24:MI")}
+
+  p
+    - if (from - count >= 0)
+      a(href="/administratie/payments?from=#{from - count}&user_id=#{userId ? userId : ''}") Prev
+      |  | 
+    a(href="/administratie/payments?from=#{from + count}&user_id=#{userId ? userId : ''}") Next

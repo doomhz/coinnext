@@ -1,0 +1,36 @@
+extends ../admin
+
+block content
+  h2 Users
+
+  ul#users-stats
+    li
+      | Total users: #{totalUsers}
+
+  p
+    - if (from - count >= 0)
+      a(href="/administratie/users?from=#{from - count}") Prev
+      |  | 
+    a(href="/administratie/users?from=#{from + count}") Next
+
+  table#users.table.table-striped
+    thead
+      tr
+        th Email
+        th Created
+        th Updated
+    tbody
+      - each user in users
+        tr
+          td
+            a(href="/administratie/user/#{user.id}", target="_blank") #{user.email}
+          td
+            | #{user.created_at.toFormat("DD MMM YYYY HH24:MI")}
+          td
+            | #{user.updated_at.toFormat("DD MMM YYYY HH24:MI")}
+
+  p
+    - if (from - count >= 0)
+      a(href="/administratie/users?from=#{from - count}") Prev
+      |  | 
+    a(href="/administratie/users?from=#{from + count}") Next

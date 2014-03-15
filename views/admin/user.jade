@@ -1,0 +1,56 @@
+extends ../admin
+
+block content
+  h2 User #{user.email} - #{user.id}
+
+  p Email verified: #{user.email_verified}
+  p Created: #{user.created_at.toFormat("DD MMM YYYY HH24:MI")}
+  p Updated: #{user.updated_at.toFormat("DD MMM YYYY HH24:MI")}
+
+  p
+    a(href="/administratie/payments?user_id=#{user.id}", target="_blank") View payments
+  p
+    a(href="/administratie/transactions?user_id=#{user.id}", target="_blank") View transactions
+
+  h3 Wallets
+
+  table#wallets.table.table-striped
+    thead
+      tr
+        th Wallet
+        th Address
+        th Balance
+        th Hold balance
+        th Created
+        th Updated
+    tbody
+      - each wallet in wallets
+        tr
+          td
+            a(href="/administratie/wallet/#{wallet.id}", target="_blank") #{wallet.id}
+          td
+            | #{wallet.address}
+          td
+            | #{wallet.balance}
+          td
+            | #{wallet.hold_balance}
+          td
+            | #{wallet.created_at.toFormat("DD MMM YYYY HH24:MI")}
+          td
+            | #{wallet.updated_at.toFormat("DD MMM YYYY HH24:MI")}
+
+  h3 Logins
+
+  table#logins.table.table-striped
+    thead
+      tr
+        th IP
+        th Date
+    tbody
+      - each login in authStats
+        tr
+          td
+            | #{login.ip}
+          td
+            | #{login.created_at.toFormat("DD MMM YYYY HH24:MI")}
+ 

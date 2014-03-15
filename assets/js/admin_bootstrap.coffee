@@ -20,7 +20,6 @@ $(document).ready ()->
       ev.preventDefault()
       currency = $(ev.target).data "currency"
       $cnt = $("#wallet-info-cnt-#{currency}")
-      console.log $cnt.hasClass "hidden"
       if not $cnt.hasClass("hidden")
         $cnt.addClass "hidden"
       else
@@ -41,3 +40,37 @@ $(document).ready ()->
           .text "#{response.id} - #{response.email}"
         else
           alert "User could not be found."
+
+  $transactionsTable = $("#transactions")
+  if $transactionsTable.length
+    $transactionsTable.delegate ".transaction-log-toggler", "click", (ev)->
+      ev.preventDefault()
+      $logEl = $(ev.currentTarget).next(".transaction-log:first")
+      $logEl.toggleClass "hidden", not $logEl.hasClass("hidden")
+
+  $paymentsTable = $("#payments")
+  if $paymentsTable.length
+    $paymentsTable.delegate ".payment-log-toggler", "click", (ev)->
+      ev.preventDefault()
+      $logEl = $(ev.currentTarget).next(".payment-log:first")
+      $logEl.toggleClass "hidden", not $logEl.hasClass("hidden")
+
+    $paymentsTable.delegate ".pay", "click", (ev)->
+      ev.preventDefault()
+      $el = $(ev.currentTarget)
+      $.ajax
+        url: "#{rootUrl}/pay/#{$el.data('id')}"
+        type: "put"
+        dataType: "json"
+        success: (response)->
+          $el.parent().find(".payment-status").text response.status
+          $el.hide()
+        error: ()->
+          alert "Error processing payment..."
+
+    $("#clear-pending-payments").click (ev)->
+      ev.preventDefault()
+      if confirm "Are you sure?"
+        $el = $(ev.currentTarget)
+        $.post "#{rootUrl}/clear_pending_payments", ()->
+          window.location.reload()

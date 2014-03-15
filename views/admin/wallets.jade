@@ -1,0 +1,45 @@
+extends ../admin
+
+block content
+  h2 Wallets #{currency}
+
+  ul#wallets-stats
+    li
+      | Total wallets: #{totalWallets}
+
+  p
+    - if (from - count >= 0)
+      a(href="/administratie/wallets?from=#{from - count}&currency=#{currency}") Prev
+      |  | 
+    a(href="/administratie/wallets?from=#{from + count}&currency=#{currency}") Next
+
+  table#wallets.table.table-striped
+    thead
+      tr
+        th Wallet
+        th User
+        th Balance
+        th Hold balance
+        th Created
+        th Updated
+    tbody
+      - each wallet in wallets
+        tr
+          td
+            a(href="/administratie/wallet/#{wallet.id}", target="_blank") #{wallet.id}
+          td
+            a(href="/administratie/user/#{wallet.user_id}", target="_blank") #{wallet.user_id}
+          td
+            | #{wallet.balance}
+          td
+            | #{wallet.hold_balance}
+          td
+            | #{wallet.created_at.toFormat("DD MMM YYYY HH24:MI")}
+          td
+            | #{wallet.updated_at.toFormat("DD MMM YYYY HH24:MI")}
+
+  p
+    - if (from - count >= 0)
+      a(href="/administratie/wallets?from=#{from - count}&currency=#{currency}") Prev
+      |  | 
+    a(href="/administratie/wallets?from=#{from + count}&currency=#{currency}") Next

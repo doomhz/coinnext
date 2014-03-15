@@ -1,0 +1,13 @@
+extends ../admin
+
+block content
+  h2 Wallet #{wallet.id}
+
+  p Address: #{wallet.address}
+  p Balance: #{wallet.balance}
+  p Hold balance: #{wallet.hold_balance}
+  p Created: #{wallet.created_at.toFormat("DD MMM YYYY HH24:MI")}
+  p Updated: #{wallet.updated_at.toFormat("DD MMM YYYY HH24:MI")}
+
+  p
+    a(href="/administratie/user/#{wallet.user_id}", target="_blank") View user
