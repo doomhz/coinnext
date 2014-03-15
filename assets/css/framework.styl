@@ -85,7 +85,7 @@ btn(color)
   padding 7px 12px
   border 0
   font-size 14px
-  text-shadow 0 -1px 0 rgba(0,0,0,0.15)
+  text-shadow 0 -1px 0 rgba(#000,.15)
   line-height 14px
   display inline-block
   font-weight bold
@@ -263,7 +263,8 @@ p
 /* Sub Nav */
 .sub-nav
   reset-list()
-  border 1px solid $border-color
+  border 1px solid #e3e6eb
+  border-bottom 1px solid #d1d5dd
   border-radius 3px
   background #fff
   li
@@ -282,7 +283,7 @@ p
       &:before
         content ""
         border-top 9px solid transparent
-        border-right 9px solid $border-color
+        border-right 9px solid #e3e6eb
         border-bottom 9px solid transparent
         display inline-block
         top 50%

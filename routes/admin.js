@@ -28,6 +28,7 @@
     app.get("/administratie", function(req, res) {
       return res.render("admin/stats", {
         title: "Stats - Admin - Satoshibet",
+        page: "stats",
         btcBankAddress: GLOBAL.wallets["BTC"].address,
         ppcBankAddress: GLOBAL.wallets["PPC"].address,
         ltcBankAddress: GLOBAL.wallets["LTC"].address,

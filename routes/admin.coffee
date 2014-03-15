@@ -22,6 +22,7 @@ module.exports = (app)->
   app.get "/administratie", (req, res)->
     res.render "admin/stats",
       title: "Stats - Admin - Satoshibet"
+      page: "stats"
       btcBankAddress: GLOBAL.wallets["BTC"].address
       ppcBankAddress: GLOBAL.wallets["PPC"].address
       ltcBankAddress: GLOBAL.wallets["LTC"].address
