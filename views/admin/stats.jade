@@ -3,40 +3,28 @@ extends ../admin
 block content
   h1 Stats
 
-  h4
-    span#btc-bank-balance
-      | 0
-    span
-      |  mBTC
-  h4
-    span#ppc-bank-balance
-      | 0
-    span
-      |  PPC
-  h4
-    span#ltc-bank-balance
-      | 0
-    span
-      |  LTC
-
+  - for currency in currencies
+    h4
+      span(id="bank-balance-#{currency}")
+        | loading...
+      span
+        |  #{currency}
 
   br
 
   p
-    input(type="text", placeholder="ID, email or deposit address", name="user-search")
-    button#find-user-bt.btn Find user
-    br
+    form#search-user-form
+      input(type="text", placeholder="ID, email or deposit address", name="term")
+      button(type="submit").btn Find user
+      br
     a#search-user-result(target="_blank")
 
   p
-    a#show-wallet-info(href="#") Show more
-  #wallet-info.hidden
-    p
-      b BTC bank address:
-      |  #{btcBankAddress}
-    p
-      b PPC bank address:
-      |  #{ppcBankAddress}
-    p
-      b LTC bank address:
-      |  #{ltcBankAddress}
+    form#load-wallet-info-form
+      input(type="text", placeholder="Currency", name="currency", value="BTC")
+      button.btn Get info
+    #wallet-info-cnt.hidden
+      span#wallet-currency
+      | : 
+      span#wallet-address
+      pre#wallet-info

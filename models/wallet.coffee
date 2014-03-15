@@ -55,6 +55,9 @@ module.exports = (sequelize, DataTypes) ->
         findById: (id, callback)->
           Wallet.find(id).complete callback
 
+        findByAddress: (address, callback)->
+          Wallet.find({where: {address: address}}).complete callback
+
         getCurrencies: ()->
           CURRENCIES
 

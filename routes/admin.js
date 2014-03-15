@@ -1,5 +1,9 @@
 (function() {
-  var JsonRenderer, _, _str;
+  var JsonRenderer, User, Wallet, _, _str;
+
+  Wallet = GLOBAL.db.Wallet;
+
+  User = GLOBAL.db.User;
 
   JsonRenderer = require("../lib/json_renderer");
 
@@ -28,18 +32,71 @@
     app.get("/administratie", function(req, res) {
       return res.render("admin/stats", {
         title: "Stats - Admin - Satoshibet",
-        btcBankAddress: GLOBAL.wallets["BTC"].address,
-        ppcBankAddress: GLOBAL.wallets["PPC"].address,
-        ltcBankAddress: GLOBAL.wallets["LTC"].address,
         _str: _str,
-        _: _
+        _: _,
+        currencies: Wallet.getCurrencies()
       });
     });
-    app.get("/administratie/banksaldo", function(req, res) {
-      return res.json({
-        btcBankBalance: 0,
-        ppcBankBalance: 0,
-        ltcBankBalance: 0
+    app.get("/administratie/banksaldo/:currency", function(req, res) {
+      var currency;
+      currency = req.params.currency;
+      if (GLOBAL.wallets[currency]) {
+        return GLOBAL.wallets[currency].getBankBalance(function(err, balance) {
+          if (err) {
+            console.log(err);
+          }
+          return res.json({
+            balance: balance || "wallet inaccessible",
+            currency: currency
+          });
+        });
+      } else {
+        return res.json({
+          balance: "wallet inaccessible",
+          currency: currency
+        });
+      }
+    });
+    app.post("/administratie/wallet_info", function(req, res) {
+      var currency;
+      currency = req.body.currency;
+      if (GLOBAL.wallets[currency]) {
+        return GLOBAL.wallets[currency].getInfo(function(err, info) {
+          if (err) {
+            console.log(err);
+          }
+          return res.json({
+            info: info || "wallet inaccessible",
+            currency: currency,
+            address: GLOBAL.appConfig().wallets[currency.toLowerCase()].wallet.address
+          });
+        });
+      } else {
+        return res.json({
+          info: "wallet inaccessible",
+          currency: currency
+        });
+      }
+    });
+    app.post("/administratie/search_user", function(req, res) {
+      var renderUser, term;
+      term = req.body.term;
+      renderUser = function(err, user) {
+        return res.json(user);
+      };
+      if (_.isNumber(parseInt(term))) {
+        return User.findById(term, renderUser);
+      }
+      if (term.indexOf("@") > -1) {
+        return User.findByEmail(term, renderUser);
+      }
+      return Wallet.findByAddress(term, function(err, wallet) {
+        if (wallet) {
+          return User.findById(wallet.user_id, renderUser);
+        }
+        return res.json({
+          error: "Could not find user by " + term
+        });
       });
     });
     return login = function(req, res, next) {

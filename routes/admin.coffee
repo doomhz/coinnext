@@ -1,4 +1,6 @@
 #Transaction = GLOBAL.db.Transaction
+Wallet = GLOBAL.db.Wallet
+User = GLOBAL.db.User
 JsonRenderer = require "../lib/json_renderer"
 _ = require "underscore"
 _str = require "../lib/underscore_string"
@@ -22,17 +24,48 @@ module.exports = (app)->
   app.get "/administratie", (req, res)->
     res.render "admin/stats",
       title: "Stats - Admin - Satoshibet"
-      btcBankAddress: GLOBAL.wallets["BTC"].address
-      ppcBankAddress: GLOBAL.wallets["PPC"].address
-      ltcBankAddress: GLOBAL.wallets["LTC"].address
       _str: _str
       _: _
+      currencies: Wallet.getCurrencies()
 
-  app.get "/administratie/banksaldo", (req, res)->
-    res.json
-      btcBankBalance: 0
-      ppcBankBalance: 0
-      ltcBankBalance: 0
+  app.get "/administratie/banksaldo/:currency", (req, res)->
+    currency = req.params.currency
+    if GLOBAL.wallets[currency]
+      GLOBAL.wallets[currency].getBankBalance (err, balance)->
+        console.log err  if err
+        res.json
+          balance: balance or "wallet inaccessible"
+          currency: currency
+    else
+      res.json
+        balance: "wallet inaccessible"
+        currency: currency
+
+  app.post "/administratie/wallet_info", (req, res)->
+    currency = req.body.currency
+    if GLOBAL.wallets[currency]
+      GLOBAL.wallets[currency].getInfo (err, info)->
+        console.log err  if err
+        res.json
+          info: info or "wallet inaccessible"
+          currency: currency
+          address: GLOBAL.appConfig().wallets[currency.toLowerCase()].wallet.address
+    else
+      res.json
+        info: "wallet inaccessible"
+        currency: currency
+
+  app.post "/administratie/search_user", (req, res)->
+    term = req.body.term
+    renderUser = (err, user)->
+      res.json user
+    return User.findById term, renderUser  if _.isNumber parseInt(term)
+    return User.findByEmail term, renderUser  if term.indexOf("@") > -1
+    Wallet.findByAddress term, (err, wallet)->
+      return User.findById wallet.user_id, renderUser  if wallet
+      res.json
+        error: "Could not find user by #{term}"
+
 
   login = (req, res, next)->
     passport.authenticate("local", (err, user, info)->

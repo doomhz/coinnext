@@ -6,4 +6,6 @@
 //= require vendor/underscore.string
 //= require vendor/backbone
 
+//= require app/helpers/json
+
 //= require admin_bootstrap

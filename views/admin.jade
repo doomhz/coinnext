@@ -13,7 +13,8 @@ html(lang='en')
 
     script.
       CONFIG = {
-        csrf: "#{csrfToken}"
+        csrf: "#{csrfToken}",
+        currencies: ["!{currencies.join('", "')}"]
       }
 
   body

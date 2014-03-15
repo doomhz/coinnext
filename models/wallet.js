@@ -54,6 +54,13 @@
         findById: function(id, callback) {
           return Wallet.find(id).complete(callback);
         },
+        findByAddress: function(address, callback) {
+          return Wallet.find({
+            where: {
+              address: address
+            }
+          }).complete(callback);
+        },
         getCurrencies: function() {
           return CURRENCIES;
         },
