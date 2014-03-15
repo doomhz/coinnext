@@ -3,45 +3,44 @@ extends ../layout
 block content
   .main-content.terms(role='main')
     .wrapper
-      .one-col
+      .one-col.content
         h1.page-title Bug Bounty Program
-        .content
-          p Coinnext appreciates and encourages the help of security researchers in disclosing any potential security vulnerabilities in a responsible manner.
-          h2 Responsible Disclosure Policy
-          p If you give us a reasonable time to respond to your report before making any information public and make a good faith effort to avoid privacy violations, destruction of data and interruption or degradation of our service during your research, we will not bring any lawsuit against you or ask law enforcement to investigate you.
+        p Coinnext appreciates and encourages the help of security researchers in disclosing any potential security vulnerabilities in a responsible manner.
+        h2 Responsible Disclosure Policy
+        p If you give us a reasonable time to respond to your report before making any information public and make a good faith effort to avoid privacy violations, destruction of data and interruption or degradation of our service during your research, we will not bring any lawsuit against you or ask law enforcement to investigate you.
 
-          h2 Eligibility
+        h2 Eligibility
 
-          p To qualify for a bounty, you must
+        p To qualify for a bounty, you must
+        ul
+          li Adhere to our Responsible Disclosure Policy
+          li Be the first person to disclose the bug
+          li Report a bug that could compromise the integrity of our trading platform, or enable access to a system within the Coinnext infrastructure, including but not limited to:
           ul
-            li Adhere to our Responsible Disclosure Policy
-            li Be the first person to disclose the bug
-            li Report a bug that could compromise the integrity of our trading platform, or enable access to a system within the Coinnext infrastructure, including but not limited to:
-            ul
-              li Cross-Site Scripting (XSS)
-              li Cross-Site Request Forgery (CSRF/XSRF)
-              li Broken Authentication
-              li Circumvention of our Platform/Privacy permission models
-              li Remote Code Execution
-              li Privilege Escalation
-              li Provisioning Errors
-              li Obtaining user information
+            li Cross-Site Scripting (XSS)
+            li Cross-Site Request Forgery (CSRF/XSRF)
+            li Broken Authentication
+            li Circumvention of our Platform/Privacy permission models
+            li Remote Code Execution
+            li Privilege Escalation
+            li Provisioning Errors
+            li Obtaining user information
 
-          h2 Rewards
-          p Depending on the severity of the bug, rewards vary from $50 to several $1,000. All rewards are payed out in Bitcoin. You are only eligible for a reward if you are the first person to point out the security vulnerability.
+        h2 Rewards
+        p Depending on the severity of the bug, rewards vary from $50 to several $1,000. All rewards are payed out in Bitcoin. You are only eligible for a reward if you are the first person to point out the security vulnerability.
 
-          h2 Exclusions
-          p The following bugs are not eligible for a bounty:
-            ul
-              li Denial of Service Vulnerabilities
-              li Spam or Social Engineering techniques
-              li Security bugs in third-party websites/applications that integrate with Coinnext
-              li Nessus/PCI scan data
-              li Usability issues
-          
-          h2 How To Disclose
-          
-          p
-            a(href="https://docs.google.com/a/coinnext.com/forms/d/1oX7MgLcpe5fci0xrzLK9PnGas8bV7UwRRDg51_P2o9o/viewform", target="_blank").btn Disclose A Vulnerability
-                    
+        h2 Exclusions
+        p The following bugs are not eligible for a bounty:
+          ul
+            li Denial of Service Vulnerabilities
+            li Spam or Social Engineering techniques
+            li Security bugs in third-party websites/applications that integrate with Coinnext
+            li Nessus/PCI scan data
+            li Usability issues
+        
+        h2 How To Disclose
+        
+        p
+          a(href="https://docs.google.com/a/coinnext.com/forms/d/1oX7MgLcpe5fci0xrzLK9PnGas8bV7UwRRDg51_P2o9o/viewform", target="_blank").btn Disclose A Vulnerability
+                  
 

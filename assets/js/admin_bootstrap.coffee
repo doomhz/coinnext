@@ -16,6 +16,20 @@ $(document).ready ()->
     setInterval updateBankBalance, 60000
     updateBankBalance()
 
+    $(".show-wallet-info-bt").click (ev)->
+      ev.preventDefault()
+      currency = $(ev.target).data "currency"
+      $cnt = $("#wallet-info-cnt-#{currency}")
+      console.log $cnt.hasClass "hidden"
+      if not $cnt.hasClass("hidden")
+        $cnt.addClass "hidden"
+      else
+        $.post "#{rootUrl}/wallet_info", {currency: currency}, (response)->
+          $("#wallet-address-#{currency}").html response.address
+          $("#wallet-info-#{currency}").html window.App.Helpers.JSON.toHTML response.info
+          $cnt.removeClass "hidden"
+
+
   $searchUserForm = $("#search-user-form")
   if $searchUserForm.length
     $searchUserForm.submit (ev)->
@@ -27,13 +41,3 @@ $(document).ready ()->
           .text "#{response.id} - #{response.email}"
         else
           alert "User could not be found."
-
-  $walletInfoForm = $("#load-wallet-info-form")
-  if $walletInfoForm.length
-    $walletInfoForm.submit (ev)->
-      ev.preventDefault()
-      $.post "#{rootUrl}/wallet_info", $(ev.target).serialize(), (response)->
-        $("#wallet-currency").html response.currency
-        $("#wallet-address").html response.address
-        $("#wallet-info").html window.App.Helpers.JSON.toHTML response.info
-        $("#wallet-info-cnt").removeClass "hidden"

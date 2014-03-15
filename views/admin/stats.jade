@@ -1,30 +1,17 @@
 extends ../admin
 
 block content
-  h1 Stats
+  h2 Wallet Balances
 
-  - for currency in currencies
-    h4
-      span(id="bank-balance-#{currency}")
-        | loading...
-      span
-        |  #{currency}
+  table.table.wallet-balance
+    - for currency in currencies
+      tr
+        td.label
+          a(data-currency="#{currency}").btn.show-wallet-info-bt #{currency}
+          div(id="wallet-info-cnt-#{currency}").hidden
+            span(id="wallet-address-#{currency}")
+            pre(id="wallet-info-#{currency}")
+        td 
+          span(id="bank-balance-#{currency}") 0
 
   br
-
-  p
-    form#search-user-form
-      input(type="text", placeholder="ID, email or deposit address", name="term")
-      button(type="submit").btn Find user
-      br
-    a#search-user-result(target="_blank")
-
-  p
-    form#load-wallet-info-form
-      input(type="text", placeholder="Currency", name="currency", value="BTC")
-      button.btn Get info
-    #wallet-info-cnt.hidden
-      span#wallet-currency
-      | : 
-      span#wallet-address
-      pre#wallet-info

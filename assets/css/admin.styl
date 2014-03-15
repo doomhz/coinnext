@@ -1,2 +1,201 @@
-@import 'vendor/bootstrap-responsive.css'
-@import 'vendor/bootstrap.css'
+@import 'nib'
+@import 'vendor/normalize.css'
+
+$teal = #3eae5f
+$blue = #549cd5
+$darkblue = #14294e
+$lightgray = #a7abb1
+
+$border-color = #d1d5dd
+$con-header-bg = #f2f4f5
+$bgcolor = #f6f7f8
+$bgcolor = #eff1f3
+
+reset-list()
+  list-style none
+  padding 0
+  margin 0
+
+btn(color)
+  color #fff
+  position relative
+  border-radius 2px
+  background-image linear-gradient(rgba(#fff,.05), transparent)
+  background-color color
+  padding 7px 12px
+  border 0
+  font-size 14px
+  text-shadow 0 -1px 0 rgba(#000,0.15)
+  line-height 14px
+  display inline-block
+  font-weight bold
+  user-select none
+  -webkit-font-smoothing antialiased
+  transition all .2s linear
+  &:hover
+    color #fff
+    background lighten(color, 20%)
+    text-decoration none
+  &:active
+    top 1px
+
+  if color is white
+    background transparent
+    color #999
+    border 1px solid #d5d5d5
+    text-shadow none
+    &:hover
+      background-color transparent
+      color $blue
+      border-color $blue
+
+.btn
+  btn($teal)
+
+body
+  color #484c57
+  -webkit-font-smoothing antialiased
+  font 14px "Helvetica Neue", Helvetica, Arial, sans-serif
+
+input
+button:focus
+  outline none
+
+.hidden
+  display none
+
+/* Side Bar */
+.sidebar
+  clearfix()
+  position fixed
+  background #549cd5
+  border-right 1px solid #14294e
+  height 100%
+  width 200px
+
+.page-head
+  border-bottom 1px solid darken(#549cd5, 10%)
+
+.site-logo
+  display block
+  margin 15px 20px
+  user-select none
+
+.coinnext-logo
+  height 25px
+  width 146px
+  display block
+  image '/img/logo-white.png' auto 25px
+  background-repeat no-repeat
+
+.nav
+  reset-list()
+
+.side-nav
+  a
+    display block
+    padding 10px 20px
+    border-bottom 1px solid darken(#549cd5, 10%)
+    color #fff
+    text-decoration none
+    &:hover
+      background rgba(#fff,.1)
+    &.active
+      background #14294e
+      border 0
+
+/* Top Bar */
+.top-bar
+  clearfix()
+  margin-left 200px
+  background-image linear-gradient(rgba(#fff,.1), transparent)
+  background-color #333
+  color #ccc
+
+.quick-search
+  float left
+  padding 6px 10px
+  input
+    border-radius 2px
+    border 0
+    padding 6px
+    width 300px
+  .btn
+    padding 7px 14px
+    background $blue
+    margin-left 5px
+    font-size 13px
+    border-radius 2px
+    
+.current-user
+  float right
+  font-size 13px
+  padding 13px
+  margin 0
+  border-right 1px solid rgba(#fff,.1)
+
+.user-nav
+  float right
+  a
+    font-size 13px
+    display inline-block
+    padding 13px
+    color #ccc
+    text-decoration none
+
+/* Content */
+
+.content
+  margin-left 200px
+  overflow hidden
+  padding 40px
+
+table
+  max-width 100%
+  background-color transparent
+  border-spacing 0
+
+th
+  text-align left
+
+.table
+  width 100%
+  margin-bottom 20px
+  border 1px solid #ddd
+  border-radius 3px
+
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td
+  padding 8px
+  line-height 1.428571429
+  vertical-align top
+  border-top 1px solid #ddd
+
+.table > thead > tr > th
+  vertical-align bottom
+  border-bottom 2px solid #ddd
+
+.table > caption + thead > tr:first-child > th,
+.table > colgroup + thead > tr:first-child > th,
+.table > thead:first-child > tr:first-child > th,
+.table > caption + thead > tr:first-child > td,
+.table > colgroup + thead > tr:first-child > td,
+.table > thead:first-child > tr:first-child > td
+  border-top 0
+
+.table > tbody > tr:nth-child(odd) > td,
+.table > tbody > tr:nth-child(odd) > th
+  background-color: #f9f9f9
+
+.wallet-balance
+  .label
+    font-weight bold
+    width 1px
+
+
+h2
+  margin 0 0 10px 0

@@ -32,6 +32,8 @@
     app.get("/administratie", function(req, res) {
       return res.render("admin/stats", {
         title: "Stats - Admin - Satoshibet",
+        page: "stats",
+        user: req.user,
         _str: _str,
         _: _,
         currencies: Wallet.getCurrencies()
@@ -46,13 +48,13 @@
             console.log(err);
           }
           return res.json({
-            balance: balance || "wallet inaccessible",
+            balance: balance || "wallet unaccessible",
             currency: currency
           });
         });
       } else {
         return res.json({
-          balance: "wallet inaccessible",
+          balance: "wallet unaccessible",
           currency: currency
         });
       }
@@ -66,14 +68,14 @@
             console.log(err);
           }
           return res.json({
-            info: info || "wallet inaccessible",
+            info: info || "wallet unaccessible",
             currency: currency,
             address: GLOBAL.appConfig().wallets[currency.toLowerCase()].wallet.address
           });
         });
       } else {
         return res.json({
-          info: "wallet inaccessible",
+          info: "wallet unaccessible",
           currency: currency
         });
       }
@@ -82,6 +84,9 @@
       var renderUser, term;
       term = req.body.term;
       renderUser = function(err, user) {
+        if (user == null) {
+          user = {};
+        }
         return res.json(user);
       };
       if (_.isNumber(parseInt(term))) {

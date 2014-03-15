@@ -24,6 +24,8 @@ module.exports = (app)->
   app.get "/administratie", (req, res)->
     res.render "admin/stats",
       title: "Stats - Admin - Satoshibet"
+      page: "stats"
+      user: req.user
       _str: _str
       _: _
       currencies: Wallet.getCurrencies()
@@ -34,11 +36,11 @@ module.exports = (app)->
       GLOBAL.wallets[currency].getBankBalance (err, balance)->
         console.log err  if err
         res.json
-          balance: balance or "wallet inaccessible"
+          balance: balance or "wallet unaccessible"
           currency: currency
     else
       res.json
-        balance: "wallet inaccessible"
+        balance: "wallet unaccessible"
         currency: currency
 
   app.post "/administratie/wallet_info", (req, res)->
@@ -47,17 +49,17 @@ module.exports = (app)->
       GLOBAL.wallets[currency].getInfo (err, info)->
         console.log err  if err
         res.json
-          info: info or "wallet inaccessible"
+          info: info or "wallet unaccessible"
           currency: currency
           address: GLOBAL.appConfig().wallets[currency.toLowerCase()].wallet.address
     else
       res.json
-        info: "wallet inaccessible"
+        info: "wallet unaccessible"
         currency: currency
 
   app.post "/administratie/search_user", (req, res)->
     term = req.body.term
-    renderUser = (err, user)->
+    renderUser = (err, user = {})->
       res.json user
     return User.findById term, renderUser  if _.isNumber parseInt(term)
     return User.findByEmail term, renderUser  if term.indexOf("@") > -1
