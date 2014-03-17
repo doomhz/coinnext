@@ -60,6 +60,6 @@ module.exports = (app)->
   app.get "/verify/:token", (req, res)->
     token = req.params.token
     User.findByToken token, (err, user)->
-      return res.render "auth/verify", {title: "Verify Account - Coinnext.com", verified: false}  if not user
+      return res.render "auth/verify", {title: "Verify Account - Coinnext.com"}  if not user
       user.setEmailVerified (err, u)->
-        res.render "auth/verify", {title: "Verify Account - Coinnext.com", verified: true}
+        res.render "auth/verify", {title: "Verify Account - Coinnext.com", user: u}

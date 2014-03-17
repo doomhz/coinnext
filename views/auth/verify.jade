@@ -6,7 +6,7 @@ block content
     .wrapper
       .auth-box
         h1 Email Verification
-        - if (verified)
+        - if (user && user.email_verified)
           p.msg 
             | Your email was successfully verified.
             br

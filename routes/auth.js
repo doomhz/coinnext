@@ -109,14 +109,13 @@
       return User.findByToken(token, function(err, user) {
         if (!user) {
           return res.render("auth/verify", {
-            title: "Verify Account - Coinnext.com",
-            verified: false
+            title: "Verify Account - Coinnext.com"
           });
         }
         return user.setEmailVerified(function(err, u) {
           return res.render("auth/verify", {
             title: "Verify Account - Coinnext.com",
-            verified: true
+            user: u
           });
         });
       });
