@@ -13,6 +13,10 @@
 //= require vendor/ZeroClipboard
 //= require vendor/highstock
 //= require vendor/highstock.exporting
+//= require vendor/BigInt
+//= require vendor/sha256
+
+//= require app/helpers/crypto_currency
 
 //= require app/models/user
 //= require app/models/wallet

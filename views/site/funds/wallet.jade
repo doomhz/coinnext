@@ -64,9 +64,9 @@ block content
                   .currency-input
                     input(type="text", name="amount", placeholder="Amount")
                     .overlay-amount #{wallet.currency}
-                  label Enter a bitcoin address:
+                  label Enter a #{currencies[wallet.currency]} address:
                   .address-input
-                    input(type="text", name="address", placeholder="#{wallet.currency} address")
+                    input(type="text", name="address", placeholder="#{wallet.currency} address", data-currency="#{wallet.currency}")
                   .confirm-order
                     button Withdraw
                   ul.terms

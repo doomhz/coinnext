@@ -4,14 +4,15 @@ class App.FinancesView extends App.MasterView
     "submit #add-wallet-form": "onAddWallet"
     "click #show-qr-bt": "onShowQrAddress"
     "click #generate-address": "onGenerateAddress"
-    "submit #withdraw-form": "onPay"
+    #"submit #withdraw-form": "onPay"
 
-  initialize: ()->
+  initialize: (options)->
     $.subscribe "payment-processed", @onPaymentProcessed
     $.subscribe "wallet-balance-loaded", @onWalletBalanceLoaded
 
   render: ()->
     @renderCopyButton()
+    @setupFormValidators()
 
   renderCopyButton: ()->
     $copyButton = @$("#copy-address")
@@ -37,6 +38,28 @@ class App.FinancesView extends App.MasterView
         @$("[data-wallet-balance-id='#{walletId}']").html _.str.satoshiRound(wallet.get("balance") + wallet.get("hold_balance"))
         @$("[data-wallet-hold-balance-id='#{walletId}']").text _.str.satoshiRound(wallet.get("hold_balance"))
         @$("[data-wallet-available-balance-id='#{walletId}']").text _.str.satoshiRound(wallet.get("balance"))
+
+  setupFormValidators: ()->
+    $.validator.addMethod "cryptoAddress", (value, element)->
+      App.Helpers.CryptoCurrency.isValidAddress value
+    @$("#withdraw-form").validate
+      rules:
+        amount:
+          required: true
+          number: true
+          min: 0.000001
+        address:
+          required: true
+          cryptoAddress: true
+      messages:
+        amount:
+          required: "Please provide an amount."
+        address:
+          required: "Please provide an address."
+          cryptoAddress: "Please provide a valid address."
+      submitHandler: (form)=>
+        @onPay form
+        return false
 
   onAddWallet: (ev)->
     ev.preventDefault()
@@ -80,9 +103,8 @@ class App.FinancesView extends App.MasterView
       error: (m, xhr)->
         $.publish "error", xhr    
 
-  onPay: (ev)->
-    ev.preventDefault()
-    $form = $(ev.target)
+  onPay: (form)->
+    $form = $(form)
     amount = parseFloat $form.find("[name='amount']").val()
     if _.isNumber(amount) and amount > 0
       $form.find("button").attr "disabled", true

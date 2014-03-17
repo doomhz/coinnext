@@ -11,7 +11,7 @@ class App.TradeView extends App.MasterView
   events:
     "click .market-switcher": "onMarketSwitch"
     "click .header-balance .amount": "onAmountClick"
-    "submit .order-form": "onOrderSubmit"
+    #"submit .order-form": "onOrderSubmit"
     "keyup #market-buy-form #spend-amount-input": "onMarketBuyAmountChange"
     "keyup #limit-buy-form #buy-amount-input": "onLimitBuyAmountChange"
     "keyup #limit-buy-form #buy-unit-price": "onLimitBuyAmountChange"
@@ -30,6 +30,7 @@ class App.TradeView extends App.MasterView
       success: ()=>
         @renderTradeStats()
       error: ()=>
+    @setupFormValidators()
 
   renderTradeStats: ()->
     stats = @model.get "#{@currency1}_#{@currency2}"
@@ -47,6 +48,27 @@ class App.TradeView extends App.MasterView
         @$("[data-wallet-hold-balance-id='#{walletId}']").text _.str.satoshiRound(wallet.get("hold_balance"))
         @$("[data-wallet-available-balance-id='#{walletId}']").text _.str.satoshiRound(wallet.get("balance"))
 
+  setupFormValidators: ()->
+    for orderForm in @$(".order-form")
+      $(orderForm).validate
+        rules:
+          amount:
+            required: true
+            number: true
+            min: 0.000001
+          unit_price:
+            required: true
+            number: true
+            min: 0.000001
+        messages:
+          amount:
+            required: "Please provide an amount."
+          unit_price:
+            required: "Please provide an amount."
+        submitHandler: (form)=>
+          @onOrderSubmit form
+          return false
+
   isValidAmount: (amount)->
     _.isNumber(amount) and not _.isNaN(amount) and amount > 0
 
@@ -55,11 +77,9 @@ class App.TradeView extends App.MasterView
     @$("#limit-#{$target.attr("name")}-box,#market-#{$target.attr("name")}-box").hide()
     @$("##{$target.val()}-#{$target.attr("name")}-box").show()
 
-  onOrderSubmit: (ev)->
-    ev.preventDefault()
-    $form = $(ev.target)
+  onOrderSubmit: (form)->
+    $form = $(form)
     amount = parseFloat $form.find("[name='amount']").val()
-    return $.publish "error", "Please submit a valid amount bigger than 0."  if not @isValidAmount amount
     order = new App.OrderModel
       type: $form.find("[name='type']").val()
       action: $form.find("[name='action']").val()
