@@ -17,7 +17,7 @@ class App.FinancesView extends App.MasterView
   renderCopyButton: ()->
     $copyButton = @$("#copy-address")
     $showQrBt = @$("#show-qr-bt")
-    if $copyButton.length and $copyButton.data("clipboard-text").length
+    if $copyButton.length and $copyButton.attr("data-clipboard-text").length
       new ZeroClipboard $copyButton[0],
         moviePath: "#{window.location.origin}/ZeroClipboard.swf"
       $copyButton.show()
@@ -28,7 +28,7 @@ class App.FinancesView extends App.MasterView
 
   renderQrAddress: ($qrCnt)->
     $qrCnt.empty()
-    new QRCode $qrCnt[0], $qrCnt.data("address")
+    new QRCode $qrCnt[0], $qrCnt.attr("data-address")
 
   renderWalletBalance: (walletId)->
     wallet = new App.WalletModel
@@ -92,10 +92,8 @@ class App.FinancesView extends App.MasterView
         $qrAddressCnt = @$("#qr-address-cnt")
         $showQrBt = @$("#show-qr-bt")
         $copyButton.attr "data-clipboard-text", wallet.get("address")
-        $copyButton.data "clipboard-text", wallet.get("address")
         $addressRow.text wallet.get("address")
         $qrAddressCnt.attr "data-address", wallet.get("address")
-        $qrAddressCnt.data "address", wallet.get("address")
         $copyButton.show()
         $showQrBt.show()
         @renderCopyButton()
