@@ -9,7 +9,11 @@ block content
         - var coinStats = marketStats[currency1 + "_" + currency2];
         #coin-stats.coin-stats
         
-        include _chatbox
+        - if (user)
+          - if (user.chat_enabled)
+            include _chatbox
+        - else
+          include _chatbox
 
       .col-center
         include _warnings

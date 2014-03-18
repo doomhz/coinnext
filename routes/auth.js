@@ -184,7 +184,7 @@
           return AuthStats.log({
             ip: req.ip,
             user: req.user
-          });
+          }, req.user.email_auth_enabled);
         });
       })(req, res, next);
     };
