@@ -27,7 +27,7 @@
           len: [5, 500]
         }
       },
-      gauth_data: {
+      gauth_qr: {
         type: DataTypes.TEXT
       },
       gauth_key: {
@@ -41,14 +41,17 @@
       email_verified: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
+      },
+      chat_enabled: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+      },
+      email_auth_enabled: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
       }
     }, {
       tableName: "users",
-      getterMethods: {
-        google_auth_data: function() {
-          return JSON.parse(this.gauth_data);
-        }
-      },
       classMethods: {
         findById: function(id, callback) {
           if (callback == null) {
@@ -84,33 +87,49 @@
           userData = _.extend({}, data);
           userData.password = User.hashPassword(userData.password);
           return User.create(userData).complete(callback);
+        },
+        generateGAuthPassByKey: function(key) {
+          return speakeasy.time({
+            key: key,
+            encoding: "base32"
+          });
+        },
+        isValidGAuthPassForKey: function(pass, key) {
+          return User.generateGAuthPassByKey(key) === pass;
         }
       },
       instanceMethods: {
         isValidPassword: function(password) {
           return this.password === User.hashPassword(password);
         },
-        generateGAuthData: function(callback) {
-          var data;
-          if (callback == null) {
-            callback = function() {};
-          }
-          data = speakeasy.generate_key({
+        generateGAuthData: function() {
+          var data, gData;
+          gData = speakeasy.generate_key({
             name: "coinnext.com",
             length: 20,
             google_auth_qr: true
           });
-          this.gauth_data = JSON.stringify(data);
-          this.gauth_key = data.base32;
+          return data = {
+            gauth_qr: gData.google_auth_qr,
+            gauth_key: gData.base32
+          };
+        },
+        setGAuthData: function(key, callback) {
+          if (callback == null) {
+            callback = function() {};
+          }
+          this.gauth_key = key;
+          return this.save().complete(callback);
+        },
+        dropGAuthData: function(callback) {
+          if (callback == null) {
+            callback = function() {};
+          }
+          this.gauth_key = null;
           return this.save().complete(callback);
         },
         isValidGAuthPass: function(pass) {
-          var currentPass;
-          currentPass = speakeasy.time({
-            key: this.gauth_key,
-            encoding: "base32"
-          });
-          return currentPass === pass;
+          return User.generateGAuthPassByKey(this.gauth_key) === pass;
         },
         sendPasswordLink: function(callback) {
           var data, emailer, options, passUrl, siteUrl;
@@ -189,6 +208,18 @@
         },
         canTrade: function() {
           return this.email_verified;
+        },
+        updateSettings: function(data, callback) {
+          if (callback == null) {
+            callback = function() {};
+          }
+          if (data.chat_enabled != null) {
+            this.chat_enabled = !!data.chat_enabled;
+          }
+          if (data.email_auth_enabled != null) {
+            this.email_auth_enabled = !!data.email_auth_enabled;
+          }
+          return this.save().complete(callback);
         }
       }
     });

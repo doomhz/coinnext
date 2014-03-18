@@ -25,8 +25,9 @@
           len: [5, 500]
         }
       },
-      gauth_data: {
-        type: DataTypes.TEXT
+      gauth_qr: {
+        type: DataTypes.TEXT,
+        unique: true
       },
       gauth_key: {
         type: DataTypes.STRING(32),
@@ -38,11 +39,6 @@
       }
     }, {
       tableName: "admin_users",
-      getterMethods: {
-        google_auth_data: function() {
-          return JSON.parse(this.gauth_data);
-        }
-      },
       classMethods: {
         findById: function(id, callback) {
           if (callback == null) {
@@ -94,7 +90,7 @@
             length: 20,
             google_auth_qr: true
           });
-          this.gauth_data = JSON.stringify(data);
+          this.gauth_qr = data.google_auth_qr;
           this.gauth_key = data.base32;
           return this.save().complete(callback);
         },

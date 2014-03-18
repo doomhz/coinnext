@@ -1,16 +1,32 @@
 (function() {
-  var JsonRenderer, User;
+  var AuthStats, JsonRenderer, User;
 
   User = GLOBAL.db.User;
+
+  AuthStats = GLOBAL.db.AuthStats;
 
   JsonRenderer = require("../lib/json_renderer");
 
   module.exports = function(app) {
+    var login;
     app.get("/signup", function(req, res) {
       return res.render("auth/signup");
     });
     app.get("/login", function(req, res) {
       return res.render("auth/login");
+    });
+    app.post("/login", function(req, res, next) {
+      return login(req, res, next);
+    });
+    app.put("/login", function(req, res, next) {
+      return login(req, res, next);
+    });
+    app.get("/logout", function(req, res) {
+      req.logout();
+      if (req.accepts("html")) {
+        return res.redirect("/");
+      }
+      return res.json({});
     });
     app.get("/send-password", function(req, res) {
       var errors, success;
@@ -103,7 +119,7 @@
         });
       });
     });
-    return app.get("/verify/:token", function(req, res) {
+    app.get("/verify/:token", function(req, res) {
       var token;
       token = req.params.token;
       return User.findByToken(token, function(err, user) {
@@ -120,6 +136,58 @@
         });
       });
     });
+    app.post("/google_auth", function(req, res) {
+      if (!req.user) {
+        return JsonRenderer.error(null, res);
+      }
+      return res.json(req.user.generateGAuthData());
+    });
+    app.put("/google_auth/:id?", function(req, res) {
+      if (!req.user) {
+        return JsonRenderer.error(null, res);
+      }
+      if (!User.isValidGAuthPassForKey(req.body.gauth_pass, req.body.gauth_key)) {
+        return JsonRenderer.error("Invalid Google Authenticator code", res, 401);
+      }
+      return req.user.setGAuthData(req.body.gauth_key, function(err, user) {
+        return res.json(user);
+      });
+    });
+    app.del("/google_auth/:id?", function(req, res) {
+      if (!req.user) {
+        return JsonRenderer.error(null, res);
+      }
+      if (!req.user.isValidGAuthPass(req.body.gauth_pass)) {
+        return JsonRenderer.error("Invalid Google Authenticator code", res, 401);
+      }
+      return req.user.dropGAuthData(function() {
+        return res.json(JsonRenderer.user(req.user));
+      });
+    });
+    return login = function(req, res, next) {
+      return passport.authenticate("local", function(err, user, info) {
+        if (err) {
+          return JsonRenderer.error(err, res, 401);
+        }
+        if (!user) {
+          return JsonRenderer.error("Invalid credentials", res, 401);
+        }
+        return req.logIn(user, function(err) {
+          if (err) {
+            return JsonRenderer.error("Invalid credentials", res, 401);
+          }
+          if (user.gauth_key && !user.isValidGAuthPass(req.body.gauth_pass)) {
+            req.logout();
+            return JsonRenderer.error("Invalid Google Authenticator code", res, 401);
+          }
+          res.json(JsonRenderer.user(req.user));
+          return AuthStats.log({
+            ip: req.ip,
+            user: req.user
+          });
+        });
+      })(req, res, next);
+    };
   };
 
 }).call(this);

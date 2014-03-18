@@ -221,7 +221,7 @@ module.exports = (app)->
       return res.redirect "/administratie/login"  if not user
       req.logIn user, (err)->
         return res.redirect "/administratie/login"  if err
-        if user.gauth_data and not user.isValidGAuthPass req.body.gauth_pass
+        if user.gauth_key and not user.isValidGAuthPass req.body.gauth_pass
           req.logout()
           return res.redirect "/administratie/login"
         res.redirect "/administratie"

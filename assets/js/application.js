@@ -19,6 +19,7 @@
 //= require app/helpers/crypto_currency
 
 //= require app/models/user
+//= require app/models/google_auth
 //= require app/models/wallet
 //= require app/models/payment
 //= require app/models/transaction
@@ -33,6 +34,7 @@
 
 //= require app/views/master
 //= require app/views/finances
+//= require app/views/settings
 //= require app/views/pending_transactions
 //= require app/views/transactions_history
 //= require app/views/trade

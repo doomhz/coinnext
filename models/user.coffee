@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) ->
         allowNull: false
         validate:
           len: [5, 500]
-      gauth_data:
+      gauth_qr:
         type: DataTypes.TEXT
       gauth_key:
         type: DataTypes.STRING(32)
@@ -28,13 +28,14 @@ module.exports = (sequelize, DataTypes) ->
       email_verified:
         type: DataTypes.BOOLEAN
         defaultValue: false
+      chat_enabled:
+        type: DataTypes.BOOLEAN
+        defaultValue: true
+      email_auth_enabled:
+        type: DataTypes.BOOLEAN
+        defaultValue: true
     ,
       tableName: "users"
-      getterMethods:
-
-        google_auth_data: ()->
-          JSON.parse @gauth_data
-
       classMethods:
         
         findById: (id, callback = ()->)->
@@ -54,25 +55,38 @@ module.exports = (sequelize, DataTypes) ->
           userData.password = User.hashPassword userData.password
           User.create(userData).complete callback
 
+        generateGAuthPassByKey: (key)->
+          speakeasy.time
+            key: key
+            encoding: "base32"
+
+        isValidGAuthPassForKey: (pass, key)->
+          User.generateGAuthPassByKey(key) is pass
+
       instanceMethods:
         
         isValidPassword: (password)->
           @password is User.hashPassword(password)
 
-        generateGAuthData: (callback = ()->)->
-          data = speakeasy.generate_key
+        generateGAuthData: ()->
+          gData = speakeasy.generate_key
             name: "coinnext.com"
             length: 20
             google_auth_qr: true
-          @gauth_data = JSON.stringify data
-          @gauth_key = data.base32
+          data =
+            gauth_qr: gData.google_auth_qr
+            gauth_key: gData.base32
+
+        setGAuthData: (key, callback = ()->)->
+          @gauth_key = key
+          @save().complete callback
+        
+        dropGAuthData: (callback = ()->)->
+          @gauth_key = null
           @save().complete callback
 
         isValidGAuthPass: (pass)->
-          currentPass = speakeasy.time
-            key: @gauth_key
-            encoding: "base32"
-          currentPass is pass
+          User.generateGAuthPassByKey(@gauth_key) is pass
 
         sendPasswordLink: (callback = ()->)->
           siteUrl = GLOBAL.appConfig().emailer.host
@@ -121,5 +135,10 @@ module.exports = (sequelize, DataTypes) ->
 
         canTrade: ()->
           @email_verified
+
+        updateSettings: (data, callback = ()->)->
+          @chat_enabled = !!data.chat_enabled  if data.chat_enabled?
+          @email_auth_enabled = !!data.email_auth_enabled  if data.email_auth_enabled?
+          @save().complete callback
 
   User

@@ -1,4 +1,5 @@
 User = GLOBAL.db.User
+AuthStats = GLOBAL.db.AuthStats
 JsonRenderer = require "../lib/json_renderer"
 
 module.exports = (app)->
@@ -8,6 +9,17 @@ module.exports = (app)->
 
   app.get "/login", (req, res)->
     res.render "auth/login"
+
+  app.post "/login", (req, res, next)->
+    login req, res, next
+
+  app.put "/login", (req, res, next)->
+    login req, res, next
+
+  app.get "/logout", (req, res)->
+    req.logout()
+    return res.redirect "/"  if req.accepts "html"
+    res.json({})
 
   app.get "/send-password", (req, res)->
     if req.query.error
@@ -63,3 +75,35 @@ module.exports = (app)->
       return res.render "auth/verify", {title: "Verify Account - Coinnext.com"}  if not user
       user.setEmailVerified (err, u)->
         res.render "auth/verify", {title: "Verify Account - Coinnext.com", user: u}
+
+  app.post "/google_auth", (req, res)->
+    return JsonRenderer.error null, res  if not req.user
+    res.json req.user.generateGAuthData()
+
+  app.put "/google_auth/:id?", (req, res)->
+    return JsonRenderer.error null, res  if not req.user
+    return JsonRenderer.error "Invalid Google Authenticator code", res, 401  if not User.isValidGAuthPassForKey req.body.gauth_pass, req.body.gauth_key
+    req.user.setGAuthData req.body.gauth_key, (err, user)->
+      res.json user
+
+  app.del "/google_auth/:id?", (req, res)->
+    return JsonRenderer.error null, res  if not req.user
+    return JsonRenderer.error "Invalid Google Authenticator code", res, 401  if not req.user.isValidGAuthPass req.body.gauth_pass
+    req.user.dropGAuthData ()->
+      res.json JsonRenderer.user req.user
+
+
+  login = (req, res, next)->
+    passport.authenticate("local", (err, user, info)->
+      return JsonRenderer.error err, res, 401  if err
+      return JsonRenderer.error "Invalid credentials", res, 401  if not user
+      req.logIn user, (err)->
+        return JsonRenderer.error "Invalid credentials", res, 401  if err
+        if user.gauth_key and not user.isValidGAuthPass req.body.gauth_pass
+          req.logout()
+          return JsonRenderer.error "Invalid Google Authenticator code", res, 401
+        res.json JsonRenderer.user req.user
+        AuthStats.log
+          ip: req.ip
+          user: req.user
+    )(req, res, next)

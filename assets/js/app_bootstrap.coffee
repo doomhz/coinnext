@@ -30,14 +30,12 @@ $(document).ready ()->
           wallet = new App.WalletModel data
           $.publish "wallet-balance-loaded", wallet
 
-  $qrGenBt = $("#qr-gen-bt")
-
-  if $qrGenBt.length
-    $qrGenBt.click (ev)->
-      ev.preventDefault()
-      if confirm "Are you sure?"
-        $.get $qrGenBt.attr("href"), ()->
-          window.location.reload()
+  # Settings page
+  $settings = $("#settings")
+  if $settings.length
+    settings = new App.SettingsView
+      el: $settings
+      model: user
 
   $marketTicker = $("#market-ticker")
   if $marketTicker.length

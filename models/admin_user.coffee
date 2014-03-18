@@ -16,8 +16,9 @@ module.exports = (sequelize, DataTypes) ->
         allowNull: false
         validate:
           len: [5, 500]
-      gauth_data:
+      gauth_qr:
         type: DataTypes.TEXT
+        unique: true
       gauth_key:
         type: DataTypes.STRING(32)
         unique: true
@@ -26,11 +27,6 @@ module.exports = (sequelize, DataTypes) ->
         unique: true
     ,
       tableName: "admin_users"
-      getterMethods:
-
-        google_auth_data: ()->
-          JSON.parse @gauth_data
-
       classMethods:
         
         findById: (id, callback = ()->)->
@@ -60,7 +56,7 @@ module.exports = (sequelize, DataTypes) ->
             name: "administratiecnx"
             length: 20
             google_auth_qr: true
-          @gauth_data = JSON.stringify data
+          @gauth_qr = data.google_auth_qr
           @gauth_key = data.base32
           @save().complete callback
 

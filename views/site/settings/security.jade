@@ -1,7 +1,7 @@
 extends ../../layout
 
 block content
-  .main-content.settings(role='main')
+  #settings.main-content.settings(role='main')
     .wrapper
       .col-aside
         ul.sub-nav
@@ -52,12 +52,29 @@ block content
             p 
               a(href="https://support.google.com/accounts/answer/1066447?hl=en", target="_blank", rel="_nofollow")
                 | Check here for instructions on how to install Google Authenticator on your device.
-            - if (user.gauth_data)
-              .qr-code
-                a(href="#{user.google_auth_data.google_auth_qr}", target="_blank")
-                  img(src="#{user.google_auth_data.google_auth_qr}")
-                p#qr-code #{user.gauth_key}
-            a#qr-gen-bt(href="/generate_gauth") Enable Google Authenticator
+            - if (user.gauth_key)
+              a#qr-disable-bt(href="/disable_gauth") Disable Google Authenticator
+              #gauth-cnt.hidden
+                form#gauth-confirm-disable-form
+                  fieldset
+                    .input-prepend
+                      span.add-on
+                        i.icon-lock
+                      input(name="gauth_pass", type="text", placeholder="Confirm code")
+                  button(type="submit") Save
+            - else
+              #gauth-cnt.qr-code.hidden
+                a#gauth-link(href="", target="_blank")
+                  img#gauth-qr(src="")
+                p#gauth-key
+                form#gauth-confirm-enable-form
+                  fieldset
+                    .input-prepend
+                      span.add-on
+                        i.icon-lock
+                      input(name="gauth_pass", type="text", placeholder="Confirm code")
+                  button(type="submit") Save
+              a#qr-gen-bt(href="/generate_gauth") Enable Google Authenticator
         
         #auth-stats.container
           .con-header

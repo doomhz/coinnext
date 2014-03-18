@@ -3,12 +3,15 @@ _ = require "underscore"
 JsonRenderer =
 
   user: (user)->
-    id:         user.id
-    email:      user.email
-    username:   user.email.substr 0, user.email.indexOf("@")
-    updated_at: user.updated_at
-    created_at: user.created_at
-    gauth_data: user.gauth_data
+    id:                 user.id
+    email:              user.email
+    username:           user.email.substr 0, user.email.indexOf("@")
+    gauth_qr:           user.gauth_qr
+    gauth_key:          user.gauth_key
+    chat_enabled:       user.chat_enabled
+    email_auth_enabled: user.email_auth_enabled
+    updated_at:         user.updated_at
+    created_at:         user.created_at
 
   wallet: (wallet)->
     id:            wallet.id

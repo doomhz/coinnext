@@ -320,7 +320,7 @@
           if (err) {
             return res.redirect("/administratie/login");
           }
-          if (user.gauth_data && !user.isValidGAuthPass(req.body.gauth_pass)) {
+          if (user.gauth_key && !user.isValidGAuthPass(req.body.gauth_pass)) {
             req.logout();
             return res.redirect("/administratie/login");
           }
