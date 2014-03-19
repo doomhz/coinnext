@@ -41,39 +41,42 @@ block content
           .con-header
             h1.con-header-title Two-factor authentication
           .con-body
-            p 
-              | We offer Google Authenticator as an extra security layer when logging in.
-              | <br /> Enabling two-factor authentication greatly increases the security of your account.
-            p.appstore-badges
-              a(href="https://itunes.apple.com/app/google-authenticator/id388497605?mt=8").appstore.appstore-apple
-                | Download on the App Store
-              a(href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2").appstore.appstore-google
-                | Get it on Google Play
-            p 
-              a(href="https://support.google.com/accounts/answer/1066447?hl=en", target="_blank", rel="_nofollow")
-                | Check here for instructions on how to install Google Authenticator on your device.
             - if (user.gauth_key)
-              a#qr-disable-bt(href="/disable_gauth") Disable Google Authenticator
+              p.gauth-status Two-factor authentication is currently enabled.
+              a#qr-disable-bt.btn(href="/disable_gauth") Disable Google Authenticator
               #gauth-cnt.hidden
                 form#gauth-confirm-disable-form
                   fieldset
                     .input-prepend
                       span.add-on
                         i.icon-lock
-                      input(name="gauth_pass", type="text", placeholder="Confirm code")
-                  button(type="submit") Save
+                      input(name="gauth_pass", type="text", placeholder="Verification code")
+                  fieldset.actions
+                    button.btn(type="submit") Disable Google Authenticator
             - else
-              #gauth-cnt.qr-code.hidden
-                a#gauth-link(href="", target="_blank")
+              p 
+                | We offer Google Authenticator as an extra security layer when logging in.
+                | <br /> Enabling two-factor authentication greatly increases the security of your account.
+              p.appstore-badges
+                a(href="https://itunes.apple.com/app/google-authenticator/id388497605?mt=8").appstore.appstore-apple
+                  | Download on the App Store
+                a(href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2").appstore.appstore-google
+                  | Get it on Google Play
+              p 
+                a(href="https://support.google.com/accounts/answer/1066447?hl=en", target="_blank", rel="_nofollow")
+                  | Check here for instructions on how to install Google Authenticator on your device.
+              #gauth-cnt.hidden
+                a#gauth-link.qr-code(href="", target="_blank")
                   img#gauth-qr(src="")
-                p#gauth-key
-                form#gauth-confirm-enable-form
-                  fieldset
-                    .input-prepend
-                      span.add-on
-                        i.icon-lock
-                      input(name="gauth_pass", type="text", placeholder="Confirm code")
-                  button(type="submit") Save
+                .gauth-info
+                  .key
+                    label.gauth-label Your Authentication Key: <span id="gauth-key"></span>
+                  form#gauth-confirm-enable-form
+                    fieldset
+                      label.gauth-label Insert Your Authentication Code:
+                      input(name="gauth_pass", type="text", placeholder="Verification code").gauth-input
+                    fieldset.actions
+                      button.btn(type="submit") Enable Google Authenticator 
               a#qr-gen-bt(href="/generate_gauth") Enable Google Authenticator
         
         #auth-stats.container
@@ -86,6 +89,6 @@ block content
                 th IP
               - each stat in authStats
                 tr
-                  td #{stat.created_at.toFormat("DD.MM.YY HH24:MI")}
+                  td #{stat.created_at.toFormat("DD/MM/YY HH24:MI")}
                   td #{stat.ip}
                   
