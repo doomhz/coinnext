@@ -15,6 +15,8 @@
 //= require vendor/highstock.exporting
 //= require vendor/BigInt
 //= require vendor/sha256
+//= require vendor/zxcvbn
+//= require vendor/zxcvbn-async
 
 //= require app/helpers/crypto_currency
 

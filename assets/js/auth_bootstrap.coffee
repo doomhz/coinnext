@@ -6,7 +6,7 @@ $(document).ready ()->
   $setNewPassForm = $("#set-new-pass-form")
   $sendPassForm = $("#send-pass-form")
   $logoutBt = $("#logout-bt")
-  $pw_field = $signupForm.find("[name='password']")
+  $pwField = $signupForm.find("[name='password']")
 
 
   onAuthSubmit = (ev)->
@@ -46,19 +46,19 @@ $(document).ready ()->
     switchOffCell 4
 
   indicateStrength = (str) ->
-    text = document.getElementById("strength-text")
-    text.innerHTML = str
+    text = $("#strength-text")
+    text.html str
   
   switchOffCell = (number) ->
-    cell = document.getElementById("s" + number)
-    cell.className = "cell"
+    cell = $("#s#{number}")
+    cell.addClass "cell"
 
   switchOnCell = (number) ->
-    cell = document.getElementById("s" + number)
-    cell.className = "cell on"
+    cell = $("#s#{number}")
+    cell.addClass "cell on"
 
-  $pw_field.onblur = ->
-    result = zxcvbn($pw_field.val())
+  $pwField.keyup ()->
+    result = zxcvbn($pwField.val())
     score = result.score
     switchOffAllCells()
     switch score
