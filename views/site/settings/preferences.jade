@@ -22,4 +22,8 @@ block content
               label(for="email_auth_enabled")
                 input(type="checkbox" name="email_auth_enabled" id="email_auth_enabled" checked=(user.email_auth_enabled))
                 | Enable email on authentication
+            form#username-update-form
+              fieldset
+                label(for="username")
+                  input(type="text" name="username" id="username" placeholder="username" value=user.username)
 

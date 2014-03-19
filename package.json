@@ -41,6 +41,7 @@
     , "sequelize": "latest"
     , "lodash": "latest"
     , "ip": "latest"
+    , "phonetic": "latest"
   },
   "devDependencies": {
     "mocha": "latest"

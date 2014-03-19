@@ -22,7 +22,7 @@ sequelize = new Sequelize authData.db, authData.user, authData.password,
 db = {}
 
 fs.readdirSync(__dirname).filter((file) ->
-  (file.indexOf(".") isnt 0) and (file.indexOf(".js") isnt -1) and (file isnt "index.js")
+  (file.indexOf(".") isnt 0) and (file.indexOf(".js") isnt -1) and (file isnt "index.js") and (file isnt "associations.js")
 ).forEach (file) ->
   model = sequelize.import(path.join(__dirname, file))
   db[model.name] = model
@@ -31,6 +31,9 @@ fs.readdirSync(__dirname).filter((file) ->
 Object.keys(db).forEach (modelName) ->
   db[modelName].associate db  if "associate" of db[modelName]
   return
+
+db.User.hasMany db.Chat
+db.Chat.belongsTo db.User
 
 module.exports = lodash.extend(
   sequelize: sequelize

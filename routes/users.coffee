@@ -22,4 +22,5 @@ module.exports = (app)->
   app.put "/user/:id?", (req, res)->
     return JsonRenderer.error null, res  if not req.user
     req.user.updateSettings req.body, (err, user)->
+      return JsonRenderer.error err, res  if err
       res.json JsonRenderer.user user

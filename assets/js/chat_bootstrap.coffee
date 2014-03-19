@@ -16,5 +16,4 @@ $(document).ready ()->
           user: user
           chatSocketUrl: "/chat"
           messageHistoryRootUrl: "/chat/messages"
-          room: "global"
         globalChat.render()
