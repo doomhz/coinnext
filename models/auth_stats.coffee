@@ -1,4 +1,5 @@
 require "date-utils"
+ipFormatter = require "ip"
 Emailer = require "../lib/emailer"
 
 module.exports = (sequelize, DataTypes) ->
@@ -8,8 +9,12 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
       ip:
-        type: DataTypes.STRING
+        type: DataTypes.INTEGER
         allowNull: true
+        set: (ip)->
+          @setDataValue "ip", ipFormatter.toLong ip
+        get: ()->
+          ipFormatter.fromLong @getDataValue "ip"
     ,
       tableName: "auth_stats"
       classMethods:

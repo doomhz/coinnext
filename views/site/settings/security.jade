@@ -43,8 +43,7 @@ block content
           .con-body
             - if (user.gauth_key)
               p.gauth-status Two-factor authentication is currently enabled.
-              a#qr-disable-bt.btn(href="/disable_gauth") Disable Google Authenticator
-              #gauth-cnt.hidden
+              #gauth-cnt
                 form#gauth-confirm-disable-form
                   fieldset
                     .input-prepend
@@ -52,7 +51,7 @@ block content
                         i.icon-lock
                       input(name="gauth_pass", type="text", placeholder="Verification code")
                   fieldset.actions
-                    button.btn(type="submit") Disable Google Authenticator
+                    button#qr-disable-bt(type="submit") Disable Google Authenticator
             - else
               p 
                 | We offer Google Authenticator as an extra security layer when logging in.

@@ -1,7 +1,9 @@
 (function() {
-  var Emailer;
+  var Emailer, ipFormatter;
 
   require("date-utils");
+
+  ipFormatter = require("ip");
 
   Emailer = require("../lib/emailer");
 
@@ -13,8 +15,14 @@
         allowNull: false
       },
       ip: {
-        type: DataTypes.STRING,
-        allowNull: true
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        set: function(ip) {
+          return this.setDataValue("ip", ipFormatter.toLong(ip));
+        },
+        get: function() {
+          return ipFormatter.fromLong(this.getDataValue("ip"));
+        }
       }
     }, {
       tableName: "auth_stats",

@@ -8,7 +8,6 @@ class App.SettingsView extends App.MasterView
 
   events:
     "click #qr-gen-bt": "onQrGenClick"
-    "click #qr-disable-bt": "onQrDisableClick"
     "submit #gauth-confirm-disable-form": "onGauthDisableConfirmSubmit"
     "submit #gauth-confirm-enable-form": "onGauthEnableConfirmSubmit"
     "change input[type='checkbox']": "onSettingsChange"
@@ -47,19 +46,13 @@ class App.SettingsView extends App.MasterView
     data =
       id: Date.now()
       gauth_pass: $form.find("[name='gauth_pass']").val()
-    @googleAuthModel.set data
+    @googleAuthModel = new App.GoogleAuthModel data
     @googleAuthModel.destroy
       data: $.param data
       success: ()->
         window.location.reload()
       error: (m, xhr)->
         $.publish "error", xhr
-
-  onQrDisableClick: (ev)->
-    ev.preventDefault()
-    $target = $(ev.target)
-    @googleAuthModel = new App.GoogleAuthModel
-    @$("#gauth-cnt").removeClass "hidden"
 
   onSettingsChange: (ev)->
     $input = $(ev.target)
