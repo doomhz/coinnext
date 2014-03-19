@@ -46,16 +46,16 @@ $(document).ready ()->
     switchOffCell 4
 
   indicateStrength = (str) ->
-    text = $("#strength-text")
-    text.html str
+    text = document.getElementById("strength-text")
+    text.innerHTML = str  if text
   
   switchOffCell = (number) ->
-    cell = $("#s#{number}")
-    cell.addClass "cell"
+    cell = document.getElementById("s" + number)
+    cell.className = "cell"
 
   switchOnCell = (number) ->
-    cell = $("#s#{number}")
-    cell.addClass "cell on"
+    cell = document.getElementById("s" + number)
+    cell.className = "cell on"
 
   $pwField.keyup ()->
     result = zxcvbn($pwField.val())
