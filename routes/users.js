@@ -36,6 +36,9 @@
         return JsonRenderer.error(null, res);
       }
       return req.user.updateSettings(req.body, function(err, user) {
+        if (err) {
+          return JsonRenderer.error(err, res);
+        }
         return res.json(JsonRenderer.user(user));
       });
     });

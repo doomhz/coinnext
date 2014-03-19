@@ -1,5 +1,5 @@
 (function() {
-  var Emailer, crypto, speakeasy, _;
+  var Emailer, crypto, phonetic, speakeasy, _;
 
   crypto = require("crypto");
 
@@ -7,11 +7,20 @@
 
   Emailer = require("../lib/emailer");
 
+  phonetic = require("phonetic");
+
   _ = require("underscore");
 
   module.exports = function(sequelize, DataTypes) {
     var User;
     User = sequelize.define("User", {
+      uuid: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        validate: {
+          isUUID: 4
+        }
+      },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -25,6 +34,20 @@
         allowNull: false,
         validate: {
           len: [5, 500]
+        }
+      },
+      username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+          isAlphanumericAndUnderscore: function(value) {
+            var message;
+            message = "The username can have letters, numbers and underscores and should be longer than 4 characters and shorter than 16.";
+            if (!/^[a-zA-Z0-9_]{4,15}$/.test(value)) {
+              throw new Error(message);
+            }
+          }
         }
       },
       gauth_key: {
@@ -83,6 +106,7 @@
           var userData;
           userData = _.extend({}, data);
           userData.password = User.hashPassword(userData.password);
+          userData.username = User.generateUsername(data.email);
           return User.create(userData).complete(callback);
         },
         generateGAuthPassByKey: function(key) {
@@ -93,6 +117,12 @@
         },
         isValidGAuthPassForKey: function(pass, key) {
           return User.generateGAuthPassByKey(key) === pass;
+        },
+        generateUsername: function(seed) {
+          seed = crypto.createHash("sha1").update("username_" + seed + (GLOBAL.appConfig().salt), "utf8").digest("hex");
+          return phonetic.generate({
+            seed: seed
+          });
         }
       },
       instanceMethods: {
@@ -215,6 +245,9 @@
           }
           if (data.email_auth_enabled != null) {
             this.email_auth_enabled = !!data.email_auth_enabled;
+          }
+          if ((data.username != null) && data.username !== this.username) {
+            this.username = data.username;
           }
           return this.save().complete(callback);
         }

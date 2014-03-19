@@ -10,14 +10,14 @@ class App.ChatView extends App.MasterView
     "keydown #chat-message-box": "onMessageTyping"
     "click #send-message-bt": "onSendClick"
   
-  initialize: ({@room, @user, @chatSocketUrl, @messageHistoryRootUrl})->
+  initialize: ({@user, @chatSocketUrl, @messageHistoryRootUrl})->
     @chatSocketUrl ?= "/chat"
 
   render: ()->
     @loadHistory()
     @socket = io.connect @chatSocketUrl
     @socket.on "connect", ()=>
-      @socket.emit "join", {room: @room}
+      @socket.emit "join", {user_id: CONFIG.currentUser.id}
     @socket.on "new-message", (data)=>
       #console.log data
       @renderMessage data

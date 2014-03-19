@@ -3,9 +3,10 @@ _ = require "underscore"
 JsonRenderer =
 
   user: (user)->
+    uuid:               user.uuid
     id:                 user.id
     email:              user.email
-    username:           user.email.substr 0, user.email.indexOf("@")
+    username:           user.username
     gauth_qr:           user.gauth_qr
     gauth_key:          user.gauth_key
     chat_enabled:       user.chat_enabled
@@ -91,17 +92,30 @@ JsonRenderer =
       data.push @order order
     data
 
+  chatMessage: (message, user = {})->
+    username = user.username
+    username = message.user.username  if message.user?
+    data =
+      id: message.id
+      message: message.message
+      created_at: message.created_at
+      updated_at: message.updated_at
+      username: username
+
+  chatMessages: (messages)->
+    data = []
+    for message in messages
+      data.push @chatMessage message
+    data
+
   error: (err, res, code = 409, log = true)->
     res.statusCode = code
     message = ""
     if _.isString err
       message = err
-    else if _.isObject(err) and err.name is "ValidationError"
-      for key, val of err.errors
-        if val.path is "email" and val.type is "user defined"
-          message += "E-mail is already taken. "
-        else
-          message += "#{val.message} "
+    else if _.isObject(err)
+      for key, val of err
+        message += "#{val.join(' ')} "
     res.json {error: message}
     console.error message  if log
 

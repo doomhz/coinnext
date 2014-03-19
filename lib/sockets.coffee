@@ -1,6 +1,6 @@
 io = require "socket.io"
-_s = require "underscore.string"
 Chat = GLOBAL.db.Chat
+JsonRenderer = require "./json_renderer"
 
 sockets = {}
 
@@ -37,12 +37,13 @@ initSockets = (server, env)->
 
   sockets.chatSocket = sockets.io.of("/chat").on "connection", (socket)->
     socket.on "join", (data)->
-      socket.join data.room
+      socket.user_id = data.user_id
+      socket.join Chat.getGlobalRoomName()
     socket.on "add-message", (data)->
-      data.message = _s.truncate _s.trim(data.message), 150
-      if data.message.length
-        Chat.create(data).success (message)->
-          sockets.chatSocket.in(message.values.room).emit "new-message", message.values
+      data.user_id = socket.user_id
+      Chat.create(data).success (message)->
+        message.getUser().success (user)->
+          sockets.chatSocket.in(Chat.getGlobalRoomName()).emit "new-message", JsonRenderer.chatMessage message, user
       @
     socket.on "disconnect", (data)->
       for roomNamespace, val of sockets.io.sockets.manager.roomClients[socket.id]

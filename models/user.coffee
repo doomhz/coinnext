@@ -1,11 +1,17 @@
 crypto    = require "crypto"
 speakeasy = require "speakeasy"
 Emailer   = require "../lib/emailer"
+phonetic  = require "phonetic"
 _         = require "underscore"
 
 module.exports = (sequelize, DataTypes) ->
 
   User = sequelize.define "User",
+      uuid:
+        type: DataTypes.UUID
+        defaultValue: DataTypes.UUIDV4
+        validate:
+          isUUID: 4
       email:
         type: DataTypes.STRING
         allowNull: false
@@ -17,6 +23,14 @@ module.exports = (sequelize, DataTypes) ->
         allowNull: false
         validate:
           len: [5, 500]
+      username:
+        type: DataTypes.STRING
+        allowNull: false
+        unique: true
+        validate:
+          isAlphanumericAndUnderscore: (value)->
+            message = "The username can have letters, numbers and underscores and should be longer than 4 characters and shorter than 16."
+            throw new Error message  if not /^[a-zA-Z0-9_]{4,15}$/.test(value)
       gauth_key:
         type: DataTypes.STRING(32)
         unique: true
@@ -51,6 +65,7 @@ module.exports = (sequelize, DataTypes) ->
         createNewUser: (data, callback)->
           userData = _.extend({}, data)
           userData.password = User.hashPassword userData.password
+          userData.username = User.generateUsername data.email
           User.create(userData).complete callback
 
         generateGAuthPassByKey: (key)->
@@ -60,6 +75,11 @@ module.exports = (sequelize, DataTypes) ->
 
         isValidGAuthPassForKey: (pass, key)->
           User.generateGAuthPassByKey(key) is pass
+
+        generateUsername: (seed)->
+          seed = crypto.createHash("sha1").update("username_#{seed}#{GLOBAL.appConfig().salt}", "utf8").digest("hex")
+          phonetic.generate
+            seed: seed
 
       instanceMethods:
         
@@ -137,6 +157,7 @@ module.exports = (sequelize, DataTypes) ->
         updateSettings: (data, callback = ()->)->
           @chat_enabled = !!data.chat_enabled  if data.chat_enabled?
           @email_auth_enabled = !!data.email_auth_enabled  if data.email_auth_enabled?
+          @username = data.username  if data.username? and data.username isnt @username
           @save().complete callback
 
   User

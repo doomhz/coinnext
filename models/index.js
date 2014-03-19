@@ -33,7 +33,7 @@
   db = {};
 
   fs.readdirSync(__dirname).filter(function(file) {
-    return (file.indexOf(".") !== 0) && (file.indexOf(".js") !== -1) && (file !== "index.js");
+    return (file.indexOf(".") !== 0) && (file.indexOf(".js") !== -1) && (file !== "index.js") && (file !== "associations.js");
   }).forEach(function(file) {
     var model;
     model = sequelize["import"](path.join(__dirname, file));
@@ -45,6 +45,10 @@
       db[modelName].associate(db);
     }
   });
+
+  db.User.hasMany(db.Chat);
+
+  db.Chat.belongsTo(db.User);
 
   module.exports = lodash.extend({
     sequelize: sequelize,
