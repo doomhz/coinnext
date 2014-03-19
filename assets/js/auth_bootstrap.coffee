@@ -6,6 +6,8 @@ $(document).ready ()->
   $setNewPassForm = $("#set-new-pass-form")
   $sendPassForm = $("#send-pass-form")
   $logoutBt = $("#logout-bt")
+  $pw_field = $signupForm.find("[name='password']")
+
 
   onAuthSubmit = (ev)->
     ev.preventDefault()
@@ -34,6 +36,59 @@ $(document).ready ()->
             $form.find("#error-cnt").text response.responseJSON.error
           else
             $form.find("#error-cnt").text "Invalid credentials."
+
+  # Password Strength Meter
+  switchOffAllCells = ->
+    switchOffCell 0
+    switchOffCell 1
+    switchOffCell 2
+    switchOffCell 3
+    switchOffCell 4
+
+  indicateStrength = (str) ->
+    text = document.getElementById("strength-text")
+    text.innerHTML = str
+  
+  switchOffCell = (number) ->
+    cell = document.getElementById("s" + number)
+    cell.className = "cell"
+
+  switchOnCell = (number) ->
+    cell = document.getElementById("s" + number)
+    cell.className = "cell on"
+
+  $pw_field.onblur = ->
+    result = zxcvbn($pw_field.val())
+    score = result.score
+    switchOffAllCells()
+    switch score
+      when 0
+        switchOnCell 0
+        indicateStrength "Very weak"
+      when 1
+        switchOnCell 0
+        switchOnCell 1
+        indicateStrength "Weak"
+      when 2
+        switchOnCell 0
+        switchOnCell 1
+        switchOnCell 2
+        indicateStrength "Adequate"
+      when 3
+        switchOnCell 0
+        switchOnCell 1
+        switchOnCell 2
+        switchOnCell 3
+        indicateStrength "Pretty good"
+      when 4
+        switchOnCell 0
+        switchOnCell 1
+        switchOnCell 2
+        switchOnCell 3
+        switchOnCell 4
+        indicateStrength "Excellent"
+      else
+        swichOnCell 0
 
   if $signupForm.length
     $signupForm.validate
