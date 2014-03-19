@@ -7,6 +7,11 @@ _         = require "underscore"
 module.exports = (sequelize, DataTypes) ->
 
   User = sequelize.define "User",
+      uuid:
+        type: DataTypes.UUID
+        defaultValue: DataTypes.UUIDV4
+        validate:
+          isUUID: 4
       email:
         type: DataTypes.STRING
         allowNull: false

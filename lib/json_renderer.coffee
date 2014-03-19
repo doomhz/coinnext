@@ -3,6 +3,7 @@ _ = require "underscore"
 JsonRenderer =
 
   user: (user)->
+    uuid:               user.uuid
     id:                 user.id
     email:              user.email
     username:           user.username
