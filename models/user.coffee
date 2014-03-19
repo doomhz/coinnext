@@ -17,8 +17,6 @@ module.exports = (sequelize, DataTypes) ->
         allowNull: false
         validate:
           len: [5, 500]
-      gauth_qr:
-        type: DataTypes.TEXT
       gauth_key:
         type: DataTypes.STRING(32)
         unique: true

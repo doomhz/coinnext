@@ -27,9 +27,6 @@
           len: [5, 500]
         }
       },
-      gauth_qr: {
-        type: DataTypes.TEXT
-      },
       gauth_key: {
         type: DataTypes.STRING(32),
         unique: true
