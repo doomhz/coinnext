@@ -97,7 +97,7 @@
   input
     padding-left 30px
 
-.password-strength
+#password-strength
   width 100%
   clearfix()
 
@@ -105,18 +105,27 @@
   width 20%
   float left
   background-color #eff1f3
-  min-height 10px
+  min-height 8px
   border 1px solid #fff 
   box-sizing border-box
   border-radius 3px
- 
-#s0.on
-  background-color red
-#s1.on
-  background-color #ee8262
-#s2.on
-  background-color orange
-#s3.on
-  background-color #c8f526
-#s4.on
-  background-color green
+
+#strength-text
+  font-size 12px
+
+.veryweak
+  #s0
+    background-color red
+.weak
+  #s0, #s1
+    background-color #ee8262
+.adequate
+  #s0, #s1, #s2
+    background-color orange  
+.prettygood
+  #s0, #s1, #s2, #s3
+    background-color lighten($teal,30%)
+.excellent
+  #s0, #s1, #s2, #s3, #s4
+    background-color $teal
+  
