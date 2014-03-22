@@ -109,7 +109,7 @@
               user_id: userId,
               wallet_id: walletId,
               confirmations: {
-                lt: 3
+                lt: MarketHelper.getTransactionMinConf()
               }
             },
             order: [["created_at", "DESC"]]
@@ -123,7 +123,7 @@
               user_id: userId,
               wallet_id: walletId,
               confirmations: {
-                gt: 2
+                gte: MarketHelper.getTransactionMinConf()
               }
             },
             order: [["created_at", "DESC"]]
@@ -139,7 +139,7 @@
             where: {
               txid: ids,
               confirmations: {
-                lt: 3
+                lt: MarketHelper.getTransactionMinConf()
               }
             },
             order: [["created_at", "DESC"]]

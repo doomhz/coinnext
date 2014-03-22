@@ -41,6 +41,8 @@ TRANSACTION_ACCEPTED_CATEGORIES =
   send: 1
   receive: 2
 
+TRANSACTION_MIN_CONF = 3
+
 MarketHelper =
 
   getMarkets: ()->
@@ -110,5 +112,8 @@ MarketHelper =
 
   getTransactionCategoryLiteral: (intCategory)->
     _.invert(TRANSACTION_ACCEPTED_CATEGORIES)[intCategory]
+
+  getTransactionMinConf: ()->
+    TRANSACTION_MIN_CONF
 
 exports = module.exports = MarketHelper
