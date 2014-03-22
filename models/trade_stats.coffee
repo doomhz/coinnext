@@ -1,9 +1,15 @@
+MarketHelper = require "../lib/market_helper"
+
 module.exports = (sequelize, DataTypes) ->
 
   TradeStats = sequelize.define "TradeStats",
       type:
-        type: DataTypes.STRING
+        type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
+        get: ()->
+          MarketHelper.getMarketLiteral @getDataValue("type")
+        set: (type)->
+          @setDataValue "type", MarketHelper.getMarket(type)
       open_price:
         type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
@@ -33,6 +39,7 @@ module.exports = (sequelize, DataTypes) ->
       classMethods:
         
         getLastStats: (type, callback = ()->)->
+          type = MarketHelper.getMarket type
           halfHour = 1800000
           aDayAgo = Date.now() - 86400000 - halfHour
           query =

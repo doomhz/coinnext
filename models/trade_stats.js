@@ -1,10 +1,20 @@
 (function() {
+  var MarketHelper;
+
+  MarketHelper = require("../lib/market_helper");
+
   module.exports = function(sequelize, DataTypes) {
     var TradeStats;
     TradeStats = sequelize.define("TradeStats", {
       type: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        get: function() {
+          return MarketHelper.getMarketLiteral(this.getDataValue("type"));
+        },
+        set: function(type) {
+          return this.setDataValue("type", MarketHelper.getMarket(type));
+        }
       },
       open_price: {
         type: DataTypes.FLOAT.UNSIGNED,
@@ -45,6 +55,7 @@
           if (callback == null) {
             callback = function() {};
           }
+          type = MarketHelper.getMarket(type);
           halfHour = 1800000;
           aDayAgo = Date.now() - 86400000 - halfHour;
           query = {

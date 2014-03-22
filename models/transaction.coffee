@@ -1,6 +1,6 @@
-module.exports = (sequelize, DataTypes) ->
+MarketHelper = require "../lib/market_helper"
 
-  ACCEPTED_CATEGORIES = ["send", "receive"]
+module.exports = (sequelize, DataTypes) ->
 
   Transaction = sequelize.define "Transaction",
       user_id:
@@ -10,29 +10,37 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.INTEGER.UNSIGNED
         allowNull: true
       currency:
-        type: DataTypes.STRING
+        type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
+        get: ()->
+          MarketHelper.getCurrencyLiteral @getDataValue("currency")
+        set: (currency)->
+          @setDataValue "currency", MarketHelper.getCurrency(currency)
       account:
-        type: DataTypes.STRING
+        type: DataTypes.STRING(50)
       fee:
         type: DataTypes.FLOAT.UNSIGNED
       address:
-        type: DataTypes.STRING
+        type: DataTypes.STRING(34)
         allowNull: false
       amount:
         type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
         allowNull: false
       category:
-        type: DataTypes.ENUM
-        values: ACCEPTED_CATEGORIES
+        type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
+        comment: "send, receive"
+        get: ()->
+          MarketHelper.getTransactionCategoryLiteral @getDataValue("category")
+        set: (category)->
+          @setDataValue "category", MarketHelper.getTransactionCategory(category)
       txid:
-        type: DataTypes.STRING
+        type: DataTypes.STRING(64)
         allowNull: false
         unique: true
       confirmations:
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER.UNSIGNED
         defaultValue: 0
       balance_loaded:
         type: DataTypes.BOOLEAN
@@ -105,7 +113,7 @@ module.exports = (sequelize, DataTypes) ->
           Transaction.find({where: {txid: txid}}).complete callback
 
         isValidFormat: (category)->
-          ACCEPTED_CATEGORIES.indexOf(category) > -1
+          !!MarketHelper.getTransactionCategory category
 
         setUserById: (txid, userId, callback)->
           Transaction.update({user_id: userId}, {txid: txid}).complete callback

@@ -1,31 +1,21 @@
+MarketHelper = require "../lib/market_helper"
 _ = require "underscore"
 
 module.exports = (sequelize, DataTypes) ->
-
-  #CURRENCIES = [
-  #  "BTC", "LTC", "PPC", "WDC", "NMC", "QRK",
-  #  "NVC", "ZET", "FTC", "XPM", "MEC", "TRC"
-  #]
-
-  CURRENCIES = [
-    "BTC", "LTC", "PPC"
-  ]
-
-  CURRENCY_NAMES =
-    BTC: "Bitcoin"
-    LTC: "Litecoin"
-    PPC: "Peercoin"
 
   Wallet = sequelize.define "Wallet",
       user_id:
         type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
       currency:
-        type: DataTypes.ENUM
-        values: CURRENCIES
+        type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
+        get: ()->
+          MarketHelper.getCurrencyLiteral @getDataValue("currency")
+        set: (currency)->
+          @setDataValue "currency", MarketHelper.getCurrency(currency)
       address:
-        type: DataTypes.STRING
+        type: DataTypes.STRING(34)
         allowNull: true
       balance:
         type: DataTypes.FLOAT.UNSIGNED
@@ -48,7 +38,7 @@ module.exports = (sequelize, DataTypes) ->
           "wallet_#{@id}"
 
         currency_name: ()->
-          CURRENCY_NAMES[@currency]
+          MarketHelper.getCurrencyName @getDataValue("currency")
 
       classMethods:
 
@@ -58,17 +48,11 @@ module.exports = (sequelize, DataTypes) ->
         findByAddress: (address, callback)->
           Wallet.find({where: {address: address}}).complete callback
 
-        getCurrencies: ()->
-          CURRENCIES
-
-        getCurrencyNames: ()->
-          CURRENCY_NAMES
-
         findUserWalletByCurrency: (userId, currency, callback = ()->)->
-          Wallet.find({where: {user_id: userId, currency: currency}}).complete callback
+          Wallet.find({where: {user_id: userId, currency: MarketHelper.getCurrency(currency)}}).complete callback
 
         findOrCreateUserWalletByCurrency: (userId, currency, callback = ()->)->
-          Wallet.findOrCreate({user_id: userId, currency: currency}, {user_id: userId, currency: currency}).complete callback
+          Wallet.findOrCreate({user_id: userId, currency: MarketHelper.getCurrency(currency)}, {user_id: userId, currency: currency}).complete callback
 
         findUserWallets: (userId, callback = ()->)->
           query =
@@ -86,9 +70,6 @@ module.exports = (sequelize, DataTypes) ->
           id = account.replace("wallet_", "")
           Wallet.findById id, callback
 
-        isValidCurrency: (currency)->
-          CURRENCIES.indexOf(currency) > -1
-        
       instanceMethods:
 
         generateAddress: (callback = ()->)->

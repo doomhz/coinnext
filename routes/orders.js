@@ -1,11 +1,13 @@
 (function() {
-  var JsonRenderer, MarketStats, Order, Wallet;
+  var JsonRenderer, MarketHelper, MarketStats, Order, Wallet;
 
   Order = GLOBAL.db.Order;
 
   Wallet = GLOBAL.db.Wallet;
 
   MarketStats = GLOBAL.db.MarketStats;
+
+  MarketHelper = require("../lib/market_helper");
 
   JsonRenderer = require("../lib/json_renderer");
 
@@ -92,19 +94,19 @@
       if (orderData.type === "limit" && !Order.isValidTradeAmount(parseFloat(orderData.unit_price))) {
         return "Please submit a valid unit price amount.";
       }
-      if (["buy", "sell"].indexOf(orderData.action) === -1) {
+      if (!MarketHelper.getOrderAction(orderData.action)) {
         return "Please submit a valid action.";
       }
-      if (Wallet.getCurrencies().indexOf(orderData.buy_currency) === -1) {
+      if (!MarketHelper.isValidCurrency(orderData.buy_currency)) {
         return "Please submit a valid buy currency.";
       }
-      if (Wallet.getCurrencies().indexOf(orderData.sell_currency) === -1) {
+      if (!MarketHelper.isValidCurrency(orderData.sell_currency)) {
         return "Please submit a valid sell currency.";
       }
       if (orderData.buy_currency === orderData.sell_currency) {
         return "Please submit different currencies.";
       }
-      if (!MarketStats.isValidMarket(orderData.action, orderData.buy_currency, orderData.sell_currency)) {
+      if (!MarketHelper.isValidMarket(orderData.action, orderData.buy_currency, orderData.sell_currency)) {
         return "Invalid market.";
       }
       return false;

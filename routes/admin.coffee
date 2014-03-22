@@ -3,6 +3,7 @@ User = GLOBAL.db.User
 Transaction = GLOBAL.db.Transaction
 Payment = GLOBAL.db.Payment
 AuthStats = GLOBAL.db.AuthStats
+MarketHelper = require "../lib/market_helper"
 jsonRenderer = require "../lib/json_renderer"
 jsonBeautifier = require "../lib/json_beautifier"
 _ = require "underscore"
@@ -31,7 +32,7 @@ module.exports = (app)->
       adminUser: req.user
       _str: _str
       _: _
-      currencies: Wallet.getCurrencies()
+      currencies: MarketHelper.getCurrencyTypes()
 
   app.get "/administratie/users", (req, res)->
     count = req.query.count or 20
@@ -49,7 +50,7 @@ module.exports = (app)->
         adminUser: req.user
         _str: _str
         _: _
-        currencies: Wallet.getCurrencies()
+        currencies: MarketHelper.getCurrencyTypes()
         users: result.rows
         totalUsers: result.count
         from: from
@@ -72,7 +73,7 @@ module.exports = (app)->
             adminUser: req.user
             _str: _str
             _: _
-            currencies: Wallet.getCurrencies()
+            currencies: MarketHelper.getCurrencyTypes()
             user: user
             wallets: wallets
             authStats: authStats
@@ -85,7 +86,7 @@ module.exports = (app)->
         adminUser: req.user
         _str: _str
         _: _
-        currencies: Wallet.getCurrencies()
+        currencies: MarketHelper.getCurrencyTypes()
         wallet: wallet
 
   app.get "/administratie/wallets", (req, res)->
@@ -107,7 +108,7 @@ module.exports = (app)->
         adminUser: req.user
         _str: _str
         _: _
-        currencies: Wallet.getCurrencies()
+        currencies: MarketHelper.getCurrencyTypes()
         wallets: result.rows
         totalWallets: result.count
         from: from
@@ -134,7 +135,7 @@ module.exports = (app)->
         adminUser: req.user
         _str: _str
         _: _
-        currencies: Wallet.getCurrencies()
+        currencies: MarketHelper.getCurrencyTypes()
         transactions: result.rows
         totalTransactions: result.count
         from: from
@@ -161,7 +162,7 @@ module.exports = (app)->
         adminUser: req.user
         _str: _str
         _: _
-        currencies: Wallet.getCurrencies()
+        currencies: MarketHelper.getCurrencyTypes()
         payments: result.rows
         totalPayments: result.count
         from: from

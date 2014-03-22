@@ -1,4 +1,5 @@
 Wallet = GLOBAL.db.Wallet
+MarketHelper = require "../lib/market_helper"
 JsonRenderer = require "../lib/json_renderer"
 
 module.exports = (app)->
@@ -6,7 +7,7 @@ module.exports = (app)->
   app.post "/wallets", (req, res)->
     currency = req.body.currency
     return JsonRenderer.error "Please auth.", res  if not req.user
-    return JsonRenderer.error "Invalid currency.", res  if not Wallet.isValidCurrency currency
+    return JsonRenderer.error "Invalid currency.", res  if not MarketHelper.isValidCurrency currency
     Wallet.findOrCreateUserWalletByCurrency req.user.id, currency, (err, wallet)->
       console.error err  if err
       return JsonRenderer.error "Could not create wallet.", res  if err

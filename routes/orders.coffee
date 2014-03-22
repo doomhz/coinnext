@@ -1,6 +1,7 @@
 Order = GLOBAL.db.Order
 Wallet = GLOBAL.db.Wallet
 MarketStats = GLOBAL.db.MarketStats
+MarketHelper = require "../lib/market_helper"
 JsonRenderer = require "../lib/json_renderer"
 
 module.exports = (app)->
@@ -43,9 +44,9 @@ module.exports = (app)->
   notValidOrderData = (orderData)->
     return "Please submit a valid amount bigger than 0."  if not Order.isValidTradeAmount orderData.amount
     return "Please submit a valid unit price amount."  if orderData.type is "limit" and not Order.isValidTradeAmount(parseFloat(orderData.unit_price))
-    return "Please submit a valid action."  if ["buy", "sell"].indexOf(orderData.action) is -1
-    return "Please submit a valid buy currency."  if Wallet.getCurrencies().indexOf(orderData.buy_currency) is -1
-    return "Please submit a valid sell currency."  if Wallet.getCurrencies().indexOf(orderData.sell_currency) is -1
+    return "Please submit a valid action."  if not MarketHelper.getOrderAction orderData.action
+    return "Please submit a valid buy currency."  if not MarketHelper.isValidCurrency orderData.buy_currency
+    return "Please submit a valid sell currency."  if not MarketHelper.isValidCurrency orderData.sell_currency
     return "Please submit different currencies."  if orderData.buy_currency is orderData.sell_currency
-    return "Invalid market."  if not MarketStats.isValidMarket orderData.action, orderData.buy_currency, orderData.sell_currency
+    return "Invalid market."  if not MarketHelper.isValidMarket orderData.action, orderData.buy_currency, orderData.sell_currency
     false

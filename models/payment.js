@@ -1,4 +1,10 @@
 (function() {
+  var MarketHelper, ipFormatter;
+
+  MarketHelper = require("../lib/market_helper");
+
+  ipFormatter = require("ip");
+
   module.exports = function(sequelize, DataTypes) {
     var Payment;
     Payment = sequelize.define("Payment", {
@@ -11,15 +17,21 @@
         allowNull: false
       },
       transaction_id: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         allowNull: true
       },
       currency: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        get: function() {
+          return MarketHelper.getCurrencyLiteral(this.getDataValue("currency"));
+        },
+        set: function(currency) {
+          return this.setDataValue("currency", MarketHelper.getCurrency(currency));
+        }
       },
       address: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(34),
         allowNull: false,
         validate: {
           isValidAddress: function(value) {
@@ -42,15 +54,42 @@
         }
       },
       status: {
-        type: DataTypes.ENUM,
-        values: ["pending", "processed", "canceled"],
-        defaultValue: "pending"
+        type: DataTypes.INTEGER.UNSIGNED,
+        defaultValue: MarketHelper.getPaymentStatus("pending"),
+        comment: "pending, processed, canceled",
+        get: function() {
+          return MarketHelper.getPaymentStatusLiteral(this.getDataValue("status"));
+        },
+        set: function(status) {
+          return this.setDataValue("status", MarketHelper.getPaymentStatus(status));
+        }
       },
       log: {
-        type: DataTypes.TEXT
+        type: DataTypes.TEXT,
+        set: function(response) {
+          var e;
+          if (!this.log) {
+            this.log = "";
+          }
+          if (this.log.length) {
+            this.log += ",";
+          }
+          try {
+            return this.log += JSON.stringify(response);
+          } catch (_error) {
+            e = _error;
+          }
+        }
       },
       remote_ip: {
-        type: DataTypes.STRING
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        set: function(ip) {
+          return this.setDataValue("remote_ip", ipFormatter.toLong(ip));
+        },
+        get: function() {
+          return ipFormatter.fromLong(this.getDataValue("remote_ip"));
+        }
       }
     }, {
       tableName: "payments",
@@ -64,7 +103,7 @@
             where: {
               user_id: userId,
               wallet_id: walletId,
-              status: status
+              status: MarketHelper.getPaymentStatus(status)
             }
           };
           return Payment.findAll(query).complete(callback);
@@ -73,7 +112,7 @@
           var query;
           query = {
             where: {
-              status: status
+              status: MarketHelper.getPaymentStatus(status)
             },
             order: [["created_at", "ASC"]]
           };
@@ -100,64 +139,29 @@
           return this.status === "pending";
         },
         process: function(response, callback) {
-          var e;
           if (callback == null) {
             callback = function() {};
           }
           this.status = "processed";
           this.transaction_id = response;
-          if (!this.log) {
-            this.log = "";
-          }
-          if (this.log.length) {
-            this.log += ",";
-          }
-          try {
-            this.log += JSON.stringify(response);
-          } catch (_error) {
-            e = _error;
-          }
+          this.log = response;
           return this.save().complete(callback);
         },
         cancel: function(reason, callback) {
-          var e;
           if (callback == null) {
             callback = function() {};
           }
           this.status = "canceled";
-          reason = JSON.stringify(reason);
-          if (!this.log) {
-            this.log = "";
-          }
-          if (this.log.length) {
-            this.log += ",";
-          }
-          try {
-            this.log += JSON.stringify(reason);
-          } catch (_error) {
-            e = _error;
-          }
+          this.log = reason;
           return this.save().complete(function(e, p) {
             return callback(reason, p);
           });
         },
         errored: function(reason, callback) {
-          var e;
           if (callback == null) {
             callback = function() {};
           }
-          reason = JSON.stringify(reason);
-          if (!this.log) {
-            this.log = "";
-          }
-          if (this.log.length) {
-            this.log += ",";
-          }
-          try {
-            this.log += JSON.stringify(reason);
-          } catch (_error) {
-            e = _error;
-          }
+          this.log = reason;
           return this.save().complete(function(e, p) {
             return callback(reason, p);
           });

@@ -1,7 +1,9 @@
 (function() {
-  var JsonRenderer, Wallet;
+  var JsonRenderer, MarketHelper, Wallet;
 
   Wallet = GLOBAL.db.Wallet;
+
+  MarketHelper = require("../lib/market_helper");
 
   JsonRenderer = require("../lib/json_renderer");
 
@@ -12,7 +14,7 @@
       if (!req.user) {
         return JsonRenderer.error("Please auth.", res);
       }
-      if (!Wallet.isValidCurrency(currency)) {
+      if (!MarketHelper.isValidCurrency(currency)) {
         return JsonRenderer.error("Invalid currency.", res);
       }
       return Wallet.findOrCreateUserWalletByCurrency(req.user.id, currency, function(err, wallet) {

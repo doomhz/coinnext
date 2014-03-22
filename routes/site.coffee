@@ -2,6 +2,7 @@ Wallet = GLOBAL.db.Wallet
 MarketStats = GLOBAL.db.MarketStats
 TradeStats = GLOBAL.db.TradeStats
 AuthStats = GLOBAL.db.AuthStats
+MarketHelper = require "../lib/market_helper"
 _str = require "../lib/underscore_string"
 
 module.exports = (app)->
@@ -13,7 +14,7 @@ module.exports = (app)->
         page: "home"
         user: req.user
         marketStats: marketStats
-        currencies: Wallet.getCurrencyNames()
+        currencies: MarketHelper.getCurrencyNames()
 
   app.get "/trade", (req, res)->
     res.redirect "/trade/LTC/BTC"
@@ -21,8 +22,7 @@ module.exports = (app)->
   app.get "/trade/:currency1/:currency2", (req, res)->
     currency1 = req.params.currency1
     currency2 = req.params.currency2
-    currencies = Wallet.getCurrencies()
-    return res.redirect "/"  if currencies.indexOf(currency1) is -1 or currencies.indexOf(currency2) is -1
+    return res.redirect "/"  if not MarketHelper.isValidCurrency(currency1) or not MarketHelper.isValidCurrency(currency2)
     MarketStats.getStats (err, marketStats)->
       if req.user
         Wallet.findUserWalletByCurrency req.user.id, currency1, (err, wallet1)->
@@ -41,7 +41,7 @@ module.exports = (app)->
               currency2: currency2
               wallet1: wallet1
               wallet2: wallet2
-              currencies: Wallet.getCurrencyNames()
+              currencies: MarketHelper.getCurrencyNames()
               marketStats: marketStats
               _str: _str
       else
@@ -54,7 +54,7 @@ module.exports = (app)->
             currency: currency1
           wallet2: Wallet.build
             currency: currency2
-          currencies: Wallet.getCurrencyNames()
+          currencies: MarketHelper.getCurrencyNames()
           marketStats: marketStats
           _str: _str
 
@@ -66,7 +66,7 @@ module.exports = (app)->
         page: "funds"
         user: req.user
         wallets: wallets
-        currencies: Wallet.getCurrencyNames()
+        currencies: MarketHelper.getCurrencyNames()
         _str: _str
 
   app.get "/funds/:currency", (req, res)->
@@ -81,7 +81,7 @@ module.exports = (app)->
           user: req.user
           wallet: wallet
           wallets: wallets
-          currencies: Wallet.getCurrencyNames()
+          currencies: MarketHelper.getCurrencyNames()
           _str: _str
 
   app.get "/market_stats", (req, res)->

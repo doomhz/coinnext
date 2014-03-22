@@ -1,5 +1,7 @@
 (function() {
-  var _;
+  var MarketHelper, _;
+
+  MarketHelper = require("../lib/market_helper");
 
   _ = require("underscore");
 
@@ -11,22 +13,46 @@
         allowNull: false
       },
       type: {
-        type: DataTypes.ENUM,
-        values: ["market", "limit"],
-        allowNull: false
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        comment: "market, limit",
+        get: function() {
+          return MarketHelper.getOrderTypeLiteral(this.getDataValue("type"));
+        },
+        set: function(type) {
+          return this.setDataValue("type", MarketHelper.getOrderType(type));
+        }
       },
       action: {
-        type: DataTypes.ENUM,
-        values: ["buy", "sell"],
-        allowNull: false
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        comment: "buy, sell",
+        get: function() {
+          return MarketHelper.getOrderActionLiteral(this.getDataValue("action"));
+        },
+        set: function(action) {
+          return this.setDataValue("action", MarketHelper.getOrderAction(action));
+        }
       },
       buy_currency: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        get: function() {
+          return MarketHelper.getCurrencyLiteral(this.getDataValue("buy_currency"));
+        },
+        set: function(buyCurrency) {
+          return this.setDataValue("buy_currency", MarketHelper.getCurrency(buyCurrency));
+        }
       },
       sell_currency: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        get: function() {
+          return MarketHelper.getCurrencyLiteral(this.getDataValue("sell_currency"));
+        },
+        set: function(sellCurrency) {
+          return this.setDataValue("sell_currency", MarketHelper.getCurrency(sellCurrency));
+        }
       },
       amount: {
         type: DataTypes.FLOAT.UNSIGNED,
@@ -66,9 +92,15 @@
         }
       },
       status: {
-        type: DataTypes.ENUM,
-        values: ["open", "partiallyCompleted", "completed"],
-        defaultValue: "open"
+        type: DataTypes.INTEGER.UNSIGNED,
+        defaultValue: MarketHelper.getOrderStatus("open"),
+        comment: "open, partiallyCompleted, completed",
+        get: function() {
+          return MarketHelper.getOrderStatusLiteral(this.getDataValue("status"));
+        },
+        set: function(status) {
+          return this.setDataValue("status", MarketHelper.getOrderStatus(status));
+        }
       },
       published: {
         type: DataTypes.BOOLEAN,
@@ -101,30 +133,30 @@
             order: [["created_at", "DESC"]]
           };
           if (options.status === "open") {
-            query.where.status = ["partiallyCompleted", "open"];
+            query.where.status = [MarketHelper.getOrderStatus("partiallyCompleted"), MarketHelper.getOrderStatus("open")];
           }
           if (options.status === "completed") {
-            query.where.status = options.status;
+            query.where.status = MarketHelper.getOrderStatus(options.status);
           }
-          if (["buy", "sell"].indexOf(options.action) > -1) {
-            query.where.action = options.action;
+          if (!!MarketHelper.getOrderAction(options.action)) {
+            query.where.action = MarketHelper.getOrderAction(options.action);
           }
           if (options.user_id) {
             query.where.user_id = options.user_id;
           }
           if (options.action === "buy") {
-            query.where.buy_currency = options.currency1;
-            query.where.sell_currency = options.currency2;
+            query.where.buy_currency = MarketHelper.getCurrency(options.currency1);
+            query.where.sell_currency = MarketHelper.getCurrency(options.currency2);
           } else if (options.action === "sell") {
-            query.where.buy_currency = options.currency2;
-            query.where.sell_currency = options.currency1;
+            query.where.buy_currency = MarketHelper.getCurrency(options.currency2);
+            query.where.sell_currency = MarketHelper.getCurrency(options.currency1);
           } else if (!options.action) {
             currencies = [];
             if (options.currency1) {
-              currencies.push(options.currency1);
+              currencies.push(MarketHelper.getCurrency(options.currency1));
             }
             if (options.currency2) {
-              currencies.push(options.currency2);
+              currencies.push(MarketHelper.getCurrency(options.currency2));
             }
             if (currencies.length > 1) {
               query.where.buy_currency = currencies;
@@ -145,7 +177,7 @@
           var query;
           query = {
             where: {
-              status: "completed",
+              status: MarketHelper.getOrderStatus("completed"),
               close_time: {
                 gte: startTime,
                 lte: endTime

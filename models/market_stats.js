@@ -1,17 +1,21 @@
 (function() {
+  var MarketHelper;
+
+  MarketHelper = require("../lib/market_helper");
+
   module.exports = function(sequelize, DataTypes) {
-    var MARKETS, MarketStats;
-    MARKETS = ["LTC_BTC", "PPC_BTC"];
+    var MarketStats;
     MarketStats = sequelize.define("MarketStats", {
       type: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false,
-        unique: true
-      },
-      label: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
+        unique: true,
+        get: function() {
+          return MarketHelper.getMarketLiteral(this.getDataValue("type"));
+        },
+        set: function(type) {
+          return this.setDataValue("type", MarketHelper.getMarket(type));
+        }
       },
       last_price: {
         type: DataTypes.FLOAT.UNSIGNED,
@@ -48,6 +52,11 @@
       }
     }, {
       tableName: "market_stats",
+      getterMethods: {
+        label: function() {
+          return this.type.substr(0, this.type.indexOf("_"));
+        }
+      },
       classMethods: {
         getStats: function(callback) {
           if (callback == null) {
@@ -72,7 +81,7 @@
           if (order.action === "sell") {
             return MarketStats.find({
               where: {
-                type: type
+                type: MarketHelper.getMarket(type)
               }
             }).complete(function(err, marketStats) {
               marketStats.resetIfNotToday();
@@ -91,19 +100,6 @@
               return marketStats.save().complete(callback);
             });
           }
-        },
-        getMarkets: function() {
-          return MARKETS;
-        },
-        isValidMarket: function(action, buyCurrency, sellCurrency) {
-          var market;
-          if (action === "buy") {
-            market = "" + buyCurrency + "_" + sellCurrency;
-          }
-          if (action === "sell") {
-            market = "" + sellCurrency + "_" + buyCurrency;
-          }
-          return MarketStats.getMarkets().indexOf(market) > -1;
         },
         calculateGrowthRatio: function(lastPrice, newPrice) {
           return parseFloat(newPrice * 100 / lastPrice - 100);

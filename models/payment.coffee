@@ -1,3 +1,6 @@
+MarketHelper = require "../lib/market_helper"
+ipFormatter = require "ip"
+
 module.exports = (sequelize, DataTypes) ->
 
   Payment = sequelize.define "Payment",
@@ -8,13 +11,17 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
       transaction_id:
-        type: DataTypes.STRING
+        type: DataTypes.STRING(64)
         allowNull: true
       currency:
-        type: DataTypes.STRING
+        type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
+        get: ()->
+          MarketHelper.getCurrencyLiteral @getDataValue("currency")
+        set: (currency)->
+          @setDataValue "currency", MarketHelper.getCurrency(currency)
       address:
-        type: DataTypes.STRING
+        type: DataTypes.STRING(34)
         allowNull: false
         validate:
           isValidAddress: (value)->
@@ -29,13 +36,28 @@ module.exports = (sequelize, DataTypes) ->
           notNull: true
           min: 0.00000001
       status:
-        type: DataTypes.ENUM
-        values: ["pending", "processed", "canceled"]
-        defaultValue: "pending"
+        type: DataTypes.INTEGER.UNSIGNED
+        defaultValue: MarketHelper.getPaymentStatus "pending"
+        comment: "pending, processed, canceled"
+        get: ()->
+          MarketHelper.getPaymentStatusLiteral @getDataValue("status")
+        set: (status)->
+          @setDataValue "status", MarketHelper.getPaymentStatus(status)
       log:
         type: DataTypes.TEXT
+        set: (response)->
+          @log = ""  if not @log
+          @log += ","  if @log.length
+          try
+            @log += JSON.stringify(response)
+          catch e
       remote_ip:
-        type: DataTypes.STRING
+        type: DataTypes.INTEGER
+        allowNull: true
+        set: (ip)->
+          @setDataValue "remote_ip", ipFormatter.toLong ip
+        get: ()->
+          ipFormatter.fromLong @getDataValue "remote_ip"
 
     ,
       tableName: "payments"
@@ -49,13 +71,13 @@ module.exports = (sequelize, DataTypes) ->
             where:
               user_id: userId
               wallet_id: walletId
-              status: status
+              status: MarketHelper.getPaymentStatus(status)
           Payment.findAll(query).complete callback
 
         findByStatus: (status, callback)->
           query =
             where:
-              status: status
+              status: MarketHelper.getPaymentStatus(status)
             order: [
               ["created_at", "ASC"]
             ]
@@ -81,31 +103,17 @@ module.exports = (sequelize, DataTypes) ->
         process: (response, callback = ()->)->
           @status = "processed"
           @transaction_id = response
-          @log = ""  if not @log
-          @log += ","  if @log.length
-          try
-            @log += JSON.stringify(response)
-          catch e
+          @log = response
           @save().complete callback
 
         cancel: (reason, callback = ()->)->
           @status = "canceled"
-          reason = JSON.stringify reason
-          @log = ""  if not @log
-          @log += ","  if @log.length
-          try
-            @log += JSON.stringify(reason)
-          catch e
+          @log = reason
           @save().complete (e, p)->
             callback reason, p
 
         errored: (reason, callback = ()->)->
-          reason = JSON.stringify reason
-          @log = ""  if not @log
-          @log += ","  if @log.length
-          try
-            @log += JSON.stringify(reason)
-          catch e
+          @log = reason
           @save().complete (e, p)->
             callback reason, p
 

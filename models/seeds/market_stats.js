@@ -1,11 +1,9 @@
 (function() {
   module.exports = [
     {
-      type: "LTC_BTC",
-      label: "LTC"
+      type: "LTC_BTC"
     }, {
-      type: "PPC_BTC",
-      label: "PPC"
+      type: "PPC_BTC"
     }
   ];
 

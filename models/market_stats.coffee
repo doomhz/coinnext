@@ -1,18 +1,16 @@
+MarketHelper = require "../lib/market_helper"
+
 module.exports = (sequelize, DataTypes) ->
-  
-  MARKETS = [
-    "LTC_BTC", "PPC_BTC"
-  ]
 
   MarketStats = sequelize.define "MarketStats",
       type:
-        type: DataTypes.STRING
+        type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
         unique: true
-      label:
-        type: DataTypes.STRING
-        allowNull: false
-        unique: true
+        get: ()->
+          MarketHelper.getMarketLiteral @getDataValue("type")
+        set: (type)->
+          @setDataValue "type", MarketHelper.getMarket(type)
       last_price:
         type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
@@ -41,6 +39,11 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.DATE
     ,
       tableName: "market_stats"
+      getterMethods:
+
+        label: ()->
+          @type.substr 0, @type.indexOf("_")
+
       classMethods:
         
         getStats: (callback = ()->)->
@@ -53,7 +56,7 @@ module.exports = (sequelize, DataTypes) ->
         trackFromOrder: (order, callback = ()->)->
           type = if order.action is "buy" then "#{order.buy_currency}_#{order.sell_currency}" else "#{order.sell_currency}_#{order.buy_currency}"
           if order.action is "sell"
-            MarketStats.find({where: {type: type}}).complete (err, marketStats)->
+            MarketStats.find({where: {type: MarketHelper.getMarket(type)}}).complete (err, marketStats)->
               marketStats.resetIfNotToday()
               marketStats.growth_ratio = MarketStats.calculateGrowthRatio marketStats.last_price, order.unit_price  if order.unit_price isnt marketStats.last_price
               marketStats.last_price = order.unit_price
@@ -62,14 +65,6 @@ module.exports = (sequelize, DataTypes) ->
               marketStats.volume1 += order.amount
               marketStats.volume2 += order.result_amount
               marketStats.save().complete callback
-
-        getMarkets: ()->
-          MARKETS
-
-        isValidMarket: (action, buyCurrency, sellCurrency)->
-          market = "#{buyCurrency}_#{sellCurrency}"  if action is "buy"
-          market = "#{sellCurrency}_#{buyCurrency}"  if action is "sell"
-          MarketStats.getMarkets().indexOf(market) > -1
 
         calculateGrowthRatio: (lastPrice, newPrice)->
           parseFloat newPrice * 100 / lastPrice - 100

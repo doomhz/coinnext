@@ -1,28 +1,29 @@
 (function() {
-  var _;
+  var MarketHelper, _;
+
+  MarketHelper = require("../lib/market_helper");
 
   _ = require("underscore");
 
   module.exports = function(sequelize, DataTypes) {
-    var CURRENCIES, CURRENCY_NAMES, Wallet;
-    CURRENCIES = ["BTC", "LTC", "PPC"];
-    CURRENCY_NAMES = {
-      BTC: "Bitcoin",
-      LTC: "Litecoin",
-      PPC: "Peercoin"
-    };
+    var Wallet;
     Wallet = sequelize.define("Wallet", {
       user_id: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false
       },
       currency: {
-        type: DataTypes.ENUM,
-        values: CURRENCIES,
-        allowNull: false
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        get: function() {
+          return MarketHelper.getCurrencyLiteral(this.getDataValue("currency"));
+        },
+        set: function(currency) {
+          return this.setDataValue("currency", MarketHelper.getCurrency(currency));
+        }
       },
       address: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(34),
         allowNull: true
       },
       balance: {
@@ -47,7 +48,7 @@
           return "wallet_" + this.id;
         },
         currency_name: function() {
-          return CURRENCY_NAMES[this.currency];
+          return MarketHelper.getCurrencyName(this.getDataValue("currency"));
         }
       },
       classMethods: {
@@ -61,12 +62,6 @@
             }
           }).complete(callback);
         },
-        getCurrencies: function() {
-          return CURRENCIES;
-        },
-        getCurrencyNames: function() {
-          return CURRENCY_NAMES;
-        },
         findUserWalletByCurrency: function(userId, currency, callback) {
           if (callback == null) {
             callback = function() {};
@@ -74,7 +69,7 @@
           return Wallet.find({
             where: {
               user_id: userId,
-              currency: currency
+              currency: MarketHelper.getCurrency(currency)
             }
           }).complete(callback);
         },
@@ -84,7 +79,7 @@
           }
           return Wallet.findOrCreate({
             user_id: userId,
-            currency: currency
+            currency: MarketHelper.getCurrency(currency)
           }, {
             user_id: userId,
             currency: currency
@@ -121,9 +116,6 @@
           }
           id = account.replace("wallet_", "");
           return Wallet.findById(id, callback);
-        },
-        isValidCurrency: function(currency) {
-          return CURRENCIES.indexOf(currency) > -1;
         }
       },
       instanceMethods: {

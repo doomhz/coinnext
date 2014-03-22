@@ -1,5 +1,5 @@
 (function() {
-  var AuthStats, MarketStats, TradeStats, Wallet, _str;
+  var AuthStats, MarketHelper, MarketStats, TradeStats, Wallet, _str;
 
   Wallet = GLOBAL.db.Wallet;
 
@@ -8,6 +8,8 @@
   TradeStats = GLOBAL.db.TradeStats;
 
   AuthStats = GLOBAL.db.AuthStats;
+
+  MarketHelper = require("../lib/market_helper");
 
   _str = require("../lib/underscore_string");
 
@@ -19,7 +21,7 @@
           page: "home",
           user: req.user,
           marketStats: marketStats,
-          currencies: Wallet.getCurrencyNames()
+          currencies: MarketHelper.getCurrencyNames()
         });
       });
     });
@@ -27,11 +29,10 @@
       return res.redirect("/trade/LTC/BTC");
     });
     app.get("/trade/:currency1/:currency2", function(req, res) {
-      var currencies, currency1, currency2;
+      var currency1, currency2;
       currency1 = req.params.currency1;
       currency2 = req.params.currency2;
-      currencies = Wallet.getCurrencies();
-      if (currencies.indexOf(currency1) === -1 || currencies.indexOf(currency2) === -1) {
+      if (!MarketHelper.isValidCurrency(currency1) || !MarketHelper.isValidCurrency(currency2)) {
         return res.redirect("/");
       }
       return MarketStats.getStats(function(err, marketStats) {
@@ -56,7 +57,7 @@
                 currency2: currency2,
                 wallet1: wallet1,
                 wallet2: wallet2,
-                currencies: Wallet.getCurrencyNames(),
+                currencies: MarketHelper.getCurrencyNames(),
                 marketStats: marketStats,
                 _str: _str
               });
@@ -74,7 +75,7 @@
             wallet2: Wallet.build({
               currency: currency2
             }),
-            currencies: Wallet.getCurrencyNames(),
+            currencies: MarketHelper.getCurrencyNames(),
             marketStats: marketStats,
             _str: _str
           });
@@ -91,7 +92,7 @@
           page: "funds",
           user: req.user,
           wallets: wallets,
-          currencies: Wallet.getCurrencyNames(),
+          currencies: MarketHelper.getCurrencyNames(),
           _str: _str
         });
       });
@@ -114,7 +115,7 @@
             user: req.user,
             wallet: wallet,
             wallets: wallets,
-            currencies: Wallet.getCurrencyNames(),
+            currencies: MarketHelper.getCurrencyNames(),
             _str: _str
           });
         });

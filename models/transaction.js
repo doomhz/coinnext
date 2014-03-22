@@ -1,7 +1,10 @@
 (function() {
+  var MarketHelper;
+
+  MarketHelper = require("../lib/market_helper");
+
   module.exports = function(sequelize, DataTypes) {
-    var ACCEPTED_CATEGORIES, Transaction;
-    ACCEPTED_CATEGORIES = ["send", "receive"];
+    var Transaction;
     Transaction = sequelize.define("Transaction", {
       user_id: {
         type: DataTypes.INTEGER.UNSIGNED,
@@ -12,17 +15,23 @@
         allowNull: true
       },
       currency: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        get: function() {
+          return MarketHelper.getCurrencyLiteral(this.getDataValue("currency"));
+        },
+        set: function(currency) {
+          return this.setDataValue("currency", MarketHelper.getCurrency(currency));
+        }
       },
       account: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING(50)
       },
       fee: {
         type: DataTypes.FLOAT.UNSIGNED
       },
       address: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(34),
         allowNull: false
       },
       amount: {
@@ -31,17 +40,23 @@
         allowNull: false
       },
       category: {
-        type: DataTypes.ENUM,
-        values: ACCEPTED_CATEGORIES,
-        allowNull: false
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        comment: "send, receive",
+        get: function() {
+          return MarketHelper.getTransactionCategoryLiteral(this.getDataValue("category"));
+        },
+        set: function(category) {
+          return this.setDataValue("category", MarketHelper.getTransactionCategory(category));
+        }
       },
       txid: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         allowNull: false,
         unique: true
       },
       confirmations: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         defaultValue: 0
       },
       balance_loaded: {
@@ -139,7 +154,7 @@
           }).complete(callback);
         },
         isValidFormat: function(category) {
-          return ACCEPTED_CATEGORIES.indexOf(category) > -1;
+          return !!MarketHelper.getTransactionCategory(category);
         },
         setUserById: function(txid, userId, callback) {
           return Transaction.update({

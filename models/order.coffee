@@ -1,3 +1,4 @@
+MarketHelper = require "../lib/market_helper"
 _ = require "underscore"
 
 module.exports = (sequelize, DataTypes) ->
@@ -7,19 +8,35 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
       type:
-        type: DataTypes.ENUM
-        values: ["market", "limit"]
+        type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
+        comment: "market, limit"
+        get: ()->
+          MarketHelper.getOrderTypeLiteral @getDataValue("type")
+        set: (type)->
+          @setDataValue "type", MarketHelper.getOrderType(type)
       action:
-        type: DataTypes.ENUM
-        values: ["buy", "sell"]
+        type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
+        comment: "buy, sell"
+        get: ()->
+          MarketHelper.getOrderActionLiteral @getDataValue("action")
+        set: (action)->
+          @setDataValue "action", MarketHelper.getOrderAction(action)
       buy_currency:
-        type: DataTypes.STRING
+        type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
+        get: ()->
+          MarketHelper.getCurrencyLiteral @getDataValue("buy_currency")
+        set: (buyCurrency)->
+          @setDataValue "buy_currency", MarketHelper.getCurrency(buyCurrency)
       sell_currency:
-        type: DataTypes.STRING
+        type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
+        get: ()->
+          MarketHelper.getCurrencyLiteral @getDataValue("sell_currency")
+        set: (sellCurrency)->
+          @setDataValue "sell_currency", MarketHelper.getCurrency(sellCurrency)
       amount:
         type: DataTypes.FLOAT.UNSIGNED
         defaultValue: 0
@@ -48,9 +65,13 @@ module.exports = (sequelize, DataTypes) ->
         validate:
           isFloat: true
       status:
-        type: DataTypes.ENUM
-        values: ["open", "partiallyCompleted", "completed"]
-        defaultValue: "open"
+        type: DataTypes.INTEGER.UNSIGNED
+        defaultValue: MarketHelper.getOrderStatus "open"
+        comment: "open, partiallyCompleted, completed"
+        get: ()->
+          MarketHelper.getOrderStatusLiteral @getDataValue("status")
+        set: (status)->
+          @setDataValue "status", MarketHelper.getOrderStatus(status)
       published:
         type: DataTypes.BOOLEAN
         defaultValue: false
@@ -73,21 +94,21 @@ module.exports = (sequelize, DataTypes) ->
               ["created_at", "DESC"]
             ]
           if options.status is "open"
-            query.where.status = ["partiallyCompleted", "open"]
+            query.where.status = [MarketHelper.getOrderStatus("partiallyCompleted"), MarketHelper.getOrderStatus("open")]
           if options.status is "completed"
-            query.where.status = options.status
-          query.where.action = options.action    if ["buy", "sell"].indexOf(options.action) > -1
+            query.where.status = MarketHelper.getOrderStatus(options.status)
+          query.where.action = MarketHelper.getOrderAction(options.action)    if !!MarketHelper.getOrderAction(options.action)
           query.where.user_id = options.user_id  if options.user_id
           if options.action is "buy"
-            query.where.buy_currency = options.currency1
-            query.where.sell_currency = options.currency2
+            query.where.buy_currency = MarketHelper.getCurrency options.currency1
+            query.where.sell_currency = MarketHelper.getCurrency options.currency2
           else if options.action is "sell"
-            query.where.buy_currency = options.currency2
-            query.where.sell_currency = options.currency1
+            query.where.buy_currency = MarketHelper.getCurrency options.currency2
+            query.where.sell_currency = MarketHelper.getCurrency options.currency1
           else if not options.action
             currencies = []
-            currencies.push options.currency1  if options.currency1
-            currencies.push options.currency2  if options.currency2
+            currencies.push MarketHelper.getCurrency(options.currency1)  if options.currency1
+            currencies.push MarketHelper.getCurrency(options.currency2)  if options.currency2
             if currencies.length > 1
               query.where.buy_currency = currencies
               query.where.sell_currency = currencies
@@ -100,7 +121,7 @@ module.exports = (sequelize, DataTypes) ->
         findCompletedByTime: (startTime, endTime, callback)->
           query =
             where:
-              status: "completed"
+              status: MarketHelper.getOrderStatus("completed")
               close_time:
                 gte: startTime
                 lte: endTime

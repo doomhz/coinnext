@@ -1,6 +1,7 @@
 restify = require "restify"
 Order = GLOBAL.db.Order
 TradeStats = GLOBAL.db.TradeStats
+MarketHelper = require "../../lib/market_helper"
 _ = require "underscore"
 
 module.exports = (app)->
