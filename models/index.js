@@ -48,7 +48,11 @@
 
   db.User.hasMany(db.Chat);
 
+  db.User.hasMany(db.UserToken);
+
   db.Chat.belongsTo(db.User);
+
+  db.UserToken.belongsTo(db.User);
 
   module.exports = lodash.extend({
     sequelize: sequelize,

@@ -31,12 +31,6 @@ module.exports = (sequelize, DataTypes) ->
           isAlphanumericAndUnderscore: (value)->
             message = "The username can have letters, numbers and underscores and should be longer than 4 characters and shorter than 16."
             throw new Error message  if not /^[a-zA-Z0-9_]{4,15}$/.test(value)
-      gauth_key:
-        type: DataTypes.STRING(32)
-        unique: true
-      token:
-        type: DataTypes.STRING(40)
-        unique: true
       email_verified:
         type: DataTypes.BOOLEAN
         defaultValue: false
@@ -54,7 +48,13 @@ module.exports = (sequelize, DataTypes) ->
           User.find(id).complete callback
 
         findByToken: (token, callback = ()->)->
-          User.find({where:{token: token}}).complete callback
+          query =
+            where:
+              token: token
+            include: [
+              {model: GLOBAL.db.UserToken, attributes: ["type", "token"]}
+            ]
+          User.find(query).complete callback
 
         findByEmail: (email, callback = ()->)->
           User.find({where:{email: email}}).complete callback
@@ -68,14 +68,6 @@ module.exports = (sequelize, DataTypes) ->
           userData.username = User.generateUsername data.email
           User.create(userData).complete callback
 
-        generateGAuthPassByKey: (key)->
-          speakeasy.time
-            key: key
-            encoding: "base32"
-
-        isValidGAuthPassForKey: (pass, key)->
-          User.generateGAuthPassByKey(key) is pass
-
         generateUsername: (seed)->
           seed = crypto.createHash("sha1").update("username_#{seed}#{GLOBAL.appConfig().salt}", "utf8").digest("hex")
           phonetic.generate
@@ -85,23 +77,6 @@ module.exports = (sequelize, DataTypes) ->
         
         isValidPassword: (password)->
           @password is User.hashPassword(password)
-
-        generateGAuthData: ()->
-          gData = speakeasy.generate_key
-            name: "coinnext.com"
-            length: 20
-            google_auth_qr: true
-          data =
-            gauth_qr: gData.google_auth_qr
-            gauth_key: gData.base32
-
-        setGAuthData: (key, callback = ()->)->
-          @gauth_key = key
-          @save().complete callback
-        
-        dropGAuthData: (callback = ()->)->
-          @gauth_key = null
-          @save().complete callback
 
         isValidGAuthPass: (pass)->
           User.generateGAuthPassByKey(@gauth_key) is pass

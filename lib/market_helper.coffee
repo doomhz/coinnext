@@ -43,6 +43,11 @@ TRANSACTION_ACCEPTED_CATEGORIES =
 
 TRANSACTION_MIN_CONF = 3
 
+TOKENS =
+  email_confirmation: 1
+  google_auth: 2
+  change_password: 3
+
 MarketHelper =
 
   getMarkets: ()->
@@ -121,5 +126,11 @@ MarketHelper =
 
   convertFromBigint: (value)->
     parseFloat(value) / 100000000
+
+  getTokenTypeLiteral: (intType)->
+    _.invert(TOKENS)[intType]
+
+  getTokenType: (type)->
+    _.invert(TOKENS)[type]
 
 exports = module.exports = MarketHelper

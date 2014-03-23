@@ -50,14 +50,6 @@
           }
         }
       },
-      gauth_key: {
-        type: DataTypes.STRING(32),
-        unique: true
-      },
-      token: {
-        type: DataTypes.STRING(40),
-        unique: true
-      },
       email_verified: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
@@ -80,14 +72,22 @@
           return User.find(id).complete(callback);
         },
         findByToken: function(token, callback) {
+          var query;
           if (callback == null) {
             callback = function() {};
           }
-          return User.find({
+          query = {
             where: {
               token: token
-            }
-          }).complete(callback);
+            },
+            include: [
+              {
+                model: GLOBAL.db.UserToken,
+                attributes: ["type", "token"]
+              }
+            ]
+          };
+          return User.find(query).complete(callback);
         },
         findByEmail: function(email, callback) {
           if (callback == null) {
@@ -109,15 +109,6 @@
           userData.username = User.generateUsername(data.email);
           return User.create(userData).complete(callback);
         },
-        generateGAuthPassByKey: function(key) {
-          return speakeasy.time({
-            key: key,
-            encoding: "base32"
-          });
-        },
-        isValidGAuthPassForKey: function(pass, key) {
-          return User.generateGAuthPassByKey(key) === pass;
-        },
         generateUsername: function(seed) {
           seed = crypto.createHash("sha1").update("username_" + seed + (GLOBAL.appConfig().salt), "utf8").digest("hex");
           return phonetic.generate({
@@ -128,32 +119,6 @@
       instanceMethods: {
         isValidPassword: function(password) {
           return this.password === User.hashPassword(password);
-        },
-        generateGAuthData: function() {
-          var data, gData;
-          gData = speakeasy.generate_key({
-            name: "coinnext.com",
-            length: 20,
-            google_auth_qr: true
-          });
-          return data = {
-            gauth_qr: gData.google_auth_qr,
-            gauth_key: gData.base32
-          };
-        },
-        setGAuthData: function(key, callback) {
-          if (callback == null) {
-            callback = function() {};
-          }
-          this.gauth_key = key;
-          return this.save().complete(callback);
-        },
-        dropGAuthData: function(callback) {
-          if (callback == null) {
-            callback = function() {};
-          }
-          this.gauth_key = null;
-          return this.save().complete(callback);
         },
         isValidGAuthPass: function(pass) {
           return User.generateGAuthPassByKey(this.gauth_key) === pass;
