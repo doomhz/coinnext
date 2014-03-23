@@ -19,14 +19,24 @@ module.exports = (sequelize, DataTypes) ->
       account:
         type: DataTypes.STRING(50)
       fee:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("fee")
+        set: (fee)->
+          @setDataValue "fee", MarketHelper.convertToBigint(fee)
+        comment: "FLOAT x 100000000"
       address:
         type: DataTypes.STRING(34)
         allowNull: false
       amount:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("amount")
+        set: (amount)->
+          @setDataValue "amount", MarketHelper.convertToBigint(amount)
+        comment: "FLOAT x 100000000"
       category:
         type: DataTypes.INTEGER.UNSIGNED
         allowNull: false

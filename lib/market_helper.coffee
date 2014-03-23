@@ -116,4 +116,10 @@ MarketHelper =
   getTransactionMinConf: ()->
     TRANSACTION_MIN_CONF
 
+  convertToBigint: (value)->
+    parseFloat(value) * 100000000
+
+  convertFromBigint: (value)->
+    parseFloat(value) / 100000000
+
 exports = module.exports = MarketHelper

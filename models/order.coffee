@@ -38,32 +38,57 @@ module.exports = (sequelize, DataTypes) ->
         set: (sellCurrency)->
           @setDataValue "sell_currency", MarketHelper.getCurrency(sellCurrency)
       amount:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
         validate:
           isFloat: true
           notNull: true
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("amount")
+        set: (amount)->
+          @setDataValue "amount", MarketHelper.convertToBigint(amount)
+        comment: "FLOAT x 100000000"
       sold_amount:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         validate:
           isFloat: true
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("sold_amount")
+        set: (soldAmount)->
+          @setDataValue "sold_amount", MarketHelper.convertToBigint(soldAmount)
+        comment: "FLOAT x 100000000"
       result_amount:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         validate:
           isFloat: true
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("result_amount")
+        set: (resultAmount)->
+          @setDataValue "result_amount", MarketHelper.convertToBigint(resultAmount)
+        comment: "FLOAT x 100000000"
       fee:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         validate:
           isFloat: true
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("fee")
+        set: (fee)->
+          @setDataValue "fee", MarketHelper.convertToBigint(fee)
+        comment: "FLOAT x 100000000"
       unit_price:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         validate:
           isFloat: true
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("unit_price")
+        set: (unitPrice)->
+          @setDataValue "unit_price", MarketHelper.convertToBigint(unitPrice)
+        comment: "FLOAT x 100000000"
       status:
         type: DataTypes.INTEGER.UNSIGNED
         defaultValue: MarketHelper.getOrderStatus "open"
@@ -132,12 +157,6 @@ module.exports = (sequelize, DataTypes) ->
 
         isValidTradeAmount: (amount)->
           _.isNumber(amount) and not _.isNaN(amount) and amount > 0
-
-        convertToEngineValue: (value)->
-          parseFloat(value) * 100000000
-
-        convertFromEngineValue: (value)->
-          parseFloat(value) / 100000000
 
       instanceMethods:
         

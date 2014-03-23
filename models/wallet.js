@@ -27,19 +27,40 @@
         allowNull: true
       },
       balance: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
-        allowNull: false
+        allowNull: false,
+        get: function() {
+          return MarketHelper.convertFromBigint(this.getDataValue("balance"));
+        },
+        set: function(balance) {
+          return this.setDataValue("balance", MarketHelper.convertToBigint(balance));
+        },
+        comment: "FLOAT x 100000000"
       },
       hold_balance: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
-        allowNull: false
+        allowNull: false,
+        get: function() {
+          return MarketHelper.convertFromBigint(this.getDataValue("hold_balance"));
+        },
+        set: function(holdBalance) {
+          return this.setDataValue("hold_balance", MarketHelper.convertToBigint(holdBalance));
+        },
+        comment: "FLOAT x 100000000"
       },
       fee: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0.2,
-        allowNull: false
+        allowNull: false,
+        get: function() {
+          return MarketHelper.convertFromBigint(this.getDataValue("fee"));
+        },
+        set: function(fee) {
+          return this.setDataValue("fee", MarketHelper.convertToBigint(fee));
+        },
+        comment: "FLOAT x 100000000"
       }
     }, {
       tableName: "wallets",
@@ -145,7 +166,7 @@
           }
           if (!_.isNaN(newBalance) && _.isNumber(newBalance)) {
             return this.increment({
-              balance: newBalance
+              balance: MarketHelper.convertToBigint(newBalance)
             }).complete((function(_this) {
               return function(err, wl) {
                 if (err) {
@@ -165,7 +186,7 @@
           }
           if (!_.isNaN(newBalance) && _.isNumber(newBalance)) {
             return this.increment({
-              hold_balance: newBalance
+              hold_balance: MarketHelper.convertToBigint(newBalance)
             }).complete((function(_this) {
               return function(err, wl) {
                 if (err) {

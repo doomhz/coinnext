@@ -12,29 +12,59 @@ module.exports = (sequelize, DataTypes) ->
         set: (type)->
           @setDataValue "type", MarketHelper.getMarket(type)
       last_price:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("last_price")
+        set: (lastPrice)->
+          @setDataValue "last_price", MarketHelper.convertToBigint(lastPrice)
+        comment: "FLOAT x 100000000"
       day_high:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("day_high")
+        set: (dayHigh)->
+          @setDataValue "day_high", MarketHelper.convertToBigint(dayHigh)
+        comment: "FLOAT x 100000000"
       day_low:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("day_low")
+        set: (dayLow)->
+          @setDataValue "day_low", MarketHelper.convertToBigint(dayLow)
+        comment: "FLOAT x 100000000"
       volume1:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("volume1")
+        set: (volume1)->
+          @setDataValue "volume1", MarketHelper.convertToBigint(volume1)
+        comment: "FLOAT x 100000000"
       volume2:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("volume2")
+        set: (volume2)->
+          @setDataValue "volume2", MarketHelper.convertToBigint(volume2)
+        comment: "FLOAT x 100000000"
       growth_ratio:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("growth_ratio")
+        set: (growthRatio)->
+          @setDataValue "growth_ratio", MarketHelper.convertToBigint(growthRatio)
+        comment: "FLOAT x 100000000"
       today:
         type: DataTypes.DATE
     ,

@@ -17,29 +17,64 @@
         }
       },
       open_price: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
-        allowNull: false
+        allowNull: false,
+        get: function() {
+          return MarketHelper.convertFromBigint(this.getDataValue("open_price"));
+        },
+        set: function(openPrice) {
+          return this.setDataValue("open_price", MarketHelper.convertToBigint(openPrice));
+        },
+        comment: "FLOAT x 100000000"
       },
       close_price: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
-        allowNull: false
+        allowNull: false,
+        get: function() {
+          return MarketHelper.convertFromBigint(this.getDataValue("close_price"));
+        },
+        set: function(closePrice) {
+          return this.setDataValue("close_price", MarketHelper.convertToBigint(closePrice));
+        },
+        comment: "FLOAT x 100000000"
       },
       high_price: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
-        allowNull: false
+        allowNull: false,
+        get: function() {
+          return MarketHelper.convertFromBigint(this.getDataValue("high_price"));
+        },
+        set: function(highPrice) {
+          return this.setDataValue("high_price", MarketHelper.convertToBigint(highPrice));
+        },
+        comment: "FLOAT x 100000000"
       },
       low_price: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
-        allowNull: false
+        allowNull: false,
+        get: function() {
+          return MarketHelper.convertFromBigint(this.getDataValue("low_price"));
+        },
+        set: function(lowPrice) {
+          return this.setDataValue("low_price", MarketHelper.convertToBigint(lowPrice));
+        },
+        comment: "FLOAT x 100000000"
       },
       volume: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
-        allowNull: false
+        allowNull: false,
+        get: function() {
+          return MarketHelper.convertFromBigint(this.getDataValue("volume"));
+        },
+        set: function(volume) {
+          return this.setDataValue("volume", MarketHelper.convertToBigint(volume));
+        },
+        comment: "FLOAT x 100000000"
       },
       start_time: {
         type: DataTypes.DATE

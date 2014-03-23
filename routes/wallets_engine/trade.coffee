@@ -5,6 +5,7 @@ MarketStats = GLOBAL.db.MarketStats
 TradeQueue = require "../../lib/trade_queue"
 trader = null
 JsonRenderer = require "../../lib/json_renderer"
+MarketHelper = require "../../lib/market_helper"
 ClientSocket = require "../../lib/client_socket"
 orderSocket = new ClientSocket
   host: GLOBAL.appConfig().app_host
@@ -20,8 +21,8 @@ module.exports = (app)->
       return next(new restify.ConflictError "Trade queue down")  if not trader
       marketType = "#{order.action}_#{order.type}".toUpperCase()
       orderCurrency = order["#{order.action}_currency"]
-      amount = Order.convertToEngineValue order.amount
-      unitPrice = if order.unit_price then Order.convertToEngineValue order.unit_price else order.unit_price
+      amount = MarketHelper.convertToBigint order.amount
+      unitPrice = if order.unit_price then MarketHelper.convertToBigint order.unit_price else order.unit_price
       queueData =
         eventType: "order"
         data:
@@ -79,10 +80,10 @@ module.exports = (app)->
     if result and result.eventType is "orderResult"
       orderId = result.data.orderId
       status = result.data.orderState
-      soldAmount = Order.convertFromEngineValue result.data.soldAmount
-      receivedAmount = Order.convertFromEngineValue result.data.receivedAmount
-      fee = Order.convertFromEngineValue result.data.orderFee
-      unitPrice = Order.convertFromEngineValue result.data.orderPPU
+      soldAmount = MarketHelper.convertFromBigint result.data.soldAmount
+      receivedAmount = MarketHelper.convertFromBigint result.data.receivedAmount
+      fee = MarketHelper.convertFromBigint result.data.orderFee
+      unitPrice = MarketHelper.convertFromBigint result.data.orderPPU
       Order.findById orderId, (err, order)->
         return console.error "Wrong order to complete ", result  if not order
         Wallet.findUserWalletByCurrency order.user_id, order.buy_currency, (err, buyWallet)->

@@ -55,41 +55,76 @@
         }
       },
       amount: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         allowNull: false,
         validate: {
           isFloat: true,
           notNull: true
-        }
+        },
+        get: function() {
+          return MarketHelper.convertFromBigint(this.getDataValue("amount"));
+        },
+        set: function(amount) {
+          return this.setDataValue("amount", MarketHelper.convertToBigint(amount));
+        },
+        comment: "FLOAT x 100000000"
       },
       sold_amount: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         validate: {
           isFloat: true
-        }
+        },
+        get: function() {
+          return MarketHelper.convertFromBigint(this.getDataValue("sold_amount"));
+        },
+        set: function(soldAmount) {
+          return this.setDataValue("sold_amount", MarketHelper.convertToBigint(soldAmount));
+        },
+        comment: "FLOAT x 100000000"
       },
       result_amount: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         validate: {
           isFloat: true
-        }
+        },
+        get: function() {
+          return MarketHelper.convertFromBigint(this.getDataValue("result_amount"));
+        },
+        set: function(resultAmount) {
+          return this.setDataValue("result_amount", MarketHelper.convertToBigint(resultAmount));
+        },
+        comment: "FLOAT x 100000000"
       },
       fee: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         validate: {
           isFloat: true
-        }
+        },
+        get: function() {
+          return MarketHelper.convertFromBigint(this.getDataValue("fee"));
+        },
+        set: function(fee) {
+          return this.setDataValue("fee", MarketHelper.convertToBigint(fee));
+        },
+        comment: "FLOAT x 100000000"
       },
       unit_price: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         validate: {
           isFloat: true
-        }
+        },
+        get: function() {
+          return MarketHelper.convertFromBigint(this.getDataValue("unit_price"));
+        },
+        set: function(unitPrice) {
+          return this.setDataValue("unit_price", MarketHelper.convertToBigint(unitPrice));
+        },
+        comment: "FLOAT x 100000000"
       },
       status: {
         type: DataTypes.INTEGER.UNSIGNED,
@@ -189,12 +224,6 @@
         },
         isValidTradeAmount: function(amount) {
           return _.isNumber(amount) && !_.isNaN(amount) && amount > 0;
-        },
-        convertToEngineValue: function(value) {
-          return parseFloat(value) * 100000000;
-        },
-        convertFromEngineValue: function(value) {
-          return parseFloat(value) / 100000000;
         }
       },
       instanceMethods: {

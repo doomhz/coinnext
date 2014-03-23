@@ -44,14 +44,21 @@
         }
       },
       amount: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         allowNull: false,
         validate: {
           isFloat: true,
           notNull: true,
           min: 0.00000001
-        }
+        },
+        get: function() {
+          return MarketHelper.convertFromBigint(this.getDataValue("amount"));
+        },
+        set: function(amount) {
+          return this.setDataValue("amount", MarketHelper.convertToBigint(amount));
+        },
+        comment: "FLOAT x 100000000"
       },
       status: {
         type: DataTypes.INTEGER.UNSIGNED,

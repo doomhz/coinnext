@@ -1,5 +1,5 @@
 (function() {
-  var ClientSocket, JsonRenderer, MarketStats, Order, TradeQueue, Wallet, orderSocket, restify, trader;
+  var ClientSocket, JsonRenderer, MarketHelper, MarketStats, Order, TradeQueue, Wallet, orderSocket, restify, trader;
 
   restify = require("restify");
 
@@ -14,6 +14,8 @@
   trader = null;
 
   JsonRenderer = require("../../lib/json_renderer");
+
+  MarketHelper = require("../../lib/market_helper");
 
   ClientSocket = require("../../lib/client_socket");
 
@@ -38,8 +40,8 @@
         }
         marketType = ("" + order.action + "_" + order.type).toUpperCase();
         orderCurrency = order["" + order.action + "_currency"];
-        amount = Order.convertToEngineValue(order.amount);
-        unitPrice = order.unit_price ? Order.convertToEngineValue(order.unit_price) : order.unit_price;
+        amount = MarketHelper.convertToBigint(order.amount);
+        unitPrice = order.unit_price ? MarketHelper.convertToBigint(order.unit_price) : order.unit_price;
         queueData = {
           eventType: "order",
           data: {
@@ -123,10 +125,10 @@
       if (result && result.eventType === "orderResult") {
         orderId = result.data.orderId;
         status = result.data.orderState;
-        soldAmount = Order.convertFromEngineValue(result.data.soldAmount);
-        receivedAmount = Order.convertFromEngineValue(result.data.receivedAmount);
-        fee = Order.convertFromEngineValue(result.data.orderFee);
-        unitPrice = Order.convertFromEngineValue(result.data.orderPPU);
+        soldAmount = MarketHelper.convertFromBigint(result.data.soldAmount);
+        receivedAmount = MarketHelper.convertFromBigint(result.data.receivedAmount);
+        fee = MarketHelper.convertFromBigint(result.data.orderFee);
+        unitPrice = MarketHelper.convertFromBigint(result.data.orderPPU);
         return Order.findById(orderId, function(err, order) {
           if (!order) {
             return console.error("Wrong order to complete ", result);

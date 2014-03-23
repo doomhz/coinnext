@@ -28,16 +28,30 @@
         type: DataTypes.STRING(50)
       },
       fee: {
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED,
+        get: function() {
+          return MarketHelper.convertFromBigint(this.getDataValue("fee"));
+        },
+        set: function(fee) {
+          return this.setDataValue("fee", MarketHelper.convertToBigint(fee));
+        },
+        comment: "FLOAT x 100000000"
       },
       address: {
         type: DataTypes.STRING(34),
         allowNull: false
       },
       amount: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
-        allowNull: false
+        allowNull: false,
+        get: function() {
+          return MarketHelper.convertFromBigint(this.getDataValue("amount"));
+        },
+        set: function(amount) {
+          return this.setDataValue("amount", MarketHelper.convertToBigint(amount));
+        },
+        comment: "FLOAT x 100000000"
       },
       category: {
         type: DataTypes.INTEGER.UNSIGNED,

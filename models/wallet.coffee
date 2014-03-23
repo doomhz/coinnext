@@ -18,17 +18,32 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.STRING(34)
         allowNull: true
       balance:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("balance")
+        set: (balance)->
+          @setDataValue "balance", MarketHelper.convertToBigint(balance)
+        comment: "FLOAT x 100000000"
       hold_balance:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("hold_balance")
+        set: (holdBalance)->
+          @setDataValue "hold_balance", MarketHelper.convertToBigint(holdBalance)
+        comment: "FLOAT x 100000000"
       fee:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0.2
         allowNull: false
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("fee")
+        set: (fee)->
+          @setDataValue "fee", MarketHelper.convertToBigint(fee)
+        comment: "FLOAT x 100000000"
     ,
       tableName: "wallets"
 
@@ -86,7 +101,7 @@ module.exports = (sequelize, DataTypes) ->
 
         addBalance: (newBalance, callback = ()->)->
           if not _.isNaN(newBalance) and _.isNumber(newBalance)
-            @increment({balance: newBalance}).complete (err, wl)=>
+            @increment({balance: MarketHelper.convertToBigint(newBalance)}).complete (err, wl)=>
               console.log "Could not add the wallet balance #{newBalance} for #{@id}: #{err}"  if err
               Wallet.find(@id).complete callback
           else
@@ -95,7 +110,7 @@ module.exports = (sequelize, DataTypes) ->
 
         addHoldBalance: (newBalance, callback = ()->)->
           if not _.isNaN(newBalance) and _.isNumber(newBalance)
-            @increment({hold_balance: newBalance}).complete (err, wl)=>
+            @increment({hold_balance: MarketHelper.convertToBigint(newBalance)}).complete (err, wl)=>
               console.log "Could not add the wallet hold balance #{newBalance} for #{@id}: #{err}"  if err
               Wallet.find(@id).complete callback
           else

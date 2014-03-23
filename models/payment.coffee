@@ -28,13 +28,18 @@ module.exports = (sequelize, DataTypes) ->
             pattern = /^[1-9A-Za-z]{27,34}/
             throw new Error "Invalid address."  if not pattern.test(value)
       amount:
-        type: DataTypes.FLOAT.UNSIGNED
+        type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
         validate:
           isFloat: true
           notNull: true
           min: 0.00000001
+        get: ()->
+          MarketHelper.convertFromBigint @getDataValue("amount")
+        set: (amount)->
+          @setDataValue "amount", MarketHelper.convertToBigint(amount)
+        comment: "FLOAT x 100000000"
       status:
         type: DataTypes.INTEGER.UNSIGNED
         defaultValue: MarketHelper.getPaymentStatus "pending"
