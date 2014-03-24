@@ -18,10 +18,8 @@
         if (err) {
           return JsonRenderer.error(err, res);
         }
-        newUser.generateToken(function() {
-          newUser.sendEmailVerificationLink();
-          return Wallet.findOrCreateUserWalletByCurrency(newUser.id, "BTC");
-        });
+        newUser.sendEmailVerificationLink();
+        Wallet.findOrCreateUserWalletByCurrency(newUser.id, "BTC");
         return res.json(JsonRenderer.user(newUser));
       });
     });

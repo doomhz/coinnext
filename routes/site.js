@@ -1,5 +1,5 @@
 (function() {
-  var AuthStats, MarketHelper, MarketStats, TradeStats, Wallet, _str;
+  var AuthStats, MarketHelper, MarketStats, TradeStats, UserToken, Wallet, _str;
 
   Wallet = GLOBAL.db.Wallet;
 
@@ -8,6 +8,8 @@
   TradeStats = GLOBAL.db.TradeStats;
 
   AuthStats = GLOBAL.db.AuthStats;
+
+  UserToken = GLOBAL.db.UserToken;
 
   MarketHelper = require("../lib/market_helper");
 
@@ -159,11 +161,14 @@
         return res.redirect("/login");
       }
       return AuthStats.findByUser(req.user.id, function(err, authStats) {
-        return res.render("site/settings/security", {
-          title: 'Security - Settings',
-          page: 'settings',
-          user: req.user,
-          authStats: authStats
+        return UserToken.findByUserAndType(req.user.id, "google_auth", function(err, googleToken) {
+          return res.render("site/settings/security", {
+            title: 'Security - Settings',
+            page: 'settings',
+            user: req.user,
+            authStats: authStats,
+            googleToken: googleToken
+          });
         });
       });
     });

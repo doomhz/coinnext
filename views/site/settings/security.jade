@@ -41,7 +41,7 @@ block content
           .con-header
             h1.con-header-title Two-factor authentication
           .con-body
-            - if (user.gauth_key)
+            - if (googleToken)
               p.gauth-status Two-factor authentication is currently enabled.
               #gauth-cnt
                 form#gauth-confirm-disable-form

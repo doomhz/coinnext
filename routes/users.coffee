@@ -10,9 +10,8 @@ module.exports = (app)->
       password: req.body.password
     User.createNewUser data, (err, newUser)->
       return JsonRenderer.error err, res  if err
-      newUser.generateToken ()->
-        newUser.sendEmailVerificationLink()
-        Wallet.findOrCreateUserWalletByCurrency newUser.id, "BTC"
+      newUser.sendEmailVerificationLink()
+      Wallet.findOrCreateUserWalletByCurrency newUser.id, "BTC"
       res.json JsonRenderer.user newUser
 
   app.get "/user/:id?", (req, res)->

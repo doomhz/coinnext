@@ -1,7 +1,9 @@
 (function() {
-  var AuthStats, JsonRenderer, User;
+  var AuthStats, JsonRenderer, User, UserToken;
 
   User = GLOBAL.db.User;
+
+  UserToken = GLOBAL.db.UserToken;
 
   AuthStats = GLOBAL.db.AuthStats;
 
@@ -54,15 +56,13 @@
           res.writeHead(303, {
             "Location": "/send-password?error=wrong-user"
           });
-          res.end();
+          return res.end();
         }
-        return user.generateToken(function() {
-          return user.sendPasswordLink(function() {
-            res.writeHead(303, {
-              "Location": "/send-password?success=true"
-            });
-            return res.end();
+        return user.sendChangePasswordLink(function() {
+          res.writeHead(303, {
+            "Location": "/send-password?success=true"
           });
+          return res.end();
         });
       });
     });
@@ -140,16 +140,16 @@
       if (!req.user) {
         return JsonRenderer.error(null, res);
       }
-      return res.json(req.user.generateGAuthData());
+      return res.json(UserToken.generateGAuthData());
     });
     app.put("/google_auth/:id?", function(req, res) {
       if (!req.user) {
         return JsonRenderer.error(null, res);
       }
-      if (!User.isValidGAuthPassForKey(req.body.gauth_pass, req.body.gauth_key)) {
+      if (!UserToken.isValidGAuthPassForKey(req.body.gauth_pass, req.body.gauth_key)) {
         return JsonRenderer.error("Invalid Google Authenticator code", res, 401);
       }
-      return req.user.setGAuthData(req.body.gauth_key, function(err, user) {
+      return UserToken.addGAuthTokenForUser(req.body.gauth_key, req.user.id, function(err, user) {
         return res.json(user);
       });
     });
@@ -157,11 +157,13 @@
       if (!req.user) {
         return JsonRenderer.error(null, res);
       }
-      if (!req.user.isValidGAuthPass(req.body.gauth_pass)) {
-        return JsonRenderer.error("Invalid Google Authenticator code", res, 401);
-      }
-      return req.user.dropGAuthData(function() {
-        return res.json(JsonRenderer.user(req.user));
+      return UserToken.isValidGAuthPassForUser(req.user.id, req.body.gauth_pass, function(err, isValid) {
+        if (!isValid) {
+          return JsonRenderer.error("Invalid Google Authenticator code", res, 401);
+        }
+        return UserToken.dropGAuthDataForUser(req.user.id, function() {
+          return res.json(JsonRenderer.user(req.user));
+        });
       });
     });
     return login = function(req, res, next) {
@@ -176,15 +178,17 @@
           if (err) {
             return JsonRenderer.error("Invalid credentials", res, 401);
           }
-          if (user.gauth_key && !user.isValidGAuthPass(req.body.gauth_pass)) {
-            req.logout();
-            return JsonRenderer.error("Invalid Google Authenticator code", res, 401);
-          }
-          res.json(JsonRenderer.user(req.user));
-          return AuthStats.log({
-            ip: req.ip,
-            user: req.user
-          }, req.user.email_auth_enabled);
+          return UserToken.findByUserAndType(user.id, "google_auth", function(err, googleToken) {
+            if (googleToken && !googleToken.isValidGAuthPass(req.body.gauth_pass)) {
+              req.logout();
+              return JsonRenderer.error("Invalid Google Authenticator code", res, 401);
+            }
+            res.json(JsonRenderer.user(req.user));
+            return AuthStats.log({
+              ip: req.ip,
+              user: req.user
+            }, req.user.email_auth_enabled);
+          });
         });
       })(req, res, next);
     };

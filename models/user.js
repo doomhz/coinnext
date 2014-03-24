@@ -1,5 +1,7 @@
 (function() {
-  var Emailer, crypto, phonetic, speakeasy, _;
+  var Emailer, MarketHelper, crypto, phonetic, speakeasy, _;
+
+  MarketHelper = require("../lib/market_helper");
 
   crypto = require("crypto");
 
@@ -82,12 +84,16 @@
             },
             include: [
               {
-                model: GLOBAL.db.UserToken,
-                attributes: ["type", "token"]
+                model: GLOBAL.db.User
               }
             ]
           };
-          return User.find(query).complete(callback);
+          return GLOBAL.db.UserToken.find(query).complete(function(err, userToken) {
+            if (userToken == null) {
+              userToken = {};
+            }
+            return callback(err, userToken.user);
+          });
         },
         findByEmail: function(email, callback) {
           if (callback == null) {
@@ -120,69 +126,65 @@
         isValidPassword: function(password) {
           return this.password === User.hashPassword(password);
         },
-        isValidGAuthPass: function(pass) {
-          return User.generateGAuthPassByKey(this.gauth_key) === pass;
-        },
-        sendPasswordLink: function(callback) {
-          var data, emailer, options, passUrl, siteUrl;
+        sendChangePasswordLink: function(callback) {
           if (callback == null) {
             callback = function() {};
           }
-          siteUrl = GLOBAL.appConfig().emailer.host;
-          passUrl = "" + siteUrl + "/change-password/" + this.token;
-          data = {
-            "site_url": siteUrl,
-            "pass_url": passUrl
-          };
-          options = {
-            to: {
-              email: this.email
-            },
-            subject: "Change password request on Coinnext.com",
-            template: "change_password"
-          };
-          emailer = new Emailer(options, data);
-          emailer.send(function(err, result) {
-            if (err) {
-              return console.error(err);
-            }
-          });
-          return callback();
+          return GLOBAL.db.UserToken.generateChangePasswordTokenForUser(this.id, this.uuid, (function(_this) {
+            return function(err, userToken) {
+              var data, emailer, options, passUrl, siteUrl;
+              siteUrl = GLOBAL.appConfig().emailer.host;
+              passUrl = "" + siteUrl + "/change-password/" + userToken.token;
+              data = {
+                "site_url": siteUrl,
+                "pass_url": passUrl
+              };
+              options = {
+                to: {
+                  email: _this.email
+                },
+                subject: "Change password request on Coinnext.com",
+                template: "change_password"
+              };
+              emailer = new Emailer(options, data);
+              emailer.send(function(err, result) {
+                if (err) {
+                  return console.error(err);
+                }
+              });
+              return callback();
+            };
+          })(this));
         },
         sendEmailVerificationLink: function(callback) {
-          var data, emailer, options, siteUrl, verificationUrl;
           if (callback == null) {
             callback = function() {};
           }
-          siteUrl = GLOBAL.appConfig().emailer.host;
-          verificationUrl = "" + siteUrl + "/verify/" + this.token;
-          data = {
-            "site_url": siteUrl,
-            "verification_url": verificationUrl
-          };
-          options = {
-            to: {
-              email: this.email
-            },
-            subject: "Account confirmation on Coinnext.com",
-            template: "confirm_email"
-          };
-          emailer = new Emailer(options, data);
-          emailer.send(function(err, result) {
-            if (err) {
-              return console.error(err);
-            }
-          });
-          return callback();
-        },
-        generateToken: function(callback) {
-          if (callback == null) {
-            callback = function() {};
-          }
-          this.token = crypto.createHash("sha1").update("" + this._id + (GLOBAL.appConfig().salt) + (Date.now()), "utf8").digest("hex");
-          return this.save().complete(function(err, u) {
-            return callback(u.token);
-          });
+          return GLOBAL.db.UserToken.generateEmailConfirmationTokenForUser(this.id, this.uuid, (function(_this) {
+            return function(err, userToken) {
+              var data, emailer, options, siteUrl, verificationUrl;
+              siteUrl = GLOBAL.appConfig().emailer.host;
+              verificationUrl = "" + siteUrl + "/verify/" + userToken.token;
+              data = {
+                "site_url": siteUrl,
+                "verification_url": verificationUrl
+              };
+              options = {
+                to: {
+                  email: _this.email
+                },
+                subject: "Account confirmation on Coinnext.com",
+                template: "confirm_email"
+              };
+              emailer = new Emailer(options, data);
+              emailer.send(function(err, result) {
+                if (err) {
+                  return console.error(err);
+                }
+              });
+              return callback();
+            };
+          })(this));
         },
         changePassword: function(password, callback) {
           if (callback == null) {

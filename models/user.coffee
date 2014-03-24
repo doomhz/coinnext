@@ -1,3 +1,4 @@
+MarketHelper = require "../lib/market_helper"
 crypto    = require "crypto"
 speakeasy = require "speakeasy"
 Emailer   = require "../lib/emailer"
@@ -52,9 +53,10 @@ module.exports = (sequelize, DataTypes) ->
             where:
               token: token
             include: [
-              {model: GLOBAL.db.UserToken, attributes: ["type", "token"]}
+              {model: GLOBAL.db.User}
             ]
-          User.find(query).complete callback
+          GLOBAL.db.UserToken.find(query).complete (err, userToken = {})->
+            callback err, userToken.user
 
         findByEmail: (email, callback = ()->)->
           User.find({where:{email: email}}).complete callback
@@ -78,45 +80,39 @@ module.exports = (sequelize, DataTypes) ->
         isValidPassword: (password)->
           @password is User.hashPassword(password)
 
-        isValidGAuthPass: (pass)->
-          User.generateGAuthPassByKey(@gauth_key) is pass
-
-        sendPasswordLink: (callback = ()->)->
-          siteUrl = GLOBAL.appConfig().emailer.host
-          passUrl = "#{siteUrl}/change-password/#{@token}"
-          data =
-            "site_url": siteUrl
-            "pass_url": passUrl
-          options =
-            to:
-              email: @email
-            subject: "Change password request on Coinnext.com"
-            template: "change_password"
-          emailer = new Emailer options, data
-          emailer.send (err, result)->
-            console.error err  if err
-          callback()
+        sendChangePasswordLink: (callback = ()->)->
+          GLOBAL.db.UserToken.generateChangePasswordTokenForUser @id, @uuid, (err, userToken)=>
+            siteUrl = GLOBAL.appConfig().emailer.host
+            passUrl = "#{siteUrl}/change-password/#{userToken.token}"
+            data =
+              "site_url": siteUrl
+              "pass_url": passUrl
+            options =
+              to:
+                email: @email
+              subject: "Change password request on Coinnext.com"
+              template: "change_password"
+            emailer = new Emailer options, data
+            emailer.send (err, result)->
+              console.error err  if err
+            callback()
 
         sendEmailVerificationLink: (callback = ()->)->
-          siteUrl = GLOBAL.appConfig().emailer.host
-          verificationUrl = "#{siteUrl}/verify/#{@token}"
-          data =
-            "site_url": siteUrl
-            "verification_url": verificationUrl
-          options =
-            to:
-              email: @email
-            subject: "Account confirmation on Coinnext.com"
-            template: "confirm_email"
-          emailer = new Emailer options, data
-          emailer.send (err, result)->
-            console.error err  if err
-          callback()
-
-        generateToken: (callback = ()->)->
-          @token = crypto.createHash("sha1").update("#{@_id}#{GLOBAL.appConfig().salt}#{Date.now()}", "utf8").digest("hex")
-          @save().complete (err, u)->
-            callback(u.token)
+          GLOBAL.db.UserToken.generateEmailConfirmationTokenForUser @id, @uuid, (err, userToken)=>
+            siteUrl = GLOBAL.appConfig().emailer.host
+            verificationUrl = "#{siteUrl}/verify/#{userToken.token}"
+            data =
+              "site_url": siteUrl
+              "verification_url": verificationUrl
+            options =
+              to:
+                email: @email
+              subject: "Account confirmation on Coinnext.com"
+              template: "confirm_email"
+            emailer = new Emailer options, data
+            emailer.send (err, result)->
+              console.error err  if err
+            callback()
 
         changePassword: (password, callback = ()->)->
           @password = User.hashPassword password

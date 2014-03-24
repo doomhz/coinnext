@@ -1,4 +1,5 @@
 User = GLOBAL.db.User
+UserToken = GLOBAL.db.UserToken
 AuthStats = GLOBAL.db.AuthStats
 JsonRenderer = require "../lib/json_renderer"
 
@@ -35,11 +36,10 @@ module.exports = (app)->
     User.findByEmail email, (err, user)->
       if not user
         res.writeHead(303, {"Location": "/send-password?error=wrong-user"})
+        return res.end()
+      user.sendChangePasswordLink ()->
+        res.writeHead(303, {"Location": "/send-password?success=true"})
         res.end()
-      user.generateToken ()->
-        user.sendPasswordLink ()->
-          res.writeHead(303, {"Location": "/send-password?success=true"})
-          res.end()
 
   app.get "/change-password/:token", (req, res)->
     token = req.params.token
@@ -78,19 +78,20 @@ module.exports = (app)->
 
   app.post "/google_auth", (req, res)->
     return JsonRenderer.error null, res  if not req.user
-    res.json req.user.generateGAuthData()
+    res.json UserToken.generateGAuthData()
 
   app.put "/google_auth/:id?", (req, res)->
     return JsonRenderer.error null, res  if not req.user
-    return JsonRenderer.error "Invalid Google Authenticator code", res, 401  if not User.isValidGAuthPassForKey req.body.gauth_pass, req.body.gauth_key
-    req.user.setGAuthData req.body.gauth_key, (err, user)->
+    return JsonRenderer.error "Invalid Google Authenticator code", res, 401  if not UserToken.isValidGAuthPassForKey req.body.gauth_pass, req.body.gauth_key
+    UserToken.addGAuthTokenForUser req.body.gauth_key, req.user.id, (err, user)->
       res.json user
 
   app.del "/google_auth/:id?", (req, res)->
     return JsonRenderer.error null, res  if not req.user
-    return JsonRenderer.error "Invalid Google Authenticator code", res, 401  if not req.user.isValidGAuthPass req.body.gauth_pass
-    req.user.dropGAuthData ()->
-      res.json JsonRenderer.user req.user
+    UserToken.isValidGAuthPassForUser req.user.id, req.body.gauth_pass, (err, isValid)->
+      return JsonRenderer.error "Invalid Google Authenticator code", res, 401  if not isValid
+      UserToken.dropGAuthDataForUser req.user.id, ()->
+        res.json JsonRenderer.user req.user
 
 
   login = (req, res, next)->
@@ -99,9 +100,10 @@ module.exports = (app)->
       return JsonRenderer.error "Invalid credentials", res, 401  if not user
       req.logIn user, (err)->
         return JsonRenderer.error "Invalid credentials", res, 401  if err
-        if user.gauth_key and not user.isValidGAuthPass req.body.gauth_pass
-          req.logout()
-          return JsonRenderer.error "Invalid Google Authenticator code", res, 401
-        res.json JsonRenderer.user req.user
-        AuthStats.log {ip: req.ip, user: req.user}, req.user.email_auth_enabled
+        UserToken.findByUserAndType user.id, "google_auth", (err, googleToken)->
+          if googleToken and not googleToken.isValidGAuthPass req.body.gauth_pass
+            req.logout()
+            return JsonRenderer.error "Invalid Google Authenticator code", res, 401
+          res.json JsonRenderer.user req.user
+          AuthStats.log {ip: req.ip, user: req.user}, req.user.email_auth_enabled
     )(req, res, next)

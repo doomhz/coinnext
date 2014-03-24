@@ -131,6 +131,6 @@ MarketHelper =
     _.invert(TOKENS)[intType]
 
   getTokenType: (type)->
-    _.invert(TOKENS)[type]
+    TOKENS[type]
 
 exports = module.exports = MarketHelper
