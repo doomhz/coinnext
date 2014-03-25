@@ -12,23 +12,22 @@ block content
       .col-main
         .container
           .con-header
-            h1.con-header-title Preferences
+            h1.con-header-title Social
           .con-body
-            fieldset.preference-con
-              legend Chat
-              fieldset.checkbox
-                label(for="chat_enabled")
-                  input(type="checkbox" name="chat_enabled" id="chat_enabled" checked=(user.chat_enabled))
-                  | Enable Chat
-              form#username-update-form
-                fieldset
-                  label(for="username") Username
-                  input(type="text" name="username" id="username" placeholder="username" value=user.username)
-
-            fieldset.preference-con
-              legend Email
-              fieldset.checkbox
-                label(for="email_auth_enabled")
-                  input(type="checkbox" name="email_auth_enabled" id="email_auth_enabled" checked=(user.email_auth_enabled))
-                  | Enable email on authentication
-              
+            fieldset.checkbox
+              label(for="chat_enabled")
+                input(type="checkbox" name="chat_enabled" id="chat_enabled" checked=(user.chat_enabled))
+                | Enable Chat
+            form#username-update-form
+              fieldset
+                label(for="username") Username
+                input(type="text" name="username" id="username" placeholder="username" value=user.username)
+        .container
+          .con-header
+            h1.con-header-title Notifications
+          .con-body
+            fieldset.checkbox
+              label(for="email_auth_enabled")
+                input(type="checkbox" name="email_auth_enabled" id="email_auth_enabled" checked=(user.email_auth_enabled))
+                | Enable email on authentication
+            

@@ -126,9 +126,19 @@ $red = #da4444
 .abbreviation
   border-right 1px solid #e0e0e0
   display inline-block
+  line-height 20px
   padding 10px
   margin -10px
   margin-right 10px
+  .icon
+    vertical-align text-top
+    background url("/img/coin-icons.png") no-repeat
+    height 20px
+    width 20px
+    &.litecoin
+      background-position 0 0
+    &.peercoin
+      background-position -20px 0
 
 .coin-stats
   @extends .container
