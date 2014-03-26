@@ -12,20 +12,27 @@ module.exports = (app)->
     data = req.body
     data.user_id = req.user.id
     return JsonRenderer.error validationError, res  if validationError = notValidOrderData data
-    holdBalance = data.amount
     holdBalance = parseFloat(data.amount * data.unit_price)  if data.type is "limit" and data.action is "buy"
     Wallet.findOrCreateUserWalletByCurrency req.user.id, data.buy_currency, (err, buyWallet)->
       return JsonRenderer.error "Wallet #{data.buy_currency} does not exist.", res  if err or not buyWallet
       Wallet.findOrCreateUserWalletByCurrency req.user.id, data.sell_currency, (err, wallet)->
         return JsonRenderer.error "Wallet #{data.sell_currency} does not exist.", res  if err or not wallet
-        wallet.holdBalance holdBalance, (err, wallet)->
-          return JsonRenderer.error "Not enough #{data.sell_currency} to open an order.", res  if err or not wallet
-          Order.create(data).complete (err, newOrder)->
-            return JsonRenderer.error "Sorry, could not open an order...", res  if err
-            newOrder.publish (err, order)->
-              console.log "Could not publish newlly created order - #{err}"  if err
-              return res.json JsonRenderer.order newOrder  if err
-              res.json JsonRenderer.order order
+        GLOBAL.db.sequelize.transaction (transaction)->
+          wallet.holdBalance holdBalance, transaction, (err, wallet)->
+            if err or not wallet
+              return transaction.rollback().success ()->
+                JsonRenderer.error "Not enough #{data.sell_currency} to open an order.", res
+            Order.create(data, {transaction: transaction}).complete (err, newOrder)->
+              if err
+                return transaction.rollback().success ()->
+                  JsonRenderer.error "Sorry, could not open an order...", res
+              transaction.commit().success ()->
+                newOrder.publish (err, order)->
+                  console.log "Could not publish newlly created order - #{err}"  if err
+                  return res.json JsonRenderer.order newOrder  if err
+                  res.json JsonRenderer.order order
+              transaction.done (err)->
+                JsonRenderer.error "Could not open an order. Please try again later.", res  if err
 
   app.get "/orders", (req, res)->
     Order.findByOptions req.query, (err, orders)->

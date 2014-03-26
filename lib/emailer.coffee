@@ -29,6 +29,7 @@ class Emailer
       generateTextFromHTML: true
       attachments: attachments
     transport = @getTransport()
+    return callback()  if not GLOBAL.appConfig().emailer.enabled
     transport.sendMail messageData, callback
 
   getTransport: ()->

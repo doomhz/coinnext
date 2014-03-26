@@ -99,35 +99,31 @@ module.exports = (sequelize, DataTypes) ->
               console.error "Could not generate address - #{JSON.stringify(body)}"
               callback "Invalid address"
 
-        addBalance: (newBalance, callback = ()->)->
+        addBalance: (newBalance, transaction, callback = ()->)->
           if not _.isNaN(newBalance) and _.isNumber(newBalance)
-            @increment({balance: MarketHelper.convertToBigint(newBalance)}).complete (err, wl)=>
-              console.log "Could not add the wallet balance #{newBalance} for #{@id}: #{err}"  if err
+            @increment({balance: MarketHelper.convertToBigint(newBalance)}, {transaction: transaction}).complete (err, wl)=>
+              return callback "Could not add the wallet balance #{newBalance} for #{@id}: #{err}"  if err
               Wallet.find(@id).complete callback
           else
-            console.log "Could not add wallet balance #{newBalance} for #{@id}"
-            callback(null, @)
+            callback "Could not add wallet balance #{newBalance} for #{@id}"
 
-        addHoldBalance: (newBalance, callback = ()->)->
+        addHoldBalance: (newBalance, transaction, callback = ()->)->
           if not _.isNaN(newBalance) and _.isNumber(newBalance)
-            @increment({hold_balance: MarketHelper.convertToBigint(newBalance)}).complete (err, wl)=>
-              console.log "Could not add the wallet hold balance #{newBalance} for #{@id}: #{err}"  if err
+            @increment({hold_balance: MarketHelper.convertToBigint(newBalance)}, {transaction: transaction}).complete (err, wl)=>
+              return callback "Could not add the wallet hold balance #{newBalance} for #{@id}: #{err}"  if err
               Wallet.find(@id).complete callback
           else
-            console.log "Could not add wallet hold balance #{newBalance} for #{@id}"
-            callback(null, @)
+            callback "Could not add wallet hold balance #{newBalance} for #{@id}"
 
-        holdBalance: (balance, callback = ()->)->
+        holdBalance: (balance, transaction, callback = ()->)->
           if not _.isNaN(balance) and _.isNumber(balance) and @canWithdraw(balance)
-            @addBalance -balance, (err)=>
+            @addBalance -balance, transaction, (err)=>
               if not err
-                @addHoldBalance balance, callback
+                @addHoldBalance balance, transaction, callback
               else
-                console.log "Could not hold wallet balance #{balance} for #{@id}, not enough funds?"
-                Wallet.findById @id, callback
+                callback "Could not hold wallet balance #{balance} for #{@id}, not enough funds?"
           else
-            console.log "Could not add wallet hold balance #{balance} for #{@id}"
-            callback("Invalid balance #{balance}", @)
+            callback "Could not add wallet hold balance #{balance} for #{@id}, invalid balance #{balance}."
 
         canWithdraw: (amount)->
           parseFloat(@balance) >= parseFloat(amount)

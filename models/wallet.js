@@ -160,64 +160,64 @@
             };
           })(this));
         },
-        addBalance: function(newBalance, callback) {
+        addBalance: function(newBalance, transaction, callback) {
           if (callback == null) {
             callback = function() {};
           }
           if (!_.isNaN(newBalance) && _.isNumber(newBalance)) {
             return this.increment({
               balance: MarketHelper.convertToBigint(newBalance)
+            }, {
+              transaction: transaction
             }).complete((function(_this) {
               return function(err, wl) {
                 if (err) {
-                  console.log("Could not add the wallet balance " + newBalance + " for " + _this.id + ": " + err);
+                  return callback("Could not add the wallet balance " + newBalance + " for " + _this.id + ": " + err);
                 }
                 return Wallet.find(_this.id).complete(callback);
               };
             })(this));
           } else {
-            console.log("Could not add wallet balance " + newBalance + " for " + this.id);
-            return callback(null, this);
+            return callback("Could not add wallet balance " + newBalance + " for " + this.id);
           }
         },
-        addHoldBalance: function(newBalance, callback) {
+        addHoldBalance: function(newBalance, transaction, callback) {
           if (callback == null) {
             callback = function() {};
           }
           if (!_.isNaN(newBalance) && _.isNumber(newBalance)) {
             return this.increment({
               hold_balance: MarketHelper.convertToBigint(newBalance)
+            }, {
+              transaction: transaction
             }).complete((function(_this) {
               return function(err, wl) {
                 if (err) {
-                  console.log("Could not add the wallet hold balance " + newBalance + " for " + _this.id + ": " + err);
+                  return callback("Could not add the wallet hold balance " + newBalance + " for " + _this.id + ": " + err);
                 }
                 return Wallet.find(_this.id).complete(callback);
               };
             })(this));
           } else {
-            console.log("Could not add wallet hold balance " + newBalance + " for " + this.id);
-            return callback(null, this);
+            return callback("Could not add wallet hold balance " + newBalance + " for " + this.id);
           }
         },
-        holdBalance: function(balance, callback) {
+        holdBalance: function(balance, transaction, callback) {
           if (callback == null) {
             callback = function() {};
           }
           if (!_.isNaN(balance) && _.isNumber(balance) && this.canWithdraw(balance)) {
-            return this.addBalance(-balance, (function(_this) {
+            return this.addBalance(-balance, transaction, (function(_this) {
               return function(err) {
                 if (!err) {
-                  return _this.addHoldBalance(balance, callback);
+                  return _this.addHoldBalance(balance, transaction, callback);
                 } else {
-                  console.log("Could not hold wallet balance " + balance + " for " + _this.id + ", not enough funds?");
-                  return Wallet.findById(_this.id, callback);
+                  return callback("Could not hold wallet balance " + balance + " for " + _this.id + ", not enough funds?");
                 }
               };
             })(this));
           } else {
-            console.log("Could not add wallet hold balance " + balance + " for " + this.id);
-            return callback("Invalid balance " + balance, this);
+            return callback("Could not add wallet hold balance " + balance + " for " + this.id + ", invalid balance " + balance + ".");
           }
         },
         canWithdraw: function(amount) {

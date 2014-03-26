@@ -26,7 +26,6 @@
       if (validationError = notValidOrderData(data)) {
         return JsonRenderer.error(validationError, res);
       }
-      holdBalance = data.amount;
       if (data.type === "limit" && data.action === "buy") {
         holdBalance = parseFloat(data.amount * data.unit_price);
       }
@@ -38,22 +37,37 @@
           if (err || !wallet) {
             return JsonRenderer.error("Wallet " + data.sell_currency + " does not exist.", res);
           }
-          return wallet.holdBalance(holdBalance, function(err, wallet) {
-            if (err || !wallet) {
-              return JsonRenderer.error("Not enough " + data.sell_currency + " to open an order.", res);
-            }
-            return Order.create(data).complete(function(err, newOrder) {
-              if (err) {
-                return JsonRenderer.error("Sorry, could not open an order...", res);
+          return GLOBAL.db.sequelize.transaction(function(transaction) {
+            return wallet.holdBalance(holdBalance, transaction, function(err, wallet) {
+              if (err || !wallet) {
+                return transaction.rollback().success(function() {
+                  return JsonRenderer.error("Not enough " + data.sell_currency + " to open an order.", res);
+                });
               }
-              return newOrder.publish(function(err, order) {
+              return Order.create(data, {
+                transaction: transaction
+              }).complete(function(err, newOrder) {
                 if (err) {
-                  console.log("Could not publish newlly created order - " + err);
+                  return transaction.rollback().success(function() {
+                    return JsonRenderer.error("Sorry, could not open an order...", res);
+                  });
                 }
-                if (err) {
-                  return res.json(JsonRenderer.order(newOrder));
-                }
-                return res.json(JsonRenderer.order(order));
+                transaction.commit().success(function() {
+                  return newOrder.publish(function(err, order) {
+                    if (err) {
+                      console.log("Could not publish newlly created order - " + err);
+                    }
+                    if (err) {
+                      return res.json(JsonRenderer.order(newOrder));
+                    }
+                    return res.json(JsonRenderer.order(order));
+                  });
+                });
+                return transaction.done(function(err) {
+                  if (err) {
+                    return JsonRenderer.error("Could not open an order. Please try again later.", res);
+                  }
+                });
               });
             });
           });

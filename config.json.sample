@@ -30,6 +30,7 @@
     },
     "salt": "coinnextsecret#1999",
     "emailer": {
+      "enabled": false,
       "host": "http://localhost:5000",
       "from": "Coinnext Mailer <no-reply@coinnext.com>",
       "transport": {
@@ -131,6 +132,7 @@
     },
     "salt": "coinnextsecret#1999",
     "emailer": {
+      "enabled": false,
       "host": "http://localhost:5000",
       "from": "Coinnext Mailer <no-reply@coinnext.com>",
       "transport": {
@@ -236,6 +238,7 @@
     },
     "salt": "coinnextsecret#1999",
     "emailer": {
+      "enabled": true,
       "host": "https://coinnext.com",
       "from": "Coinnext Mailer <no-reply@coinnext.com>",
       "transport": {

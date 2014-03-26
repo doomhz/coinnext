@@ -25,10 +25,6 @@
           len: [5, 500]
         }
       },
-      gauth_qr: {
-        type: DataTypes.TEXT,
-        unique: true
-      },
       gauth_key: {
         type: DataTypes.STRING(32),
         unique: true
@@ -90,7 +86,6 @@
             length: 20,
             google_auth_qr: true
           });
-          this.gauth_qr = data.google_auth_qr;
           this.gauth_key = data.base32;
           return this.save().complete(callback);
         },
