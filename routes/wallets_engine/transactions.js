@@ -68,26 +68,34 @@
           if (!wallet.canWithdraw(payment.amount)) {
             return callback(null, "" + payment.id + " - not processed - no funds");
           }
-          return wallet.addBalance(-payment.amount, function(err) {
-            if (err) {
-              return callback(null, "" + payment.id + " - not processed - " + err);
-            }
-            return processPayment(payment, function(err, p) {
-              if (!err && p.isProcessed()) {
-                processedUserIds.push(wallet.user_id);
-                return Transaction.setUserById(p.transaction_id, p.user_id, function() {
-                  callback(null, "" + payment.id + " - processed");
-                  return usersSocket.send({
-                    type: "payment-processed",
-                    user_id: payment.user_id,
-                    eventData: JsonRenderer.payment(p)
-                  });
-                });
-              } else {
-                return wallet.addBalance(payment.amount, function() {
+          return GLOBAL.db.sequelize.transaction(function(transaction) {
+            return wallet.addBalance(-payment.amount, transaction, function(err) {
+              if (err) {
+                return transaction.rollback().success(function() {
                   return callback(null, "" + payment.id + " - not processed - " + err);
                 });
               }
+              return processPayment(payment, function(err, p) {
+                if (err || !p.isProcessed()) {
+                  return transaction.rollback().success(function() {
+                    return callback(null, "" + payment.id + " - not processed - " + err);
+                  });
+                }
+                transaction.commit().success(function() {
+                  processedUserIds.push(wallet.user_id);
+                  return Transaction.setUserById(p.transaction_id, p.user_id, function() {
+                    callback(null, "" + payment.id + " - processed");
+                    return usersSocket.send({
+                      type: "payment-processed",
+                      user_id: payment.user_id,
+                      eventData: JsonRenderer.payment(p)
+                    });
+                  });
+                });
+                return transaction.done(function(err) {
+                  return callback(null, "" + payment.id + " - not processed - " + err);
+                });
+              });
             });
           });
         });
@@ -124,7 +132,7 @@
       if (!txId) {
         return callback();
       }
-      return GLOBAL.wallets[currency].getTransaction(txId, function(err, transaction) {
+      return GLOBAL.wallets[currency].getTransaction(txId, function(err, walletTransaction) {
         var account, category;
         if (err) {
           console.error(err);
@@ -132,13 +140,13 @@
         if (err) {
           return callback();
         }
-        category = transaction.details[0].category;
-        account = transaction.details[0].account;
+        category = walletTransaction.details[0].category;
+        account = walletTransaction.details[0].account;
         if (!Transaction.isValidFormat(category)) {
           return callback();
         }
         return Wallet.findByAccount(account, function(err, wallet) {
-          return Transaction.addFromWallet(transaction, currency, wallet, function(err, updatedTransaction) {
+          return Transaction.addFromWallet(walletTransaction, currency, wallet, function(err, updatedTransaction) {
             if (wallet) {
               usersSocket.send({
                 type: "transaction-update",
@@ -148,25 +156,30 @@
               if (category !== "receive" || updatedTransaction.balance_loaded || !GLOBAL.wallets[currency].isBalanceConfirmed(updatedTransaction.confirmations)) {
                 return callback();
               }
-              return wallet.addBalance(updatedTransaction.amount, function(err) {
-                if (err) {
-                  console.error("Could not load user balance " + updatedTransaction.amount, err);
-                }
-                if (err) {
-                  return callback();
-                }
-                if (err) {
-                  console.log("Added balance " + updatedTransaction.amount + " to wallet " + wallet.id + " for tx " + updatedTransaction.id, err);
-                }
-                return Transaction.markAsLoaded(updatedTransaction.id, function() {
+              return GLOBAL.db.sequelize.transaction(function(transaction) {
+                return wallet.addBalance(updatedTransaction.amount, transaction, function(err) {
                   if (err) {
-                    console.log("Balance loading to wallet " + wallet.id + " for tx " + updatedTransaction.id + " finished", err);
+                    return transaction.rollback().success(function() {
+                      return next(new restify.ConflictError("Could not load user balance " + updatedTransaction.amount + " - " + err));
+                    });
                   }
-                  callback();
-                  return usersSocket.send({
-                    type: "wallet-balance-loaded",
-                    user_id: wallet.user_id,
-                    eventData: JsonRenderer.wallet(wallet)
+                  return Transaction.markAsLoaded(updatedTransaction.id, transaction, function(err) {
+                    if (err) {
+                      return transaction.rollback().success(function() {
+                        return next(new restify.ConflictError("Could not mark the transaction as loaded " + updatedTransaction.id + " - " + err));
+                      });
+                    }
+                    transaction.commit().success(function() {
+                      callback();
+                      return usersSocket.send({
+                        type: "wallet-balance-loaded",
+                        user_id: wallet.user_id,
+                        eventData: JsonRenderer.wallet(wallet)
+                      });
+                    });
+                    return transaction.done(function(err) {
+                      return next(new restify.ConflictError("Could not load transaction " + updatedTransaction.id + " - " + err));
+                    });
                   });
                 });
               });

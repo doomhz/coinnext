@@ -185,11 +185,13 @@
             txid: txId
           }).complete(callback);
         },
-        markAsLoaded: function(id, callback) {
+        markAsLoaded: function(id, mysqlTransaction, callback) {
           return Transaction.update({
             balance_loaded: true
           }, {
             id: id
+          }, {
+            transaction: mysqlTransaction
           }).complete(callback);
         }
       }

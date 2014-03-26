@@ -131,7 +131,7 @@ module.exports = (sequelize, DataTypes) ->
         setUserAndWalletById: (txId, userId, walletId, callback)->
           Transaction.update({user_id: userId, wallet_id: walletId}, {txid: txId}).complete callback
 
-        markAsLoaded: (id, callback)->
-          Transaction.update({balance_loaded: true}, {id: id}).complete callback
+        markAsLoaded: (id, mysqlTransaction, callback)->
+          Transaction.update({balance_loaded: true}, {id: id}, {transaction: mysqlTransaction}).complete callback
 
   Transaction
