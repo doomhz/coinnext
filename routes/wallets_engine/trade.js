@@ -96,20 +96,36 @@
         return Wallet.findUserWalletByCurrency(order.user_id, order.sell_currency, function(err, wallet) {
           var remainingHoldBalance;
           remainingHoldBalance = order.amount - order.sold_amount;
-          return wallet.holdBalance(-remainingHoldBalance, function(err, wallet) {
-            return order.destroy().complete(function(err) {
-              if (err) {
-                return next(new restify.ConflictError(err));
+          return GLOBAL.db.sequelize.transaction(function(transaction) {
+            return wallet.holdBalance(-remainingHoldBalance, transaction, function(err, wallet) {
+              if (err || !wallet) {
+                return transaction.rollback().success(function() {
+                  return next(new restify.ConflictError("Could not cancel order " + orderId + " - " + err));
+                });
               }
-              res.send({
-                id: orderId,
-                canceled: true
-              });
-              return orderSocket.send({
-                type: "order-canceled",
-                eventData: {
-                  id: orderId
+              return order.destroy({
+                transaction: transaction
+              }).complete(function(err) {
+                if (err) {
+                  return transaction.rollback().success(function() {
+                    return next(new restify.ConflictError(err));
+                  });
                 }
+                transaction.commit().success(function() {
+                  res.send({
+                    id: orderId,
+                    canceled: true
+                  });
+                  return orderSocket.send({
+                    type: "order-canceled",
+                    eventData: {
+                      id: orderId
+                    }
+                  });
+                });
+                return transaction.done(function(err) {
+                  return next(new restify.ConflictError("Could not cancel order " + orderId + " - " + err));
+                });
               });
             });
           });
@@ -135,39 +151,63 @@
           }
           return Wallet.findUserWalletByCurrency(order.user_id, order.buy_currency, function(err, buyWallet) {
             return Wallet.findUserWalletByCurrency(order.user_id, order.sell_currency, function(err, sellWallet) {
-              return sellWallet.addHoldBalance(-soldAmount, function(err, sellWallet) {
-                return buyWallet.addBalance(receivedAmount, function(err, buyWallet) {
-                  order.status = status;
-                  order.sold_amount += soldAmount;
-                  order.result_amount += receivedAmount;
-                  order.fee = fee;
-                  order.unit_price = unitPrice;
-                  if (status === "completed") {
-                    order.close_time = Date.now();
+              return GLOBAL.db.sequelize.transaction(function(transaction) {
+                return sellWallet.addHoldBalance(-soldAmount, transaction, function(err, sellWallet) {
+                  if (err || !sellWallet) {
+                    return transaction.rollback().success(function() {
+                      return next(new restify.ConflictError("Could not complete order " + orderId + " - " + err));
+                    });
                   }
-                  return order.save().complete(function(err, order) {
-                    if (err) {
-                      return console.error("Could not process order ", result, err);
+                  return buyWallet.addBalance(receivedAmount, transaction, function(err, buyWallet) {
+                    if (err || !buyWallet) {
+                      return transaction.rollback().success(function() {
+                        return next(new restify.ConflictError("Could not complete order " + orderId + " - " + err));
+                      });
                     }
-                    if (order.status === "completed") {
-                      MarketStats.trackFromOrder(order, function(err, mkSt) {
-                        return orderSocket.send({
-                          type: "market-stats-updated",
-                          eventData: mkSt.toJSON()
+                    order.status = status;
+                    order.sold_amount += soldAmount;
+                    order.result_amount += receivedAmount;
+                    order.fee = fee;
+                    order.unit_price = unitPrice;
+                    if (status === "completed") {
+                      order.close_time = Date.now();
+                    }
+                    return order.save({
+                      transaction: transaction
+                    }).complete(function(err, order) {
+                      if (err) {
+                        return console.error("Could not process order ", result, err);
+                      }
+                      if (err) {
+                        return transaction.rollback().success(function() {
+                          return next(new restify.ConflictError("Could not process order " + orderId + " - " + err));
                         });
+                      }
+                      transaction.commit().success(function() {
+                        if (order.status === "completed") {
+                          MarketStats.trackFromOrder(order, function(err, mkSt) {
+                            return orderSocket.send({
+                              type: "market-stats-updated",
+                              eventData: mkSt.toJSON()
+                            });
+                          });
+                          orderSocket.send({
+                            type: "order-completed",
+                            eventData: JsonRenderer.order(order)
+                          });
+                        }
+                        if (order.status === "partiallyCompleted") {
+                          orderSocket.send({
+                            type: "order-partially-completed",
+                            eventData: JsonRenderer.order(order)
+                          });
+                        }
+                        return console.log("Processed order " + order.id + " ", result);
                       });
-                      orderSocket.send({
-                        type: "order-completed",
-                        eventData: JsonRenderer.order(order)
+                      return transaction.done(function(err) {
+                        return next(new restify.ConflictError("Could not process order " + orderId + " - " + err));
                       });
-                    }
-                    if (order.status === "partiallyCompleted") {
-                      orderSocket.send({
-                        type: "order-partially-completed",
-                        eventData: JsonRenderer.order(order)
-                      });
-                    }
-                    return console.log("Processed order " + order.id + " ", result);
+                    });
                   });
                 });
               });

@@ -58,17 +58,25 @@ module.exports = (app)->
         console.log arguments
       Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, wallet)->
         remainingHoldBalance = order.amount - order.sold_amount
-        wallet.holdBalance -remainingHoldBalance, (err, wallet)->
-          order.destroy().complete (err)->
-            return next(new restify.ConflictError err)  if err
-            res.send
-              id:        orderId
-              canceled: true
-            orderSocket.send
-              type: "order-canceled"
-              eventData:
-                id: orderId
-
+        GLOBAL.db.sequelize.transaction (transaction)->
+          wallet.holdBalance -remainingHoldBalance, transaction, (err, wallet)->
+            if err or not wallet
+              return transaction.rollback().success ()->
+                next(new restify.ConflictError "Could not cancel order #{orderId} - #{err}")
+            order.destroy({transaction: transaction}).complete (err)->
+              if err
+                return transaction.rollback().success ()->
+                  next(new restify.ConflictError err)
+              transaction.commit().success ()->
+                res.send
+                  id:       orderId
+                  canceled: true
+                orderSocket.send
+                  type: "order-canceled"
+                  eventData:
+                    id: orderId
+              transaction.done (err)->
+                next(new restify.ConflictError "Could not cancel order #{orderId} - #{err}")
 
   # TODO: Move to a separate component
   onOrderCompleted = (message)->
@@ -88,29 +96,42 @@ module.exports = (app)->
         return console.error "Wrong order to complete ", result  if not order
         Wallet.findUserWalletByCurrency order.user_id, order.buy_currency, (err, buyWallet)->
           Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, sellWallet)->
-            sellWallet.addHoldBalance -soldAmount, (err, sellWallet)->
-              buyWallet.addBalance receivedAmount, (err, buyWallet)->
-                order.status = status
-                order.sold_amount += soldAmount
-                order.result_amount += receivedAmount
-                order.fee = fee
-                order.unit_price = unitPrice
-                order.close_time = Date.now()  if status is "completed"
-                order.save().complete (err, order)->
-                  return console.error "Could not process order ", result, err  if err
-                  if order.status is "completed"
-                    MarketStats.trackFromOrder order, (err, mkSt)->
-                      orderSocket.send
-                        type: "market-stats-updated"
-                        eventData: mkSt.toJSON()
-                    orderSocket.send
-                      type: "order-completed"
-                      eventData: JsonRenderer.order order
-                  if order.status is "partiallyCompleted"
-                    orderSocket.send
-                      type: "order-partially-completed"
-                      eventData: JsonRenderer.order order
-                  console.log "Processed order #{order.id} ", result          
+            GLOBAL.db.sequelize.transaction (transaction)->
+              sellWallet.addHoldBalance -soldAmount, transaction, (err, sellWallet)->
+                if err or not sellWallet
+                  return transaction.rollback().success ()->
+                    next(new restify.ConflictError "Could not complete order #{orderId} - #{err}")
+                buyWallet.addBalance receivedAmount, transaction, (err, buyWallet)->
+                  if err or not buyWallet
+                    return transaction.rollback().success ()->
+                      next(new restify.ConflictError "Could not complete order #{orderId} - #{err}")
+                  order.status = status
+                  order.sold_amount += soldAmount
+                  order.result_amount += receivedAmount
+                  order.fee = fee
+                  order.unit_price = unitPrice
+                  order.close_time = Date.now()  if status is "completed"
+                  order.save({transaction: transaction}).complete (err, order)->
+                    return console.error "Could not process order ", result, err  if err
+                    if err
+                      return transaction.rollback().success ()->
+                        next(new restify.ConflictError "Could not process order #{orderId} - #{err}")
+                    transaction.commit().success ()->
+                      if order.status is "completed"
+                        MarketStats.trackFromOrder order, (err, mkSt)->
+                          orderSocket.send
+                            type: "market-stats-updated"
+                            eventData: mkSt.toJSON()
+                        orderSocket.send
+                          type: "order-completed"
+                          eventData: JsonRenderer.order order
+                      if order.status is "partiallyCompleted"
+                        orderSocket.send
+                          type: "order-partially-completed"
+                          eventData: JsonRenderer.order order
+                      console.log "Processed order #{order.id} ", result          
+                    transaction.done (err)->
+                      next(new restify.ConflictError "Could not process order #{orderId} - #{err}")
 
 
   tq = new TradeQueue
