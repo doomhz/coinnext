@@ -19,18 +19,12 @@ module.exports = (sequelize, DataTypes) ->
       gauth_key:
         type: DataTypes.STRING(32)
         unique: true
-      token:
-        type: DataTypes.STRING(40)
-        unique: true
     ,
       tableName: "admin_users"
       classMethods:
         
         findById: (id, callback = ()->)->
           AdminUser.find(id).complete callback
-
-        findByToken: (token, callback = ()->)->
-          AdminUser.find({where:{token: token}}).complete callback
 
         findByEmail: (email, callback = ()->)->
           AdminUser.find({where:{email: email}}).complete callback
@@ -54,7 +48,8 @@ module.exports = (sequelize, DataTypes) ->
             length: 20
             google_auth_qr: true
           @gauth_key = data.base32
-          @save().complete callback
+          @save().complete (err, user)->
+            callback data, user
 
         isValidGAuthPass: (pass)->
           currentPass = speakeasy.time

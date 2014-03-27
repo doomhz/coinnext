@@ -4,7 +4,7 @@ Transaction = GLOBAL.db.Transaction
 Payment = GLOBAL.db.Payment
 AuthStats = GLOBAL.db.AuthStats
 MarketHelper = require "../lib/market_helper"
-jsonRenderer = require "../lib/json_renderer"
+JsonRenderer = require "../lib/json_renderer"
 jsonBeautifier = require "../lib/json_beautifier"
 _ = require "underscore"
 _str = require "../lib/underscore_string"
@@ -170,8 +170,15 @@ module.exports = (app)->
         jsonBeautifier: jsonBeautifier
 
   app.put "/administratie/pay/:id", (req, res)->
-    res.statusCode = 409
-    res.json {error: "Not yet"}
+    id = req.params.id
+    GLOBAL.walletsClient.send "process_payment", [id], (err, res2, body)=>
+      return JsonRenderer.error err, res  if err
+      if body and body.paymentId
+        Payment.findById id, (err, payment)->
+          return JsonRenderer.error err, res  if err
+          res.json JsonRenderer.payment payment
+      else
+        return JsonRenderer.error "Could not process payment - #{JSON.stringify(body)}", res
 
   app.post "/administratie/clear_pending_payments", (req, res)->
     Payment.destroy({status: "pending"}).complete (err, payment)->
@@ -180,10 +187,10 @@ module.exports = (app)->
   app.get "/administratie/banksaldo/:currency", (req, res)->
     currency = req.params.currency
     if GLOBAL.wallets[currency]
-      GLOBAL.wallets[currency].getBankBalance (err, balance)->
+      GLOBAL.wallets[currency].getBankBalance (err, balance = "wallet unaccessible")->
         console.log err  if err
         res.json
-          balance: balance or "wallet unaccessible"
+          balance: balance
           currency: currency
     else
       res.json

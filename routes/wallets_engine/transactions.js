@@ -1,5 +1,5 @@
 (function() {
-  var ClientSocket, JsonRenderer, Payment, Transaction, Wallet, async, restify, usersSocket;
+  var ClientSocket, JsonRenderer, Payment, Transaction, Wallet, async, paymentsProcessedUserIds, restify, usersSocket;
 
   restify = require("restify");
 
@@ -20,8 +20,10 @@
     path: "users"
   });
 
+  paymentsProcessedUserIds = [];
+
   module.exports = function(app) {
-    var loadTransaction, processPayment;
+    var loadTransaction, pay, processPayment;
     app.put("/transaction/:currency/:tx_id", function(req, res, next) {
       var currency, txId;
       txId = req.params.tx_id;
@@ -55,53 +57,9 @@
       });
     });
     app.post("/process_pending_payments", function(req, res, next) {
-      var processPaymentCallback, processedUserIds;
-      processedUserIds = [];
-      processPaymentCallback = function(payment, callback) {
-        return Wallet.findById(payment.wallet_id, function(err, wallet) {
-          if (!wallet) {
-            return callback(null, "" + payment.id + " - wallet " + payment.wallet_id + " not found");
-          }
-          if (processedUserIds.indexOf(wallet.user_id) > -1) {
-            return callback(null, "" + payment.id + " - user already had a processed payment");
-          }
-          if (!wallet.canWithdraw(payment.amount)) {
-            return callback(null, "" + payment.id + " - not processed - no funds");
-          }
-          return GLOBAL.db.sequelize.transaction(function(transaction) {
-            return wallet.addBalance(-payment.amount, transaction, function(err) {
-              if (err) {
-                return transaction.rollback().success(function() {
-                  return callback(null, "" + payment.id + " - not processed - " + err);
-                });
-              }
-              return processPayment(payment, function(err, p) {
-                if (err || !p.isProcessed()) {
-                  return transaction.rollback().success(function() {
-                    return callback(null, "" + payment.id + " - not processed - " + err);
-                  });
-                }
-                transaction.commit().success(function() {
-                  processedUserIds.push(wallet.user_id);
-                  return Transaction.setUserById(p.transaction_id, p.user_id, function() {
-                    callback(null, "" + payment.id + " - processed");
-                    return usersSocket.send({
-                      type: "payment-processed",
-                      user_id: payment.user_id,
-                      eventData: JsonRenderer.payment(p)
-                    });
-                  });
-                });
-                return transaction.done(function(err) {
-                  return callback(null, "" + payment.id + " - not processed - " + err);
-                });
-              });
-            });
-          });
-        });
-      };
+      paymentsProcessedUserIds = [];
       return Payment.findByStatus("pending", function(err, payments) {
-        return async.mapSeries(payments, processPaymentCallback, function(err, result) {
+        return async.mapSeries(payments, processPayment, function(err, result) {
           if (err) {
             console.log(err);
           }
@@ -109,7 +67,73 @@
         });
       });
     });
+    app.post("/process_payment/:payment_id", function(req, res, next) {
+      var paymentId;
+      paymentId = req.params.payment_id;
+      paymentsProcessedUserIds = [];
+      return Payment.findById(paymentId, function(err, payment) {
+        return processPayment(payment, function(err, result) {
+          return Payment.findById(paymentId, function(err, processedPayment) {
+            res.send({
+              paymentId: paymentId,
+              status: processedPayment.status,
+              result: result
+            });
+            if (processedPayment.isProcessed()) {
+              return usersSocket.send({
+                type: "payment-processed",
+                user_id: payment.user_id,
+                eventData: JsonRenderer.payment(processedPayment)
+              });
+            }
+          });
+        });
+      });
+    });
     processPayment = function(payment, callback) {
+      return Wallet.findById(payment.wallet_id, function(err, wallet) {
+        if (!wallet) {
+          return callback(null, "" + payment.id + " - wallet " + payment.wallet_id + " not found");
+        }
+        if (paymentsProcessedUserIds.indexOf(wallet.user_id) > -1) {
+          return callback(null, "" + payment.id + " - user already had a processed payment");
+        }
+        if (!wallet.canWithdraw(payment.amount)) {
+          return callback(null, "" + payment.id + " - not processed - no funds");
+        }
+        return GLOBAL.db.sequelize.transaction(function(transaction) {
+          return wallet.addBalance(-payment.amount, transaction, function(err) {
+            if (err) {
+              return transaction.rollback().success(function() {
+                return callback(null, "" + payment.id + " - not processed - " + err);
+              });
+            }
+            return pay(payment, function(err, p) {
+              if (err || !p.isProcessed()) {
+                return transaction.rollback().success(function() {
+                  return callback(null, "" + payment.id + " - not processed - " + err);
+                });
+              }
+              transaction.commit().success(function() {
+                paymentsProcessedUserIds.push(wallet.user_id);
+                return Transaction.setUserById(p.transaction_id, p.user_id, function() {
+                  callback(null, "" + payment.id + " - processed");
+                  return usersSocket.send({
+                    type: "payment-processed",
+                    user_id: payment.user_id,
+                    eventData: JsonRenderer.payment(p)
+                  });
+                });
+              });
+              return transaction.done(function(err) {
+                return callback(null, "" + payment.id + " - not processed - " + err);
+              });
+            });
+          });
+        });
+      });
+    };
+    pay = function(payment, callback) {
       if (callback == null) {
         callback = function() {};
       }

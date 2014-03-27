@@ -12,12 +12,14 @@ var helmet = require('helmet');
 var BtcWallet = environment === "test" ? require("./tests/helpers/btc_wallet_mock") : require("./lib/btc_wallet");
 var LtcWallet = environment === "test" ? require("./tests/helpers/ltc_wallet_mock") : require("./lib/ltc_wallet");
 var PpcWallet = environment === "test" ? require("./tests/helpers/ppc_wallet_mock") : require("./lib/ppc_wallet");
+var WalletsClient = require('./lib/wallets_client');
 var environment = process.env.NODE_ENV || 'development';
 var config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', encoding='utf8'))[environment];
 
 // Configure globals
 GLOBAL.passport = require('passport');
 GLOBAL.appConfig = function () {return config;};
+GLOBAL.walletsClient = new WalletsClient({host: GLOBAL.appConfig().wallets_host});
 GLOBAL.wallets = []
 GLOBAL.wallets["BTC"] = new BtcWallet();
 GLOBAL.wallets["LTC"] = new LtcWallet();
@@ -45,6 +47,7 @@ app.configure(function () {
   app.use(express.methodOverride());
   app.use(express.cookieParser());
   app.use(express.session({
+    key: 'cnxadmin',
     secret: 'coinnextsecretadmin83',
     store: new RedisStore(GLOBAL.appConfig().redis),
     cookie: {

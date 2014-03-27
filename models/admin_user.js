@@ -28,10 +28,6 @@
       gauth_key: {
         type: DataTypes.STRING(32),
         unique: true
-      },
-      token: {
-        type: DataTypes.STRING(40),
-        unique: true
       }
     }, {
       tableName: "admin_users",
@@ -41,16 +37,6 @@
             callback = function() {};
           }
           return AdminUser.find(id).complete(callback);
-        },
-        findByToken: function(token, callback) {
-          if (callback == null) {
-            callback = function() {};
-          }
-          return AdminUser.find({
-            where: {
-              token: token
-            }
-          }).complete(callback);
         },
         findByEmail: function(email, callback) {
           if (callback == null) {
@@ -87,7 +73,9 @@
             google_auth_qr: true
           });
           this.gauth_key = data.base32;
-          return this.save().complete(callback);
+          return this.save().complete(function(err, user) {
+            return callback(data, user);
+          });
         },
         isValidGAuthPass: function(pass) {
           var currentPass;

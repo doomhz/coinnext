@@ -40,6 +40,7 @@ app.configure(function () {
   app.use(express.methodOverride());
   app.use(express.cookieParser());
   app.use(express.session({
+    key: 'cnxweb',
     secret: 'coinnextsecret83',
     store: new RedisStore(GLOBAL.appConfig().redis),
     cookie: {

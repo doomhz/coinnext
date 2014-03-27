@@ -51,10 +51,11 @@ module.exports = (sequelize, DataTypes) ->
       log:
         type: DataTypes.TEXT
         set: (response)->
-          @log = ""  if not @log
-          @log += ","  if @log.length
+          log = ""  if not @log
+          log += ","  if @log
           try
-            @log += JSON.stringify(response)
+            log += if typeof(response) is "string" then response else JSON.stringify(response)
+            @setDataValue "log", log
           catch e
       remote_ip:
         type: DataTypes.INTEGER

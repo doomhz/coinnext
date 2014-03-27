@@ -8,6 +8,7 @@ ClientSocket = require "../../lib/client_socket"
 usersSocket = new ClientSocket
   host: GLOBAL.appConfig().app_host
   path: "users"
+paymentsProcessedUserIds = []
 
 module.exports = (app)->
 
@@ -31,40 +32,57 @@ module.exports = (app)->
         res.send("#{new Date()} - Processed #{result.length} transactions")        
 
   app.post "/process_pending_payments", (req, res, next)->
-    processedUserIds = []
-    processPaymentCallback = (payment, callback)->      
-      Wallet.findById payment.wallet_id, (err, wallet)->
-        return callback null, "#{payment.id} - wallet #{payment.wallet_id} not found"  if not wallet
-        return callback null, "#{payment.id} - user already had a processed payment"  if processedUserIds.indexOf(wallet.user_id) > -1
-        return callback null, "#{payment.id} - not processed - no funds"  if not wallet.canWithdraw payment.amount
-        GLOBAL.db.sequelize.transaction (transaction)->
-          wallet.addBalance -payment.amount, transaction, (err)->
-            if err
-              return transaction.rollback().success ()->
-                callback null, "#{payment.id} - not processed - #{err}"
-            processPayment payment, (err, p)->
-              if err or not p.isProcessed()
-                return transaction.rollback().success ()->
-                  callback null, "#{payment.id} - not processed - #{err}"
-              transaction.commit().success ()->
-                processedUserIds.push wallet.user_id
-                Transaction.setUserById p.transaction_id, p.user_id, ()->
-                  callback null, "#{payment.id} - processed"
-                  usersSocket.send
-                    type: "payment-processed"
-                    user_id: payment.user_id
-                    eventData: JsonRenderer.payment p
-              transaction.done (err)->
-                callback null, "#{payment.id} - not processed - #{err}"
-          
+    paymentsProcessedUserIds = []
     Payment.findByStatus "pending", (err, payments)->
-      async.mapSeries payments, processPaymentCallback, (err, result)->
+      async.mapSeries payments, processPayment, (err, result)->
         console.log err  if err
         res.send("#{new Date()} - #{result}")
 
+  app.post "/process_payment/:payment_id", (req, res, next)->
+    paymentId = req.params.payment_id
+    paymentsProcessedUserIds = []
+    Payment.findById paymentId, (err, payment)->
+      processPayment payment, (err, result)->
+        Payment.findById paymentId, (err, processedPayment)->
+          res.send
+            paymentId: paymentId
+            status: processedPayment.status
+            result: result
+          if processedPayment.isProcessed()
+            usersSocket.send
+              type: "payment-processed"
+              user_id: payment.user_id
+              eventData: JsonRenderer.payment processedPayment
+
 
   # TODO: Move to a separate component
-  processPayment = (payment, callback = ()->)->
+  processPayment = (payment, callback)->      
+    Wallet.findById payment.wallet_id, (err, wallet)->
+      return callback null, "#{payment.id} - wallet #{payment.wallet_id} not found"  if not wallet
+      return callback null, "#{payment.id} - user already had a processed payment"  if paymentsProcessedUserIds.indexOf(wallet.user_id) > -1
+      return callback null, "#{payment.id} - not processed - no funds"  if not wallet.canWithdraw payment.amount
+      GLOBAL.db.sequelize.transaction (transaction)->
+        wallet.addBalance -payment.amount, transaction, (err)->
+          if err
+            return transaction.rollback().success ()->
+              callback null, "#{payment.id} - not processed - #{err}"
+          pay payment, (err, p)->
+            if err or not p.isProcessed()
+              return transaction.rollback().success ()->
+                callback null, "#{payment.id} - not processed - #{err}"
+            transaction.commit().success ()->
+              paymentsProcessedUserIds.push wallet.user_id
+              Transaction.setUserById p.transaction_id, p.user_id, ()->
+                callback null, "#{payment.id} - processed"
+                usersSocket.send
+                  type: "payment-processed"
+                  user_id: payment.user_id
+                  eventData: JsonRenderer.payment p
+            transaction.done (err)->
+              callback null, "#{payment.id} - not processed - #{err}"
+
+  # TODO: Move to a separate component
+  pay = (payment, callback = ()->)->
     GLOBAL.wallets[payment.currency].sendToAddress payment.address, payment.amount, (err, response = "")->
       console.error "Could not withdraw to #{payment.address} #{payment.amount} BTC", err  if err
       return payment.errored err, callback  if err

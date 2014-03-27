@@ -46,7 +46,8 @@ task "admin:generate_user", "Add new admin user -e -p", (opts)->
     email: opts.email
     password: opts.pass
   GLOBAL.db.AdminUser.createNewUser data, (err, newUser)->
-    newUser.generateGAuthData ()->
-      console.log newUser.google_auth_data.google_auth_qr
+    return console.error err  if err
+    newUser.generateGAuthData (data, newUser)->
+      console.log data.google_auth_qr
       console.log newUser.gauth_key
     

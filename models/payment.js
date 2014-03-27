@@ -74,15 +74,16 @@
       log: {
         type: DataTypes.TEXT,
         set: function(response) {
-          var e;
+          var e, log;
           if (!this.log) {
-            this.log = "";
+            log = "";
           }
-          if (this.log.length) {
-            this.log += ",";
+          if (this.log) {
+            log += ",";
           }
           try {
-            return this.log += JSON.stringify(response);
+            log += typeof response === "string" ? response : JSON.stringify(response);
+            return this.setDataValue("log", log);
           } catch (_error) {
             e = _error;
           }

@@ -1,5 +1,5 @@
 (function() {
-  var AuthStats, MarketHelper, Payment, Transaction, User, Wallet, jsonBeautifier, jsonRenderer, _, _str;
+  var AuthStats, JsonRenderer, MarketHelper, Payment, Transaction, User, Wallet, jsonBeautifier, _, _str;
 
   Wallet = GLOBAL.db.Wallet;
 
@@ -13,7 +13,7 @@
 
   MarketHelper = require("../lib/market_helper");
 
-  jsonRenderer = require("../lib/json_renderer");
+  JsonRenderer = require("../lib/json_renderer");
 
   jsonBeautifier = require("../lib/json_beautifier");
 
@@ -233,10 +233,25 @@
       });
     });
     app.put("/administratie/pay/:id", function(req, res) {
-      res.statusCode = 409;
-      return res.json({
-        error: "Not yet"
-      });
+      var id;
+      id = req.params.id;
+      return GLOBAL.walletsClient.send("process_payment", [id], (function(_this) {
+        return function(err, res2, body) {
+          if (err) {
+            return JsonRenderer.error(err, res);
+          }
+          if (body && body.paymentId) {
+            return Payment.findById(id, function(err, payment) {
+              if (err) {
+                return JsonRenderer.error(err, res);
+              }
+              return res.json(JsonRenderer.payment(payment));
+            });
+          } else {
+            return JsonRenderer.error("Could not process payment - " + (JSON.stringify(body)), res);
+          }
+        };
+      })(this));
     });
     app.post("/administratie/clear_pending_payments", function(req, res) {
       return Payment.destroy({
@@ -250,11 +265,14 @@
       currency = req.params.currency;
       if (GLOBAL.wallets[currency]) {
         return GLOBAL.wallets[currency].getBankBalance(function(err, balance) {
+          if (balance == null) {
+            balance = "wallet unaccessible";
+          }
           if (err) {
             console.log(err);
           }
           return res.json({
-            balance: balance || "wallet unaccessible",
+            balance: balance,
             currency: currency
           });
         });
