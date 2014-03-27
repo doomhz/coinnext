@@ -44,7 +44,7 @@ describe "Wallet", ->
     it "adds the balance to the wallet", (done)->
       wallet.balance = 0
       wallet.save().complete (err, wl)->
-        wl.addBalance 3, (err, syncedWallet)->
+        wl.addBalance 3, null, (err, syncedWallet)->
           syncedWallet.balance.should.eql 3
           done()
 
@@ -64,11 +64,6 @@ describe "Wallet", ->
     describe "when the balance is lower than the given amount", ()->
       it "returns false", ()->
         wallet.canWithdraw(10.001).should.be.false
-
-
-  describe "getCurrencies", ()->
-    it "returns the available currencies list", ()->
-      GLOBAL.db.Wallet.getCurrencies().toString().should.equal CURRENCIES.toString()
 
 
   describe "findUserWalletByCurrency", ()->

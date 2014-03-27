@@ -79,7 +79,7 @@ module.exports = (app)->
                   user_id: payment.user_id
                   eventData: JsonRenderer.payment p
             transaction.done (err)->
-              callback null, "#{payment.id} - not processed - #{err}"
+              callback null, "#{payment.id} - not processed - #{err}"  if err
 
   # TODO: Move to a separate component
   pay = (payment, callback = ()->)->

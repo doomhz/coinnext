@@ -126,7 +126,9 @@
                 });
               });
               return transaction.done(function(err) {
-                return callback(null, "" + payment.id + " - not processed - " + err);
+                if (err) {
+                  return callback(null, "" + payment.id + " - not processed - " + err);
+                }
               });
             });
           });
