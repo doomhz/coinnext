@@ -27,7 +27,7 @@ var app = express();
 if (environment !== 'development') {
   app.use(connectDomain());
 }
-var connectAssetsOptions = environment !== 'development' ? {minifyBuilds: true} : {};
+var connectAssetsOptions = environment !== 'development' && environment !== 'test' ? {minifyBuilds: true, servePath: GLOBAL.appConfig().assets_host} : {};
 connectAssetsOptions.helperContext = app.locals
 app.enable("trust proxy");
 app.disable('x-powered-by');
