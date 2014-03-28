@@ -33,4 +33,12 @@ test-one:
 		--compilers coffee:coffee-script/register \
 		$f
 
+test-one-w:
+	@NODE_ENV=test ./node_modules/.bin/mocha -u bdd -b \
+		--reporter $(REPORTER) \
+		--compilers coffee:coffee-script/register \
+		--watch \
+		--growl \
+		$f
+
 .PHONY: test-integrational test-w test-unit test-one
