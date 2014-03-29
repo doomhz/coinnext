@@ -49,11 +49,11 @@
         "client": {
           "host": "127.0.0.1",
           "port": 18332,
-          "user": "doomhz",
-          "pass": "greatsuccess"
+          "user": "",
+          "pass": ""
         },
         "wallet": {
-          "address": "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw",
+          "address": "",
           "account": "coinnext_bank"
         },
         "confirmations": 1,
@@ -65,11 +65,11 @@
         "client": {
           "host": "127.0.0.1",
           "port": 19332,
-          "user": "doomhz",
-          "pass": "greatsuccess"
+          "user": "",
+          "pass": ""
         },
         "wallet": {
-          "address": "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw",
+          "address": "",
           "account": "coinnext_bank"
         },
         "confirmations": 1,
@@ -81,17 +81,33 @@
         "client": {
           "host": "127.0.0.1",
           "port": 19902,
-          "user": "doomhz",
-          "pass": "greatsuccess"
+          "user": "",
+          "pass": ""
         },
         "wallet": {
-          "address": "mj2BmUbumpy1eEYEvCTynUWdj7DrXkcTxm",
+          "address": "",
           "account": "coinnext_bank"
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
         "balance_confirmations": 0,
         "currency": "PPC"
+      },
+      "doge": {
+        "client": {
+          "host": "127.0.0.1",
+          "port": 22555,
+          "user": "",
+          "pass": ""
+        },
+        "wallet": {
+          "address": "",
+          "account": "coinnext_bank"
+        },
+        "confirmations": 1,
+        "transaction_fee": 0.0001,
+        "balance_confirmations": 0,
+        "currency": "DOGE"
       }
     },
     "app_host": "localhost:5000",
@@ -151,11 +167,11 @@
         "client": {
           "host": "127.0.0.1",
           "port": 18332,
-          "user": "doomhz",
-          "pass": "greatsuccess"
+          "user": "",
+          "pass": ""
         },
         "wallet": {
-          "address": "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw",
+          "address": "",
           "account": "coinnext_bank"
         },
         "confirmations": 1,
@@ -167,11 +183,11 @@
         "client": {
           "host": "127.0.0.1",
           "port": 19332,
-          "user": "doomhz",
-          "pass": "greatsuccess"
+          "user": "",
+          "pass": ""
         },
         "wallet": {
-          "address": "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw",
+          "address": "",
           "account": "coinnext_bank"
         },
         "confirmations": 1,
@@ -183,17 +199,33 @@
         "client": {
           "host": "127.0.0.1",
           "port": 19902,
-          "user": "doomhz",
-          "pass": "greatsuccess"
+          "user": "",
+          "pass": ""
         },
         "wallet": {
-          "address": "mj2BmUbumpy1eEYEvCTynUWdj7DrXkcTxm",
+          "address": "",
           "account": "coinnext_bank"
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
         "balance_confirmations": 0,
         "currency": "PPC"
+      },
+      "doge": {
+        "client": {
+          "host": "127.0.0.1",
+          "port": 22555,
+          "user": "",
+          "pass": ""
+        },
+        "wallet": {
+          "address": "",
+          "account": "coinnext_bank"
+        },
+        "confirmations": 1,
+        "transaction_fee": 0.0001,
+        "balance_confirmations": 0,
+        "currency": "DOGE"
       }
     },
     "app_host": "localhost:5000",
@@ -256,11 +288,11 @@
         "client": {
           "host": "127.0.0.1",
           "port": 18332,
-          "user": "doomhz",
-          "pass": "greatsuccess"
+          "user": "",
+          "pass": ""
         },
         "wallet": {
-          "address": "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw",
+          "address": "",
           "account": "coinnext_bank"
         },
         "confirmations": 1,
@@ -272,11 +304,11 @@
         "client": {
           "host": "127.0.0.1",
           "port": 9332,
-          "user": "doomhz",
-          "pass": "greatsuccess"
+          "user": "",
+          "pass": ""
         },
         "wallet": {
-          "address": "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw",
+          "address": "",
           "account": "coinnext_bank"
         },
         "confirmations": 1,
@@ -288,17 +320,33 @@
         "client": {
           "host": "127.0.0.1",
           "port": 9902,
-          "user": "doomhz",
-          "pass": "greatsuccess"
+          "user": "",
+          "pass": ""
         },
         "wallet": {
-          "address": "mj2BmUbumpy1eEYEvCTynUWdj7DrXkcTxm",
+          "address": "",
           "account": "coinnext_bank"
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
         "balance_confirmations": 0,
         "currency": "PPC"
+      },
+      "doge": {
+        "client": {
+          "host": "127.0.0.1",
+          "port": 22555,
+          "user": "",
+          "pass": ""
+        },
+        "wallet": {
+          "address": "",
+          "account": "coinnext_bank"
+        },
+        "confirmations": 1,
+        "transaction_fee": 0.0001,
+        "balance_confirmations": 0,
+        "currency": "DOGE"
       }
     },
     "app_host": "localhost:5000",

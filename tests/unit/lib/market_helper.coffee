@@ -14,8 +14,9 @@ describe "MarketHelper", ->
     BTC: 1
     LTC: 2
     PPC: 3
+    DOGE: 4
 
 
   describe "getCurrencies", ()->
     it "returns the available currencies list", ()->
-      MarketHelper.getCurrencies().toString().should.equal CURRENCIES.toString()
+      JSON.stringify(MarketHelper.getCurrencies()).should.equal JSON.stringify(CURRENCIES)

@@ -52,4 +52,8 @@ module.exports = [
   {type: "PPC_BTC", open_price: 0.00664, close_price: 0.00665, high_price: 0.00666, low_price: 0.00664, volume: 232.1904831}
   {type: "PPC_BTC", open_price: 0.00665, close_price: 0.00713, high_price: 0.00865, low_price: 0.00564, volume: 567.1904831}
   {type: "PPC_BTC", open_price: 0.00713, close_price: 0.00508, high_price: 0.00899, low_price: 0.00264, volume: 827.1904831}
+
+  {type: "DOGE_BTC", open_price: 0.00664, close_price: 0.00665, high_price: 0.00666, low_price: 0.00664, volume: 232.1904831}
+  {type: "DOGE_BTC", open_price: 0.00665, close_price: 0.00713, high_price: 0.00865, low_price: 0.00564, volume: 567.1904831}
+  {type: "DOGE_BTC", open_price: 0.00713, close_price: 0.00508, high_price: 0.00899, low_price: 0.00264, volume: 827.1904831}
 ]

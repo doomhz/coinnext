@@ -30,6 +30,7 @@ task "db:seed_trade_stats", "Seed default trade stats", ()->
   startTimes =
     LTC_BTC: startTime
     PPC_BTC: startTime
+    DOGE_BTC: startTime
   for stat in tradeStats
     stat.start_time = startTimes[stat.type]
     stat.end_time = stat.start_time + halfHour

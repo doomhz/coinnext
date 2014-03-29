@@ -9,15 +9,18 @@ CURRENCIES =
   BTC: 1
   LTC: 2
   PPC: 3
+  DOGE: 4
 
 CURRENCY_NAMES =
   BTC: "Bitcoin"
   LTC: "Litecoin"
   PPC: "Peercoin"
+  DOGE: "Dogecoin"
 
 AVAILABLE_MARKETS =
   LTC_BTC: 1
   PPC_BTC: 2
+  DOGE_BTC: 3
 
 ORDER_TYPES =
   market: 1
