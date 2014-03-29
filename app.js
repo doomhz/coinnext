@@ -63,7 +63,7 @@ app.configure(function () {
   app.use(app.router);
   app.use(function(err, req, res, next) {
     console.error(err);
-    res.send(500, "Oups, seems that there is an error on our side. Your coins are safe and we'll be back shortly...");
+    res.render("errors/500");
   });
 });
 
@@ -109,3 +109,4 @@ require('./routes/payments')(app);
 require('./routes/transactions')(app);
 require('./routes/orders')(app);
 require('./routes/chat')(app);
+require('./routes/errors')(app);
