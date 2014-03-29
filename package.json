@@ -43,6 +43,7 @@
     , "lodash": "latest"
     , "ip": "latest"
     , "phonetic": "latest"
+    , "recaptcha-async": "latest"
   },
   "devDependencies": {
     "mocha": "latest"

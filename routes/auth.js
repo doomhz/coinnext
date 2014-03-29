@@ -1,5 +1,7 @@
 (function() {
-  var AuthStats, JsonRenderer, User, UserToken;
+  var AuthStats, JsonRenderer, User, UserToken, reCaptcha;
+
+  reCaptcha = require("recaptcha-async");
 
   User = GLOBAL.db.User;
 
@@ -43,28 +45,30 @@
       });
     });
     app.post("/send-password", function(req, res) {
-      var email;
+      var dataIsLoaded, email, recaptcha;
       email = req.body.email;
       if (!email) {
-        res.writeHead(303, {
-          "Location": "/send-password"
-        });
-        return res.end();
+        return res.redirect("/send-password");
       }
-      return User.findByEmail(email, function(err, user) {
-        if (!user) {
-          res.writeHead(303, {
-            "Location": "/send-password?error=wrong-user"
+      dataIsLoaded = false;
+      recaptcha = new reCaptcha.reCaptcha();
+      recaptcha.on("data", function(captchaRes) {
+        if (!dataIsLoaded) {
+          dataIsLoaded = true;
+          if (!captchaRes.is_valid) {
+            return res.redirect("/send-password?error=invalid-captcha");
+          }
+          return User.findByEmail(email, function(err, user) {
+            if (!user) {
+              return res.redirect("/send-password?success=true");
+            }
+            return user.sendChangePasswordLink(function() {
+              return res.redirect("/send-password?success=true");
+            });
           });
-          return res.end();
         }
-        return user.sendChangePasswordLink(function() {
-          res.writeHead(303, {
-            "Location": "/send-password?success=true"
-          });
-          return res.end();
-        });
       });
+      return recaptcha.checkAnswer(GLOBAL.appConfig().recaptcha.private_key, req.connection.remoteAddress, req.body.recaptcha_challenge_field, req.body.recaptcha_response_field);
     });
     app.get("/change-password/:token", function(req, res) {
       var token;

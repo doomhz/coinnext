@@ -115,6 +115,10 @@
     "users": {
       "hostname": "http://localhost:5000",
       "events_endpoint": "http://localhost:5000/user_event"
+    },
+    "recaptcha": {
+      "public_key": "",
+      "private_key": ""
     }
   },
   "test" : {
@@ -354,6 +358,10 @@
     "users": {
       hostname: "http://direct.coinnext.com"
     },
-    "assets_host": "http://cdn.coinnext.com/assets/"
+    "assets_host": "http://cdn.coinnext.com/assets/",
+    "recaptcha": {
+      "public_key": "",
+      "private_key": ""
+    }
   }
 }

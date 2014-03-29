@@ -1,3 +1,4 @@
+reCaptcha = require "recaptcha-async"
 User = GLOBAL.db.User
 UserToken = GLOBAL.db.UserToken
 AuthStats = GLOBAL.db.AuthStats
@@ -30,16 +31,18 @@ module.exports = (app)->
 
   app.post "/send-password", (req, res)->
     email = req.body.email
-    if not email
-      res.writeHead(303, {"Location": "/send-password"})
-      return res.end()
-    User.findByEmail email, (err, user)->
-      if not user
-        res.writeHead(303, {"Location": "/send-password?error=wrong-user"})
-        return res.end()
-      user.sendChangePasswordLink ()->
-        res.writeHead(303, {"Location": "/send-password?success=true"})
-        res.end()
+    return res.redirect "/send-password"  if not email
+    dataIsLoaded = false
+    recaptcha = new reCaptcha.reCaptcha()
+    recaptcha.on "data", (captchaRes)->
+      if not dataIsLoaded
+        dataIsLoaded = true
+        return res.redirect "/send-password?error=invalid-captcha"  if not captchaRes.is_valid
+        User.findByEmail email, (err, user)->
+          return res.redirect "/send-password?success=true"  if not user
+          user.sendChangePasswordLink ()->
+            return res.redirect "/send-password?success=true"
+    recaptcha.checkAnswer GLOBAL.appConfig().recaptcha.private_key, req.connection.remoteAddress, req.body.recaptcha_challenge_field, req.body.recaptcha_response_field
 
   app.get "/change-password/:token", (req, res)->
     token = req.params.token
