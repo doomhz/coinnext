@@ -61,7 +61,7 @@ block content
                   input(type="hidden", name="wallet_id", value="#{wallet.id}")
                   label Enter the amount you would like to withdraw:
                   .currency-input
-                    input(type="text", name="amount", placeholder="Amount")
+                    input.amount-field(type="text", name="amount", placeholder="Amount")
                     .overlay-amount #{wallet.currency}
                   label Enter a #{currencies[wallet.currency]} address:
                   .address-input

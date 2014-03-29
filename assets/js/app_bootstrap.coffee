@@ -30,6 +30,16 @@ $(document).ready ()->
           wallet = new App.WalletModel data
           $.publish "wallet-balance-loaded", wallet
 
+  $(".amount-field").keyup (ev)->
+    $target = $(ev.target)
+    amount = $target.val()
+    if amount.indexOf(".") > -1
+      decimals = amount.substr amount.indexOf(".") + 1
+      if decimals.length > 8
+        integer = amount.substr 0, amount.indexOf(".")
+        decimals = decimals.substr 0, 8
+        $target.val "#{integer}.#{decimals}"
+
   # Settings page
   $settings = $("#settings")
   if $settings.length

@@ -49,7 +49,7 @@ block content
                     input#buy-unit-price(name="unit_price", type="hidden", value="#{coinStats.last_price}")
                     label I want to spend:
                     .currency-input
-                      input#spend-amount-input(type="text", name="amount", autocomplete="off", maxlength="12")
+                      input#spend-amount-input.amount-field(type="text", name="amount", autocomplete="off", maxlength="12")
                       .overlay-amount #{wallet2.currency}
                     table.order-overview
                       tr.subtotal
@@ -71,11 +71,11 @@ block content
                     input(name="buy_currency", type="hidden", value="#{wallet1.currency}")
                     label Amount to Buy:
                     .currency-input
-                      input#buy-amount-input(type="text", name="amount", maxlength="12")
+                      input#buy-amount-input.amount-field(type="text", name="amount", maxlength="12")
                       .overlay-amount #{wallet1.currency}
                     label Price per #{wallet1.currency}:
                     .currency-input
-                      input#buy-unit-price(type="text", name="unit_price", value="#{coinStats.last_price}")
+                      input#buy-unit-price.amount-field(type="text", name="unit_price", value="#{coinStats.last_price}")
                       .overlay-amount #{wallet2.currency}
                     table.order-overview
                       tr.subtotal
@@ -112,7 +112,7 @@ block content
                     input#sell-unit-price(name="unit_price", type="hidden", value="#{coinStats.last_price}")
                     label I want to Sell:
                     .currency-input
-                      input#sell-amount-input(type="text", name="amount", autocomplete="off", maxlength="12")
+                      input#sell-amount-input.amount-field(type="text", name="amount", autocomplete="off", maxlength="12")
                       .overlay-amount #{wallet1.currency}
                     table.order-overview
                       tr.subtotal 
@@ -134,11 +134,11 @@ block content
                     input(name="buy_currency", type="hidden", value="#{wallet2.currency}")
                     label Amount to Sell:
                     .currency-input
-                      input#sell-amount-input(type="text", name="amount", maxlength="12")
+                      input#sell-amount-input.amount-field(type="text", name="amount", maxlength="12")
                       .overlay-amount #{wallet1.currency}
                     label Price per #{wallet1.currency}:
                     .currency-input
-                      input#sell-unit-price(type="text", name="unit_price", value="#{coinStats.last_price}")
+                      input#sell-unit-price.amount-field(type="text", name="unit_price", value="#{coinStats.last_price}")
                       .overlay-amount #{wallet2.currency}
                     table.order-overview
                       tr.subtotal 
