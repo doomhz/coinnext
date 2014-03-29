@@ -27,7 +27,11 @@ module.exports = (app)->
     if req.query.error
       errors = [req.query.error]
     success = req.query.success
-    res.render "auth/send_password", {title: "Send Password - Coinnext.com", errors: errors, success: success}
+    res.render "auth/send_password",
+      title: "Send Password - Coinnext.com"
+      errors: errors
+      success: success
+      recaptchaPublicKey: GLOBAL.appConfig().recaptcha.public_key
 
   app.post "/send-password", (req, res)->
     email = req.body.email

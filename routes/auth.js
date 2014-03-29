@@ -41,7 +41,8 @@
       return res.render("auth/send_password", {
         title: "Send Password - Coinnext.com",
         errors: errors,
-        success: success
+        success: success,
+        recaptchaPublicKey: GLOBAL.appConfig().recaptcha.public_key
       });
     });
     app.post("/send-password", function(req, res) {
