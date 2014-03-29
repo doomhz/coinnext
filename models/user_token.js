@@ -8,7 +8,8 @@
   speakeasy = require("speakeasy");
 
   module.exports = function(sequelize, DataTypes) {
-    var UserToken;
+    var TOKEN_VALIDITY_TIME, UserToken;
+    TOKEN_VALIDITY_TIME = 86400000;
     UserToken = sequelize.define("UserToken", {
       user_id: {
         type: DataTypes.INTEGER.UNSIGNED,
@@ -29,40 +30,47 @@
         type: DataTypes.STRING(100),
         unique: true,
         allowNull: false
+      },
+      active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
       }
     }, {
       tableName: "user_tokens",
       classMethods: {
-        findByUser: function(userId, callback) {
-          if (callback == null) {
-            callback = function() {};
-          }
-          return UserToken.find({
-            where: {
-              user_id: userId
-            }
-          }).complete(callback);
-        },
         findByToken: function(token, callback) {
+          var query;
           if (callback == null) {
             callback = function() {};
           }
-          return UserToken.find({
+          query = {
             where: {
-              token: token
+              token: token,
+              active: true,
+              created_at: {
+                gt: UserToken.getMaxExpirationTime()
+              }
             }
-          }).complete(callback);
+          };
+          return UserToken.find(query).complete(callback);
         },
         findByUserAndType: function(userId, type, callback) {
+          var query;
           if (callback == null) {
             callback = function() {};
           }
-          return UserToken.find({
+          query = {
             where: {
               user_id: userId,
-              type: MarketHelper.getTokenType(type)
+              type: MarketHelper.getTokenType(type),
+              active: true,
+              created_at: {
+                gt: UserToken.getMaxExpirationTime()
+              }
             }
-          }).complete(callback);
+          };
+          return UserToken.find(query).complete(callback);
         },
         generateGAuthPassByKey: function(key) {
           return speakeasy.time({
@@ -75,6 +83,9 @@
         },
         isValidGAuthPassForUser: function(userId, pass, callback) {
           return UserToken.findByUserAndType(userId, "google_auth", function(err, googleToken) {
+            if (!googleToken) {
+              return callback(null, false);
+            }
             return callback(err, UserToken.isValidGAuthPassForKey(pass, googleToken.token));
           });
         },
@@ -100,21 +111,15 @@
             type: "google_auth",
             token: key
           };
-          return UserToken.findOrCreate({
-            user_id: data.user_id,
-            type: MarketHelper.getTokenType(data.type)
-          }, data).complete(function(err, userToken, created) {
-            if (created) {
-              return callback(err, userToken);
-            }
-            return userToken.updateAttributes(data).complete(callback);
-          });
+          return UserToken.create(data).complete(callback);
         },
         dropGAuthDataForUser: function(userId, callback) {
           if (callback == null) {
             callback = function() {};
           }
-          return UserToken.destroy({
+          return UserToken.update({
+            active: false
+          }, {
             user_id: userId,
             type: MarketHelper.getTokenType("google_auth")
           }).complete(callback);
@@ -129,15 +134,7 @@
             type: "email_confirmation",
             token: crypto.createHash("sha1").update("email_confirmations-" + userId + "-" + seed + "-" + (GLOBAL.appConfig().salt) + "-" + (Date.now()), "utf8").digest("hex")
           };
-          return UserToken.findOrCreate({
-            user_id: data.user_id,
-            type: MarketHelper.getTokenType(data.type)
-          }, data).complete(function(err, userToken, created) {
-            if (created) {
-              return callback(err, userToken);
-            }
-            return userToken.updateAttributes(data).complete(callback);
-          });
+          return UserToken.create(data).complete(callback);
         },
         generateChangePasswordTokenForUser: function(userId, seed, callback) {
           var data;
@@ -149,15 +146,20 @@
             type: "change_password",
             token: crypto.createHash("sha1").update("change_password-" + userId + "-" + seed + "-" + (GLOBAL.appConfig().salt) + "-" + (Date.now()), "utf8").digest("hex")
           };
-          return UserToken.findOrCreate({
-            user_id: data.user_id,
-            type: MarketHelper.getTokenType(data.type)
-          }, data).complete(function(err, userToken, created) {
-            if (created) {
-              return callback(err, userToken);
-            }
-            return userToken.updateAttributes(data).complete(callback);
-          });
+          return UserToken.create(data).complete(callback);
+        },
+        getMaxExpirationTime: function() {
+          return new Date(Date.now() - TOKEN_VALIDITY_TIME);
+        },
+        invalidateByToken: function(token, callback) {
+          if (callback == null) {
+            callback = function() {};
+          }
+          return UserToken.update({
+            active: false
+          }, {
+            token: token
+          }).complete(callback);
         }
       },
       instanceMethods: {

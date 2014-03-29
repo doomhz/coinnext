@@ -4,6 +4,8 @@ speakeasy = require "speakeasy"
 
 module.exports = (sequelize, DataTypes) ->
 
+  TOKEN_VALIDITY_TIME = 86400000 # 24 hours
+
   UserToken = sequelize.define "UserToken",
       user_id:
         type: DataTypes.INTEGER.UNSIGNED
@@ -20,18 +22,32 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.STRING(100)
         unique: true
         allowNull: false
+      active:
+        type: DataTypes.BOOLEAN
+        allowNull: false
+        defaultValue: true
     ,
       tableName: "user_tokens"
       classMethods:
         
-        findByUser: (userId, callback = ()->)->
-          UserToken.find({where: {user_id: userId}}).complete callback
-
         findByToken: (token, callback = ()->)->
-          UserToken.find({where: {token: token}}).complete callback
+          query =
+            where:
+              token: token
+              active: true
+              created_at:
+                gt: UserToken.getMaxExpirationTime()
+          UserToken.find(query).complete callback
 
         findByUserAndType: (userId, type, callback = ()->)->
-          UserToken.find({where: {user_id: userId, type: MarketHelper.getTokenType(type)}}).complete callback
+          query =
+            where:
+              user_id: userId
+              type: MarketHelper.getTokenType(type)
+              active: true
+              created_at:
+                gt: UserToken.getMaxExpirationTime()
+          UserToken.find(query).complete callback
 
         generateGAuthPassByKey: (key)->
           speakeasy.time
@@ -43,6 +59,7 @@ module.exports = (sequelize, DataTypes) ->
 
         isValidGAuthPassForUser: (userId, pass, callback)->
           UserToken.findByUserAndType userId, "google_auth", (err, googleToken)->
+            return callback null, false  if not googleToken
             callback err, UserToken.isValidGAuthPassForKey(pass, googleToken.token)
 
         generateGAuthData: ()->
@@ -59,30 +76,30 @@ module.exports = (sequelize, DataTypes) ->
             user_id: userId
             type: "google_auth"
             token: key
-          UserToken.findOrCreate({user_id: data.user_id, type: MarketHelper.getTokenType(data.type)}, data).complete (err, userToken, created)->
-            return callback err, userToken  if created
-            userToken.updateAttributes(data).complete callback
+          UserToken.create(data).complete callback
         
         dropGAuthDataForUser: (userId, callback = ()->)->
-          UserToken.destroy({user_id: userId, type: MarketHelper.getTokenType("google_auth")}).complete callback
+          UserToken.update({active: false}, {user_id: userId, type: MarketHelper.getTokenType("google_auth")}).complete callback
 
         generateEmailConfirmationTokenForUser: (userId, seed, callback = ()->)->
           data =
             user_id: userId
             type: "email_confirmation"
             token: crypto.createHash("sha1").update("email_confirmations-#{userId}-#{seed}-#{GLOBAL.appConfig().salt}-#{Date.now()}", "utf8").digest("hex")
-          UserToken.findOrCreate({user_id: data.user_id, type: MarketHelper.getTokenType(data.type)}, data).complete (err, userToken, created)->
-            return callback err, userToken  if created
-            userToken.updateAttributes(data).complete callback
+          UserToken.create(data).complete callback
 
         generateChangePasswordTokenForUser: (userId, seed, callback = ()->)->
           data =
             user_id: userId
             type: "change_password"
             token: crypto.createHash("sha1").update("change_password-#{userId}-#{seed}-#{GLOBAL.appConfig().salt}-#{Date.now()}", "utf8").digest("hex")
-          UserToken.findOrCreate({user_id: data.user_id, type: MarketHelper.getTokenType(data.type)}, data).complete (err, userToken, created)->
-            return callback err, userToken  if created
-            userToken.updateAttributes(data).complete callback
+          UserToken.create(data).complete callback
+
+        getMaxExpirationTime: ()->
+          new Date(Date.now() - TOKEN_VALIDITY_TIME)
+
+        invalidateByToken: (token, callback = ()->)->
+          UserToken.update({active: false}, {token: token}).complete callback
 
       instanceMethods:
 

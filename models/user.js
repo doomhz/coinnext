@@ -54,14 +54,17 @@
       },
       email_verified: {
         type: DataTypes.BOOLEAN,
+        allowNull: false,
         defaultValue: false
       },
       chat_enabled: {
         type: DataTypes.BOOLEAN,
+        allowNull: false,
         defaultValue: true
       },
       email_auth_enabled: {
         type: DataTypes.BOOLEAN,
+        allowNull: false,
         defaultValue: true
       }
     }, {

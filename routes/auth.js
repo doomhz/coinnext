@@ -67,36 +67,48 @@
       });
     });
     app.get("/change-password/:token", function(req, res) {
-      var errors, token;
+      var token;
       token = req.params.token;
-      if (req.query.error) {
-        errors = [req.query.error];
-      }
-      return res.render("auth/change_password", {
-        title: "Change Password - Coinnext.com",
-        token: token,
-        errors: errors
+      return UserToken.findByToken(token, function(err, userToken) {
+        var errors;
+        if (!userToken) {
+          return res.redirect("/404");
+        }
+        if (req.query.error) {
+          errors = [req.query.error];
+        }
+        return res.render("auth/change_password", {
+          title: "Change Password - Coinnext.com",
+          token: token,
+          errors: errors
+        });
       });
     });
     app.post("/change-password", function(req, res) {
       var password, token;
       token = req.body.token;
       password = req.body.password;
-      return User.findByToken(token, function(err, user) {
-        if (!user) {
-          res.writeHead(303, {
-            "Location": "/change-password/" + token + "?error=wrong-token"
-          });
-          res.end();
+      return UserToken.findByToken(token, function(err, userToken) {
+        if (!userToken) {
+          return res.redirect("/404");
         }
-        return user.changePassword(password, function(err, u) {
-          if (err) {
-            console.error(err);
+        return User.findByToken(token, function(err, user) {
+          if (!user) {
+            res.writeHead(303, {
+              "Location": "/change-password/" + token + "?error=wrong-token"
+            });
+            res.end();
           }
-          res.writeHead(303, {
-            "Location": "/login"
+          return user.changePassword(password, function(err, u) {
+            if (err) {
+              console.error(err);
+            }
+            UserToken.invalidateByToken(token);
+            res.writeHead(303, {
+              "Location": "/login"
+            });
+            return res.end();
           });
-          return res.end();
         });
       });
     });
@@ -122,16 +134,20 @@
     app.get("/verify/:token", function(req, res) {
       var token;
       token = req.params.token;
-      return User.findByToken(token, function(err, user) {
-        if (!user) {
-          return res.render("auth/verify", {
-            title: "Verify Account - Coinnext.com"
-          });
+      return UserToken.findByToken(token, function(err, userToken) {
+        if (!userToken) {
+          return res.redirect("/404");
         }
-        return user.setEmailVerified(function(err, u) {
-          return res.render("auth/verify", {
-            title: "Verify Account - Coinnext.com",
-            user: u
+        return User.findByToken(token, function(err, user) {
+          if (!user) {
+            return res.redirect("/404");
+          }
+          return user.setEmailVerified(function(err, u) {
+            res.render("auth/verify", {
+              title: "Verify Account - Coinnext.com",
+              user: u
+            });
+            return UserToken.invalidateByToken(token);
           });
         });
       });

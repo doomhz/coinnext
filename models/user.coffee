@@ -34,12 +34,15 @@ module.exports = (sequelize, DataTypes) ->
             throw new Error message  if not /^[a-zA-Z0-9_]{4,15}$/.test(value)
       email_verified:
         type: DataTypes.BOOLEAN
+        allowNull: false
         defaultValue: false
       chat_enabled:
         type: DataTypes.BOOLEAN
+        allowNull: false
         defaultValue: true
       email_auth_enabled:
         type: DataTypes.BOOLEAN
+        allowNull: false
         defaultValue: true
     ,
       tableName: "users"
