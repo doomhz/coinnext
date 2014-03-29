@@ -8,6 +8,10 @@ $(document).ready ()->
   $logoutBt = $("#logout-bt")
   $pwField = $signupForm.find("[name='password']")
 
+  $.validator.addMethod "onenumber", (value, element)->
+      pattern = /[0-9]{1,}/
+      return @optional(element) or pattern.test(value)
+    , "The password should contain at least one number."
 
   onAuthSubmit = (ev)->
     ev.preventDefault()
@@ -69,10 +73,11 @@ $(document).ready ()->
       rules:
         password:
           required: true
-          minlength: 5
+          minlength: 8
+          onenumber: true
         repeat_password:
           required: true
-          minlength: 5
+          minlength: 8
           equalTo: "#signup-password"
         email:
           required: true
@@ -80,10 +85,10 @@ $(document).ready ()->
       messages:
         password:
           required: "Please provide a password."
-          minlength: "Your password must be at least 5 characters long."
+          minlength: "Your password must be at least 8 characters long."
         repeat_password:
           required: "Please provide a password."
-          minlength: "Your password must be at least 5 characters long."
+          minlength: "Your password must be at least 8 characters long."
           equalTo: "Please enter the same password as above."
         email: "Please enter a valid email address."
       submitHandler: ()->
@@ -95,18 +100,19 @@ $(document).ready ()->
       rules:
         password:
           required: true
-          minlength: 5
+          minlength: 8
+          onenumber: true
         repeat_password:
           required: true
-          minlength: 5
+          minlength: 8
           equalTo: "#change-pass-new-pass"
       messages:
         password:
           required: "Please provide a password."
-          minlength: "Your password must be at least 5 characters long."
+          minlength: "Your password must be at least 8 characters long."
         repeat_password:
           required: "Please provide a password."
-          minlength: "Your password must be at least 5 characters long."
+          minlength: "Your password must be at least 8 characters long."
           equalTo: "Please enter the same password as above."
 
   if $setNewPassForm
@@ -116,20 +122,21 @@ $(document).ready ()->
           required: true
         new_password:
           required: true
-          minlength: 5
+          minlength: 8
+          onenumber: true
         repeat_new_password:
           required: true
-          minlength: 5
+          minlength: 8
           equalTo: "#set-new-pass"
       messages:
         password:
           required: "Please provide current password."
         new_password:
           required: "Please provide a new password."
-          minlength: "Your password must be at least 5 characters long."
+          minlength: "Your password must be at least 8 characters long."
         repeat_new_password:
           required: "Please provide a password."
-          minlength: "Your password must be at least 5 characters long."
+          minlength: "Your password must be at least 8 characters long."
           equalTo: "Please enter the same password as above."
       submitHandler: ()->
         $form = $setNewPassForm
