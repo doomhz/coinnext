@@ -9,6 +9,8 @@ class WalletsClient
     "publish_order":  "post"
     "cancel_order":  "del"
     "process_payment": "post"
+    "wallet_balance": "get"
+    "wallet_info": "get"
 
   constructor: (options = {})->
     @host = options.host if options.host

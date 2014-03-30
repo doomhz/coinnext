@@ -173,7 +173,7 @@ module.exports = (app)->
     id = req.params.id
     GLOBAL.walletsClient.send "process_payment", [id], (err, res2, body)=>
       return JsonRenderer.error err, res  if err
-      if body and body.paymentId
+      if body and body.paymentId?
         Payment.findById id, (err, payment)->
           return JsonRenderer.error err, res  if err
           res.json JsonRenderer.payment payment
@@ -186,30 +186,25 @@ module.exports = (app)->
 
   app.get "/administratie/banksaldo/:currency", (req, res)->
     currency = req.params.currency
-    if GLOBAL.wallets[currency]
-      GLOBAL.wallets[currency].getBankBalance (err, balance = "wallet unaccessible")->
-        console.log err  if err
+    GLOBAL.walletsClient.send "wallet_balance", [currency], (err, res2, body)=>
+      return JsonRenderer.error err, res  if err
+      if body and body.balance?
+        res.json body
+      else
         res.json
-          balance: balance
           currency: currency
-    else
-      res.json
-        balance: "wallet unaccessible"
-        currency: currency
+          balance: "wallet error"
 
   app.post "/administratie/wallet_info", (req, res)->
     currency = req.body.currency
-    if GLOBAL.wallets[currency]
-      GLOBAL.wallets[currency].getInfo (err, info)->
-        console.log err  if err
+    GLOBAL.walletsClient.send "wallet_info", [currency], (err, res2, body)=>
+      return JsonRenderer.error err, res  if err
+      if body and body.info?
+        res.json body
+      else
         res.json
-          info: info or "wallet unaccessible"
           currency: currency
-          address: GLOBAL.appConfig().wallets[currency.toLowerCase()].wallet.address
-    else
-      res.json
-        info: "wallet unaccessible"
-        currency: currency
+          info: "wallet error"
 
   app.post "/administratie/search_user", (req, res)->
     term = req.body.term

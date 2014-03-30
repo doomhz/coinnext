@@ -240,7 +240,7 @@
           if (err) {
             return JsonRenderer.error(err, res);
           }
-          if (body && body.paymentId) {
+          if (body && (body.paymentId != null)) {
             return Payment.findById(id, function(err, payment) {
               if (err) {
                 return JsonRenderer.error(err, res);
@@ -263,46 +263,40 @@
     app.get("/administratie/banksaldo/:currency", function(req, res) {
       var currency;
       currency = req.params.currency;
-      if (GLOBAL.wallets[currency]) {
-        return GLOBAL.wallets[currency].getBankBalance(function(err, balance) {
-          if (balance == null) {
-            balance = "wallet unaccessible";
-          }
+      return GLOBAL.walletsClient.send("wallet_balance", [currency], (function(_this) {
+        return function(err, res2, body) {
           if (err) {
-            console.log(err);
+            return JsonRenderer.error(err, res);
           }
-          return res.json({
-            balance: balance,
-            currency: currency
-          });
-        });
-      } else {
-        return res.json({
-          balance: "wallet unaccessible",
-          currency: currency
-        });
-      }
+          if (body && (body.balance != null)) {
+            return res.json(body);
+          } else {
+            return res.json({
+              currency: currency,
+              balance: "wallet error"
+            });
+          }
+        };
+      })(this));
     });
     app.post("/administratie/wallet_info", function(req, res) {
       var currency;
       currency = req.body.currency;
-      if (GLOBAL.wallets[currency]) {
-        return GLOBAL.wallets[currency].getInfo(function(err, info) {
+      return GLOBAL.walletsClient.send("wallet_info", [currency], (function(_this) {
+        return function(err, res2, body) {
           if (err) {
-            console.log(err);
+            return JsonRenderer.error(err, res);
           }
-          return res.json({
-            info: info || "wallet unaccessible",
-            currency: currency,
-            address: GLOBAL.appConfig().wallets[currency.toLowerCase()].wallet.address
-          });
-        });
-      } else {
-        return res.json({
-          info: "wallet unaccessible",
-          currency: currency
-        });
-      }
+          if (body && (body.info != null)) {
+            return res.json(body);
+          } else {
+            return res.json({
+              currency: currency,
+              info: "wallet error"
+            });
+          }
+        };
+      })(this));
     });
     app.post("/administratie/search_user", function(req, res) {
       var renderUser, term;
