@@ -12,17 +12,15 @@
       "db": "coinnext_auth_dev"
     },
     "session": {
-      "cookie_parser_key": "secretkey",
+      "cookie_secret": "secretkey",
       "session_key": "cnxweb",
-      "session_secret": "secret",
       "cookie": {
         "maxAge": 2592000000,
         "path": "/"
       },
       "admin": {
-        "cookie_parser_key": "adminsecretkey",
+        "cookie_secret": "adminsecretkey",
         "session_key": "cnxadmin",
-        "session_secret": "adminsecret",
         "cookie": {
           "maxAge": 2592000000,
           "path": "/"
@@ -152,17 +150,15 @@
       "db": "coinnext_auth_test"
     },
     "session": {
-      "cookie_parser_key": "secretkey",
+      "cookie_secret": "secretkey",
       "session_key": "cnxweb",
-      "session_secret": "secret",
       "cookie": {
         "maxAge": 2592000000,
         "path": "/"
       },
       "admin": {
-        "cookie_parser_key": "adminsecretkey",
+        "cookie_secret": "adminsecretkey",
         "session_key": "cnxadmin",
-        "session_secret": "adminsecret",
         "cookie": {
           "maxAge": 2592000000,
           "path": "/"
@@ -291,17 +287,15 @@
       "db": "coinnext_auth"
     },
     "session": {
-      "cookie_parser_key": "secretkey",
+      "cookie_secret": "secretkey",
       "session_key": "cnxweb",
-      "session_secret": "secret",
       "cookie": {
         "maxAge": 2592000000,
         "path": "/"
       },
       "admin": {
-        "cookie_parser_key": "adminsecretkey",
+        "cookie_secret": "adminsecretkey",
         "session_key": "cnxadmin",
-        "session_secret": "adminsecret",
         "cookie": {
           "maxAge": 2592000000,
           "path": "/"

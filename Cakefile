@@ -51,4 +51,3 @@ task "admin:generate_user", "Add new admin user -e -p", (opts)->
     newUser.generateGAuthData (data, newUser)->
       console.log data.google_auth_qr
       console.log newUser.gauth_key
-    

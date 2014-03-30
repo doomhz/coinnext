@@ -17,7 +17,7 @@ class App.ChatView extends App.MasterView
     @loadHistory()
     @socket = io.connect @chatSocketUrl
     @socket.on "connect", ()=>
-      @socket.emit "join", {user_id: CONFIG.currentUser.id}
+    #  @socket.emit "join"
     @socket.on "new-message", (data)=>
       #console.log data
       @renderMessage data

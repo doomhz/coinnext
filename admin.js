@@ -38,10 +38,9 @@ app.configure(function () {
   app.use(express.compress());
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.cookieParser(GLOBAL.appConfig().session.admin.cookie_parser_key));
+  app.use(express.cookieParser(GLOBAL.appConfig().session.admin.cookie_secret));
   app.use(express.session({
     key: GLOBAL.appConfig().session.admin.session_key,
-    secret: GLOBAL.appConfig().session.admin.session_secret,
     store: new RedisStore(GLOBAL.appConfig().redis),
     cookie: GLOBAL.appConfig().session.admin.cookie
   }));

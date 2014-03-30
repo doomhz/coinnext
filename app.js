@@ -27,6 +27,8 @@ var app = express();
 if (environment !== 'development') {
   app.use(connectDomain());
 }
+var cookieParser = express.cookieParser(GLOBAL.appConfig().session.cookie_secret);
+var sessionStore = new RedisStore(GLOBAL.appConfig().redis);
 var connectAssetsOptions = environment !== 'development' && environment !== 'test' ? {minifyBuilds: true, servePath: GLOBAL.appConfig().assets_host} : {};
 connectAssetsOptions.helperContext = app.locals
 app.enable("trust proxy");
@@ -38,11 +40,10 @@ app.configure(function () {
   app.use(express.compress());
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.cookieParser(GLOBAL.appConfig().session.cookie_parser_key));
+  app.use(cookieParser);
   app.use(express.session({
     key: GLOBAL.appConfig().session.session_key,
-    secret: GLOBAL.appConfig().session.session_secret,
-    store: new RedisStore(GLOBAL.appConfig().redis),
+    store: sessionStore,
     cookie: GLOBAL.appConfig().session.cookie
   }));
   if (environment !== "test") {
@@ -77,7 +78,7 @@ app.configure('production', function(){
 
 var server = http.createServer(app);
 
-GLOBAL.sockets = require("./lib/sockets")(server, environment);
+require("./lib/sockets")(server, environment, sessionStore, cookieParser);
 
 server.listen(app.get('port'), function(){
   console.log("Coinnext is running on port %d in %s mode", app.get("port"), app.settings.env);

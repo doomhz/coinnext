@@ -18,8 +18,6 @@ $(document).ready ()->
     success: ()->
       if user.id
         usersSocket = io.connect "#{CONFIG.users.hostname}/users"
-        usersSocket.on "connect", ()=>
-          usersSocket.emit "listen", {id: user.id}
         usersSocket.on "payment-processed", (data)=>
           payment = new App.PaymentModel data
           $.publish "payment-processed", payment
