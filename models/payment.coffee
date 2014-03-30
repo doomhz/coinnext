@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) ->
       transaction_id:
         type: DataTypes.STRING(64)
         allowNull: true
+        unique: true
       currency:
         type: DataTypes.INTEGER.UNSIGNED
         allowNull: false

@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) ->
       address:
         type: DataTypes.STRING(34)
         allowNull: true
+        unique: true
       balance:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0

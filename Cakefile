@@ -9,7 +9,8 @@ task "db:create_tables", "Create all tables", ()->
 
 task "db:create_tables_force", "Drop and create all tables", ()->
   return console.log "Not in production!"  if environment is "production"
-  GLOBAL.db.sequelize.sync({force: true}).complete ()->
+  GLOBAL.db.sequelize.query("DROP TABLE SequelizeMeta").complete ()->
+    GLOBAL.db.sequelize.sync({force: true}).complete ()->
 
 task "db:seed_market_stats", "Seed default market stats", ()->
   MarketStats = GLOBAL.db.MarketStats
@@ -39,6 +40,22 @@ task "db:seed_trade_stats", "Seed default trade stats", ()->
     TradeStats.bulkCreate(tradeStats).success ()->
       TradeStats.findAll().success (result)->
         console.log JSON.stringify result
+
+task "db:migrate", "Run pending database migrations", ()->
+  migrator = GLOBAL.db.sequelize.getMigrator
+    path:        "#{process.cwd()}/models/migrations"
+    filesFilter: /\.coffee$/
+    coffee: true
+  migrator.migrate().success ()->
+    console.log "Database migrations finished."
+
+task "db:migrate_undo", "Undo database migrations", ()->
+  migrator = GLOBAL.db.sequelize.getMigrator
+    path:        "#{process.cwd()}/models/migrations"
+    filesFilter: /\.coffee$/
+    coffee: true
+  migrator.migrate({method: "down"}).success ()->
+    console.log "Database migrations reverted."
 
 option "-e", "--email [EMAIL]", "User email"
 option "-p", "--pass [PASS]", "User pass"

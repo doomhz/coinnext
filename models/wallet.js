@@ -24,7 +24,8 @@
       },
       address: {
         type: DataTypes.STRING(34),
-        allowNull: true
+        allowNull: true,
+        unique: true
       },
       balance: {
         type: DataTypes.BIGINT.UNSIGNED,

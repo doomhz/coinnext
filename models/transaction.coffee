@@ -88,8 +88,7 @@ module.exports = (sequelize, DataTypes) ->
             where:
               user_id: userId
               wallet_id: walletId
-              confirmations:
-                lt: MarketHelper.getTransactionMinConf()
+              balance_loaded: false
             order: [
               ["created_at", "DESC"]
             ]
@@ -100,8 +99,7 @@ module.exports = (sequelize, DataTypes) ->
             where:
               user_id: userId
               wallet_id: walletId
-              confirmations:
-                gte: MarketHelper.getTransactionMinConf()
+              balance_loaded: true
             order: [
               ["created_at", "DESC"]
             ]
@@ -112,8 +110,7 @@ module.exports = (sequelize, DataTypes) ->
           query =
             where:
               txid: ids
-              confirmations:
-                lt: MarketHelper.getTransactionMinConf()
+              balance_loaded: false
             order: [
               ["created_at", "DESC"]
             ]

@@ -11,6 +11,8 @@ module.exports = (sequelize, DataTypes) ->
       uuid:
         type: DataTypes.UUID
         defaultValue: DataTypes.UUIDV4
+        allowNull: false
+        unique: true
         validate:
           isUUID: 4
       email:
