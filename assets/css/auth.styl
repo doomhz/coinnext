@@ -28,6 +28,22 @@
 .recaptcha_nothad_incorrect_sol
   margin-bottom 10px
 
+.auth-box 
+  .recaptchatable
+    a, a:hover
+      color #a7abb1
+      font-size 12px
+
+    #recaptcha_response_field
+      border-color #d1d5dd !important
+      &:focus
+        border-color $blue !important
+
+    #recaptcha_image
+      box-sizing content-box
+      border-radius 3px
+      overflow hidden
+
 .auth-box
   @extend .container
   background #fff
