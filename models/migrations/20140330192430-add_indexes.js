@@ -36,6 +36,8 @@
       migration.addIndex("wallets", ["currency"]);
       migration.addIndex("wallets", ["balance"]);
       migration.addIndex("wallets", ["created_at"]);
+      migration.addIndex("payment_logs", ["payment_id"]);
+      migration.addIndex("payment_logs", ["created_at"]);
       done();
     },
     down: function(migration, DataTypes, done) {
@@ -74,6 +76,8 @@
       migration.removeIndex("wallets", ["currency"]);
       migration.removeIndex("wallets", ["balance"]);
       migration.removeIndex("wallets", ["created_at"]);
+      migration.removeIndex("payment_logs", ["payment_id"]);
+      migration.removeIndex("payment_logs", ["created_at"]);
       done();
     }
   };

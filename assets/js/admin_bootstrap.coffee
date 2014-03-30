@@ -65,8 +65,8 @@ $(document).ready ()->
         success: (response)->
           $el.parent().find(".payment-status").text response.status
           $el.hide()
-        error: ()->
-          alert "Error processing payment..."
+        error: (xhr)->
+          alert xhr.responseText
 
     $("#clear-pending-payments").click (ev)->
       ev.preventDefault()

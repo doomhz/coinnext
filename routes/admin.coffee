@@ -147,6 +147,9 @@ module.exports = (app)->
     count = req.query.count or 20
     from = if req.query.from? then parseInt(req.query.from) else 0
     query =
+      include: [
+        {model: GLOBAL.db.PaymentLog}
+      ]
       order: [
         ["created_at", "DESC"]
       ]
@@ -175,6 +178,7 @@ module.exports = (app)->
       return JsonRenderer.error err, res  if err
       if body and body.paymentId?
         Payment.findById id, (err, payment)->
+          return JsonRenderer.error "Could not process payment - #{JSON.stringify(body)}", res  if not payment.isProcessed()
           return JsonRenderer.error err, res  if err
           res.json JsonRenderer.payment payment
       else
@@ -224,8 +228,9 @@ module.exports = (app)->
       return res.redirect "/administratie/login"  if not user
       req.logIn user, (err)->
         return res.redirect "/administratie/login"  if err
-        if user.gauth_key and not user.isValidGAuthPass req.body.gauth_pass
-          req.logout()
-          return res.redirect "/administratie/login"
+        if process.env.NODE_ENV is "production"
+          if user.gauth_key and not user.isValidGAuthPass req.body.gauth_pass
+            req.logout()
+            return res.redirect "/administratie/login"
         res.redirect "/administratie"
     )(req, res, next)

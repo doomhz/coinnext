@@ -54,6 +54,10 @@
 
   db.UserToken.belongsTo(db.User);
 
+  db.Payment.hasMany(db.PaymentLog);
+
+  db.PaymentLog.belongsTo(db.Payment);
+
   module.exports = lodash.extend({
     sequelize: sequelize,
     Sequelize: Sequelize

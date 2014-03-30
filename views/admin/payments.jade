@@ -28,7 +28,11 @@ block content
             br
             a.payment-log-toggler(href="#") View log
             pre.payment-log.hidden
-              | !{jsonBeautifier.toHTML(payment.log)}
+              - each paymentLog in payment.paymentLogs
+                | !{jsonBeautifier.toHTML(paymentLog.log)}
+                br
+                | #{paymentLog.created_at}
+                hr
               br
               | IP: #{payment.remote_ip}
           td #{payment.address}

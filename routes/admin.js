@@ -201,6 +201,11 @@
       count = req.query.count || 20;
       from = req.query.from != null ? parseInt(req.query.from) : 0;
       query = {
+        include: [
+          {
+            model: GLOBAL.db.PaymentLog
+          }
+        ],
         order: [["created_at", "DESC"]],
         limit: count,
         offset: from
@@ -242,6 +247,9 @@
           }
           if (body && (body.paymentId != null)) {
             return Payment.findById(id, function(err, payment) {
+              if (!payment.isProcessed()) {
+                return JsonRenderer.error("Could not process payment - " + (JSON.stringify(body)), res);
+              }
               if (err) {
                 return JsonRenderer.error(err, res);
               }
@@ -334,9 +342,11 @@
           if (err) {
             return res.redirect("/administratie/login");
           }
-          if (user.gauth_key && !user.isValidGAuthPass(req.body.gauth_pass)) {
-            req.logout();
-            return res.redirect("/administratie/login");
+          if (process.env.NODE_ENV === "production") {
+            if (user.gauth_key && !user.isValidGAuthPass(req.body.gauth_pass)) {
+              req.logout();
+              return res.redirect("/administratie/login");
+            }
           }
           return res.redirect("/administratie");
         });

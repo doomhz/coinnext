@@ -49,15 +49,6 @@ module.exports = (sequelize, DataTypes) ->
           MarketHelper.getPaymentStatusLiteral @getDataValue("status")
         set: (status)->
           @setDataValue "status", MarketHelper.getPaymentStatus(status)
-      log:
-        type: DataTypes.TEXT
-        set: (response)->
-          log = ""  if not @log
-          log += ","  if @log
-          try
-            log += if typeof(response) is "string" then response else JSON.stringify(response)
-            @setDataValue "log", log
-          catch e
       remote_ip:
         type: DataTypes.INTEGER
         allowNull: true
@@ -110,17 +101,23 @@ module.exports = (sequelize, DataTypes) ->
         process: (response, callback = ()->)->
           @status = "processed"
           @transaction_id = response
-          @log = response
+          GLOBAL.db.PaymentLog.create
+            payment_id: @id
+            log: response
           @save().complete callback
 
         cancel: (reason, callback = ()->)->
           @status = "canceled"
-          @log = reason
+          GLOBAL.db.PaymentLog.create
+            payment_id: @id
+            log: reason
           @save().complete (e, p)->
             callback reason, p
 
         errored: (reason, callback = ()->)->
-          @log = reason
+          GLOBAL.db.PaymentLog.create
+            payment_id: @id
+            log: reason
           @save().complete (e, p)->
             callback reason, p
 

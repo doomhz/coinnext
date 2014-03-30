@@ -72,24 +72,6 @@
           return this.setDataValue("status", MarketHelper.getPaymentStatus(status));
         }
       },
-      log: {
-        type: DataTypes.TEXT,
-        set: function(response) {
-          var e, log;
-          if (!this.log) {
-            log = "";
-          }
-          if (this.log) {
-            log += ",";
-          }
-          try {
-            log += typeof response === "string" ? response : JSON.stringify(response);
-            return this.setDataValue("log", log);
-          } catch (_error) {
-            e = _error;
-          }
-        }
-      },
       remote_ip: {
         type: DataTypes.INTEGER,
         allowNull: true,
@@ -153,7 +135,10 @@
           }
           this.status = "processed";
           this.transaction_id = response;
-          this.log = response;
+          GLOBAL.db.PaymentLog.create({
+            payment_id: this.id,
+            log: response
+          });
           return this.save().complete(callback);
         },
         cancel: function(reason, callback) {
@@ -161,7 +146,10 @@
             callback = function() {};
           }
           this.status = "canceled";
-          this.log = reason;
+          GLOBAL.db.PaymentLog.create({
+            payment_id: this.id,
+            log: reason
+          });
           return this.save().complete(function(e, p) {
             return callback(reason, p);
           });
@@ -170,7 +158,10 @@
           if (callback == null) {
             callback = function() {};
           }
-          this.log = reason;
+          GLOBAL.db.PaymentLog.create({
+            payment_id: this.id,
+            log: reason
+          });
           return this.save().complete(function(e, p) {
             return callback(reason, p);
           });
