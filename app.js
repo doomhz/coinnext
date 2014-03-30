@@ -38,15 +38,12 @@ app.configure(function () {
   app.use(express.compress());
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.cookieParser());
+  app.use(express.cookieParser(GLOBAL.appConfig().session.cookie_parser_key));
   app.use(express.session({
-    key: 'cnxweb',
-    secret: 'coinnextsecret83',
+    key: GLOBAL.appConfig().session.session_key,
+    secret: GLOBAL.appConfig().session.session_secret,
     store: new RedisStore(GLOBAL.appConfig().redis),
-    cookie: {
-      maxAge: 2592000000,
-      path: '/'
-    }
+    cookie: GLOBAL.appConfig().session.cookie
   }));
   if (environment !== "test") {
     app.use(express.csrf());

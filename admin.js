@@ -9,10 +9,6 @@ var RedisStore = require('connect-redis')(express);
 var connectDomain = require('connect-domain');
 var fs = require('fs');
 var helmet = require('helmet');
-var BtcWallet = environment === "test" ? require("./tests/helpers/btc_wallet_mock") : require("./lib/btc_wallet");
-var LtcWallet = environment === "test" ? require("./tests/helpers/ltc_wallet_mock") : require("./lib/ltc_wallet");
-var PpcWallet = environment === "test" ? require("./tests/helpers/ppc_wallet_mock") : require("./lib/ppc_wallet");
-var DogeWallet = environment === "test" ? require("./tests/helpers/doge_wallet_mock") : require("./lib/doge_wallet");
 var WalletsClient = require('./lib/wallets_client');
 var environment = process.env.NODE_ENV || 'development';
 var config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', encoding='utf8'))[environment];
@@ -21,11 +17,6 @@ var config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', encoding
 GLOBAL.passport = require('passport');
 GLOBAL.appConfig = function () {return config;};
 GLOBAL.walletsClient = new WalletsClient({host: GLOBAL.appConfig().wallets_host});
-GLOBAL.wallets = []
-GLOBAL.wallets["BTC"] = new BtcWallet();
-GLOBAL.wallets["LTC"] = new LtcWallet();
-GLOBAL.wallets["PPC"] = new PpcWallet();
-GLOBAL.wallets["DOGE"] = new DogeWallet();
 GLOBAL.db = require('./models/index');
 
 require('./lib/admin_auth');
@@ -47,15 +38,12 @@ app.configure(function () {
   app.use(express.compress());
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.cookieParser());
+  app.use(express.cookieParser(GLOBAL.appConfig().session.admin.cookie_parser_key));
   app.use(express.session({
-    key: 'cnxadmin',
-    secret: 'coinnextsecretadmin83',
+    key: GLOBAL.appConfig().session.admin.session_key,
+    secret: GLOBAL.appConfig().session.admin.session_secret,
     store: new RedisStore(GLOBAL.appConfig().redis),
-    cookie: {
-      maxAge: 2592000000,
-      path: '/'
-    }
+    cookie: GLOBAL.appConfig().session.admin.cookie
   }));
   if (environment !== "test") {
     app.use(express.csrf());

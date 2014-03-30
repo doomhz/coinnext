@@ -29,6 +29,7 @@
     , "date-utils": "latest"
     , "socket.io": "latest"
     , "socket.io-client": "latest"
+    , "session.socket.io": "latest"
     , "connect-domain": "latest"
     , "winston": "latest"
     , "async": "latest"

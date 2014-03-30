@@ -11,6 +11,24 @@
     "redis": {
       "db": "coinnext_auth_dev"
     },
+    "session": {
+      "cookie_parser_key": "secretkey",
+      "session_key": "cnxweb",
+      "session_secret": "secret",
+      "cookie": {
+        "maxAge": 2592000000,
+        "path": "/"
+      },
+      "admin": {
+        "cookie_parser_key": "adminsecretkey",
+        "session_key": "cnxadmin",
+        "session_secret": "adminsecret",
+        "cookie": {
+          "maxAge": 2592000000,
+          "path": "/"
+        }
+      }
+    },
     "amqp": {
       "connection": {
         "host": "localhost",
@@ -133,6 +151,24 @@
     "redis": {
       "db": "coinnext_auth_test"
     },
+    "session": {
+      "cookie_parser_key": "secretkey",
+      "session_key": "cnxweb",
+      "session_secret": "secret",
+      "cookie": {
+        "maxAge": 2592000000,
+        "path": "/"
+      },
+      "admin": {
+        "cookie_parser_key": "adminsecretkey",
+        "session_key": "cnxadmin",
+        "session_secret": "adminsecret",
+        "cookie": {
+          "maxAge": 2592000000,
+          "path": "/"
+        }
+      }
+    },
     "amqp": {
       "connection": {
         "host": "localhost",
@@ -253,6 +289,24 @@
       "user": "",
       "pass": "",
       "db": "coinnext_auth"
+    },
+    "session": {
+      "cookie_parser_key": "secretkey",
+      "session_key": "cnxweb",
+      "session_secret": "secret",
+      "cookie": {
+        "maxAge": 2592000000,
+        "path": "/"
+      },
+      "admin": {
+        "cookie_parser_key": "adminsecretkey",
+        "session_key": "cnxadmin",
+        "session_secret": "adminsecret",
+        "cookie": {
+          "maxAge": 2592000000,
+          "path": "/"
+        }
+      }
     },
     "amqp": {
       "connection": {

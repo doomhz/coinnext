@@ -6,10 +6,19 @@
 var restify = require('restify');
 var fs = require('fs');
 var environment = process.env.NODE_ENV || 'development';
+var BtcWallet = environment === "test" ? require("./tests/helpers/btc_wallet_mock") : require("./lib/btc_wallet");
+var LtcWallet = environment === "test" ? require("./tests/helpers/ltc_wallet_mock") : require("./lib/ltc_wallet");
+var PpcWallet = environment === "test" ? require("./tests/helpers/ppc_wallet_mock") : require("./lib/ppc_wallet");
+var DogeWallet = environment === "test" ? require("./tests/helpers/doge_wallet_mock") : require("./lib/doge_wallet");
 var config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', encoding='utf8'))[environment];
 
 // Configure globals
 GLOBAL.appConfig = function () {return config;};
+GLOBAL.wallets = []
+GLOBAL.wallets["BTC"] = new BtcWallet();
+GLOBAL.wallets["LTC"] = new LtcWallet();
+GLOBAL.wallets["PPC"] = new PpcWallet();
+GLOBAL.wallets["DOGE"] = new DogeWallet();
 GLOBAL.db = require('./models/index');
 
 // Setup express
