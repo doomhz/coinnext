@@ -70,7 +70,7 @@
           return "wallet_" + this.id;
         },
         currency_name: function() {
-          return MarketHelper.getCurrencyName(this.getDataValue("currency"));
+          return MarketHelper.getCurrencyName(this.currency);
         }
       },
       classMethods: {

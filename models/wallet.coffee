@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) ->
           "wallet_#{@id}"
 
         currency_name: ()->
-          MarketHelper.getCurrencyName @getDataValue("currency")
+          MarketHelper.getCurrencyName @currency
 
       classMethods:
 
