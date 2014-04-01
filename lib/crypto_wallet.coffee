@@ -6,6 +6,10 @@ class CryptoWallet
 
   transactionFee: 0.0001
 
+  passphrase: null
+
+  passphraseTimeout: 5
+
   currency: null
 
   constructor: (options)->
@@ -14,6 +18,7 @@ class CryptoWallet
     @createClient(options)
     @setupConfirmations(options)
     @setupTransactionFee(options)
+    @setupPassphrase(options)
 
   createClient: (options)->
 
@@ -24,12 +29,21 @@ class CryptoWallet
     @transactionFee = options.transaction_fee or @transactionFee
     @client.setTxFee @transactionFee
 
+  setupPassphrase: (options)->
+    @passphrase = options.wallet.passphrase or @passphrase
+
   generateAddress: (account, callback)->
     @client.getNewAddress account, callback
 
   sendToAddress: (address, amount, callback)->
     amount = @parseAmount amount
-    @client.sendToAddress address, amount, callback
+    @submitPassphrase (err)=>
+      return callback err  if err
+      @client.sendToAddress address, amount, callback
+
+  submitPassphrase: (callback)->
+    return callback()  if not @passphrase
+    @client.walletPassphrase @passphrase, @passphraseTimeout, callback
 
   parseAmount: (amount)->
     parseFloat(parseFloat(amount).toFixed(9))

@@ -70,7 +70,8 @@
         },
         "wallet": {
           "address": "",
-          "account": "coinnext_bank"
+          "account": "coinnext_bank",
+          "passphrase": ""
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
@@ -86,7 +87,8 @@
         },
         "wallet": {
           "address": "",
-          "account": "coinnext_bank"
+          "account": "coinnext_bank",
+          "passphrase": ""
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
@@ -102,7 +104,8 @@
         },
         "wallet": {
           "address": "",
-          "account": "coinnext_bank"
+          "account": "coinnext_bank",
+          "passphrase": ""
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
@@ -118,7 +121,8 @@
         },
         "wallet": {
           "address": "",
-          "account": "coinnext_bank"
+          "account": "coinnext_bank",
+          "passphrase": ""
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
@@ -208,7 +212,8 @@
         },
         "wallet": {
           "address": "",
-          "account": "coinnext_bank"
+          "account": "coinnext_bank",
+          "passphrase": ""
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
@@ -224,7 +229,8 @@
         },
         "wallet": {
           "address": "",
-          "account": "coinnext_bank"
+          "account": "coinnext_bank",
+          "passphrase": ""
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
@@ -240,7 +246,8 @@
         },
         "wallet": {
           "address": "",
-          "account": "coinnext_bank"
+          "account": "coinnext_bank",
+          "passphrase": ""
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
@@ -256,7 +263,8 @@
         },
         "wallet": {
           "address": "",
-          "account": "coinnext_bank"
+          "account": "coinnext_bank",
+          "passphrase": ""
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
@@ -345,7 +353,8 @@
         },
         "wallet": {
           "address": "",
-          "account": "coinnext_bank"
+          "account": "coinnext_bank",
+          "passphrase": ""
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
@@ -361,7 +370,8 @@
         },
         "wallet": {
           "address": "",
-          "account": "coinnext_bank"
+          "account": "coinnext_bank",
+          "passphrase": ""
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
@@ -377,7 +387,8 @@
         },
         "wallet": {
           "address": "",
-          "account": "coinnext_bank"
+          "account": "coinnext_bank",
+          "passphrase": ""
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
@@ -393,7 +404,8 @@
         },
         "wallet": {
           "address": "",
-          "account": "coinnext_bank"
+          "account": "coinnext_bank",
+          "passphrase": ""
         },
         "confirmations": 1,
         "transaction_fee": 0.0001,
