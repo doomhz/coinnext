@@ -1,3 +1,4 @@
+restify = require "restify"
 Order = GLOBAL.db.Order
 Wallet = GLOBAL.db.Wallet
 MarketStats = GLOBAL.db.MarketStats

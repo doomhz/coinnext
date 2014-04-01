@@ -1,4 +1,5 @@
 require "./../../helpers/spec_helper"
+marketStats = require './../../../models/seeds/market_stats'
 auth = require "./../../helpers/auth_helper"
 
 app = require "./../../../app"
@@ -6,7 +7,10 @@ walletsEngine = require "./../../../wallets"
 request = require "supertest"
 
 beforeEach (done)->
-  GLOBAL.db.sequelize.sync({force: true}).complete done
+  GLOBAL.db.sequelize.sync({force: true}).complete ()->
+    GLOBAL.db.sequelize.query("TRUNCATE TABLE #{GLOBAL.db.MarketStats.tableName}").complete ()->
+      GLOBAL.db.MarketStats.bulkCreate(marketStats).success ()->
+        done()
 
 describe "Orders Routes", ->
   describe "POST /orders", ()->

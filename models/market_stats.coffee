@@ -109,6 +109,8 @@ module.exports = (sequelize, DataTypes) ->
           parseFloat newPrice * 100 / lastPrice - 100
 
         findEnabledMarket: (currency1, currency2, callback = ()->)->
+          # TODO: Review when both are equal to BTC
+          return callback null, true  if currency1 is "BTC"
           type = "#{currency1}_#{currency2}"
           query =
             where:

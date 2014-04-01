@@ -163,6 +163,9 @@
           if (callback == null) {
             callback = function() {};
           }
+          if (currency1 === "BTC") {
+            return callback(null, true);
+          }
           type = "" + currency1 + "_" + currency2;
           query = {
             where: {

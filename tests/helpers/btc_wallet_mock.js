@@ -34,7 +34,7 @@
     };
 
     BtcWallet.prototype.sendToAddress = function(address, amount, callback) {
-      return callback(null, "unique_tx_id");
+      return callback(null, "unique_tx_id_" + address);
     };
 
     return BtcWallet;

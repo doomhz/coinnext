@@ -1,4 +1,5 @@
 require "./../../../helpers/spec_helper"
+marketStats = require './../../../../models/seeds/market_stats'
 
 app = require "./../../../../wallets"
 request = require "supertest"
@@ -8,9 +9,11 @@ describe "Transactions Api", ->
 
   beforeEach (done)->
     GLOBAL.db.sequelize.sync({force: true}).complete ()->
-      GLOBAL.db.Wallet.create({currency: "BTC", user_id: 1}).complete (err, wl)->
-        wallet = wl
-        done()
+      GLOBAL.db.sequelize.query("TRUNCATE TABLE #{GLOBAL.db.MarketStats.tableName}").complete ()->
+        GLOBAL.db.MarketStats.bulkCreate(marketStats).success ()->
+          GLOBAL.db.Wallet.create({currency: "BTC", user_id: 1}).complete (err, wl)->
+            wallet = wl
+            done()
 
   describe "PUT /transaction/:currency/:tx_id", ()->
     describe "When there is a valid currency and tx id", ()->
@@ -62,7 +65,7 @@ describe "Transactions Api", ->
       it "updates the user_id from the payment", (done)->
         wallet.balance = 10
         wallet.save().complete ()->
-          GLOBAL.db.Transaction.create({wallet_id: wallet.id, currency: "BTC", txid: "unique_tx_id"}).complete (err, tx)->
+          GLOBAL.db.Transaction.create({wallet_id: wallet.id, currency: "BTC", txid: "unique_tx_id_mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, tx)->
             GLOBAL.db.Payment.create({wallet_id: wallet.id, user_id: 1, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
               request('http://localhost:6000')
               .post("/process_pending_payments")
@@ -92,9 +95,9 @@ describe "Transactions Api", ->
         GLOBAL.db.Wallet.create({currency: "BTC", user_id: 2, balance: 10}).complete (err, wallet2)->
           wallet.balance = 10
           wallet.save().complete ()->
-            GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: 5, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
-              GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: 5, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err2, pm2)->
-                GLOBAL.db.Payment.create({user_id: 2, wallet_id: wallet2.id, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err3, pm3)->
+            GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: 5, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVa"}).complete (err, pm)->
+              GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: 5, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVb"}).complete (err2, pm2)->
+                GLOBAL.db.Payment.create({user_id: 2, wallet_id: wallet2.id, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVc"}).complete (err3, pm3)->
                   request('http://localhost:6000')
                   .post("/process_pending_payments")
                   .send()

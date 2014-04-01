@@ -17,7 +17,7 @@ TransactionHelper =
 
   processPayment: (payment, callback)->
     MarketStats.findEnabledMarket payment.currency, "BTC", (err, market)->
-      return next(new restify.ConflictError "#{new Date()} - Will not process payment #{payment.id}, the market for #{payment.currency} is disabled.")  if not market
+      return callback null, "#{new Date()} - Will not process payment #{payment.id}, the market for #{payment.currency} is disabled."  if not market
       Wallet.findById payment.wallet_id, (err, wallet)->
         return callback null, "#{payment.id} - wallet #{payment.wallet_id} not found"  if not wallet
         return callback null, "#{payment.id} - user already had a processed payment"  if TransactionHelper.paymentsProcessedUserIds.indexOf(wallet.user_id) > -1
@@ -52,7 +52,9 @@ TransactionHelper =
     txId = if typeof(transactionOrId) is "string" then transactionOrId else transactionOrId.txid
     return callback()  if not txId
     MarketStats.findEnabledMarket currency, "BTC", (err, market)->
-      return next(new restify.ConflictError "#{new Date()} - Will not load the transaction #{txId}, the market for #{currency} is disabled.")  if not market
+      if not market
+        console.error "#{new Date()} - Will not load the transaction #{txId}, the market for #{currency} is disabled."
+        return callback()
       GLOBAL.wallets[currency].getTransaction txId, (err, walletTransaction)->
         console.error err  if err
         return callback()  if err
@@ -71,11 +73,13 @@ TransactionHelper =
                 wallet.addBalance updatedTransaction.amount, transaction, (err)->
                   if err
                     return transaction.rollback().success ()->
-                      next(new restify.ConflictError "Could not load user balance #{updatedTransaction.amount} - #{err}")
+                      console.error "Could not load user balance #{updatedTransaction.amount} - #{err}"
+                      return callback()
                   Transaction.markAsLoaded updatedTransaction.id, transaction, (err)->
                     if err
                       return transaction.rollback().success ()->
-                        next(new restify.ConflictError "Could not mark the transaction as loaded #{updatedTransaction.id} - #{err}")
+                        console.error "Could not mark the transaction as loaded #{updatedTransaction.id} - #{err}"
+                        return callback()
                     transaction.commit().success ()->
                       callback()
                       usersSocket.send
@@ -83,7 +87,8 @@ TransactionHelper =
                         user_id: wallet.user_id
                         eventData: JsonRenderer.wallet wallet
                     transaction.done (err)->
-                      next(new restify.ConflictError "Could not load transaction #{updatedTransaction.id} - #{err}")
+                      console.error "Could not load transaction #{updatedTransaction.id} - #{err}"
+                      return callback()
             else
               Payment.findByTransaction txId, (err, payment)->
                 return callback()  if not payment

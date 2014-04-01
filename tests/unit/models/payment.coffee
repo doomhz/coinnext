@@ -4,7 +4,7 @@ describe "Payment", ->
   payment = undefined
 
   beforeEach (done)->
-    payment = GLOBAL.db.Payment.build {user_id: 1, wallet_id: 1, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw", status: "pending"}
+    payment = GLOBAL.db.Payment.build {id: 1, user_id: 1, wallet_id: 1, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw", status: "pending"}
     GLOBAL.db.sequelize.sync({force: true}).complete ()->
       done()
 
@@ -57,8 +57,9 @@ describe "Payment", ->
 
     it "sets the given result as log", (done)->
       payment.process "txid", (err, pm)->
-        pm.log.toString().should.eql "txid"
-        done()
+        GLOBAL.db.PaymentLog.findByPaymentId pm.id, (err, paymentLogs)->
+          paymentLogs[0].log.should.eql "txid"
+          done()
 
 
   describe "cancel", ()->
@@ -69,8 +70,9 @@ describe "Payment", ->
 
     it "sets the given result as log", (done)->
       payment.cancel "result", (err, pm)->
-        pm.log.toString().should.eql "result"
-        done()
+        GLOBAL.db.PaymentLog.findByPaymentId pm.id, (err, paymentLogs)->
+          paymentLogs[0].log.should.eql "result"
+          done()
 
 
   describe "errored", ()->
@@ -80,6 +82,7 @@ describe "Payment", ->
         done()
 
     it "sets the given result as log", (done)->
-      payment.errored {error: "failed"}, (err, pm)->
-        pm.log.toString().should.eql "{\"error\":\"failed\"}"
-        done()
+      payment.errored "{error:'failed'}", (err, pm)->
+        GLOBAL.db.PaymentLog.findByPaymentId pm.id, (err, paymentLogs)->
+          paymentLogs[0].log.should.eql "{error:'failed'}"
+          done()
