@@ -1,0 +1,19 @@
+extends ../admin
+
+block content
+  h2 Markets
+
+  table#markets.table
+    thead
+      tr
+        th Type
+        th Status
+        th Action
+    tbody
+      - each market in markets
+        tr
+          td #{market.type}
+          td #{market.status}
+          td
+            button.market-switcher(data-id="#{market.id}", data-status="#{market.status === 'disabled' ? 'enabled' : 'disabled'}")
+              | #{market.status === 'disabled' ? 'Enable' : 'Disable'}

@@ -7,6 +7,7 @@
       migration.addIndex("chats", ["user_id"]);
       migration.addIndex("chats", ["created_at"]);
       migration.addIndex("market_stats", ["type"]);
+      migration.addIndex("market_stats", ["status"]);
       migration.addIndex("orders", ["user_id"]);
       migration.addIndex("orders", ["action"]);
       migration.addIndex("orders", ["buy_currency"]);
@@ -47,6 +48,7 @@
       migration.removeIndex("chats", ["user_id"]);
       migration.removeIndex("chats", ["created_at"]);
       migration.removeIndex("market_stats", ["type"]);
+      migration.removeIndex("market_stats", ["status"]);
       migration.removeIndex("orders", ["user_id"]);
       migration.removeIndex("orders", ["action"]);
       migration.removeIndex("orders", ["buy_currency"]);

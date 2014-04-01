@@ -3,6 +3,7 @@ User = GLOBAL.db.User
 Transaction = GLOBAL.db.Transaction
 Payment = GLOBAL.db.Payment
 AuthStats = GLOBAL.db.AuthStats
+MarketStats = GLOBAL.db.MarketStats
 MarketHelper = require "../lib/market_helper"
 JsonRenderer = require "../lib/json_renderer"
 jsonBeautifier = require "../lib/json_beautifier"
@@ -220,6 +221,22 @@ module.exports = (app)->
       return User.findById wallet.user_id, renderUser  if wallet
       res.json
         error: "Could not find user by #{term}"
+
+  app.get "/administratie/markets", (req, res)->
+    MarketStats.getStats (err, markets)->
+      res.render "admin/markets",
+        title: "Markets - Admin - Satoshibet"
+        page: "markets"
+        adminUser: req.user
+        _str: _str
+        _: _
+        currencies: MarketHelper.getCurrencyTypes()
+        markets: markets
+
+  app.put "/administratie/markets/:id", (req, res)->
+    MarketStats.setMarketStatus req.params.id, req.body.status, (err, market)->
+      console.error err  if err
+      res.json market
 
 
   login = (req, res, next)->

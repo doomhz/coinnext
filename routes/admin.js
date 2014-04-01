@@ -1,5 +1,5 @@
 (function() {
-  var AuthStats, JsonRenderer, MarketHelper, Payment, Transaction, User, Wallet, jsonBeautifier, _, _str;
+  var AuthStats, JsonRenderer, MarketHelper, MarketStats, Payment, Transaction, User, Wallet, jsonBeautifier, _, _str;
 
   Wallet = GLOBAL.db.Wallet;
 
@@ -10,6 +10,8 @@
   Payment = GLOBAL.db.Payment;
 
   AuthStats = GLOBAL.db.AuthStats;
+
+  MarketStats = GLOBAL.db.MarketStats;
 
   MarketHelper = require("../lib/market_helper");
 
@@ -328,6 +330,27 @@
         return res.json({
           error: "Could not find user by " + term
         });
+      });
+    });
+    app.get("/administratie/markets", function(req, res) {
+      return MarketStats.getStats(function(err, markets) {
+        return res.render("admin/markets", {
+          title: "Markets - Admin - Satoshibet",
+          page: "markets",
+          adminUser: req.user,
+          _str: _str,
+          _: _,
+          currencies: MarketHelper.getCurrencyTypes(),
+          markets: markets
+        });
+      });
+    });
+    app.put("/administratie/markets/:id", function(req, res) {
+      return MarketStats.setMarketStatus(req.params.id, req.body.status, function(err, market) {
+        if (err) {
+          console.error(err);
+        }
+        return res.json(market);
       });
     });
     return login = function(req, res, next) {

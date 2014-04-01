@@ -74,3 +74,17 @@ $(document).ready ()->
         $el = $(ev.currentTarget)
         $.post "#{rootUrl}/clear_pending_payments", ()->
           window.location.reload()
+
+  $markets = $("#markets")
+  if $markets.length
+    $markets.delegate ".market-switcher", "click", (ev)->
+      ev.preventDefault()
+      $el = $(ev.currentTarget)
+      $.ajax
+        url: "#{rootUrl}/markets/#{$el.data('id')}"
+        type: "put"
+        dataType: "json"
+        data:
+          status: $el.data "status"
+        success: (response)->
+          window.location.reload()

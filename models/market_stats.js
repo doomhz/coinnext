@@ -91,6 +91,18 @@
       },
       today: {
         type: DataTypes.DATE
+      },
+      status: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        defaultValue: MarketHelper.getOrderStatus("enabled"),
+        allowNull: false,
+        comment: "enabled, disabled",
+        get: function() {
+          return MarketHelper.getMarketStatusLiteral(this.getDataValue("status"));
+        },
+        set: function(status) {
+          return this.setDataValue("status", MarketHelper.getMarketStatus(status));
+        }
       }
     }, {
       tableName: "market_stats",
@@ -145,6 +157,30 @@
         },
         calculateGrowthRatio: function(lastPrice, newPrice) {
           return parseFloat(newPrice * 100 / lastPrice - 100);
+        },
+        findEnabledMarket: function(currency1, currency2, callback) {
+          var query, type;
+          if (callback == null) {
+            callback = function() {};
+          }
+          type = "" + currency1 + "_" + currency2;
+          query = {
+            where: {
+              type: MarketHelper.getMarket(type),
+              status: MarketHelper.getMarketStatus("enabled")
+            }
+          };
+          return MarketStats.find(query).complete(callback);
+        },
+        setMarketStatus: function(id, status, callback) {
+          if (callback == null) {
+            callback = function() {};
+          }
+          return MarketStats.update({
+            status: status
+          }, {
+            id: id
+          }).complete(callback);
         }
       },
       instanceMethods: {

@@ -51,6 +51,10 @@ TOKENS =
   google_auth: 2
   change_password: 3
 
+MARKET_STATUS =
+  enabled: 1
+  disabled: 2
+
 MarketHelper =
 
   getMarkets: ()->
@@ -135,5 +139,11 @@ MarketHelper =
 
   getTokenType: (type)->
     TOKENS[type]
+
+  getMarketStatus: (status)->
+    MARKET_STATUS[status]
+
+  getMarketStatusLiteral: (intStatus)->
+    _.invert(MARKET_STATUS)[intStatus]
 
 exports = module.exports = MarketHelper

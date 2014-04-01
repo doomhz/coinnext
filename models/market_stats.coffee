@@ -67,6 +67,15 @@ module.exports = (sequelize, DataTypes) ->
         comment: "FLOAT x 100000000"
       today:
         type: DataTypes.DATE
+      status:
+        type: DataTypes.INTEGER.UNSIGNED
+        defaultValue: MarketHelper.getOrderStatus "enabled"
+        allowNull: false
+        comment: "enabled, disabled"
+        get: ()->
+          MarketHelper.getMarketStatusLiteral @getDataValue("status")
+        set: (status)->
+          @setDataValue "status", MarketHelper.getMarketStatus(status)
     ,
       tableName: "market_stats"
       getterMethods:
@@ -98,7 +107,18 @@ module.exports = (sequelize, DataTypes) ->
 
         calculateGrowthRatio: (lastPrice, newPrice)->
           parseFloat newPrice * 100 / lastPrice - 100
+
+        findEnabledMarket: (currency1, currency2, callback = ()->)->
+          type = "#{currency1}_#{currency2}"
+          query =
+            where:
+              type: MarketHelper.getMarket(type)
+              status: MarketHelper.getMarketStatus("enabled")
+          MarketStats.find(query).complete callback
       
+        setMarketStatus: (id, status, callback = ()->)->
+          MarketStats.update({status: status}, {id: id}).complete callback
+
       instanceMethods:
         
         resetIfNotToday: ()->

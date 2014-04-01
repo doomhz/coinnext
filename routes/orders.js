@@ -14,7 +14,7 @@
   module.exports = function(app) {
     var notValidOrderData;
     app.post("/orders", function(req, res) {
-      var data, holdBalance, validationError;
+      var data, orderCurrency, validationError;
       if (!req.user) {
         return JsonRenderer.error("You need to be logged in to place an order.", res);
       }
@@ -26,47 +26,54 @@
       if (validationError = notValidOrderData(data)) {
         return JsonRenderer.error(validationError, res);
       }
-      if (data.type === "limit" && data.action === "buy") {
-        holdBalance = parseFloat(data.amount * data.unit_price);
-      }
-      return Wallet.findOrCreateUserWalletByCurrency(req.user.id, data.buy_currency, function(err, buyWallet) {
-        if (err || !buyWallet) {
-          return JsonRenderer.error("Wallet " + data.buy_currency + " does not exist.", res);
+      orderCurrency = data["" + data.action + "_currency"];
+      return MarketStats.findEnabledMarket(orderCurrency, "BTC", function(err, market) {
+        var holdBalance;
+        if (!market) {
+          return JsonRenderer.error("Can't submit the order, the " + orderCurrency + " market is closed at the moment.", res);
         }
-        return Wallet.findOrCreateUserWalletByCurrency(req.user.id, data.sell_currency, function(err, wallet) {
-          if (err || !wallet) {
-            return JsonRenderer.error("Wallet " + data.sell_currency + " does not exist.", res);
+        if (data.type === "limit" && data.action === "buy") {
+          holdBalance = parseFloat(data.amount * data.unit_price);
+        }
+        return Wallet.findOrCreateUserWalletByCurrency(req.user.id, data.buy_currency, function(err, buyWallet) {
+          if (err || !buyWallet) {
+            return JsonRenderer.error("Wallet " + data.buy_currency + " does not exist.", res);
           }
-          return GLOBAL.db.sequelize.transaction(function(transaction) {
-            return wallet.holdBalance(holdBalance, transaction, function(err, wallet) {
-              if (err || !wallet) {
-                return transaction.rollback().success(function() {
-                  return JsonRenderer.error("Not enough " + data.sell_currency + " to open an order.", res);
-                });
-              }
-              return Order.create(data, {
-                transaction: transaction
-              }).complete(function(err, newOrder) {
-                if (err) {
+          return Wallet.findOrCreateUserWalletByCurrency(req.user.id, data.sell_currency, function(err, wallet) {
+            if (err || !wallet) {
+              return JsonRenderer.error("Wallet " + data.sell_currency + " does not exist.", res);
+            }
+            return GLOBAL.db.sequelize.transaction(function(transaction) {
+              return wallet.holdBalance(holdBalance, transaction, function(err, wallet) {
+                if (err || !wallet) {
                   return transaction.rollback().success(function() {
-                    return JsonRenderer.error("Sorry, could not open an order...", res);
+                    return JsonRenderer.error("Not enough " + data.sell_currency + " to open an order.", res);
                   });
                 }
-                transaction.commit().success(function() {
-                  return newOrder.publish(function(err, order) {
-                    if (err) {
-                      console.log("Could not publish newlly created order - " + err);
-                    }
-                    if (err) {
-                      return res.json(JsonRenderer.order(newOrder));
-                    }
-                    return res.json(JsonRenderer.order(order));
-                  });
-                });
-                return transaction.done(function(err) {
+                return Order.create(data, {
+                  transaction: transaction
+                }).complete(function(err, newOrder) {
                   if (err) {
-                    return JsonRenderer.error("Could not open an order. Please try again later.", res);
+                    return transaction.rollback().success(function() {
+                      return JsonRenderer.error("Sorry, could not open an order...", res);
+                    });
                   }
+                  transaction.commit().success(function() {
+                    return newOrder.publish(function(err, order) {
+                      if (err) {
+                        console.log("Could not publish newlly created order - " + err);
+                      }
+                      if (err) {
+                        return res.json(JsonRenderer.order(newOrder));
+                      }
+                      return res.json(JsonRenderer.order(order));
+                    });
+                  });
+                  return transaction.done(function(err) {
+                    if (err) {
+                      return JsonRenderer.error("Could not open an order. Please try again later.", res);
+                    }
+                  });
                 });
               });
             });

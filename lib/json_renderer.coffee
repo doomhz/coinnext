@@ -115,7 +115,10 @@ JsonRenderer =
       message = err
     else if _.isObject(err)
       for key, val of err
-        message += "#{val.join(' ')} "
+        if _.isArray val
+          message += "#{val.join(' ')} "
+        else
+          message += "#{val} "
     res.json {error: message}
     console.error message  if log
 
