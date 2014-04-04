@@ -1,4 +1,3 @@
-restify = require "restify"
 request = require "request"
 Order = GLOBAL.db.Order
 Wallet = GLOBAL.db.Wallet
@@ -9,6 +8,9 @@ ClientSocket = require "./client_socket"
 orderSocket = new ClientSocket
   host: GLOBAL.appConfig().app_host
   path: "orders"
+math = require("mathjs")
+  number: "bignumber"
+  decimals: 8
 
 TradeHelper =
 
@@ -50,58 +52,42 @@ TradeHelper =
   pushOrderUpdate: (data)->
     orderSocket.send data
 
-  onOrderCompleted: (message)->
-    #console.log "incoming result ", message
-    result = null
-    try
-      result = JSON.parse(message.data.toString())
-    #console.log result
-    if result and result.eventType is "orderResult"
-      orderId = result.data.orderId
-      status = result.data.orderState
-      soldAmount = MarketHelper.convertFromBigint result.data.soldAmount
-      receivedAmount = MarketHelper.convertFromBigint result.data.receivedAmount
-      fee = MarketHelper.convertFromBigint result.data.orderFee
-      unitPrice = MarketHelper.convertFromBigint result.data.orderPPU
-      Order.findById orderId, (err, order)->
-        return console.error "Wrong order to complete ", result  if not order
-        Wallet.findUserWalletByCurrency order.user_id, order.buy_currency, (err, buyWallet)->
-          Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, sellWallet)->
-            GLOBAL.db.sequelize.transaction (transaction)->
-              sellWallet.addHoldBalance -soldAmount, transaction, (err, sellWallet)->
-                if err or not sellWallet
-                  return transaction.rollback().success ()->
-                    next(new restify.ConflictError "Could not complete order #{orderId} - #{err}")
-                buyWallet.addBalance receivedAmount, transaction, (err, buyWallet)->
-                  if err or not buyWallet
-                    return transaction.rollback().success ()->
-                      next(new restify.ConflictError "Could not complete order #{orderId} - #{err}")
-                  order.status = status
-                  order.sold_amount += soldAmount
-                  order.result_amount += receivedAmount
-                  order.fee = fee
-                  order.unit_price = unitPrice
-                  order.close_time = Date.now()  if status is "completed"
-                  order.save({transaction: transaction}).complete (err, order)->
-                    return console.error "Could not process order ", result, err  if err
-                    if err
-                      return transaction.rollback().success ()->
-                        next(new restify.ConflictError "Could not process order #{orderId} - #{err}")
-                    transaction.commit().success ()->
-                      if order.status is "completed"
-                        MarketStats.trackFromOrder order, (err, mkSt)->
-                          orderSocket.send
-                            type: "market-stats-updated"
-                            eventData: mkSt.toJSON()
-                        orderSocket.send
-                          type: "order-completed"
-                          eventData: JsonRenderer.order order
-                      if order.status is "partiallyCompleted"
-                        orderSocket.send
-                          type: "order-partially-completed"
-                          eventData: JsonRenderer.order order
-                      console.log "Processed order #{order.id} ", result          
-                    transaction.done (err)->
-                      next(new restify.ConflictError "Could not process order #{orderId} - #{err}")
+  updateMatchedOrder: (orderToMatch, matchData, transaction, callback)->
+    Wallet.findUserWalletByCurrency orderToMatch.user_id, orderToMatch.buy_currency, (err, buyWallet)->
+      Wallet.findUserWalletByCurrency orderToMatch.user_id, orderToMatch.sell_currency, (err, sellWallet)->
+        matchedAmount = MarketHelper.convertFromBigint matchData.matched_amount
+        resultAmount = MarketHelper.convertFromBigint matchData.result_amount
+        unitPrice = MarketHelper.convertFromBigint matchData.unit_price
+        fee = MarketHelper.convertFromBigint matchData.fee
+        status = matchData.status
+        holdBalance = if orderToMatch.action is "buy" then math.multiply(matchedAmount, unitPrice) else matchedAmount
+        sellWallet.addHoldBalance -holdBalance, transaction, (err, sellWallet)->
+          return callback err  if err or not sellWallet
+          buyWallet.addBalance resultAmount, transaction, (err, buyWallet)->
+            return callback err  if err or not buyWallet
+            orderToMatch.status = status
+            orderToMatch.sold_amount = math.add orderToMatch.sold_amount, matchedAmount
+            orderToMatch.result_amount = math.add orderToMatch.result_amount, resultAmount
+            orderToMatch.fee = math.add orderToMatch.fee, fee
+            #orderToMatch.unit_price = unitPrice
+            orderToMatch.close_time = Date.now()  if status is "completed"
+            orderToMatch.save({transaction: transaction}).complete (err, updatedOrder)->
+              console.error "Could not process order ", err  if err
+              return callback err  if err
+              callback null, updatedOrder
+
+  trackMatchedOrder: (order)->
+    if order.status is "completed"
+      MarketStats.trackFromOrder order, (err, mkSt)->
+        orderSocket.send
+          type: "market-stats-updated"
+          eventData: mkSt.toJSON()
+      orderSocket.send
+        type: "order-completed"
+        eventData: JsonRenderer.order order
+    if order.status is "partiallyCompleted"
+      orderSocket.send
+        type: "order-partially-completed"
+        eventData: JsonRenderer.order order
 
 exports = module.exports = TradeHelper

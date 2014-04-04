@@ -58,3 +58,44 @@ module.exports = (app)->
                         id: orderId
                   transaction.done (err)->
                     next(new restify.ConflictError "Could not cancel order #{orderId} - #{err}")  if err
+
+  app.post "/orders_match", (req, res, next)->
+    matchedData = req.body
+    console.log matchedData
+    ###
+    [ { id: 8,
+        order_id: 8,
+        matched_amount: 100000000,
+        result_amount: 99800000,
+        fee: 200000,
+        unit_price: 10000000,
+        status: 'partiallyCompleted' },
+      { id: 10,
+        order_id: 10,
+        matched_amount: 100000000,
+        result_amount: 9980000,
+        fee: 20000,
+        unit_price: 10000000,
+        status: 'completed' } ]
+    ###
+    Order.findById matchedData[0].order_id, (err, orderToMatch)->
+      return next(new restify.ConflictError "Wrong order to complete #{matchedData[0].order_id} - #{err}")  if not orderToMatch or err
+      Order.findById matchedData[1].order_id, (err, matchingOrder)->
+        return next(new restify.ConflictError "Wrong order to complete #{matchedData[1].order_id} - #{err}")  if not matchingOrder or err
+        GLOBAL.db.sequelize.transaction (transaction)->
+          TradeHelper.updateMatchedOrder orderToMatch, matchedData[0], transaction, (err, updatedOrderToMatch)->
+            if err
+              console.error "Could not process order #{orderToMatch.id}", err
+              return transaction.rollback().success ()->
+                next(new restify.ConflictError "Could not process order #{orderToMatch.id} - #{err}")
+            TradeHelper.updateMatchedOrder matchingOrder, matchedData[1], transaction, (err, updatedMatchingOrder)->
+              if err
+                console.error "Could not process order #{matchingOrder.id}", err
+                return transaction.rollback().success ()->
+                  next(new restify.ConflictError "Could not process order #{matchingOrder.id} - #{err}")
+              transaction.commit().success ()->
+                TradeHelper.trackMatchedOrder updatedOrderToMatch
+                TradeHelper.trackMatchedOrder updatedMatchingOrder
+                res.send()
+              transaction.done (err)->
+                next(new restify.ConflictError "Could not process order #{orderId} - #{err}")
