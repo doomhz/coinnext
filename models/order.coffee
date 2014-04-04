@@ -1,5 +1,8 @@
 MarketHelper = require "../lib/market_helper"
 _ = require "underscore"
+math = require("mathjs")
+  number: "bignumber"
+  decimals: 8
 
 module.exports = (sequelize, DataTypes) ->
 
@@ -92,6 +95,7 @@ module.exports = (sequelize, DataTypes) ->
       status:
         type: DataTypes.INTEGER.UNSIGNED
         defaultValue: MarketHelper.getOrderStatus "open"
+        allowNull: false
         comment: "open, partiallyCompleted, completed"
         get: ()->
           MarketHelper.getOrderStatusLiteral @getDataValue("status")
@@ -100,10 +104,24 @@ module.exports = (sequelize, DataTypes) ->
       published:
         type: DataTypes.BOOLEAN
         defaultValue: false
+        allowNull: false
       close_time:
         type: DataTypes.DATE
     ,
       tableName: "orders"
+      getterMethods:
+
+        inversed_action: ()->
+          return "buy"  if @action is "sell"
+          return "sell"  if @action is "buy"
+
+        left_amount: ()->
+          math.add(@amount, -@sold_amount)
+
+        left_hold_balance: ()->
+          return math.multiply @left_amount, @unit_price  if @action is "buy"
+          return @left_amount  if @action is "sell"
+      
       classMethods:
         
         findById: (id, callback)->

@@ -1,9 +1,14 @@
 (function() {
-  var MarketHelper, _;
+  var MarketHelper, math, _;
 
   MarketHelper = require("../lib/market_helper");
 
   _ = require("underscore");
+
+  math = require("mathjs")({
+    number: "bignumber",
+    decimals: 8
+  });
 
   module.exports = function(sequelize, DataTypes) {
     var Order;
@@ -129,6 +134,7 @@
       status: {
         type: DataTypes.INTEGER.UNSIGNED,
         defaultValue: MarketHelper.getOrderStatus("open"),
+        allowNull: false,
         comment: "open, partiallyCompleted, completed",
         get: function() {
           return MarketHelper.getOrderStatusLiteral(this.getDataValue("status"));
@@ -139,13 +145,35 @@
       },
       published: {
         type: DataTypes.BOOLEAN,
-        defaultValue: false
+        defaultValue: false,
+        allowNull: false
       },
       close_time: {
         type: DataTypes.DATE
       }
     }, {
       tableName: "orders",
+      getterMethods: {
+        inversed_action: function() {
+          if (this.action === "sell") {
+            return "buy";
+          }
+          if (this.action === "buy") {
+            return "sell";
+          }
+        },
+        left_amount: function() {
+          return math.add(this.amount, -this.sold_amount);
+        },
+        left_hold_balance: function() {
+          if (this.action === "buy") {
+            return math.multiply(this.left_amount, this.unit_price);
+          }
+          if (this.action === "sell") {
+            return this.left_amount;
+          }
+        }
+      },
       classMethods: {
         findById: function(id, callback) {
           return Order.find(id).complete(callback);

@@ -1,4 +1,7 @@
 _ = require "underscore"
+math = require("mathjs")
+  number: "bignumber"
+  decimals: 8
 
 #CURRENCIES = [
 #  "BTC", "LTC", "PPC", "WDC", "NMC", "QRK",
@@ -129,10 +132,10 @@ MarketHelper =
     TRANSACTION_MIN_CONF
 
   convertToBigint: (value)->
-    parseFloat(value) * 100000000
+    math.multiply parseFloat(value), 100000000
 
   convertFromBigint: (value)->
-    parseFloat(value) / 100000000
+    math.divide parseFloat(value), 100000000
 
   getTokenTypeLiteral: (intType)->
     _.invert(TOKENS)[intType]

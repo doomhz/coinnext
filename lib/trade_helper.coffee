@@ -1,8 +1,8 @@
 restify = require "restify"
+request = require "request"
 Order = GLOBAL.db.Order
 Wallet = GLOBAL.db.Wallet
 MarketStats = GLOBAL.db.MarketStats
-TradeQueue = require "./trade_queue"
 JsonRenderer = require "./json_renderer"
 MarketHelper = require "./market_helper"
 ClientSocket = require "./client_socket"
@@ -12,20 +12,43 @@ orderSocket = new ClientSocket
 
 TradeHelper =
 
-  trader: null
+  submitOrder: (order, callback = ()->)->
+    orderData =
+      order_id: order.id
+      type: order.type
+      action: order.action
+      buy_currency: order.buy_currency
+      sell_currency: order.sell_currency
+      amount: order.getDataValue "amount"
+      unit_price: order.getDataValue "unit_price"
+    uri = "#{GLOBAL.appConfig().engine_api_host}/order/#{order.id}"
+    options =
+      uri: uri
+      method: "POST"
+      json: orderData
+    @sendEngineData uri, options, callback
+
+  cancelOrder: (order, callback = ()->)->
+    uri = "#{GLOBAL.appConfig().engine_api_host}/order/#{order.id}"
+    options =
+      uri: uri
+      method: "DELETE"
+    @sendEngineData uri, options, callback
+
+  sendEngineData: (uri, options, callback)->
+    try
+      request options, (err, response, body)->
+        if err or response.statusCode isnt 200
+          err = "#{response.statusCode} - Could not send order data to #{uri} - #{JSON.stringify(options.json)} - #{JSON.stringify(err)} - #{JSON.stringify(body)}"
+          console.log err
+          return callback err
+        return callback()
+    catch e
+      console.error e
+      callback "Bad response #{e}"
 
   pushOrderUpdate: (data)->
     orderSocket.send data
-
-  initQueue: ()->
-    tq = new TradeQueue
-      connection:               GLOBAL.appConfig().amqp.connection
-      openOrdersQueueName:      GLOBAL.appConfig().amqp.queues.open_orders
-      completedOrdersQueueName: GLOBAL.appConfig().amqp.queues.completed_orders
-      onComplete:               TradeHelper.onOrderCompleted
-      onConnect:                (tradeQueue)->
-        TradeHelper.trader = tradeQueue
-    tq.connect()
 
   onOrderCompleted: (message)->
     #console.log "incoming result ", message

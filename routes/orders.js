@@ -1,5 +1,5 @@
 (function() {
-  var JsonRenderer, MarketHelper, MarketStats, Order, Wallet;
+  var JsonRenderer, MarketHelper, MarketStats, Order, Wallet, math;
 
   Order = GLOBAL.db.Order;
 
@@ -10,6 +10,11 @@
   MarketHelper = require("../lib/market_helper");
 
   JsonRenderer = require("../lib/json_renderer");
+
+  math = require("mathjs")({
+    number: "bignumber",
+    decimals: 8
+  });
 
   module.exports = function(app) {
     var notValidOrderData;
@@ -33,7 +38,10 @@
           return JsonRenderer.error("Can't submit the order, the " + orderCurrency + " market is closed at the moment.", res);
         }
         if (data.type === "limit" && data.action === "buy") {
-          holdBalance = parseFloat(data.amount * data.unit_price);
+          holdBalance = math.multiply(parseFloat(data.amount), parseFloat(data.unit_price));
+        }
+        if (data.type === "limit" && data.action === "sell") {
+          holdBalance = parseFloat(data.amount);
         }
         return Wallet.findOrCreateUserWalletByCurrency(req.user.id, data.buy_currency, function(err, buyWallet) {
           if (err || !buyWallet) {

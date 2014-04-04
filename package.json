@@ -45,6 +45,7 @@
     , "ip": "latest"
     , "phonetic": "latest"
     , "recaptcha-async": "latest"
+    , "mathjs": "latest"
   },
   "devDependencies": {
     "mocha": "latest"

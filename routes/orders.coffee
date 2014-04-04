@@ -3,6 +3,9 @@ Wallet = GLOBAL.db.Wallet
 MarketStats = GLOBAL.db.MarketStats
 MarketHelper = require "../lib/market_helper"
 JsonRenderer = require "../lib/json_renderer"
+math = require("mathjs")
+  number: "bignumber"
+  decimals: 8
 
 module.exports = (app)->
 
@@ -15,7 +18,8 @@ module.exports = (app)->
     orderCurrency = data["#{data.action}_currency"]
     MarketStats.findEnabledMarket orderCurrency, "BTC", (err, market)->
       return JsonRenderer.error "Can't submit the order, the #{orderCurrency} market is closed at the moment.", res  if not market
-      holdBalance = parseFloat(data.amount * data.unit_price)  if data.type is "limit" and data.action is "buy"
+      holdBalance = math.multiply(parseFloat(data.amount), parseFloat(data.unit_price))  if data.type is "limit" and data.action is "buy"
+      holdBalance = parseFloat(data.amount)  if data.type is "limit" and data.action is "sell"
       Wallet.findOrCreateUserWalletByCurrency req.user.id, data.buy_currency, (err, buyWallet)->
         return JsonRenderer.error "Wallet #{data.buy_currency} does not exist.", res  if err or not buyWallet
         Wallet.findOrCreateUserWalletByCurrency req.user.id, data.sell_currency, (err, wallet)->
