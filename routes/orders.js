@@ -28,6 +28,7 @@
       }
       data = req.body;
       data.user_id = req.user.id;
+      data.status = "open";
       if (validationError = notValidOrderData(data)) {
         return JsonRenderer.error(validationError, res);
       }

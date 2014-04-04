@@ -14,6 +14,7 @@ module.exports = (app)->
     return JsonRenderer.error "Sorry, but you can not trade. Did you verify your account?", res  if not req.user.canTrade()
     data = req.body
     data.user_id = req.user.id
+    data.status = "open"
     return JsonRenderer.error validationError, res  if validationError = notValidOrderData data
     orderCurrency = data["#{data.action}_currency"]
     MarketStats.findEnabledMarket orderCurrency, "BTC", (err, market)->
