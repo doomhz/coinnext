@@ -36,15 +36,6 @@ module.exports = (sequelize, DataTypes) ->
         set: (holdBalance)->
           @setDataValue "hold_balance", MarketHelper.convertToBigint(holdBalance)
         comment: "FLOAT x 100000000"
-      fee:
-        type: DataTypes.BIGINT.UNSIGNED
-        defaultValue: 0.2
-        allowNull: false
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("fee")
-        set: (fee)->
-          @setDataValue "fee", MarketHelper.convertToBigint(fee)
-        comment: "FLOAT x 100000000"
     ,
       tableName: "wallets"
 
@@ -55,6 +46,9 @@ module.exports = (sequelize, DataTypes) ->
 
         currency_name: ()->
           MarketHelper.getCurrencyName @currency
+
+        fee: ()->
+          MarketHelper.getTradeFee()
 
       classMethods:
 

@@ -112,24 +112,6 @@
     return app.post("/orders_match", function(req, res, next) {
       var matchedData;
       matchedData = req.body;
-      console.log(matchedData);
-
-      /*
-      [ { id: 8,
-          order_id: 8,
-          matched_amount: 100000000,
-          result_amount: 99800000,
-          fee: 200000,
-          unit_price: 10000000,
-          status: 'partiallyCompleted' },
-        { id: 10,
-          order_id: 10,
-          matched_amount: 100000000,
-          result_amount: 9980000,
-          fee: 20000,
-          unit_price: 10000000,
-          status: 'completed' } ]
-       */
       return Order.findById(matchedData[0].order_id, function(err, orderToMatch) {
         if (!orderToMatch || err) {
           return next(new restify.ConflictError("Wrong order to complete " + matchedData[0].order_id + " - " + err));
@@ -154,12 +136,16 @@
                   });
                 }
                 transaction.commit().success(function() {
-                  TradeHelper.trackMatchedOrder(updatedOrderToMatch);
-                  TradeHelper.trackMatchedOrder(updatedMatchingOrder);
-                  return res.send();
+                  return TradeHelper.trackMatchedOrder(updatedOrderToMatch, function() {
+                    return TradeHelper.trackMatchedOrder(updatedMatchingOrder, function() {
+                      return res.send();
+                    });
+                  });
                 });
                 return transaction.done(function(err) {
-                  return next(new restify.ConflictError("Could not process order " + orderId + " - " + err));
+                  if (err) {
+                    return next(new restify.ConflictError("Could not process order " + orderId + " - " + err));
+                  }
                 });
               });
             });

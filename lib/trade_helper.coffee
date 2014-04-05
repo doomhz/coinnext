@@ -60,7 +60,7 @@ TradeHelper =
         unitPrice = MarketHelper.convertFromBigint matchData.unit_price
         fee = MarketHelper.convertFromBigint matchData.fee
         status = matchData.status
-        holdBalance = if orderToMatch.action is "buy" then math.multiply(matchedAmount, unitPrice) else matchedAmount
+        holdBalance = if orderToMatch.action is "buy" then math.multiply(matchedAmount, orderToMatch.unit_price) else matchedAmount
         sellWallet.addHoldBalance -holdBalance, transaction, (err, sellWallet)->
           return callback err  if err or not sellWallet
           buyWallet.addBalance resultAmount, transaction, (err, buyWallet)->
@@ -76,18 +76,21 @@ TradeHelper =
               return callback err  if err
               callback null, updatedOrder
 
-  trackMatchedOrder: (order)->
+  trackMatchedOrder: (order, callback)->
     if order.status is "completed"
       MarketStats.trackFromOrder order, (err, mkSt)->
+        callback err, mkSt
         orderSocket.send
           type: "market-stats-updated"
           eventData: mkSt.toJSON()
       orderSocket.send
         type: "order-completed"
         eventData: JsonRenderer.order order
+      return
     if order.status is "partiallyCompleted"
       orderSocket.send
         type: "order-partially-completed"
         eventData: JsonRenderer.order order
+    callback()
 
 exports = module.exports = TradeHelper

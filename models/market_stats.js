@@ -1,7 +1,12 @@
 (function() {
-  var MarketHelper;
+  var MarketHelper, math;
 
   MarketHelper = require("../lib/market_helper");
+
+  math = require("mathjs")({
+    number: "bignumber",
+    decimals: 8
+  });
 
   module.exports = function(sequelize, DataTypes) {
     var MarketStats;
@@ -132,7 +137,7 @@
             callback = function() {};
           }
           type = order.action === "buy" ? "" + order.buy_currency + "_" + order.sell_currency : "" + order.sell_currency + "_" + order.buy_currency;
-          if (order.action === "sell") {
+          if (order.action === "sell" && order.status === "completed") {
             return MarketStats.find({
               where: {
                 type: MarketHelper.getMarket(type)
@@ -149,14 +154,17 @@
               if (order.unit_price < marketStats.day_low || marketStats.day_low === 0) {
                 marketStats.day_low = order.unit_price;
               }
-              marketStats.volume1 += order.amount;
-              marketStats.volume2 += order.result_amount;
+              marketStats.volume1 = math.add(marketStats.volume1, order.amount);
+              marketStats.volume2 = math.select(marketStats.volume2).add(order.result_amount).add(order.fee).done();
               return marketStats.save().complete(callback);
             });
           }
         },
         calculateGrowthRatio: function(lastPrice, newPrice) {
-          return parseFloat(newPrice * 100 / lastPrice - 100);
+          if (!lastPrice) {
+            return 100;
+          }
+          return math.select(newPrice).multiply(100).divide(lastPrice).add(-100).done();
         },
         findEnabledMarket: function(currency1, currency2, callback) {
           var query, type;
@@ -190,7 +198,7 @@
         resetIfNotToday: function() {
           var today;
           today = new Date().getDate();
-          if (today !== this.today.getDate()) {
+          if (!this.today || (today !== this.today.getDate())) {
             this.today = new Date();
             this.day_high = 0;
             this.day_low = 0;

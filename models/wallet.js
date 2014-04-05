@@ -50,18 +50,6 @@
           return this.setDataValue("hold_balance", MarketHelper.convertToBigint(holdBalance));
         },
         comment: "FLOAT x 100000000"
-      },
-      fee: {
-        type: DataTypes.BIGINT.UNSIGNED,
-        defaultValue: 0.2,
-        allowNull: false,
-        get: function() {
-          return MarketHelper.convertFromBigint(this.getDataValue("fee"));
-        },
-        set: function(fee) {
-          return this.setDataValue("fee", MarketHelper.convertToBigint(fee));
-        },
-        comment: "FLOAT x 100000000"
       }
     }, {
       tableName: "wallets",
@@ -71,6 +59,9 @@
         },
         currency_name: function() {
           return MarketHelper.getCurrencyName(this.currency);
+        },
+        fee: function() {
+          return MarketHelper.getTradeFee();
         }
       },
       classMethods: {

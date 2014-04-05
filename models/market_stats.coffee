@@ -1,4 +1,7 @@
 MarketHelper = require "../lib/market_helper"
+math = require("mathjs")
+  number: "bignumber"
+  decimals: 8
 
 module.exports = (sequelize, DataTypes) ->
 
@@ -94,19 +97,20 @@ module.exports = (sequelize, DataTypes) ->
         
         trackFromOrder: (order, callback = ()->)->
           type = if order.action is "buy" then "#{order.buy_currency}_#{order.sell_currency}" else "#{order.sell_currency}_#{order.buy_currency}"
-          if order.action is "sell"
+          if order.action is "sell" and order.status is "completed"
             MarketStats.find({where: {type: MarketHelper.getMarket(type)}}).complete (err, marketStats)->
               marketStats.resetIfNotToday()
               marketStats.growth_ratio = MarketStats.calculateGrowthRatio marketStats.last_price, order.unit_price  if order.unit_price isnt marketStats.last_price
               marketStats.last_price = order.unit_price
               marketStats.day_high = order.unit_price  if order.unit_price > marketStats.day_high
               marketStats.day_low = order.unit_price  if order.unit_price < marketStats.day_low or marketStats.day_low is 0
-              marketStats.volume1 += order.amount
-              marketStats.volume2 += order.result_amount
+              marketStats.volume1 = math.add marketStats.volume1, order.amount
+              marketStats.volume2 = math.select(marketStats.volume2).add(order.result_amount).add(order.fee).done()
               marketStats.save().complete callback
 
         calculateGrowthRatio: (lastPrice, newPrice)->
-          parseFloat newPrice * 100 / lastPrice - 100
+          return 100  if not lastPrice
+          math.select(newPrice).multiply(100).divide(lastPrice).add(-100).done()
 
         findEnabledMarket: (currency1, currency2, callback = ()->)->
           # TODO: Review when both are equal to BTC
@@ -125,7 +129,7 @@ module.exports = (sequelize, DataTypes) ->
         
         resetIfNotToday: ()->
           today = new Date().getDate()
-          if today isnt @today.getDate()
+          if not @today or (today isnt @today.getDate())
             @today = new Date()
             @day_high = 0
             @day_low = 0
