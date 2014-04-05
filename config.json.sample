@@ -27,23 +27,6 @@
         }
       }
     },
-    "amqp": {
-      "connection": {
-        "host": "localhost",
-        "port": 5672,
-        "login": "guest",
-        "password": "guest",
-        "authMechanism": "AMQPLAIN",
-        "vhost": "/",
-        "ssl": {
-          "enabled": false
-        }
-      },
-      "queues": {
-        "open_orders": "open-orders",
-        "completed_orders": "completed-orders"
-      }
-    },
     "salt": "coinnextsecret#1999",
     "emailer": {
       "enabled": false,
@@ -132,6 +115,7 @@
     },
     "app_host": "localhost:5000",
     "wallets_host": "localhost:6000",
+    "engine_api_host": "http://localhost:7000",
     "users": {
       "hostname": "http://localhost:5000",
       "events_endpoint": "http://localhost:5000/user_event"
@@ -169,23 +153,6 @@
         }
       }
     },
-    "amqp": {
-      "connection": {
-        "host": "localhost",
-        "port": 5672,
-        "login": "guest",
-        "password": "guest",
-        "authMechanism": "AMQPLAIN",
-        "vhost": "/",
-        "ssl": {
-          "enabled": false
-        }
-      },
-      "queues": {
-        "open_orders": "open-orders",
-        "completed_orders": "completed-orders"
-      }
-    },
     "salt": "coinnextsecret#1999",
     "emailer": {
       "enabled": false,
@@ -274,6 +241,7 @@
     },
     "app_host": "localhost:5000",
     "wallets_host": "localhost:6000",
+    "engine_api_host": "http://localhost:7000",
     "users": {
       hostname: "http://localhost:5000"
     }
@@ -308,23 +276,6 @@
           "maxAge": 2592000000,
           "path": "/"
         }
-      }
-    },
-    "amqp": {
-      "connection": {
-        "host": "localhost",
-        "port": 5672,
-        "login": "guest",
-        "password": "guest",
-        "authMechanism": "AMQPLAIN",
-        "vhost": "/",
-        "ssl": {
-          "enabled": false
-        }
-      },
-      "queues": {
-        "open_orders": "open-orders",
-        "completed_orders": "completed-orders"
       }
     },
     "salt": "coinnextsecret#1999",
@@ -415,6 +366,7 @@
     },
     "app_host": "localhost:5000",
     "wallets_host": "localhost:6000",
+    "engine_api_host": "http://localhost:7000",
     "users": {
       hostname: "http://direct.coinnext.com"
     },
