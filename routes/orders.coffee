@@ -57,6 +57,7 @@ module.exports = (app)->
         res.json {}
 
   notValidOrderData = (orderData)->
+    return "Market orders are disabled at the moment."  if orderData.type is "market"
     return "Please submit a valid amount bigger than 0."  if not Order.isValidTradeAmount orderData.amount
     return "Please submit a valid unit price amount."  if orderData.type is "limit" and not Order.isValidTradeAmount(parseFloat(orderData.unit_price))
     return "Please submit a valid action."  if not MarketHelper.getOrderAction orderData.action

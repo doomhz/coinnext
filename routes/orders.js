@@ -118,6 +118,9 @@
       });
     });
     return notValidOrderData = function(orderData) {
+      if (orderData.type === "market") {
+        return "Market orders are disabled at the moment.";
+      }
       if (!Order.isValidTradeAmount(orderData.amount)) {
         return "Please submit a valid amount bigger than 0.";
       }
