@@ -86,11 +86,12 @@ TradeHelper =
       orderSocket.send
         type: "order-completed"
         eventData: JsonRenderer.order order
-      return
     if order.status is "partiallyCompleted"
       orderSocket.send
         type: "order-partially-completed"
         eventData: JsonRenderer.order order
-    callback()
+      callback()
+    else
+      callback()
 
 exports = module.exports = TradeHelper
