@@ -3,6 +3,9 @@ $(document).ready ()->
   $.tmpload.defaults.tplWrapper = _.template
   $(document).ajaxSend (ev, xhr)->
     xhr.setRequestHeader "X-CSRF-Token", CONFIG.csrf
+  App.math = mathjs
+    number: "bignumber"
+    decimals: 8
 
   _.str.roundTo = (number, decimals = 8)->
     multiplier = Math.pow(10, decimals)

@@ -79,7 +79,7 @@ class App.TradeView extends App.MasterView
 
   onOrderSubmit: (form)->
     $form = $(form)
-    amount = parseFloat $form.find("[name='amount']").val()
+    amount = _.str.roundTo $form.find("[name='amount']").val(), 8
     order = new App.OrderModel
       type: $form.find("[name='type']").val()
       action: $form.find("[name='action']").val()
@@ -103,15 +103,15 @@ class App.TradeView extends App.MasterView
   onMarketBuyAmountChange: (ev)->
     $target = $(ev.target)
     $form = $target.parents("form")
-    spendAmount = parseFloat $form.find("#spend-amount-input").val()
+    spendAmount = _.str.roundTo $form.find("#spend-amount-input").val(), 8
     $result = $form.find("#buy-amount-result")
     $fee = $form.find("#buy-fee")
     $subTotal = $form.find("#buy-subtotal")
-    fee = parseFloat $fee.data("fee")
-    lastPrice = parseFloat $form.find("#buy-unit-price").val()
+    fee = _.str.roundTo $fee.data("fee"), 8
+    lastPrice = _.str.roundTo $form.find("#buy-unit-price").val(), 8
     if @isValidAmount(spendAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
-      subTotal = _.str.roundTo spendAmount / lastPrice, 8
-      totalFee = _.str.roundTo subTotal / 100 * fee, 8
+      subTotal = _.str.roundTo App.math.divide(spendAmount, lastPrice), 8
+      totalFee = _.str.roundTo App.math.select(subTotal).divide(100).multiply(fee).done(), 8
       total = subTotal - totalFee
       #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee
@@ -125,15 +125,15 @@ class App.TradeView extends App.MasterView
   onLimitBuyAmountChange: (ev)->
     $target = $(ev.target)
     $form = $target.parents("form")
-    buyAmount = parseFloat $form.find("#buy-amount-input").val()
+    buyAmount = _.str.roundTo $form.find("#buy-amount-input").val(), 8
     $result = $form.find("#buy-amount-result")
     $fee = $form.find("#buy-fee")
     $subTotal = $form.find("#buy-subtotal")
-    fee = parseFloat $fee.data("fee")
-    lastPrice = parseFloat $form.find("#buy-unit-price").val()
+    fee = _.str.roundTo $fee.data("fee"), 8
+    lastPrice = _.str.roundTo $form.find("#buy-unit-price").val(), 8
     if @isValidAmount(buyAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
-      subTotal = _.str.roundTo buyAmount * lastPrice, 8
-      totalFee = _.str.roundTo buyAmount / 100 * fee, 8
+      subTotal = _.str.roundTo App.math.multiply(buyAmount, lastPrice), 8
+      totalFee = _.str.roundTo App.math.select(buyAmount).divide(100).multiply(fee).done(), 8
       total = buyAmount - totalFee
       #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee
@@ -147,15 +147,15 @@ class App.TradeView extends App.MasterView
   onSellAmountChange: (ev)->
     $target = $(ev.target)
     $form = $target.parents("form")
-    sellAmount = parseFloat $form.find("#sell-amount-input").val()
+    sellAmount = _.str.roundTo $form.find("#sell-amount-input").val(), 8
     $result = $form.find("#sell-amount-result")
     $fee = $form.find("#sell-fee")
     $subTotal = $form.find("#sell-subtotal")
-    fee = parseFloat $fee.data("fee")
-    lastPrice = parseFloat $form.find("#sell-unit-price").val()
+    fee = _.str.roundTo $fee.data("fee"), 8
+    lastPrice = _.str.roundTo $form.find("#sell-unit-price").val(), 8
     if @isValidAmount(sellAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
-      subTotal = _.str.roundTo sellAmount * lastPrice, 8
-      totalFee = _.str.roundTo subTotal / 100 * fee, 8
+      subTotal = _.str.roundTo App.math.multiply(sellAmount, lastPrice), 8
+      totalFee = _.str.roundTo App.math.select(subTotal).divide(100).multiply(fee).done(), 8
       total = subTotal - totalFee
       #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee
