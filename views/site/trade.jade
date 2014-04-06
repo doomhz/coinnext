@@ -33,36 +33,6 @@ block content
                 h3.con-header-title <i class="icon-circle-arrow-down"></i> Buy #{wallet1.currency}
                 .header-balance <a href="#" class="amount" data-amount="#{_str.satoshiRound(wallet2.balance)}" data-type="buy"><span data-wallet-balance-id="#{wallet2.id}">#{_str.satoshiRound(wallet2.balance)}</span> #{wallet2.currency}</a> Available
               .order-box-body
-                .market-type
-                  label
-                    input.market-switcher(type='radio', name='buy', value="market", checked)
-                    i Market Order
-                  label
-                    input.market-switcher(type='radio', name='buy', value="limit")
-                    i Limit Order
-                #market-buy-box.market-order
-                  form#market-buy-form.order-form
-                    input(name="type", type="hidden", value="market")
-                    input(name="action", type="hidden", value="buy")
-                    input(name="sell_currency", type="hidden", value="#{wallet2.currency}")
-                    input(name="buy_currency", type="hidden", value="#{wallet1.currency}")
-                    input#buy-unit-price(name="unit_price", type="hidden", value="#{coinStats.last_price}")
-                    label I want to spend:
-                    .currency-input
-                      input#spend-amount-input.amount-field(type="text", name="amount", autocomplete="off", maxlength="12")
-                      .overlay-amount #{wallet2.currency}
-                    table.order-overview
-                      tr.subtotal
-                        th Subtotal:
-                        td <span id="buy-subtotal" class="amount">0</span> #{wallet1.currency}
-                      tr.fee
-                        th Fee:
-                        td <span id="buy-fee" class="amount" data-fee="#{wallet1.fee}">0</span> #{wallet1.currency}
-                      tr.to-receive
-                        th Approx. #{wallet1.currency} to receive:
-                        td <span id="buy-amount-result" class="amount">0</span> #{wallet1.currency}
-                    .confirm-order
-                      button Buy #{wallet1.currency_name}
                 #limit-buy-box.limit-order
                   form#limit-buy-form.order-form
                     input(name="type", type="hidden", value="limit")
@@ -96,36 +66,6 @@ block content
                 h3.con-header-title <i class="icon-circle-arrow-up"></i> Sell #{wallet1.currency}
                 .header-balance <a href="#" class="amount" data-amount="#{_str.satoshiRound(wallet1.balance)}" data-type="sell"><span data-wallet-balance-id="#{wallet1.id}">#{_str.satoshiRound(wallet1.balance)}</span> #{wallet1.currency}</a> Available
               .order-box-body
-                .market-type
-                  label
-                    input.market-switcher(type='radio', name='sell', value="market", checked)
-                    i Market Order
-                  label
-                    input.market-switcher(type='radio', name='sell', value="limit")
-                    i Limit Order
-                #market-sell-box.market-order
-                  form#market-sell-form.order-form
-                    input(name="type", type="hidden", value="market")
-                    input(name="action", type="hidden", value="sell")
-                    input(name="sell_currency", type="hidden", value="#{wallet1.currency}")
-                    input(name="buy_currency", type="hidden", value="#{wallet2.currency}")
-                    input#sell-unit-price(name="unit_price", type="hidden", value="#{coinStats.last_price}")
-                    label I want to Sell:
-                    .currency-input
-                      input#sell-amount-input.amount-field(type="text", name="amount", autocomplete="off", maxlength="12")
-                      .overlay-amount #{wallet1.currency}
-                    table.order-overview
-                      tr.subtotal 
-                        th Subtotal:
-                        td <span id="sell-subtotal" class="amount">0</span> #{wallet2.currency}
-                      tr.fee
-                        th Fee:
-                        td <span id="sell-fee" class="amount" data-fee="#{wallet2.fee}">0</span> #{wallet2.currency}
-                      tr.to-receive
-                        th Approx. #{wallet2.currency} to receive:
-                        td <span id="sell-amount-result" class="amount">0</span> #{wallet2.currency}
-                    .confirm-order
-                      button Sell #{wallet1.currency_name}
                 #limit-sell-box.limit-order
                   form#limit-sell-form.order-form
                     input(name="type", type="hidden", value="limit")
