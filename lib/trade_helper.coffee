@@ -61,22 +61,24 @@ TradeHelper =
         fee = MarketHelper.convertFromBigint matchData.fee
         status = matchData.status
         holdBalance = if orderToMatch.action is "buy" then math.multiply(matchedAmount, orderToMatch.unit_price) else matchedAmount
+        changeBalance = if orderToMatch.action is "buy" then math.add(holdBalance, -math.multiply(matchedAmount, unitPrice)) else 0
         sellWallet.addHoldBalance -holdBalance, transaction, (err, sellWallet)->
           return callback err  if err or not sellWallet
-          buyWallet.addBalance resultAmount, transaction, (err, buyWallet)->
-            return callback err  if err or not buyWallet
-            orderToMatch.status = status
-            orderToMatch.sold_amount = math.add orderToMatch.sold_amount, matchedAmount
-            orderToMatch.result_amount = math.add orderToMatch.result_amount, resultAmount
-            orderToMatch.fee = math.add orderToMatch.fee, fee
-            #orderToMatch.unit_price = unitPrice
-            orderToMatch.close_time = Date.now()  if status is "completed"
-            orderToMatch.save({transaction: transaction}).complete (err, updatedOrder)->
-              console.error "Could not process order ", err  if err
-              return callback err  if err
-              callback null, updatedOrder
+          sellWallet.addBalance changeBalance, transaction, (err, sellWallet)->
+            return callback err  if err or not sellWallet
+            buyWallet.addBalance resultAmount, transaction, (err, buyWallet)->
+              return callback err  if err or not buyWallet
+              orderToMatch.status = status
+              orderToMatch.sold_amount = math.add orderToMatch.sold_amount, matchedAmount
+              orderToMatch.result_amount = math.add orderToMatch.result_amount, resultAmount
+              orderToMatch.fee = math.add orderToMatch.fee, fee
+              orderToMatch.close_time = Date.now()  if status is "completed"
+              orderToMatch.save({transaction: transaction}).complete (err, updatedOrder)->
+                console.error "Could not process order ", err  if err
+                return callback err  if err
+                callback null, updatedOrder
 
-  trackMatchedOrder: (order, callback)->
+  trackMatchedOrder: (order, callback = ()->)->
     if order.status is "completed"
       MarketStats.trackFromOrder order, (err, mkSt)->
         callback err, mkSt

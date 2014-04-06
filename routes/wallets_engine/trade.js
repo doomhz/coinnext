@@ -136,11 +136,9 @@
                   });
                 }
                 transaction.commit().success(function() {
-                  return TradeHelper.trackMatchedOrder(updatedOrderToMatch, function() {
-                    return TradeHelper.trackMatchedOrder(updatedMatchingOrder, function() {
-                      return res.send();
-                    });
-                  });
+                  TradeHelper.trackMatchedOrder(updatedOrderToMatch);
+                  TradeHelper.trackMatchedOrder(updatedMatchingOrder);
+                  return res.send();
                 });
                 return transaction.done(function(err) {
                   if (err) {
