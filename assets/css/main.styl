@@ -233,6 +233,7 @@ hr
     max-width 500px
     float left
     &.logo
+      display none
       padding 20px 10px
       .coinnext-logo
         image '/img/logo-gray.png' auto 25px
@@ -260,6 +261,11 @@ hr
     &.risk-disclaimer
       float right
       margin-right 0
+      width 500px
+
+@media only screen and (min-width: 1200px)
+  .footer-body .column.logo
+    display block
 
 .page-foot
   clearfix()
