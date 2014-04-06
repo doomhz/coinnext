@@ -39,7 +39,7 @@ block content
               .con-header
                 h3.con-header-title <i class="icon-circle-arrow-down"></i> Deposit #{currencies[wallet.currency]}
               .con-body
-                label To deposit bitcoins, send to this address:
+                label To deposit #{currencies[wallet.currency]}, send to this address:
                 .coin-deposit-address
                   code#address-row #{wallet.address}
                   - if (!wallet.address)
