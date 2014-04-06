@@ -24,7 +24,6 @@
     , "litecoin": "latest"
     , "node-peercoin": "latest"
     , "node-dogecoin": "0.3.5"
-    , "nib": "latest"
     , "jslogger": "latest"
     , "date-utils": "latest"
     , "socket.io": "latest"
