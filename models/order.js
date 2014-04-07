@@ -248,7 +248,7 @@
             },
             order: [["close_time", "ASC"]]
           };
-          return Order.findAll(query).completed(callback);
+          return Order.findAll(query).complete(callback);
         },
         isValidTradeAmount: function(amount) {
           return _.isNumber(amount) && !_.isNaN(amount) && amount > 0;

@@ -171,7 +171,7 @@ module.exports = (sequelize, DataTypes) ->
             order: [
               ["close_time", "ASC"]
             ]
-          Order.findAll(query).completed callback
+          Order.findAll(query).complete callback
 
         isValidTradeAmount: (amount)->
           _.isNumber(amount) and not _.isNaN(amount) and amount > 0
