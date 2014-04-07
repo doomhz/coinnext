@@ -112,7 +112,7 @@ class App.TradeView extends App.MasterView
     if @isValidAmount(spendAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
       subTotal = _.str.roundTo App.math.divide(spendAmount, lastPrice), 8
       totalFee = _.str.roundTo App.math.select(subTotal).divide(100).multiply(fee).done(), 8
-      total = subTotal - totalFee
+      total = App.math.add subTotal, -totalFee
       #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee
       $subTotal.text subTotal
@@ -134,7 +134,7 @@ class App.TradeView extends App.MasterView
     if @isValidAmount(buyAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
       subTotal = _.str.roundTo App.math.multiply(buyAmount, lastPrice), 8
       totalFee = _.str.roundTo App.math.select(buyAmount).divide(100).multiply(fee).done(), 8
-      total = buyAmount - totalFee
+      total = App.math.add buyAmount, -totalFee
       #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee
       $subTotal.text subTotal
@@ -156,7 +156,7 @@ class App.TradeView extends App.MasterView
     if @isValidAmount(sellAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
       subTotal = _.str.roundTo App.math.multiply(sellAmount, lastPrice), 8
       totalFee = _.str.roundTo App.math.select(subTotal).divide(100).multiply(fee).done(), 8
-      total = subTotal - totalFee
+      total = App.math.add subTotal, -totalFee
       #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee
       $subTotal.text subTotal

@@ -161,17 +161,18 @@ module.exports = (sequelize, DataTypes) ->
             return callback "Wrong action", []
           Order.findAll(query).complete callback  
 
-        findCompletedByTime: (startTime, endTime, callback)->
+        findCompletedByTimeAndAction: (startTime, endTime, action, callback)->
           query =
             where:
               status: MarketHelper.getOrderStatus("completed")
+              action: MarketHelper.getOrderAction action
               close_time:
-                gte: startTime
-                lte: endTime
+                gte: new Date(startTime)
+                lte: new Date(endTime)
             order: [
               ["close_time", "ASC"]
             ]
-          Order.findAll(query).completed callback
+          Order.findAll(query).complete callback
 
         isValidTradeAmount: (amount)->
           _.isNumber(amount) and not _.isNaN(amount) and amount > 0

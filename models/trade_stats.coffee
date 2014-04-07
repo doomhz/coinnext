@@ -61,6 +61,7 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.DATE
     ,
       tableName: "trade_stats"
+      timestamps: false
       classMethods:
         
         getLastStats: (type, callback = ()->)->
