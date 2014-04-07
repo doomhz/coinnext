@@ -84,6 +84,7 @@
       }
     }, {
       tableName: "trade_stats",
+      timestamps: false,
       classMethods: {
         getLastStats: function(type, callback) {
           var aDayAgo, halfHour, query;

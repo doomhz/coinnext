@@ -236,14 +236,15 @@
           }
           return Order.findAll(query).complete(callback);
         },
-        findCompletedByTime: function(startTime, endTime, callback) {
+        findCompletedByTimeAndAction: function(startTime, endTime, action, callback) {
           var query;
           query = {
             where: {
               status: MarketHelper.getOrderStatus("completed"),
+              action: MarketHelper.getOrderAction(action),
               close_time: {
-                gte: startTime,
-                lte: endTime
+                gte: new Date(startTime),
+                lte: new Date(endTime)
               }
             },
             order: [["close_time", "ASC"]]
