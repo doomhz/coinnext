@@ -34,12 +34,10 @@ block content
               th Last Price
               th Volume (24h)
               th % Change (24h)
-              th Price Graph (7d)
             - each info, type in marketStats
               tr
                 td <a href="/trade/#{type.replace("_", "/")}">#{type.replace("_", "/")}</a>
                 td #{currencies[info.label]}
                 td #{info.last_price}
                 td #{info.volume1} #{type.split("_")[0]}
-                td 
                 td 
