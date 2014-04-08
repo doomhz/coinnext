@@ -79,7 +79,7 @@ class App.TradeView extends App.MasterView
 
   onOrderSubmit: (form)->
     $form = $(form)
-    amount = _.str.roundTo $form.find("[name='amount']").val(), 8
+    amount = _.str.satoshiRound $form.find("[name='amount']").val()
     order = new App.OrderModel
       type: $form.find("[name='type']").val()
       action: $form.find("[name='action']").val()
@@ -100,23 +100,23 @@ class App.TradeView extends App.MasterView
     type = $target.data('type')
     $input = @$("##{type}-amount-input")
     unitPrice = parseFloat @$("##{type}-unit-price").val()
-    resultAmount = if type is "buy" then _.str.roundTo(App.math.divide(amount, unitPrice), 8) else amount
+    resultAmount = if type is "buy" then _.str.satoshiRound App.math.divide(amount, unitPrice) else amount
     $input.val(resultAmount)
     $input.trigger "keyup"
 
   onMarketBuyAmountChange: (ev)->
     $target = $(ev.target)
     $form = $target.parents("form")
-    spendAmount = _.str.roundTo $form.find("#spend-amount-input").val(), 8
+    spendAmount = _.str.satoshiRound $form.find("#spend-amount-input").val()
     $result = $form.find("#buy-amount-result")
     $fee = $form.find("#buy-fee")
     $subTotal = $form.find("#buy-subtotal")
-    fee = _.str.roundTo $fee.data("fee"), 8
-    lastPrice = _.str.roundTo $form.find("#buy-unit-price").val(), 8
+    fee = _.str.satoshiRound $fee.data("fee")
+    lastPrice = _.str.satoshiRound $form.find("#buy-unit-price").val()
     if @isValidAmount(spendAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
-      subTotal = _.str.roundTo App.math.divide(spendAmount, lastPrice), 8
-      totalFee = _.str.roundTo App.math.select(subTotal).divide(100).multiply(fee).done(), 8
-      total = _.str.roundTo App.math.add(subTotal, -totalFee), 8
+      subTotal = _.str.satoshiRound App.math.divide(spendAmount, lastPrice)
+      totalFee = _.str.satoshiRound App.math.select(subTotal).divide(100).multiply(fee).done()
+      total = _.str.satoshiRound App.math.add(subTotal, -totalFee)
       #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee
       $subTotal.text subTotal
@@ -129,16 +129,16 @@ class App.TradeView extends App.MasterView
   onLimitBuyAmountChange: (ev)->
     $target = $(ev.target)
     $form = $target.parents("form")
-    buyAmount = _.str.roundTo $form.find("#buy-amount-input").val(), 8
+    buyAmount = _.str.satoshiRound $form.find("#buy-amount-input").val()
     $result = $form.find("#buy-amount-result")
     $fee = $form.find("#buy-fee")
     $subTotal = $form.find("#buy-subtotal")
-    fee = _.str.roundTo $fee.data("fee"), 8
-    lastPrice = _.str.roundTo $form.find("#buy-unit-price").val(), 8
+    fee = _.str.satoshiRound $fee.data("fee")
+    lastPrice = _.str.satoshiRound $form.find("#buy-unit-price").val()
     if @isValidAmount(buyAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
-      subTotal = _.str.roundTo App.math.multiply(buyAmount, lastPrice), 8
-      totalFee = _.str.roundTo App.math.select(buyAmount).divide(100).multiply(fee).done(), 8
-      total = _.str.roundTo App.math.add(buyAmount, -totalFee), 8
+      subTotal = _.str.satoshiRound App.math.multiply(buyAmount, lastPrice)
+      totalFee = _.str.satoshiRound App.math.select(buyAmount).divide(100).multiply(fee).done()
+      total = _.str.satoshiRound App.math.add(buyAmount, -totalFee)
       #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee
       $subTotal.text subTotal
@@ -151,16 +151,16 @@ class App.TradeView extends App.MasterView
   onSellAmountChange: (ev)->
     $target = $(ev.target)
     $form = $target.parents("form")
-    sellAmount = _.str.roundTo $form.find("#sell-amount-input").val(), 8
+    sellAmount = _.str.satoshiRound $form.find("#sell-amount-input").val()
     $result = $form.find("#sell-amount-result")
     $fee = $form.find("#sell-fee")
     $subTotal = $form.find("#sell-subtotal")
-    fee = _.str.roundTo $fee.data("fee"), 8
-    lastPrice = _.str.roundTo $form.find("#sell-unit-price").val(), 8
+    fee = _.str.satoshiRound $fee.data("fee")
+    lastPrice = _.str.satoshiRound $form.find("#sell-unit-price").val()
     if @isValidAmount(sellAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
-      subTotal = _.str.roundTo App.math.multiply(sellAmount, lastPrice), 8
-      totalFee = _.str.roundTo App.math.select(subTotal).divide(100).multiply(fee).done(), 8
-      total = _.str.roundTo App.math.add(subTotal, -totalFee), 8
+      subTotal = _.str.satoshiRound App.math.multiply(sellAmount, lastPrice)
+      totalFee = _.str.satoshiRound App.math.select(subTotal).divide(100).multiply(fee).done()
+      total = _.str.satoshiRound App.math.add(subTotal, -totalFee)
       #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee
       $subTotal.text subTotal

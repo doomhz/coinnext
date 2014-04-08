@@ -8,8 +8,7 @@ $(document).ready ()->
     decimals: 8
 
   _.str.roundTo = (number, decimals = 8)->
-    multiplier = Math.pow(10, decimals)
-    Math.round(parseFloat(number) * multiplier) / multiplier
+    App.math.round parseFloat(number), decimals
 
   _.str.satoshiRound = (number)->
     _.str.roundTo number, 8
