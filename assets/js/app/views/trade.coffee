@@ -95,7 +95,7 @@ class App.TradeView extends App.MasterView
 
   onAmountClick: (ev)->
     ev.preventDefault()
-    $target = $(ev.target)
+    $target = $(ev.currentTarget)
     amount = $target.data('amount')
     type = $target.data('type')
     $input = @$("##{type}-amount-input")
