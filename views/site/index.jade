@@ -38,6 +38,6 @@ block content
               tr
                 td <a href="/trade/#{type.replace("_", "/")}">#{type.replace("_", "/")}</a>
                 td #{currencies[info.label]}
-                td #{info.last_price}
+                td.rate.up #{info.last_price}
                 td #{info.volume1} #{type.split("_")[0]}
                 td 
