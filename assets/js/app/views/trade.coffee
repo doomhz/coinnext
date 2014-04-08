@@ -96,8 +96,12 @@ class App.TradeView extends App.MasterView
   onAmountClick: (ev)->
     ev.preventDefault()
     $target = $(ev.target)
-    $input = @$("##{$target.data('type')}-amount-input")
-    $input.val($target.data('amount'))
+    amount = $target.data('amount')
+    type = $target.data('type')
+    $input = @$("##{type}-amount-input")
+    unitPrice = parseFloat @$("##{type}-unit-price").val()
+    resultAmount = if type is "buy" then _.str.roundTo(App.math.divide(amount, unitPrice), 8) else amount
+    $input.val(resultAmount)
     $input.trigger "keyup"
 
   onMarketBuyAmountChange: (ev)->
@@ -112,7 +116,7 @@ class App.TradeView extends App.MasterView
     if @isValidAmount(spendAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
       subTotal = _.str.roundTo App.math.divide(spendAmount, lastPrice), 8
       totalFee = _.str.roundTo App.math.select(subTotal).divide(100).multiply(fee).done(), 8
-      total = App.math.add subTotal, -totalFee
+      total = _.str.roundTo App.math.add(subTotal, -totalFee), 8
       #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee
       $subTotal.text subTotal
@@ -134,7 +138,7 @@ class App.TradeView extends App.MasterView
     if @isValidAmount(buyAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
       subTotal = _.str.roundTo App.math.multiply(buyAmount, lastPrice), 8
       totalFee = _.str.roundTo App.math.select(buyAmount).divide(100).multiply(fee).done(), 8
-      total = App.math.add buyAmount, -totalFee
+      total = _.str.roundTo App.math.add(buyAmount, -totalFee), 8
       #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee
       $subTotal.text subTotal
@@ -156,7 +160,7 @@ class App.TradeView extends App.MasterView
     if @isValidAmount(sellAmount) and @isValidAmount(fee) and @isValidAmount(lastPrice)
       subTotal = _.str.roundTo App.math.multiply(sellAmount, lastPrice), 8
       totalFee = _.str.roundTo App.math.select(subTotal).divide(100).multiply(fee).done(), 8
-      total = App.math.add subTotal, -totalFee
+      total = _.str.roundTo App.math.add(subTotal, -totalFee), 8
       #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee
       $subTotal.text subTotal

@@ -159,6 +159,7 @@ module.exports = (sequelize, DataTypes) ->
               query.where = sequelize.and(query.where, sequelize.or({buy_currency: currencies[0]}, {sell_currency: currencies[0]}))
           else
             return callback "Wrong action", []
+          query.order = options.sort_by  if options.sort_by
           Order.findAll(query).complete callback  
 
         findCompletedByTimeAndAction: (startTime, endTime, action, callback)->

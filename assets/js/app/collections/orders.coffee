@@ -14,6 +14,7 @@ class window.App.OrdersCollection extends Backbone.Collection
     params.currency1 = @currency1  if @currency1
     params.currency2 = @currency2  if @currency2
     params.user_id   = @userId     if @userId
+    params.sort_by   = @sortBy    if @sortBy
     url += "?#{$.param(params)}"
 
   model: window.App.OrderModel
@@ -24,6 +25,7 @@ class window.App.OrdersCollection extends Backbone.Collection
     @currency1 = options.currency1
     @currency2 = options.currency2
     @userId    = options.userId
+    @sortBy    = options.sortBy
 
   calculateVolume: ()->
     total = 0

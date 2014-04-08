@@ -166,6 +166,10 @@ $(document).ready ()->
         action: "sell"
         currency1: $openSellOrders.data "currency1"
         currency2: $openSellOrders.data "currency2"
+        sortBy: [
+          ["unit_price", "ASC"]
+          ["created_at", "ASC"]
+        ]
     openSellOrders.render()
 
     $openBuyOrders = $("#open-buy-orders-cnt")
@@ -178,6 +182,10 @@ $(document).ready ()->
         action: "buy"
         currency1: $openBuyOrders.data "currency1"
         currency2: $openBuyOrders.data "currency2"
+        sortBy: [
+          ["unit_price", "DESC"]
+          ["created_at", "ASC"]
+        ]
     openBuyOrders.render()
 
     $closedOrders = $("#closed-orders-cnt")

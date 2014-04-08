@@ -234,6 +234,9 @@
           } else {
             return callback("Wrong action", []);
           }
+          if (options.sort_by) {
+            query.order = options.sort_by;
+          }
           return Order.findAll(query).complete(callback);
         },
         findCompletedByTimeAndAction: function(startTime, endTime, action, callback) {
