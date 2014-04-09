@@ -8,5 +8,5 @@ script(type="text/template", id="wallet-closed-order-tpl")
     td.trade-type <%= order.getCreatedDate() %>
     td.trade-type <%= order.get('action') %>
     td.trade-price <%= _.str.satoshiRound(order.get('unit_price')) %>
-    td.trade-amount <%= _.str.satoshiRound(order.calculateFirstAmount()) %>
-    td.trade-total <%= _.str.satoshiRound(order.calculateSecondAmount()) %>
+    td.trade-amount <%= order.calculateFirstAmount() %>
+    td.trade-total <%= order.calculateSecondAmount() %>

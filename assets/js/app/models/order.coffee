@@ -36,5 +36,24 @@ class App.OrderModel extends Backbone.Model
       return _.str.satoshiRound App.math.multiply(@get("amount"), @get("unit_price"))  if @get("action") is "sell"
     return _.str.satoshiRound App.math.multiply(@get("amount"), @get("unit_price"))  if @get("type") is "limit"
 
+  calculateFirstNoFeeAmount: ()->
+    return _.str.satoshiRound App.math.add(@get("amount"), -@get("sold_amount"))  if @get("status") is "partiallyCompleted"
+    return _.str.satoshiRound @get("amount")
+
+  calculateSecondNoFeeAmount: ()->
+    if @get("status") is "partiallyCompleted"
+      return _.str.satoshiRound App.math.multiply(App.math.add(@get("amount"), -@get("sold_amount")), @get("unit_price"))
+    if @get("status") is "completed"
+      return _.str.satoshiRound @get("amount")  if @get("action") is "buy"
+    return _.str.satoshiRound App.math.multiply(@get("amount"), @get("unit_price"))
+
   getCreatedDate: ()->
     new Date(@get('created_at')).format('dd.mm.yy hh:ss')
+
+  mergeWithOrder: (orderToMerge)->
+    attributes = orderToMerge.toJSON()
+    return @attributes = attributes  if _.isEmpty @attributes
+    @set
+      amount: App.math.add @attributes.amount, attributes.amount
+      sold_amount: App.math.add @attributes.sold_amount, attributes.sold_amount
+      result_amount: App.math.add @attributes.result_amount, attributes.result_amount

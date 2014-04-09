@@ -1,5 +1,0 @@
-script(type="text/template", id="site-open-order-tpl")
-  tr(data-action="<%= order.get('action') %>", data-id="<%= order.id %>")
-    td.trade-price <%= _.str.satoshiRound(order.get('unit_price')) %>
-    td.trade-amount <%= _.str.satoshiRound(order.calculateFirstAmount()) %>
-    td.trade-total <%= _.str.satoshiRound(order.calculateSecondAmount()) %>

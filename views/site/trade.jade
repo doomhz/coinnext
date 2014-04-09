@@ -116,7 +116,7 @@ block content
             #sell-orders.order-book
               .con-header
                 h3.con-header-title Sell Orders
-                .order-book-total Total: <span id="open-sell-volume-total">0</span> #{wallet1.currency}
+                .order-book-total Total: <span id="order-book-sell-volume-total">0</span> #{wallet1.currency}
               .table-wrap
                 table.trade-data
                   thead
@@ -124,20 +124,20 @@ block content
                       th Price
                       th #{wallet1.currency}
                       th #{wallet2.currency}
-                  tbody#open-sell-orders-cnt(data-currency1="#{wallet1.currency}", data-currency2="#{wallet2.currency}")
+                  tbody#order-book-sell-cnt(data-currency1="#{wallet1.currency}", data-currency2="#{wallet2.currency}")
 
           .two-col-wrap
             #buy-orders.order-book
               .con-header
                 h3.con-header-title Buy Orders
-                .order-book-total Total: <span id="open-buy-volume-total">0</span> #{wallet1.currency}
+                .order-book-total Total: <span id="order-book-buy-volume-total">0</span> #{wallet1.currency}
               table.trade-data
                 thead
                   tr
                     th Price
                     th #{wallet1.currency}
                     th #{wallet2.currency}
-                tbody#open-buy-orders-cnt(data-currency1="#{wallet1.currency}", data-currency2="#{wallet2.currency}")
+                tbody#order-book-buy-cnt(data-currency1="#{wallet1.currency}", data-currency2="#{wallet2.currency}")
 
         // Trade History
         section#trade-history.trade-history.container
@@ -156,5 +156,5 @@ block content
 
   include ../templates/coin_stats
   include ../templates/open_order
-  include ../templates/site_open_order
+  include ../templates/order_book_order
   include ../templates/site_closed_order

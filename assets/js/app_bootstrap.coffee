@@ -155,37 +155,37 @@ $(document).ready ()->
         userId: CONFIG.currentUser.id
     openOrders.render()
 
-    $openSellOrders = $("#open-sell-orders-cnt")
-    openSellOrders = new App.OrdersView
-      el: $openSellOrders
-      tpl: "site-open-order-tpl"
-      $totalsEl: $trade.find("#open-sell-volume-total")
+    $orderBookSell = $("#order-book-sell-cnt")
+    orderBookSell = new App.OrderBookView
+      el: $orderBookSell
+      tpl: "order-book-order-tpl"
+      $totalsEl: $trade.find("#order-book-sell-volume-total")
       collection: new App.OrdersCollection null,
         type: "open"
         action: "sell"
-        currency1: $openSellOrders.data "currency1"
-        currency2: $openSellOrders.data "currency2"
+        currency1: $orderBookSell.data "currency1"
+        currency2: $orderBookSell.data "currency2"
         sortBy: [
           ["unit_price", "ASC"]
           ["created_at", "ASC"]
         ]
-    openSellOrders.render()
+    orderBookSell.render()
 
-    $openBuyOrders = $("#open-buy-orders-cnt")
-    openBuyOrders = new App.OrdersView
-      el: $openBuyOrders
-      tpl: "site-open-order-tpl"
-      $totalsEl: $trade.find("#open-buy-volume-total")
+    $orderBookBuy = $("#order-book-buy-cnt")
+    orderBookBuy = new App.OrderBookView
+      el: $orderBookBuy
+      tpl: "order-book-order-tpl"
+      $totalsEl: $trade.find("#order-book-buy-volume-total")
       collection: new App.OrdersCollection null,
         type: "open"
         action: "buy"
-        currency1: $openBuyOrders.data "currency1"
-        currency2: $openBuyOrders.data "currency2"
+        currency1: $orderBookBuy.data "currency1"
+        currency2: $orderBookBuy.data "currency2"
         sortBy: [
           ["unit_price", "DESC"]
           ["created_at", "ASC"]
         ]
-    openBuyOrders.render()
+    orderBookBuy.render()
 
     $closedOrders = $("#closed-orders-cnt")
     closedOrders = new App.OrdersView
@@ -193,8 +193,8 @@ $(document).ready ()->
       tpl: "site-closed-order-tpl"
       collection: new App.OrdersCollection null,
         type: "completed"
-        currency1: $openBuyOrders.data "currency1"
-        currency2: $openBuyOrders.data "currency2"
+        currency1: $closedOrders.data "currency1"
+        currency2: $closedOrders.data "currency2"
     closedOrders.render()
 
   ordersSocket = io.connect "#{CONFIG.users.hostname}/orders"

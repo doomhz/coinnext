@@ -30,5 +30,13 @@ class window.App.OrdersCollection extends Backbone.Collection
   calculateVolume: ()->
     total = 0
     @each (order)->
-      total += order.calculateFirstAmount()
-    total
+      total = App.math.add(total, order.calculateFirstAmount())
+    _.str.satoshiRound total
+
+  getStacked: ()->
+    stackedOrders = {}
+    @each (order)->
+      unitPrice = _.str.satoshiRound order.get("unit_price")
+      stackedOrders[unitPrice] = new App.OrderModel  if not stackedOrders[unitPrice]
+      stackedOrders[unitPrice].mergeWithOrder order
+    _.values stackedOrders
