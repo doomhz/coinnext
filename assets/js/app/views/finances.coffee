@@ -103,7 +103,7 @@ class App.FinancesView extends App.MasterView
 
   onPay: (form)->
     $form = $(form)
-    amount = parseFloat $form.find("[name='amount']").val()
+    amount = _.str.satoshiRound $form.find("[name='amount']").val()
     if _.isNumber(amount) and amount > 0
       $form.find("button").attr "disabled", true
       payment = new App.PaymentModel

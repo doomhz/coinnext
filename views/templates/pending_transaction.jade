@@ -2,12 +2,12 @@ script(type="text/template", id="pending-transaction-tpl")
   | <% if (typeof(transaction) !== "undefined") { %>
   tr(class="<%= transaction.get('category') === 'send' ? 'distract' : 'add' %>", data-id="<%= transaction.id %>")
     td <%= transaction.get('txid') %>
-    td.trade-amount <%= transaction.get('category') === 'receive' ? '+' : '' %><%= transaction.get("amount") %> <%= transaction.get("currency") %>
+    td.trade-amount <%= transaction.get('category') === 'receive' ? '+' : '' %><%= _.str.satoshiRound(transaction.get("amount")) %> <%= transaction.get("currency") %>
     td <%= transaction.get("confirmations") %>/3
   | <% } %>
   | <% if (typeof(payment) !== "undefined") { %>
   tr.distract(data-id="<%= payment.id %>")
     td Withdrawal to <%= payment.get("address") %>
-    td.trade-amount -<%= payment.get("amount") %> <%= payment.get("currency") %>
+    td.trade-amount -<%= _.str.satoshiRound(payment.get("amount")) %> <%= payment.get("currency") %>
     td Pending approval
   | <% } %>

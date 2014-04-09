@@ -99,7 +99,7 @@ class App.TradeView extends App.MasterView
     amount = $target.data('amount')
     type = $target.data('type')
     $input = @$("##{type}-amount-input")
-    unitPrice = parseFloat @$("##{type}-unit-price").val()
+    unitPrice = _.str.satoshiRound @$("##{type}-unit-price").val()
     resultAmount = if type is "buy" then _.str.satoshiRound App.math.divide(amount, unitPrice) else amount
     $input.val(resultAmount)
     $input.trigger "keyup"
