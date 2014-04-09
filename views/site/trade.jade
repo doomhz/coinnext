@@ -41,7 +41,7 @@ block content
                     input(name="buy_currency", type="hidden", value="#{wallet1.currency}")
                     label Amount to Buy:
                     .currency-input
-                      input#buy-amount-input.amount-field(type="text", name="amount", maxlength="12")
+                      input#buy-amount-input.amount-field(type="text", name="amount", maxlength="25")
                       .overlay-amount #{wallet1.currency}
                     label Price per #{wallet1.currency}:
                     .currency-input
@@ -74,7 +74,7 @@ block content
                     input(name="buy_currency", type="hidden", value="#{wallet2.currency}")
                     label Amount to Sell:
                     .currency-input
-                      input#sell-amount-input.amount-field(type="text", name="amount", maxlength="12")
+                      input#sell-amount-input.amount-field(type="text", name="amount", maxlength="25")
                       .overlay-amount #{wallet1.currency}
                     label Price per #{wallet1.currency}:
                     .currency-input
