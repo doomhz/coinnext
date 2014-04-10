@@ -29,6 +29,9 @@ $(document).ready ()->
         usersSocket.on "wallet-balance-loaded", (data)=>
           wallet = new App.WalletModel data
           $.publish "wallet-balance-loaded", wallet
+        usersSocket.on "wallet-balance-changed", (data)=>
+          wallet = new App.WalletModel data
+          $.publish "wallet-balance-changed", wallet
 
   $(".amount-field").keyup (ev)->
     $target = $(ev.target)

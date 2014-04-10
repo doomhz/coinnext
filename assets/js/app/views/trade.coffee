@@ -24,6 +24,7 @@ class App.TradeView extends App.MasterView
     $.subscribe "market-stats-updated", @onMarketStatsUpdated
     $.subscribe "payment-processed", @onPaymentProcessed
     $.subscribe "wallet-balance-loaded", @onWalletBalanceLoaded
+    $.subscribe "wallet-balance-changed", @onWalletBalanceChanged
     $.subscribe "order-book-order-selected", @onOrderBookOrderSelected
 
   render: ()->
@@ -178,6 +179,10 @@ class App.TradeView extends App.MasterView
     @renderWalletBalance payment.get("wallet_id")
 
   onWalletBalanceLoaded: (ev, wallet)=>
+    @renderWalletBalance wallet.id
+
+  onWalletBalanceChanged: (ev, wallet)=>
+    console.log wallet
     @renderWalletBalance wallet.id
 
   onOrderBookOrderSelected: (ev, order)=>

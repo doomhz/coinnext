@@ -3,6 +3,10 @@ Wallet = GLOBAL.db.Wallet
 MarketStats = GLOBAL.db.MarketStats
 MarketHelper = require "../lib/market_helper"
 JsonRenderer = require "../lib/json_renderer"
+ClientSocket = require "../lib/client_socket"
+usersSocket = new ClientSocket
+  host: GLOBAL.appConfig().app_host
+  path: "users"
 math = require("mathjs")
   number: "bignumber"
   decimals: 8
@@ -39,6 +43,14 @@ module.exports = (app)->
                     console.log "Could not publish newlly created order - #{err}"  if err
                     return res.json JsonRenderer.order newOrder  if err
                     res.json JsonRenderer.order order
+                  usersSocket.send
+                    type: "wallet-balance-changed"
+                    user_id: wallet.user_id
+                    eventData: JsonRenderer.wallet wallet
+                  usersSocket.send
+                    type: "wallet-balance-changed"
+                    user_id: buyWallet.user_id
+                    eventData: JsonRenderer.wallet buyWallet
                 transaction.done (err)->
                   JsonRenderer.error "Could not open an order. Please try again later.", res  if err
 
