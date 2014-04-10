@@ -24,6 +24,7 @@ class App.TradeView extends App.MasterView
     $.subscribe "market-stats-updated", @onMarketStatsUpdated
     $.subscribe "payment-processed", @onPaymentProcessed
     $.subscribe "wallet-balance-loaded", @onWalletBalanceLoaded
+    $.subscribe "order-book-order-selected", @onOrderBookOrderSelected
 
   render: ()->
     @model.fetch
@@ -178,3 +179,8 @@ class App.TradeView extends App.MasterView
 
   onWalletBalanceLoaded: (ev, wallet)=>
     @renderWalletBalance wallet.id
+
+  onOrderBookOrderSelected: (ev, order)=>
+    @$("#buy-unit-price,#sell-unit-price").val order.get "unit_price"
+    @$("#buy-amount-input").val(order.get("amount")).trigger("keyup")  if order.get("action") is "sell"
+    @$("#sell-amount-input").val(order.get("amount")).trigger("keyup")  if order.get("action") is "buy"

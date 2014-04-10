@@ -33,6 +33,15 @@ class window.App.OrdersCollection extends Backbone.Collection
       total = App.math.add(total, order.calculateFirstAmount())
     _.str.satoshiRound total
 
+  calculateVolumeForPriceLimit: (unitPrice)->
+    totalAmount = 0
+    reachedTheUnitPrice = false
+    @each (order)->
+      return  if reachedTheUnitPrice and unitPrice isnt _.str.satoshiRound(order.get("unit_price"))
+      reachedTheUnitPrice = true  if unitPrice is _.str.satoshiRound(order.get("unit_price"))
+      totalAmount = App.math.add(totalAmount, order.calculateFirstAmount())
+    _.str.satoshiRound totalAmount
+
   getStacked: ()->
     stackedOrders = {}
     @each (order)->

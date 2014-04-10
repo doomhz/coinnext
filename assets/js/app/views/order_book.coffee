@@ -4,6 +4,9 @@ class App.OrderBookView extends App.MasterView
 
   collection: null
 
+  events:
+    "click .order-book-order": "onOrderClick"
+
   initialize: (options = {})->
     @tpl = options.tpl  if options.tpl
     @$totalsEl = options.$totalsEl  if options.$totalsEl
@@ -39,3 +42,13 @@ class App.OrderBookView extends App.MasterView
 
   onOrderCanceled: (ev, data)=>
     @render()
+
+  onOrderClick: (ev)->
+    $row = $(ev.currentTarget)
+    unitPrice = $row.data "unit-price"
+    action = $row.data "action"
+    order = new App.OrderModel
+      unit_price: unitPrice
+      action: action
+      amount: @collection.calculateVolumeForPriceLimit unitPrice
+    $.publish "order-book-order-selected", order
