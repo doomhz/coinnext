@@ -2,13 +2,13 @@ script(type="text/template", id="coin-stats-tpl")
   table.trade-data
     tr.last-price
       th Last Price:
-      td <%= _.str.satoshiRound(coinStats.last_price) %> <%= currency1 %> <span class="change <%= coinStats.growth_ratio >= 0 ? 'up' : 'down' %>"><%= _.str.roundTo(coinStats.growth_ratio, 2) * (coinStats.growth_ratio < 0 ? -1 : 1) %>%</span>
+      td <%= _.str.satoshiRound(coinStats.last_price) %> <%= currency2 %> <span class="change <%= coinStats.growth_ratio >= 0 ? 'up' : 'down' %>"><%= _.str.roundTo(coinStats.growth_ratio, 2) * (coinStats.growth_ratio < 0 ? -1 : 1) %>%</span>
     tr.high-price
       th 24hr High:
-      td <%= _.str.satoshiRound(coinStats.day_high) %> <%= currency1 %>
+      td <%= _.str.satoshiRound(coinStats.day_high) %> <%= currency2 %>
     tr.low-price
       th 24hr Low:
-      td <%= _.str.satoshiRound(coinStats.day_low) %> <%= currency1 %>
+      td <%= _.str.satoshiRound(coinStats.day_low) %> <%= currency2 %>
     tr.volume
       th Volume:
       td <%= _.str.satoshiRound(coinStats.volume2) %> <%= currency2 %> / <%= _.str.satoshiRound(coinStats.volume1) %> <%= currency1 %>
