@@ -111,7 +111,7 @@
           }).complete(callback);
         },
         hashPassword: function(password) {
-          return crypto.createHash("sha1").update("" + password + (GLOBAL.appConfig().salt), "utf8").digest("hex");
+          return crypto.createHash("sha256").update("" + password + (GLOBAL.appConfig().salt), "utf8").digest("hex");
         },
         createNewUser: function(data, callback) {
           var userData;
@@ -121,7 +121,7 @@
           return User.create(userData).complete(callback);
         },
         generateUsername: function(seed) {
-          seed = crypto.createHash("sha1").update("username_" + seed + (GLOBAL.appConfig().salt), "utf8").digest("hex");
+          seed = crypto.createHash("sha256").update("username_" + seed + (GLOBAL.appConfig().salt), "utf8").digest("hex");
           return phonetic.generate({
             seed: seed
           });

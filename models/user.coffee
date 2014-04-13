@@ -67,7 +67,7 @@ module.exports = (sequelize, DataTypes) ->
           User.find({where:{email: email}}).complete callback
 
         hashPassword: (password)->
-          crypto.createHash("sha1").update("#{password}#{GLOBAL.appConfig().salt}", "utf8").digest("hex")
+          crypto.createHash("sha256").update("#{password}#{GLOBAL.appConfig().salt}", "utf8").digest("hex")
         
         createNewUser: (data, callback)->
           userData = _.extend({}, data)
@@ -76,7 +76,7 @@ module.exports = (sequelize, DataTypes) ->
           User.create(userData).complete callback
 
         generateUsername: (seed)->
-          seed = crypto.createHash("sha1").update("username_#{seed}#{GLOBAL.appConfig().salt}", "utf8").digest("hex")
+          seed = crypto.createHash("sha256").update("username_#{seed}#{GLOBAL.appConfig().salt}", "utf8").digest("hex")
           phonetic.generate
             seed: seed
 

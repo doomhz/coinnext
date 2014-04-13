@@ -49,7 +49,7 @@
           }).complete(callback);
         },
         hashPassword: function(password) {
-          return crypto.createHash("sha1").update("" + password + (GLOBAL.appConfig().salt), "utf8").digest("hex");
+          return crypto.createHash("sha256").update("" + password + (GLOBAL.appConfig().salt), "utf8").digest("hex");
         },
         createNewUser: function(data, callback) {
           var userData;
@@ -89,7 +89,7 @@
           if (callback == null) {
             callback = function() {};
           }
-          this.token = crypto.createHash("sha1").update("" + this._id + (GLOBAL.appConfig().salt) + (Date.now()), "utf8").digest("hex");
+          this.token = crypto.createHash("sha256").update("" + this._id + (GLOBAL.appConfig().salt) + (Date.now()), "utf8").digest("hex");
           return this.save().complete(function(err, u) {
             return callback(u.token);
           });
