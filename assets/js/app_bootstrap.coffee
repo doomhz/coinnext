@@ -13,6 +13,9 @@ $(document).ready ()->
   _.str.satoshiRound = (number)->
     _.str.roundTo number, 8
 
+  _.str.toFixed = (number, decimals = 8)->
+    _.str.rtrim(_.str.rtrim(parseFloat(number).toFixed(decimals), "0"), ".")
+
   errorLogger = new App.ErrorLogger
 
   user = new App.UserModel
