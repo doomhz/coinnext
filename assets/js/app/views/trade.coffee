@@ -141,9 +141,9 @@ class App.TradeView extends App.MasterView
       subTotal = _.str.satoshiRound App.math.multiply(buyAmount, lastPrice)
       totalFee = _.str.satoshiRound App.math.select(buyAmount).divide(100).multiply(fee).done()
       total = _.str.satoshiRound App.math.add(buyAmount, -totalFee)
-      $fee.text totalFee
-      $subTotal.text subTotal
-      $result.text total
+      $fee.text _.str.toFixed totalFee
+      $subTotal.text _.str.toFixed subTotal
+      $result.text _.str.toFixed total
     else
       $result.text 0
       $fee.text 0
@@ -162,9 +162,9 @@ class App.TradeView extends App.MasterView
       subTotal = _.str.satoshiRound App.math.multiply(sellAmount, lastPrice)
       totalFee = _.str.satoshiRound App.math.select(subTotal).divide(100).multiply(fee).done()
       total = _.str.satoshiRound App.math.add(subTotal, -totalFee)
-      $fee.text totalFee
-      $subTotal.text subTotal
-      $result.text total
+      $fee.text _.str.toFixed totalFee
+      $subTotal.text _.str.toFixed subTotal
+      $result.text _.str.toFixed total
     else
       $result.text 0
       $fee.text 0
