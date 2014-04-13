@@ -141,9 +141,9 @@ class App.TradeView extends App.MasterView
       subTotal = _.str.satoshiRound App.math.multiply(buyAmount, lastPrice)
       totalFee = _.str.satoshiRound App.math.select(buyAmount).divide(100).multiply(fee).done()
       total = _.str.satoshiRound App.math.add(buyAmount, -totalFee)
-      $fee.text _.str.toFixed totalFee
-      $subTotal.text _.str.toFixed subTotal
-      $result.text _.str.toFixed total
+      $fee.text totalFee
+      $subTotal.text subTotal
+      $result.text total
     else
       $result.text 0
       $fee.text 0

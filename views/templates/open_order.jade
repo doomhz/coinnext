@@ -3,6 +3,6 @@ script(type="text/template", id="open-order-tpl")
     td.trade-date <%= order.getCreatedDate() %>
     td.trade-type <%= order.get('action') %>
     td.trade-price <%= _.str.satoshiRound(order.get('unit_price')) %>
-    td.trade-amount <%= order.calculateFirstAmount() %>
-    td.trade-total <%= order.calculateSecondAmount() %>
+    td.trade-amount <%= _.str.toFixed(order.calculateFirstNoFeeAmount()) %>
+    td.trade-total <%= _.str.toFixed(order.calculateSecondNoFeeAmount()) %>
     td.trade-action <a href="#" class="action cancel" data-id="<%= order.id %>">Cancel</a>
