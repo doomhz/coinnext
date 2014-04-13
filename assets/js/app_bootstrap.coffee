@@ -159,6 +159,7 @@ $(document).ready ()->
         currency1: $openOrders.data "currency1"
         currency2: $openOrders.data "currency2"
         userId: CONFIG.currentUser.id
+      hideOnEmpty: true
     openOrders.render()
 
     $orderBookSell = $("#order-book-sell-cnt")

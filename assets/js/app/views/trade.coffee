@@ -180,7 +180,6 @@ class App.TradeView extends App.MasterView
     @renderWalletBalance wallet.id
 
   onWalletBalanceChanged: (ev, wallet)=>
-    console.log wallet
     @renderWalletBalance wallet.id
 
   onOrderBookOrderSelected: (ev, order)=>
