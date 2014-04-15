@@ -65,8 +65,10 @@ class App.TradeView extends App.MasterView
         messages:
           amount:
             required: "Please provide an amount."
+            min: "Please provide an amount bigger than 0.0000001"
           unit_price:
             required: "Please provide an amount."
+            min: "Please provide an amount bigger than 0.000001"
         submitHandler: (form)=>
           @onOrderSubmit form
           return false
