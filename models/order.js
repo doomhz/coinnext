@@ -75,17 +75,17 @@
         },
         comment: "FLOAT x 100000000"
       },
-      sold_amount: {
+      matched_amount: {
         type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         validate: {
           isFloat: true
         },
         get: function() {
-          return MarketHelper.convertFromBigint(this.getDataValue("sold_amount"));
+          return MarketHelper.convertFromBigint(this.getDataValue("matched_amount"));
         },
-        set: function(soldAmount) {
-          return this.setDataValue("sold_amount", MarketHelper.convertToBigint(soldAmount));
+        set: function(matchedAmount) {
+          return this.setDataValue("matched_amount", MarketHelper.convertToBigint(matchedAmount));
         },
         comment: "FLOAT x 100000000"
       },
@@ -163,7 +163,7 @@
           }
         },
         left_amount: function() {
-          return math.add(this.amount, -this.sold_amount);
+          return math.add(this.amount, -this.matched_amount);
         },
         left_hold_balance: function() {
           if (this.action === "buy") {
@@ -233,6 +233,9 @@
             }
           } else {
             return callback("Wrong action", []);
+          }
+          if (options.published != null) {
+            query.where.published = !!options.published;
           }
           if (options.sort_by) {
             query.order = options.sort_by;

@@ -172,6 +172,7 @@ $(document).ready ()->
         action: "sell"
         currency1: $orderBookSell.data "currency1"
         currency2: $orderBookSell.data "currency2"
+        published: true
         sortBy: [
           ["unit_price", "ASC"]
           ["created_at", "ASC"]
@@ -188,6 +189,7 @@ $(document).ready ()->
         action: "buy"
         currency1: $orderBookBuy.data "currency1"
         currency2: $orderBookBuy.data "currency2"
+        published: true
         sortBy: [
           ["unit_price", "DESC"]
           ["created_at", "ASC"]

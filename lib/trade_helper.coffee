@@ -34,6 +34,7 @@ TradeHelper =
     @sendEngineData uri, options, callback
 
   cancelOrder: (order, callback = ()->)->
+    return callback()  if not order.published
     uri = "#{GLOBAL.appConfig().engine_api_host}/order/#{order.id}"
     options =
       uri: uri
@@ -75,7 +76,7 @@ TradeHelper =
             buyWallet.addBalance resultAmount, transaction, (err, buyWallet)->
               return callback err  if err or not buyWallet
               orderToMatch.status = status
-              orderToMatch.sold_amount = math.add orderToMatch.sold_amount, matchedAmount
+              orderToMatch.matched_amount = math.add orderToMatch.matched_amount, matchedAmount
               orderToMatch.result_amount = math.add orderToMatch.result_amount, resultAmount
               orderToMatch.fee = math.add orderToMatch.fee, fee
               orderToMatch.close_time = Date.now()  if status is "completed"

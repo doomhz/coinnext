@@ -70,21 +70,21 @@ JsonRenderer =
     data
 
   order: (order)->
-    id:            order.id
-    user_id:       order.user_id
-    type:          order.type
-    action:        order.action
-    buy_currency:  order.buy_currency
-    sell_currency: order.sell_currency
-    amount:        order.amount
-    sold_amount:   order.sold_amount
-    result_amount: order.result_amount
-    fee:           order.fee
-    unit_price:    order.unit_price
-    status:        order.status
-    published:     order.published
-    updated_at:    order.updated_at
-    created_at:    order.created_at
+    id:             order.id
+    user_id:        order.user_id
+    type:           order.type
+    action:         order.action
+    buy_currency:   order.buy_currency
+    sell_currency:  order.sell_currency
+    amount:         order.amount
+    matched_amount: order.matched_amount
+    result_amount:  order.result_amount
+    fee:            order.fee
+    unit_price:     order.unit_price
+    status:         order.status
+    published:      order.published
+    updated_at:     order.updated_at
+    created_at:     order.created_at
 
   orders: (orders)->
     data = []

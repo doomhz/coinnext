@@ -6,6 +6,8 @@ class window.App.OrdersCollection extends Backbone.Collection
 
   currency2: null
 
+  published: null
+
   url: ()->
     url = "/orders"
     params = {}
@@ -13,8 +15,9 @@ class window.App.OrdersCollection extends Backbone.Collection
     params.action    = @action     if @action
     params.currency1 = @currency1  if @currency1
     params.currency2 = @currency2  if @currency2
+    params.published = @published  if @published?
     params.user_id   = @userId     if @userId
-    params.sort_by   = @sortBy    if @sortBy
+    params.sort_by   = @sortBy     if @sortBy
     url += "?#{$.param(params)}"
 
   model: window.App.OrderModel
@@ -24,6 +27,7 @@ class window.App.OrdersCollection extends Backbone.Collection
     @action    = options.action
     @currency1 = options.currency1
     @currency2 = options.currency2
+    @published = options.published
     @userId    = options.userId
     @sortBy    = options.sortBy
 
