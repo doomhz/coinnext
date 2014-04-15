@@ -213,12 +213,14 @@ describe "Trade Api", ->
         .send(matchData)
         .expect(200)
         .end ()->
-          GLOBAL.db.MarketStats.getStats (err, stats)->
-            stats["LTC_BTC"].growth_ratio.should.eql 100
-            stats["LTC_BTC"].last_price.should.eql 0.05
-            stats["LTC_BTC"].day_high.should.eql 0.05
-            stats["LTC_BTC"].day_low.should.eql 0.05
-            stats["LTC_BTC"].volume1.should.eql 5
-            stats["LTC_BTC"].volume2.should.eql 0.25
-            new Date(stats["LTC_BTC"].today).getDate().should.eql new Date().getDate()
-            done()
+          setTimeout ()->
+              GLOBAL.db.MarketStats.getStats (err, stats)->
+                stats["LTC_BTC"].growth_ratio.should.eql 100
+                stats["LTC_BTC"].last_price.should.eql 0.05
+                stats["LTC_BTC"].day_high.should.eql 0.05
+                stats["LTC_BTC"].day_low.should.eql 0.05
+                stats["LTC_BTC"].volume1.should.eql 5
+                stats["LTC_BTC"].volume2.should.eql 0.25
+                new Date(stats["LTC_BTC"].today).getDate().should.eql new Date().getDate()
+                done()
+            , 500
