@@ -25,7 +25,7 @@ class App.OrderBookView extends App.MasterView
         @renderVolume()  if @$totalsEl
 
   renderVolume: ()->
-    @$totalsEl.text @collection.calculateVolume()
+    @$totalsEl.text _.str.toFixed @collection.calculateVolume()
 
   onNewOrder: (ev, order)=>
     @render()
