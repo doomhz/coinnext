@@ -78,6 +78,7 @@ $(document).ready ()->
         payments: new App.PaymentsCollection null,
           type: "pending"
           walletId: $pendingTransactions.data "wallet-id"
+        hideOnEmpty: true
       pendingTransactions.render()
 
     $transactionsHistory = $("#transactions-history-cnt")
@@ -87,6 +88,7 @@ $(document).ready ()->
         collection: new App.TransactionsCollection null,
           type: "processed"
           walletId: $transactionsHistory.data "wallet-id"
+        hideOnEmpty: true
       transactionsHistory.render()
 
     $openOrders = $("#open-orders-cnt")
@@ -98,6 +100,7 @@ $(document).ready ()->
           type: "open"
           currency1: $openOrders.data "currency1"
           userId: CONFIG.currentUser.id
+        hideOnEmpty: true
       openOrders.render()
 
     $closedOrders = $("#closed-orders-cnt")
@@ -109,6 +112,7 @@ $(document).ready ()->
           type: "completed"
           currency1: $closedOrders.data "currency1"
           userId: CONFIG.currentUser.id
+        hideOnEmpty: true
       closedOrders.render()
 
     $overviewOpenOrders = $("#overview-open-orders-cnt")
@@ -119,6 +123,7 @@ $(document).ready ()->
         collection: new App.OrdersCollection null,
           type: "open"
           userId: CONFIG.currentUser.id
+        hideOnEmpty: true
       overviewOpenOrders.render()
 
     $overviewClosedOrders = $("#overview-closed-orders-cnt")
@@ -129,6 +134,7 @@ $(document).ready ()->
         collection: new App.OrdersCollection null,
           type: "completed"
           userId: CONFIG.currentUser.id
+        hideOnEmpty: true
       overviewClosedOrders.render()
 
 
@@ -204,6 +210,7 @@ $(document).ready ()->
         type: "completed"
         currency1: $closedOrders.data "currency1"
         currency2: $closedOrders.data "currency2"
+      hideOnEmpty: true
     closedOrders.render()
 
   ordersSocket = io.connect "#{CONFIG.users.hostname}/orders"

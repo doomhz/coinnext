@@ -13,6 +13,7 @@ class App.OrdersView extends App.MasterView
     @tpl = options.tpl  if options.tpl
     @$totalsEl = options.$totalsEl  if options.$totalsEl
     @hideOnEmpty = options.hideOnEmpty  if options.hideOnEmpty
+    @toggleVisible()
     $.subscribe "new-order", @onNewOrder
     $.subscribe "order-completed", @onOrderCompleted
     $.subscribe "order-partially-completed", @onOrderPartiallyCompleted
@@ -29,12 +30,6 @@ class App.OrdersView extends App.MasterView
 
   renderVolume: ()->
     @$totalsEl.text @collection.calculateVolume()
-
-  toggleVisible: ()->
-    if @collection.length
-      @$el.parents("section.container:first").show()
-    else
-      @$el.parents("section.container:first").hide()
 
   onNewOrder: (ev, order)=>
     @$el.empty()

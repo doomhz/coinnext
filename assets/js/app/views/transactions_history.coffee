@@ -5,6 +5,8 @@ class App.TransactionsHistoryView extends App.MasterView
   collection: null
 
   initialize: (options = {})->
+    @hideOnEmpty = options.hideOnEmpty  if options.hideOnEmpty
+    @toggleVisible()
     $.subscribe "payment-processed", @onPaymentProcessed
     $.subscribe "transaction-update", @onTransactionUpdate
 
@@ -14,6 +16,7 @@ class App.TransactionsHistoryView extends App.MasterView
         @collection.each (transaction)=>
           @$el.append @template
             transaction: transaction
+        @toggleVisible()  if @hideOnEmpty
 
   onTransactionUpdate: (ev, transaction)=>
     @$el.empty()

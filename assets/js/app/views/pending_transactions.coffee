@@ -7,10 +7,12 @@ class App.PendingTransactionsView extends App.MasterView
   payments: null
 
   initialize: (options = {})->
+    @payments = options.payments
+    @hideOnEmpty = options.hideOnEmpty  if options.hideOnEmpty
+    @toggleVisible()
     $.subscribe "payment-submited", @onPaymentSubmited
     $.subscribe "payment-processed", @onPaymentProcessed
     $.subscribe "transaction-update", @onTransactionUpdate
-    @payments = options.payments
 
   render: ()->
     @collection.fetch
@@ -23,6 +25,7 @@ class App.PendingTransactionsView extends App.MasterView
             @$el.append $tx
           else
             $existentTx.replaceWith $tx
+          @toggleVisible()  if @hideOnEmpty
     @payments.fetch
       success: ()=>
         @payments.each (payment)=>
@@ -33,6 +36,7 @@ class App.PendingTransactionsView extends App.MasterView
             @$el.append $pm
           else
             $existentPm.replaceWith $pm
+          @toggleVisible()  if @hideOnEmpty
 
   onTransactionUpdate: (ev, transaction)=>
     @render()
