@@ -8,7 +8,7 @@ clearfix()
   zoom 1
 
 image(path, w = auto, h = auto, min_pixel_ratio = 1.5)
-  background-image: url(path)
+  background-image: url(CDN(path))
 
   s = 'all and (-webkit-min-device-pixel-ratio:' + min_pixel_ratio + '),'
   s = s + '(min--moz-device-pixel-ratio:' + min_pixel_ratio + '),'
@@ -20,7 +20,7 @@ image(path, w = auto, h = auto, min_pixel_ratio = 1.5)
   @media s
     ext = extname(path)
     path = pathjoin(dirname(path), basename(path, ext) + '@2x' + ext)
-    background-image: url(path)
+    background-image: url(CDN(path))
     if w in (cover contain) and h == auto
         h = null
     background-size: w h
@@ -112,4 +112,4 @@ linear-gradient-image(start, stops...)
   grad = create-gradient-image(size, start)
   stops = normalize-stops(stops)
   add-color-stop(grad, stop[0], stop[1]) for stop in stops
-  'url(%s)' % gradient-data-uri(grad)
+  'url(CDN(%s))' % gradient-data-uri(grad)

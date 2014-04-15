@@ -9,6 +9,7 @@ var RedisStore = require('connect-redis')(express);
 var connectDomain = require('connect-domain');
 var fs = require('fs');
 var helmet = require('helmet');
+var simpleCdn = require('express-simple-cdn');
 var WalletsClient = require('./lib/wallets_client');
 var environment = process.env.NODE_ENV || 'development';
 var config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', encoding='utf8'))[environment];
@@ -31,6 +32,11 @@ var cookieParser = express.cookieParser(GLOBAL.appConfig().session.cookie_secret
 var sessionStore = new RedisStore(GLOBAL.appConfig().redis);
 var connectAssetsOptions = environment !== 'development' && environment !== 'test' ? {minifyBuilds: true, servePath: GLOBAL.appConfig().assets_host} : {};
 connectAssetsOptions.helperContext = app.locals
+app.locals.CDN = function(path, noKey) {
+  var glueSign = path.indexOf("?") > -1 ? "&" : "?";
+  var assetsKey = !noKey && GLOBAL.appConfig().assets_key ? glueSign + "_=" + GLOBAL.appConfig().assets_key : "";
+  return simpleCdn(path, GLOBAL.appConfig().assets_host) + assetsKey;
+};
 app.enable("trust proxy");
 app.disable('x-powered-by');
 app.configure(function () {

@@ -370,7 +370,8 @@
     "users": {
       hostname: "http://direct.coinnext.com"
     },
-    "assets_host": "http://cdn.coinnext.com/assets/",
+    "assets_host": "https://d2fsloj9ifsfv5.cloudfront.net",
+    "assets_key": "1397587150588",
     "recaptcha": {
       "public_key": "",
       "private_key": ""

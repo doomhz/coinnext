@@ -45,6 +45,7 @@
     , "phonetic": "latest"
     , "recaptcha-async": "latest"
     , "mathjs": "latest"
+    , "express-simple-cdn": "latest"
   },
   "devDependencies": {
     "mocha": "latest"
