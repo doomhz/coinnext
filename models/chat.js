@@ -43,8 +43,43 @@
           };
           return Chat.findAll(query).complete(callback);
         },
+        findLastUserMessage: function(userId, callback) {
+          var query;
+          query = {
+            where: {
+              user_id: userId
+            },
+            order: [["created_at", "DESC"]],
+            limit: 1
+          };
+          return Chat.find(query).complete(callback);
+        },
         getGlobalRoomName: function() {
           return GLOBAL_ROOM_NAME;
+        },
+        addMessage: function(data, callback) {
+          if (callback == null) {
+            callback = function() {};
+          }
+          return Chat.findLastUserMessage(data.user_id, function(err, message) {
+            if (message && message.isSpam(data)) {
+              return callback("Dropping spam message " + data.message + " by user " + data.user_id + ".");
+            }
+            return Chat.create(data).complete(callback);
+          });
+        }
+      },
+      instanceMethods: {
+        isSpam: function(newMessage) {
+          return this.isTooEarly() || this.isDuplicate(newMessage);
+        },
+        isDuplicate: function(newMessage) {
+          return this.message === newMessage.message;
+        },
+        isTooEarly: function() {
+          var twoSecondsAgo;
+          twoSecondsAgo = new Date(Date.now() - 2 * 1000);
+          return this.created_at >= twoSecondsAgo;
         }
       }
     });

@@ -72,7 +72,7 @@ class App.TradeView extends App.MasterView
           return false
 
   isValidAmount: (amount)->
-    _.isNumber(amount) and not _.isNaN(amount) and amount > 0
+    _.isNumber(amount) and not _.isNaN(amount) and _.isFinite(amount) and amount > 0
 
   onMarketSwitch: (ev)->
     $target = $(ev.target)
@@ -103,6 +103,7 @@ class App.TradeView extends App.MasterView
     $input = @$("##{type}-amount-input")
     unitPrice = _.str.satoshiRound @$("##{type}-unit-price").val()
     resultAmount = if type is "buy" then _.str.satoshiRound App.math.divide(amount, unitPrice) else amount
+    resultAmount = if @isValidAmount(resultAmount) then resultAmount else 0
     $input.val(resultAmount)
     $input.trigger "keyup"
 
@@ -119,7 +120,6 @@ class App.TradeView extends App.MasterView
       subTotal = _.str.satoshiRound App.math.divide(spendAmount, lastPrice)
       totalFee = _.str.satoshiRound App.math.select(subTotal).divide(100).multiply(fee).done()
       total = _.str.satoshiRound App.math.add(subTotal, -totalFee)
-      #console.log fee, totalFee, lastPrice, total
       $fee.text totalFee
       $subTotal.text subTotal
       $result.text total
@@ -141,10 +141,9 @@ class App.TradeView extends App.MasterView
       subTotal = _.str.satoshiRound App.math.multiply(buyAmount, lastPrice)
       totalFee = _.str.satoshiRound App.math.select(buyAmount).divide(100).multiply(fee).done()
       total = _.str.satoshiRound App.math.add(buyAmount, -totalFee)
-      #console.log fee, totalFee, lastPrice, total
-      $fee.text totalFee
-      $subTotal.text subTotal
-      $result.text total
+      $fee.text _.str.toFixed totalFee
+      $subTotal.text _.str.toFixed subTotal
+      $result.text _.str.toFixed total
     else
       $result.text 0
       $fee.text 0
@@ -163,10 +162,9 @@ class App.TradeView extends App.MasterView
       subTotal = _.str.satoshiRound App.math.multiply(sellAmount, lastPrice)
       totalFee = _.str.satoshiRound App.math.select(subTotal).divide(100).multiply(fee).done()
       total = _.str.satoshiRound App.math.add(subTotal, -totalFee)
-      #console.log fee, totalFee, lastPrice, total
-      $fee.text totalFee
-      $subTotal.text subTotal
-      $result.text total
+      $fee.text _.str.toFixed totalFee
+      $subTotal.text _.str.toFixed subTotal
+      $result.text _.str.toFixed total
     else
       $result.text 0
       $fee.text 0
@@ -182,7 +180,6 @@ class App.TradeView extends App.MasterView
     @renderWalletBalance wallet.id
 
   onWalletBalanceChanged: (ev, wallet)=>
-    console.log wallet
     @renderWalletBalance wallet.id
 
   onOrderBookOrderSelected: (ev, order)=>

@@ -52,15 +52,15 @@ module.exports = (sequelize, DataTypes) ->
         set: (amount)->
           @setDataValue "amount", MarketHelper.convertToBigint(amount)
         comment: "FLOAT x 100000000"
-      sold_amount:
+      matched_amount:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         validate:
           isFloat: true
         get: ()->
-          MarketHelper.convertFromBigint @getDataValue("sold_amount")
-        set: (soldAmount)->
-          @setDataValue "sold_amount", MarketHelper.convertToBigint(soldAmount)
+          MarketHelper.convertFromBigint @getDataValue("matched_amount")
+        set: (matchedAmount)->
+          @setDataValue "matched_amount", MarketHelper.convertToBigint(matchedAmount)
         comment: "FLOAT x 100000000"
       result_amount:
         type: DataTypes.BIGINT.UNSIGNED
@@ -116,7 +116,7 @@ module.exports = (sequelize, DataTypes) ->
           return "sell"  if @action is "buy"
 
         left_amount: ()->
-          math.add(@amount, -@sold_amount)
+          math.add(@amount, -@matched_amount)
 
         left_hold_balance: ()->
           return math.multiply @left_amount, @unit_price  if @action is "buy"
@@ -159,6 +159,7 @@ module.exports = (sequelize, DataTypes) ->
               query.where = sequelize.and(query.where, sequelize.or({buy_currency: currencies[0]}, {sell_currency: currencies[0]}))
           else
             return callback "Wrong action", []
+          query.where.published = !!options.published  if options.published?
           query.order = options.sort_by  if options.sort_by
           Order.findAll(query).complete callback  
 

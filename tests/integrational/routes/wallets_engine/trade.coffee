@@ -51,7 +51,7 @@ describe "Trade Api", ->
         .end ()->
           GLOBAL.db.Order.find(1).success (order)->
             order.amount.should.eql 10
-            order.sold_amount.should.eql 5
+            order.matched_amount.should.eql 5
             order.result_amount.should.eql 4.99
             order.fee.should.eql 0.01
             order.unit_price.should.eql 0.1
@@ -66,7 +66,7 @@ describe "Trade Api", ->
         .end ()->
           GLOBAL.db.Order.find(2).success (order)->
             order.amount.should.eql 5
-            order.sold_amount.should.eql 5
+            order.matched_amount.should.eql 5
             order.result_amount.should.eql 0.499
             order.fee.should.eql 0.001
             order.unit_price.should.eql 0.1
@@ -157,7 +157,7 @@ describe "Trade Api", ->
         .end ()->
           GLOBAL.db.Order.find(1).success (order)->
             order.amount.should.eql 10
-            order.sold_amount.should.eql 5
+            order.matched_amount.should.eql 5
             order.result_amount.should.eql 4.99
             order.fee.should.eql 0.01
             order.unit_price.should.eql 0.1
@@ -172,7 +172,7 @@ describe "Trade Api", ->
         .end ()->
           GLOBAL.db.Order.find(2).success (order)->
             order.amount.should.eql 5
-            order.sold_amount.should.eql 5
+            order.matched_amount.should.eql 5
             order.result_amount.should.eql 0.2495
             order.fee.should.eql 0.0005
             order.unit_price.should.eql 0.05

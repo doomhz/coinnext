@@ -89,11 +89,16 @@
                         id: orderId,
                         canceled: true
                       });
-                      return TradeHelper.pushOrderUpdate({
+                      TradeHelper.pushOrderUpdate({
                         type: "order-canceled",
                         eventData: {
                           id: orderId
                         }
+                      });
+                      return TradeHelper.pushUserUpdate({
+                        type: "wallet-balance-changed",
+                        user_id: wallet.user_id,
+                        eventData: JsonRenderer.wallet(wallet)
                       });
                     });
                     return transaction.done(function(err) {

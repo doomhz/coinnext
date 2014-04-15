@@ -84,15 +84,10 @@
                       }
                       return res.json(JsonRenderer.order(order));
                     });
-                    usersSocket.send({
+                    return usersSocket.send({
                       type: "wallet-balance-changed",
                       user_id: wallet.user_id,
                       eventData: JsonRenderer.wallet(wallet)
-                    });
-                    return usersSocket.send({
-                      type: "wallet-balance-changed",
-                      user_id: buyWallet.user_id,
-                      eventData: JsonRenderer.wallet(buyWallet)
                     });
                   });
                   return transaction.done(function(err) {

@@ -40,7 +40,8 @@ initSockets = (server, env, sessionStore, cookieParser)->
     socket.user_id = session.passport.user  if session and session.passport
     socket.on "add-message", (data)->
       data.user_id = socket.user_id
-      Chat.create(data).success (message)->
+      Chat.addMessage data, (err, message)->
+        return console.error err  if err
         message.getUser().success (user)->
           sockets.io.of("/chat").emit "new-message", JsonRenderer.chatMessage message, user
       @

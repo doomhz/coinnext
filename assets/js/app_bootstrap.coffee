@@ -13,6 +13,9 @@ $(document).ready ()->
   _.str.satoshiRound = (number)->
     _.str.roundTo number, 8
 
+  _.str.toFixed = (number, decimals = 8)->
+    _.str.rtrim(_.str.rtrim(parseFloat(number).toFixed(decimals), "0"), ".")
+
   errorLogger = new App.ErrorLogger
 
   user = new App.UserModel
@@ -156,6 +159,7 @@ $(document).ready ()->
         currency1: $openOrders.data "currency1"
         currency2: $openOrders.data "currency2"
         userId: CONFIG.currentUser.id
+      hideOnEmpty: true
     openOrders.render()
 
     $orderBookSell = $("#order-book-sell-cnt")
@@ -168,6 +172,7 @@ $(document).ready ()->
         action: "sell"
         currency1: $orderBookSell.data "currency1"
         currency2: $orderBookSell.data "currency2"
+        published: true
         sortBy: [
           ["unit_price", "ASC"]
           ["created_at", "ASC"]
@@ -184,6 +189,7 @@ $(document).ready ()->
         action: "buy"
         currency1: $orderBookBuy.data "currency1"
         currency2: $orderBookBuy.data "currency2"
+        published: true
         sortBy: [
           ["unit_price", "DESC"]
           ["created_at", "ASC"]

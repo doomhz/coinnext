@@ -4,12 +4,15 @@ class App.OrdersView extends App.MasterView
 
   collection: null
 
+  hideOnEmpty: false
+
   events:
     "click .cancel": "onCancelClick"
 
   initialize: (options = {})->
     @tpl = options.tpl  if options.tpl
     @$totalsEl = options.$totalsEl  if options.$totalsEl
+    @hideOnEmpty = options.hideOnEmpty  if options.hideOnEmpty
     $.subscribe "new-order", @onNewOrder
     $.subscribe "order-completed", @onOrderCompleted
     $.subscribe "order-partially-completed", @onOrderPartiallyCompleted
@@ -22,9 +25,16 @@ class App.OrdersView extends App.MasterView
           @$el.append @template
             order: order
         @renderVolume()  if @$totalsEl
+        @toggleVisible()  if @hideOnEmpty
 
   renderVolume: ()->
     @$totalsEl.text @collection.calculateVolume()
+
+  toggleVisible: ()->
+    if @collection.length
+      @$el.parents("section.container:first").show()
+    else
+      @$el.parents("section.container:first").hide()
 
   onNewOrder: (ev, order)=>
     @$el.empty()

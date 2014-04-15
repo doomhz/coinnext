@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) ->
           AdminUser.find({where:{email: email}}).complete callback
 
         hashPassword: (password)->
-          crypto.createHash("sha1").update("#{password}#{GLOBAL.appConfig().salt}", "utf8").digest("hex")
+          crypto.createHash("sha256").update("#{password}#{GLOBAL.appConfig().salt}", "utf8").digest("hex")
         
         createNewUser: (data, callback)->
           userData = _.extend({}, data)
@@ -58,7 +58,7 @@ module.exports = (sequelize, DataTypes) ->
           currentPass is pass
 
         generateToken: (callback = ()->)->
-          @token = crypto.createHash("sha1").update("#{@_id}#{GLOBAL.appConfig().salt}#{Date.now()}", "utf8").digest("hex")
+          @token = crypto.createHash("sha256").update("#{@_id}#{GLOBAL.appConfig().salt}#{Date.now()}", "utf8").digest("hex")
           @save().complete (err, u)->
             callback(u.token)
 

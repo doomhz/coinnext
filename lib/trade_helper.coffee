@@ -8,6 +8,9 @@ ClientSocket = require "./client_socket"
 orderSocket = new ClientSocket
   host: GLOBAL.appConfig().app_host
   path: "orders"
+usersSocket = new ClientSocket
+  host: GLOBAL.appConfig().app_host
+  path: "users"
 math = require("mathjs")
   number: "bignumber"
   decimals: 8
@@ -31,6 +34,7 @@ TradeHelper =
     @sendEngineData uri, options, callback
 
   cancelOrder: (order, callback = ()->)->
+    return callback()  if not order.published
     uri = "#{GLOBAL.appConfig().engine_api_host}/order/#{order.id}"
     options =
       uri: uri
@@ -52,6 +56,9 @@ TradeHelper =
   pushOrderUpdate: (data)->
     orderSocket.send data
 
+  pushUserUpdate: (data)->
+    usersSocket.send data
+
   updateMatchedOrder: (orderToMatch, matchData, transaction, callback)->
     Wallet.findUserWalletByCurrency orderToMatch.user_id, orderToMatch.buy_currency, (err, buyWallet)->
       Wallet.findUserWalletByCurrency orderToMatch.user_id, orderToMatch.sell_currency, (err, sellWallet)->
@@ -69,7 +76,7 @@ TradeHelper =
             buyWallet.addBalance resultAmount, transaction, (err, buyWallet)->
               return callback err  if err or not buyWallet
               orderToMatch.status = status
-              orderToMatch.sold_amount = math.add orderToMatch.sold_amount, matchedAmount
+              orderToMatch.matched_amount = math.add orderToMatch.matched_amount, matchedAmount
               orderToMatch.result_amount = math.add orderToMatch.result_amount, resultAmount
               orderToMatch.fee = math.add orderToMatch.fee, fee
               orderToMatch.close_time = Date.now()  if status is "completed"
@@ -77,19 +84,27 @@ TradeHelper =
                 console.error "Could not process order ", err  if err
                 return callback err  if err
                 callback null, updatedOrder
+                TradeHelper.pushUserUpdate
+                  type: "wallet-balance-changed"
+                  user_id: sellWallet.user_id
+                  eventData: JsonRenderer.wallet sellWallet
+                TradeHelper.pushUserUpdate
+                  type: "wallet-balance-changed"
+                  user_id: buyWallet.user_id
+                  eventData: JsonRenderer.wallet buyWallet
 
   trackMatchedOrder: (order, callback = ()->)->
     if order.status is "completed"
       MarketStats.trackFromOrder order, (err, mkSt)->
         callback err, mkSt
-        orderSocket.send
+        TradeHelper.send
           type: "market-stats-updated"
           eventData: mkSt.toJSON()
-      orderSocket.send
+      TradeHelper.pushOrderUpdate
         type: "order-completed"
         eventData: JsonRenderer.order order
     if order.status is "partiallyCompleted"
-      orderSocket.send
+      TradeHelper.pushOrderUpdate
         type: "order-partially-completed"
         eventData: JsonRenderer.order order
       callback()

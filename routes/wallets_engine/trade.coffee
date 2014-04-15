@@ -56,6 +56,10 @@ module.exports = (app)->
                       type: "order-canceled"
                       eventData:
                         id: orderId
+                    TradeHelper.pushUserUpdate
+                      type: "wallet-balance-changed"
+                      user_id: wallet.user_id
+                      eventData: JsonRenderer.wallet wallet
                   transaction.done (err)->
                     next(new restify.ConflictError "Could not cancel order #{orderId} - #{err}")  if err
 

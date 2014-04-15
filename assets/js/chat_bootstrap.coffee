@@ -10,7 +10,7 @@ $(document).ready ()->
   
   if $globalChat.length
     user.fetch
-      success: ()->
+      complete: ()->
         globalChat = new App.ChatView
           el: $globalChat
           user: user

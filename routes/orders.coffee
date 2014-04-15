@@ -47,10 +47,6 @@ module.exports = (app)->
                     type: "wallet-balance-changed"
                     user_id: wallet.user_id
                     eventData: JsonRenderer.wallet wallet
-                  usersSocket.send
-                    type: "wallet-balance-changed"
-                    user_id: buyWallet.user_id
-                    eventData: JsonRenderer.wallet buyWallet
                 transaction.done (err)->
                   JsonRenderer.error "Could not open an order. Please try again later.", res  if err
 
