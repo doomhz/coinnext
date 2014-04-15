@@ -77,7 +77,7 @@
                   transaction.commit().success(function() {
                     newOrder.publish(function(err, order) {
                       if (err) {
-                        console.log("Could not publish newlly created order - " + err);
+                        console.error("Could not publish newlly created order - " + err);
                       }
                       if (err) {
                         return res.json(JsonRenderer.order(newOrder));
@@ -120,7 +120,7 @@
         }
         return order.cancel(function(err) {
           if (err) {
-            console.log("Could not cancel order - " + err);
+            console.error("Could not cancel order - " + err);
           }
           if (err) {
             return res.json(JsonRenderer.order(order));
@@ -134,7 +134,7 @@
         return "Market orders are disabled at the moment.";
       }
       if (!Order.isValidTradeAmount(orderData.amount)) {
-        return "Please submit a valid amount bigger than 0.";
+        return "Please submit a valid amount bigger than 0.0000001.";
       }
       if (orderData.type === "limit" && !Order.isValidTradeAmount(parseFloat(orderData.unit_price))) {
         return "Please submit a valid unit price amount.";
@@ -153,6 +153,9 @@
       }
       if (!MarketHelper.isValidMarket(orderData.action, orderData.buy_currency, orderData.sell_currency)) {
         return "Invalid market.";
+      }
+      if (!Order.isValidFee(orderData.amount, orderData.action, orderData.unit_price)) {
+        return "The fee is too low, please submit a bigger amount.";
       }
       return false;
     };

@@ -40,7 +40,7 @@ module.exports = (app)->
                     JsonRenderer.error "Sorry, could not open an order...", res
                 transaction.commit().success ()->
                   newOrder.publish (err, order)->
-                    console.log "Could not publish newlly created order - #{err}"  if err
+                    console.error "Could not publish newlly created order - #{err}"  if err
                     return res.json JsonRenderer.order newOrder  if err
                     res.json JsonRenderer.order order
                   usersSocket.send
@@ -60,17 +60,19 @@ module.exports = (app)->
     Order.findByUserAndId req.params.id, req.user.id, (err, order)->
       return JsonRenderer.error "Sorry, could not delete orders...", res  if err or not order
       order.cancel (err)->
-        console.log "Could not cancel order - #{err}"  if err
+        console.error "Could not cancel order - #{err}"  if err
         return res.json JsonRenderer.order order  if err
         res.json {}
 
+  # TODO: Move to the model as field validations
   notValidOrderData = (orderData)->
     return "Market orders are disabled at the moment."  if orderData.type is "market"
-    return "Please submit a valid amount bigger than 0."  if not Order.isValidTradeAmount orderData.amount
+    return "Please submit a valid amount bigger than 0.0000001."  if not Order.isValidTradeAmount orderData.amount
     return "Please submit a valid unit price amount."  if orderData.type is "limit" and not Order.isValidTradeAmount(parseFloat(orderData.unit_price))
     return "Please submit a valid action."  if not MarketHelper.getOrderAction orderData.action
     return "Please submit a valid buy currency."  if not MarketHelper.isValidCurrency orderData.buy_currency
     return "Please submit a valid sell currency."  if not MarketHelper.isValidCurrency orderData.sell_currency
     return "Please submit different currencies."  if orderData.buy_currency is orderData.sell_currency
     return "Invalid market."  if not MarketHelper.isValidMarket orderData.action, orderData.buy_currency, orderData.sell_currency
+    return "The fee is too low, please submit a bigger amount."  if not Order.isValidFee orderData.amount, orderData.action, orderData.unit_price
     false

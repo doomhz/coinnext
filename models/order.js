@@ -258,7 +258,16 @@
           return Order.findAll(query).complete(callback);
         },
         isValidTradeAmount: function(amount) {
-          return _.isNumber(amount) && !_.isNaN(amount) && amount > 0;
+          return _.isNumber(amount) && !_.isNaN(amount) && _.isFinite(amount) && amount > MarketHelper.getMinTradeAmount();
+        },
+        isValidFee: function(amount, action, unitPrice) {
+          if (MarketHelper.getTradeFee() === 0) {
+            return true;
+          }
+          if (!_.isNumber(amount) || _.isNaN(amount) || !_.isFinite(amount)) {
+            return false;
+          }
+          return MarketHelper.calculateFee(MarketHelper.calculateResultAmount(amount, action, unitPrice)) > MarketHelper.getMinFeeAmount();
         }
       },
       instanceMethods: {

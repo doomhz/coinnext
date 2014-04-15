@@ -154,4 +154,18 @@ MarketHelper =
   getTradeFee: ()->
     FEE
 
+  getMinTradeAmount: ()->
+    0.0000001
+
+  getMinFeeAmount: ()->
+    0.00000001
+
+  calculateResultAmount: (amount, action, unitPrice)->
+    return amount  if action is "buy"
+    unitPrice = @convertFromBigint unitPrice
+    math.multiply(amount, unitPrice)
+
+  calculateFee: (amount)->
+    math.select(amount).divide(100).multiply(@getTradeFee()).done()
+
 exports = module.exports = MarketHelper

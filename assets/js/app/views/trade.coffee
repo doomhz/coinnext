@@ -57,7 +57,7 @@ class App.TradeView extends App.MasterView
           amount:
             required: true
             number: true
-            min: 0.000001
+            min: 0.0000001
           unit_price:
             required: true
             number: true
