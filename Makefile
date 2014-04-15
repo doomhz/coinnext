@@ -31,6 +31,7 @@ test-one:
 	@NODE_ENV=test ./node_modules/.bin/mocha -u bdd -b \
 		--reporter $(REPORTER) \
 		--compilers coffee:coffee-script/register \
+		--timeout 3000 \
 		$f
 
 test-one-w:

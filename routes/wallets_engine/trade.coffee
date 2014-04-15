@@ -81,8 +81,10 @@ module.exports = (app)->
                 return transaction.rollback().success ()->
                   next(new restify.ConflictError "Could not process order #{matchingOrder.id} - #{err}")
               transaction.commit().success ()->
-                TradeHelper.trackMatchedOrder updatedOrderToMatch
-                TradeHelper.trackMatchedOrder updatedMatchingOrder
-                res.send()
+                TradeHelper.trackMatchedOrder updatedOrderToMatch, ()->
+                  TradeHelper.trackMatchedOrder updatedMatchingOrder, ()->
+                    res.send()
               transaction.done (err)->
-                next(new restify.ConflictError "Could not process order #{orderId} - #{err}")  if err
+                if err
+                  console.error "Could not process order #{orderId}", err
+                  next(new restify.ConflictError "Could not process order #{orderId} - #{err}")

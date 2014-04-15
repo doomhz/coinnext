@@ -141,12 +141,15 @@
                   });
                 }
                 transaction.commit().success(function() {
-                  TradeHelper.trackMatchedOrder(updatedOrderToMatch);
-                  TradeHelper.trackMatchedOrder(updatedMatchingOrder);
-                  return res.send();
+                  return TradeHelper.trackMatchedOrder(updatedOrderToMatch, function() {
+                    return TradeHelper.trackMatchedOrder(updatedMatchingOrder, function() {
+                      return res.send();
+                    });
+                  });
                 });
                 return transaction.done(function(err) {
                   if (err) {
+                    console.error("Could not process order " + orderId, err);
                     return next(new restify.ConflictError("Could not process order " + orderId + " - " + err));
                   }
                 });

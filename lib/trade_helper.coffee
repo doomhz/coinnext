@@ -104,11 +104,9 @@ TradeHelper =
         type: "order-completed"
         eventData: JsonRenderer.order order
     if order.status is "partiallyCompleted"
+      callback()
       TradeHelper.pushOrderUpdate
         type: "order-partially-completed"
         eventData: JsonRenderer.order order
-      callback()
-    else
-      callback()
 
 exports = module.exports = TradeHelper

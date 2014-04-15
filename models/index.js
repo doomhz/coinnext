@@ -25,7 +25,7 @@
       timestamps: true
     },
     pool: {
-      maxConnections: 10,
+      maxConnections: 151,
       maxIdleTime: 30
     }
   });

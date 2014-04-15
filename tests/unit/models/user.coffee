@@ -5,4 +5,4 @@ describe "User", ->
   describe "hashPassword", ()->
     it "returns the hashed password", ()->
       password = "testPassword"
-      GLOBAL.db.User.hashPassword(password).should.eql "7956e77278fcf84375e188c91ad5e4d9a83d44a3"
+      GLOBAL.db.User.hashPassword(password).should.eql "f7dfe3adc9848f0d258f16ecaf79a524f13e704620a653885c913b1873774f62"

@@ -9,7 +9,7 @@ request = require "supertest"
 beforeEach (done)->
   GLOBAL.db.sequelize.sync({force: true}).complete ()->
     GLOBAL.db.sequelize.query("TRUNCATE TABLE #{GLOBAL.db.MarketStats.tableName}").complete ()->
-      GLOBAL.db.MarketStats.bulkCreate(marketStats).success ()->
+      GLOBAL.db.MarketStats.bulkCreate(marketStats).complete ()->
         done()
 
 describe "Orders Routes", ->

@@ -10,7 +10,7 @@ describe "Trade Api", ->
   beforeEach (done)->
     GLOBAL.db.sequelize.sync({force: true}).complete ()->
       GLOBAL.db.sequelize.query("TRUNCATE TABLE #{GLOBAL.db.MarketStats.tableName}").complete ()->
-        GLOBAL.db.MarketStats.bulkCreate(marketStats).success ()->
+        GLOBAL.db.MarketStats.bulkCreate(marketStats).complete ()->
           done()
 
   describe "POST /orders_match", ()->
@@ -49,7 +49,7 @@ describe "Trade Api", ->
         .send(matchData)
         .expect(200)
         .end ()->
-          GLOBAL.db.Order.find(1).success (order)->
+          GLOBAL.db.Order.find(1).complete (err, order)->
             order.amount.should.eql 10
             order.matched_amount.should.eql 5
             order.result_amount.should.eql 4.99
@@ -64,7 +64,7 @@ describe "Trade Api", ->
         .send(matchData)
         .expect(200)
         .end ()->
-          GLOBAL.db.Order.find(2).success (order)->
+          GLOBAL.db.Order.find(2).complete (err, order)->
             order.amount.should.eql 5
             order.matched_amount.should.eql 5
             order.result_amount.should.eql 0.499
@@ -79,8 +79,8 @@ describe "Trade Api", ->
         .send(matchData)
         .expect(200)
         .end ()->
-          GLOBAL.db.Wallet.find(1).success (sellWallet)->
-            GLOBAL.db.Wallet.find(2).success (buyWallet)->
+          GLOBAL.db.Wallet.find(1).complete (err, sellWallet)->
+            GLOBAL.db.Wallet.find(2).complete (err, buyWallet)->
               sellWallet.balance.should.eql 9
               sellWallet.hold_balance.should.eql 0.5
               buyWallet.balance.should.eql 4.99
@@ -93,8 +93,8 @@ describe "Trade Api", ->
         .send(matchData)
         .expect(200)
         .end ()->
-          GLOBAL.db.Wallet.find(3).success (buyWallet)->
-            GLOBAL.db.Wallet.find(4).success (sellWallet)->
+          GLOBAL.db.Wallet.find(3).complete (err, buyWallet)->
+            GLOBAL.db.Wallet.find(4).complete (err, sellWallet)->
               sellWallet.balance.should.eql 5
               sellWallet.hold_balance.should.eql 0
               buyWallet.balance.should.eql 0.499
@@ -155,7 +155,7 @@ describe "Trade Api", ->
         .send(matchData)
         .expect(200)
         .end ()->
-          GLOBAL.db.Order.find(1).success (order)->
+          GLOBAL.db.Order.find(1).complete (err, order)->
             order.amount.should.eql 10
             order.matched_amount.should.eql 5
             order.result_amount.should.eql 4.99
@@ -170,7 +170,7 @@ describe "Trade Api", ->
         .send(matchData)
         .expect(200)
         .end ()->
-          GLOBAL.db.Order.find(2).success (order)->
+          GLOBAL.db.Order.find(2).complete (err, order)->
             order.amount.should.eql 5
             order.matched_amount.should.eql 5
             order.result_amount.should.eql 0.2495
@@ -185,8 +185,8 @@ describe "Trade Api", ->
         .send(matchData)
         .expect(200)
         .end ()->
-          GLOBAL.db.Wallet.find(1).success (sellWallet)->
-            GLOBAL.db.Wallet.find(2).success (buyWallet)->
+          GLOBAL.db.Wallet.find(1).complete (err, sellWallet)->
+            GLOBAL.db.Wallet.find(2).complete (err, buyWallet)->
               sellWallet.balance.should.eql 9.25
               sellWallet.hold_balance.should.eql 0.5
               buyWallet.balance.should.eql 4.99
@@ -199,8 +199,8 @@ describe "Trade Api", ->
         .send(matchData)
         .expect(200)
         .end ()->
-          GLOBAL.db.Wallet.find(3).success (buyWallet)->
-            GLOBAL.db.Wallet.find(4).success (sellWallet)->
+          GLOBAL.db.Wallet.find(3).complete (err, buyWallet)->
+            GLOBAL.db.Wallet.find(4).complete (err, sellWallet)->
               sellWallet.balance.should.eql 5
               sellWallet.hold_balance.should.eql 0
               buyWallet.balance.should.eql 0.2495
@@ -213,14 +213,12 @@ describe "Trade Api", ->
         .send(matchData)
         .expect(200)
         .end ()->
-          setTimeout ()->
-              GLOBAL.db.MarketStats.getStats (err, stats)->
-                stats["LTC_BTC"].growth_ratio.should.eql 100
-                stats["LTC_BTC"].last_price.should.eql 0.05
-                stats["LTC_BTC"].day_high.should.eql 0.05
-                stats["LTC_BTC"].day_low.should.eql 0.05
-                stats["LTC_BTC"].volume1.should.eql 5
-                stats["LTC_BTC"].volume2.should.eql 0.25
-                new Date(stats["LTC_BTC"].today).getDate().should.eql new Date().getDate()
-                done()
-            , 500
+          GLOBAL.db.MarketStats.getStats (err, stats)->
+            stats["LTC_BTC"].growth_ratio.should.eql 100
+            stats["LTC_BTC"].last_price.should.eql 0.05
+            stats["LTC_BTC"].day_high.should.eql 0.05
+            stats["LTC_BTC"].day_low.should.eql 0.05
+            stats["LTC_BTC"].volume1.should.eql 5
+            stats["LTC_BTC"].volume2.should.eql 0.25
+            new Date(stats["LTC_BTC"].today).getDate().should.eql new Date().getDate()
+            done()

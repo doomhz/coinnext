@@ -59,9 +59,9 @@ TransactionHelper =
         console.error err  if err
         return callback()  if err
         category = walletTransaction.details[0].category
-        account = walletTransaction.details[0].account
+        address = walletTransaction.details[0].address
         return callback()  if not Transaction.isValidFormat category
-        Wallet.findByAccount account, (err, wallet)->
+        Wallet.findByAddress address, (err, wallet)->
           Transaction.addFromWallet walletTransaction, currency, wallet, (err, updatedTransaction)->
             if wallet
               usersSocket.send

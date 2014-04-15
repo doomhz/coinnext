@@ -17,7 +17,7 @@ sequelize = new Sequelize authData.db, authData.user, authData.password,
     collate: "utf8_general_ci"
     timestamps: true
   pool:
-    maxConnections: 10
+    maxConnections: 151
     maxIdleTime: 30
 db = {}
 
