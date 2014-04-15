@@ -162,10 +162,9 @@ MarketHelper =
 
   calculateResultAmount: (amount, action, unitPrice)->
     return amount  if action is "buy"
-    unitPrice = @convertFromBigint unitPrice
-    math.multiply(amount, unitPrice)
+    math.multiply(parseFloat(amount), parseFloat(unitPrice))
 
   calculateFee: (amount)->
-    math.select(amount).divide(100).multiply(@getTradeFee()).done()
+    math.select(parseFloat(amount)).divide(100).multiply(@getTradeFee()).done()
 
 exports = module.exports = MarketHelper
