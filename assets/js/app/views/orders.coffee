@@ -53,8 +53,8 @@ class App.OrdersView extends App.MasterView
     if $existentOrder.length
       $existentOrder.addClass "highlight"
       $existentOrder.find(".trade-price").text order.get("unit_price")
-      $existentOrder.find(".trade-amount").text order.calculateFirstAmount()
-      $existentOrder.find(".trade-total").text order.calculateSecondAmount()
+      $existentOrder.find(".trade-amount").text order.calculateFirstNoFeeAmount()
+      $existentOrder.find(".trade-total").text order.calculateSecondNoFeeAmount()
       setTimeout ()->
           $existentOrder.removeClass "highlight"  if $existentOrder.length
         , 1000
