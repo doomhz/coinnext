@@ -1,4 +1,5 @@
 _ = require "underscore"
+_str = require "underscore.string"
 
 JsonRenderer =
 
@@ -109,7 +110,17 @@ JsonRenderer =
     data
 
   error: (err, res, code = 409, log = true)->
+    console.error err  if log
     res.statusCode = code
+    if _.isObject(err)
+      delete err.sql
+      if err.code is "ER_DUP_ENTRY"
+        message = "#{err}"
+        message = message.replace "Error: ER_DUP_ENTRY: ", ""
+        message = message.replace /for key.*$/, ""
+        message = message.replace /Duplicate entry/, "Value already taken"
+        message = _str.trim message
+        return res.json {error: message}
     message = ""
     if _.isString err
       message = err
@@ -120,6 +131,5 @@ JsonRenderer =
         else
           message += "#{val} "
     res.json {error: message}
-    console.error message  if log
 
 exports = module.exports = JsonRenderer
