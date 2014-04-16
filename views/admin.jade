@@ -31,7 +31,7 @@ html(lang='en')
           li: a(href='/administratie/markets', class=(page === 'markets' ? 'active' : '')) Markets
           li
             a(href='/administratie/wallets', class=(page === 'wallets' ? 'active' : '')) Wallets
-            ul
+            ul.currency-nav
               - each currency in currencies
                 li: a(href="/administratie/wallets?currency=#{currency}") #{currency}
           

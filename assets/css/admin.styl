@@ -3,6 +3,7 @@ use("./plugins/cdn.js")
 @import 'vendor/normalize.css'
 @import 'mixins'
 
+$red = #da4444
 $teal = #3eae5f
 $blue = #549cd5
 $darkblue = #14294e
@@ -58,6 +59,13 @@ body
   color #484c57
   -webkit-font-smoothing antialiased
   font 14px "Helvetica Neue", Helvetica, Arial, sans-serif
+
+a
+  text-decoration none
+  color $blue
+  transition color .1s linear
+  &:hover
+    text-decoration underline
 
 input
 button:focus
@@ -146,6 +154,26 @@ button:focus
     text-decoration none
 
 /* Content */
+.action
+  background #fff
+  color inherit
+  border-radius 3px
+  padding 2px 5px
+  text-transform uppercase
+  border 1px solid $border-color
+  font-size 12px
+  margin 0
+  transition all .1s linear
+  &:hover
+    color $blue
+    text-decoration none
+    border-color $blue
+  &:active
+    color $darkblue
+  &.disable
+    &:hover
+      color $red
+      border-color $red
 
 .content
   margin-left 200px
@@ -198,6 +226,8 @@ th
     font-weight bold
     width 1px
 
+.stats
+  reset-list()
 
 h2
   margin 0 0 10px 0
