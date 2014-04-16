@@ -114,13 +114,7 @@ JsonRenderer =
     res.statusCode = code
     if _.isObject(err)
       delete err.sql
-      if err.code is "ER_DUP_ENTRY"
-        message = "#{err}"
-        message = message.replace "Error: ER_DUP_ENTRY: ", ""
-        message = message.replace /for key.*$/, ""
-        message = message.replace /Duplicate entry/, "Value already taken"
-        message = _str.trim message
-        return res.json {error: message}
+      return res.json {error: @formatDuplicateError("#{err}")}  if err.code is "ER_DUP_ENTRY"
     message = ""
     if _.isString err
       message = err
@@ -130,6 +124,12 @@ JsonRenderer =
           message += "#{val.join(' ')} "
         else
           message += "#{val} "
-    res.json {error: message}
+    res.json {error: @formatDuplicateError(message)}
+
+  formatDuplicateError: (message)->
+    message = message.replace "Error: ER_DUP_ENTRY: ", ""
+    message = message.replace /for key.*$/, ""
+    message = message.replace /Duplicate entry/, "Value already taken"
+    _str.trim message
 
 exports = module.exports = JsonRenderer
