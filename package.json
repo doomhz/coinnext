@@ -44,7 +44,7 @@
     , "ip": "latest"
     , "phonetic": "latest"
     , "recaptcha-async": "latest"
-    , "mathjs": "latest"
+    , "mathjs": "0.19.0"
     , "express-simple-cdn": "latest"
   },
   "devDependencies": {
