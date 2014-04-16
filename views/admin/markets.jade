@@ -15,5 +15,5 @@ block content
           td #{market.type}
           td #{market.status}
           td
-            button.market-switcher(data-id="#{market.id}", data-status="#{market.status === 'disabled' ? 'enabled' : 'disabled'}")
+            button.market-switcher.action.disable(data-id="#{market.id}", data-status="#{market.status === 'disabled' ? 'enabled' : 'disabled'}")
               | #{market.status === 'disabled' ? 'Enable' : 'Disable'}
