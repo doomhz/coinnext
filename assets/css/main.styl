@@ -14,19 +14,19 @@ $lightgray = #a7abb1
 $border-color = #d1d5dd
 $con-header-bg = #f2f4f5
 $bgcolor = #f6f7f8
-$bgcolor = #eff1f3
 
 $text-color = #2d3441
 
 @import 'framework'
 
 html
-  background #13294e
+body
+  height 100%
 
 body
   min-width 1000px
   background $bgcolor
-  color #484c57
+  color #4e4e4e
   -webkit-font-smoothing antialiased
   font 14px "Helvetica Neue", Helvetica, Arial, sans-serif
 
@@ -116,6 +116,7 @@ textarea
 
 .site-nav
 .auth-nav
+  font-family "Gotham SSm A", "Gotham SSm B", Arial, sans-serif
   float right
   .nav
     clearfix()
@@ -174,11 +175,11 @@ textarea
       line-height 25px
       margin 12px 5px
       padding 0 20px
-      font-size 12px
+      font-size 11px
       &.white
         btn(white)
         padding 0 20px
-        font-size 12px
+        font-size 11px
         line-height 23px
 
 /* Body */
@@ -250,7 +251,7 @@ hr
       reset-list()
       li
         a
-          padding 2px
+          padding 2px 0
           color $lightgray
           display block
           &:hover
