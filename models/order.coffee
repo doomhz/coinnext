@@ -184,6 +184,10 @@ module.exports = (sequelize, DataTypes) ->
           return false  if not _.isNumber(amount) or _.isNaN(amount) or not _.isFinite(amount)
           MarketHelper.calculateFee(MarketHelper.calculateResultAmount(amount, action, unitPrice)) > MarketHelper.getMinFeeAmount()
 
+        isValidSpendAmount: (amount, action, unitPrice)->
+          return false  if not _.isNumber(amount) or _.isNaN(amount) or not _.isFinite(amount)
+          MarketHelper.calculateSpendAmount(amount, action, unitPrice) >= MarketHelper.getMinSpendAmount()
+
       instanceMethods:
         
         publish: (callback = ()->)->

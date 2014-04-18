@@ -157,6 +157,9 @@ MarketHelper =
   getMinTradeAmount: ()->
     0.0000001
 
+  getMinSpendAmount: ()->
+    0.00000001
+
   getMinFeeAmount: ()->
     0.00000001
 
@@ -166,5 +169,9 @@ MarketHelper =
 
   calculateFee: (amount)->
     math.select(parseFloat(amount)).divide(100).multiply(@getTradeFee()).done()
+
+  calculateSpendAmount: (amount, action, unitPrice)->
+    return amount  if action is "sell"
+    math.multiply(parseFloat(amount), parseFloat(unitPrice))
 
 exports = module.exports = MarketHelper
