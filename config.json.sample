@@ -16,14 +16,18 @@
       "session_key": "cnxweb",
       "cookie": {
         "maxAge": 2592000000,
-        "path": "/"
+        "path": "/",
+        "httpOnly": true,
+        "secure": true
       },
       "admin": {
         "cookie_secret": "adminsecretkey",
         "session_key": "cnxadmin",
         "cookie": {
           "maxAge": 2592000000,
-          "path": "/"
+          "path": "/",
+          "httpOnly": true,
+          "secure": true
         }
       }
     },
@@ -142,14 +146,18 @@
       "session_key": "cnxweb",
       "cookie": {
         "maxAge": 2592000000,
-        "path": "/"
+        "path": "/",
+        "httpOnly": true,
+        "secure": true
       },
       "admin": {
         "cookie_secret": "adminsecretkey",
         "session_key": "cnxadmin",
         "cookie": {
           "maxAge": 2592000000,
-          "path": "/"
+          "path": "/",
+          "httpOnly": true,
+          "secure": true
         }
       }
     },
@@ -267,14 +275,18 @@
       "session_key": "cnxweb",
       "cookie": {
         "maxAge": 2592000000,
-        "path": "/"
+        "path": "/",
+        "httpOnly": true,
+        "secure": true
       },
       "admin": {
         "cookie_secret": "adminsecretkey",
         "session_key": "cnxadmin",
         "cookie": {
           "maxAge": 2592000000,
-          "path": "/"
+          "path": "/",
+          "httpOnly": true,
+          "secure": true
         }
       }
     },

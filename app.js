@@ -50,6 +50,7 @@ app.configure(function () {
   app.use(express.session({
     key: GLOBAL.appConfig().session.session_key,
     store: sessionStore,
+    proxy: true,
     cookie: GLOBAL.appConfig().session.cookie
   }));
   if (environment !== "test") {

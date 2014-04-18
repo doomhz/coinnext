@@ -42,6 +42,7 @@ app.configure(function () {
   app.use(express.session({
     key: GLOBAL.appConfig().session.admin.session_key,
     store: new RedisStore(GLOBAL.appConfig().redis),
+    proxy: true,
     cookie: GLOBAL.appConfig().session.admin.cookie
   }));
   if (environment !== "test") {

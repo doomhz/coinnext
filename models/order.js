@@ -267,7 +267,13 @@
           if (!_.isNumber(amount) || _.isNaN(amount) || !_.isFinite(amount)) {
             return false;
           }
-          return MarketHelper.calculateFee(MarketHelper.calculateResultAmount(amount, action, unitPrice)) > MarketHelper.getMinFeeAmount();
+          return MarketHelper.calculateFee(MarketHelper.calculateResultAmount(amount, action, unitPrice)) >= MarketHelper.getMinFeeAmount();
+        },
+        isValidSpendAmount: function(amount, action, unitPrice) {
+          if (!_.isNumber(amount) || _.isNaN(amount) || !_.isFinite(amount)) {
+            return false;
+          }
+          return MarketHelper.calculateSpendAmount(amount, action, unitPrice) >= MarketHelper.getMinSpendAmount();
         }
       },
       instanceMethods: {

@@ -154,6 +154,9 @@
       if (!MarketHelper.isValidMarket(orderData.action, orderData.buy_currency, orderData.sell_currency)) {
         return "Invalid market.";
       }
+      if (!Order.isValidSpendAmount(orderData.amount, orderData.action, orderData.unit_price)) {
+        return "Trade amount is too low, please submit a bigger amount.";
+      }
       if (!Order.isValidFee(orderData.amount, orderData.action, orderData.unit_price)) {
         return "The fee is too low, please submit a bigger amount.";
       }

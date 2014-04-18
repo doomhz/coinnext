@@ -4,7 +4,7 @@ class App.FinancesView extends App.MasterView
     "submit #add-wallet-form": "onAddWallet"
     "click #show-qr-bt": "onShowQrAddress"
     "click #generate-address": "onGenerateAddress"
-    #"submit #withdraw-form": "onPay"
+    "click [data-wallet-available-balance-id]": "onAvailableBalanceClick"
 
   initialize: (options)->
     $.subscribe "payment-processed", @onPaymentProcessed
@@ -120,6 +120,12 @@ class App.FinancesView extends App.MasterView
           $.publish "error", xhr
     else
       $.publish "error", "Please submit a proper amount."
+
+  onAvailableBalanceClick: (ev)->
+    ev.preventDefault()
+    $target = $(ev.target)
+    amount = _.str.satoshiRound  App.math.add(parseFloat($target.text()), -parseFloat($target.data("withdrawal-fee")))
+    $("#withdrawal-amount").val amount
 
   onPaymentProcessed: (ev, payment)=>
     @renderWalletBalance payment.get("wallet_id")

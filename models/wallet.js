@@ -1,9 +1,14 @@
 (function() {
-  var MarketHelper, _;
+  var MarketHelper, math, _;
 
   MarketHelper = require("../lib/market_helper");
 
   _ = require("underscore");
+
+  math = require("mathjs")({
+    number: "bignumber",
+    decimals: 8
+  });
 
   module.exports = function(sequelize, DataTypes) {
     var Wallet;
@@ -62,6 +67,9 @@
         },
         fee: function() {
           return MarketHelper.getTradeFee();
+        },
+        withdrawal_fee: function() {
+          return MarketHelper.getWithdrawalFee(this.currency);
         }
       },
       classMethods: {
@@ -212,8 +220,16 @@
             return callback("Could not add wallet hold balance " + balance + " for " + this.id + ", invalid balance " + balance + ".");
           }
         },
-        canWithdraw: function(amount) {
-          return parseFloat(this.balance) >= parseFloat(amount);
+        canWithdraw: function(amount, includeFee) {
+          var withdrawAmount;
+          if (includeFee == null) {
+            includeFee = true;
+          }
+          withdrawAmount = parseFloat(amount);
+          if (includeFee) {
+            withdrawAmount = math.add(withdrawAmount, this.withdrawal_fee);
+          }
+          return this.balance >= withdrawAmount;
         }
       }
     });
