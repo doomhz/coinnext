@@ -48,7 +48,7 @@ describe "Transactions Api", ->
   describe "POST /process_pending_payments", ()->
     describe "when the wallet has enough balance", ()->
       it "returns 200 ok and the executed payment ids", (done)->
-        wallet.balance = 10
+        wallet.balance = 10.0002
         wallet.save().complete ()->
           GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
             request('http://localhost:6000')
@@ -63,7 +63,7 @@ describe "Transactions Api", ->
                 done()
 
       it "updates the user_id from the payment", (done)->
-        wallet.balance = 10
+        wallet.balance = 10.0002
         wallet.save().complete ()->
           GLOBAL.db.Transaction.create({wallet_id: wallet.id, currency: "BTC", txid: "unique_tx_id_mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, tx)->
             GLOBAL.db.Payment.create({wallet_id: wallet.id, user_id: 1, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
@@ -92,8 +92,8 @@ describe "Transactions Api", ->
 
     describe "when there are payments for the same user", ()->
       it "processes only one payment", (done)->
-        GLOBAL.db.Wallet.create({currency: "BTC", user_id: 2, balance: 10}).complete (err, wallet2)->
-          wallet.balance = 10
+        GLOBAL.db.Wallet.create({currency: "BTC", user_id: 2, balance: 10.0002}).complete (err, wallet2)->
+          wallet.balance = 10.0002
           wallet.save().complete ()->
             GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: 5, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVa"}).complete (err, pm)->
               GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: 5, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVb"}).complete (err2, pm2)->

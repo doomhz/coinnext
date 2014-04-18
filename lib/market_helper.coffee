@@ -51,6 +51,12 @@ TRANSACTION_ACCEPTED_CATEGORIES =
 
 TRANSACTION_MIN_CONF = 3
 
+WITHDRAWAL_FEES =
+  BTC: 0.0002
+  LTC: 0.002
+  PPC: 0.02
+  DOGE: 2
+
 TOKENS =
   email_confirmation: 1
   google_auth: 2
@@ -173,5 +179,8 @@ MarketHelper =
   calculateSpendAmount: (amount, action, unitPrice)->
     return amount  if action is "sell"
     math.multiply(parseFloat(amount), parseFloat(unitPrice))
+
+  getWithdrawalFee: (currency)->
+    WITHDRAWAL_FEES[currency]
 
 exports = module.exports = MarketHelper

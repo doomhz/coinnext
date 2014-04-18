@@ -27,20 +27,24 @@ TransactionHelper =
             if err
               return transaction.rollback().success ()->
                 callback null, "#{payment.id} - not processed - #{err}"
-            TransactionHelper.pay payment, (err, p)->
-              if err or not p.isProcessed()
+            wallet.addBalance -wallet.withdrawal_fee, transaction, (err)->
+              if err
                 return transaction.rollback().success ()->
                   callback null, "#{payment.id} - not processed - #{err}"
-              transaction.commit().success ()->
-                TransactionHelper.paymentsProcessedUserIds.push wallet.user_id
-                Transaction.setUserById p.transaction_id, p.user_id, ()->
-                  callback null, "#{payment.id} - processed"
-                  usersSocket.send
-                    type: "payment-processed"
-                    user_id: payment.user_id
-                    eventData: JsonRenderer.payment p
-              transaction.done (err)->
-                callback null, "#{payment.id} - not processed - #{err}"  if err
+              TransactionHelper.pay payment, (err, p)->
+                if err or not p.isProcessed()
+                  return transaction.rollback().success ()->
+                    callback null, "#{payment.id} - not processed - #{err}"
+                transaction.commit().success ()->
+                  TransactionHelper.paymentsProcessedUserIds.push wallet.user_id
+                  Transaction.setUserById p.transaction_id, p.user_id, ()->
+                    callback null, "#{payment.id} - processed"
+                    usersSocket.send
+                      type: "payment-processed"
+                      user_id: payment.user_id
+                      eventData: JsonRenderer.payment p
+                transaction.done (err)->
+                  callback null, "#{payment.id} - not processed - #{err}"  if err
 
   pay: (payment, callback = ()->)->
     GLOBAL.wallets[payment.currency].sendToAddress payment.address, payment.amount, (err, response = "")->

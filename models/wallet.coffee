@@ -1,5 +1,8 @@
 MarketHelper = require "../lib/market_helper"
 _ = require "underscore"
+math = require("mathjs")
+  number: "bignumber"
+  decimals: 8
 
 module.exports = (sequelize, DataTypes) ->
 
@@ -49,6 +52,9 @@ module.exports = (sequelize, DataTypes) ->
 
         fee: ()->
           MarketHelper.getTradeFee()
+
+        withdrawal_fee: ()->
+          MarketHelper.getWithdrawalFee @currency
 
       classMethods:
 
@@ -120,7 +126,9 @@ module.exports = (sequelize, DataTypes) ->
           else
             callback "Could not add wallet hold balance #{balance} for #{@id}, invalid balance #{balance}."
 
-        canWithdraw: (amount)->
-          parseFloat(@balance) >= parseFloat(amount)
+        canWithdraw: (amount, includeFee = true)->
+          withdrawAmount = parseFloat amount
+          withdrawAmount = math.add(withdrawAmount, @withdrawal_fee)  if includeFee
+          @balance >= withdrawAmount
 
   Wallet
