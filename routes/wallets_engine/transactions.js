@@ -1,5 +1,5 @@
 (function() {
-  var JsonRenderer, Payment, Transaction, TransactionHelper, Wallet, async, paymentsProcessedUserIds, restify;
+  var JsonRenderer, Payment, Transaction, TransactionHelper, Wallet, async, paymentsProcessedUserIds, restify, _;
 
   restify = require("restify");
 
@@ -17,6 +17,8 @@
 
   paymentsProcessedUserIds = [];
 
+  _ = require("underscore");
+
   module.exports = function(app) {
     app.put("/transaction/:currency/:tx_id", function(req, res, next) {
       var currency, txId;
@@ -24,8 +26,21 @@
       currency = req.params.currency;
       console.log(txId);
       console.log(currency);
-      return TransactionHelper.loadTransaction(txId, currency, function() {
-        return res.end();
+      return GLOBAL.wallets[currency].getTransaction(txId, function(err, walletTransaction) {
+        var loadTransactionCallback, subTransactions;
+        subTransactions = _.clone(walletTransaction.details);
+        delete walletTransaction.details;
+        loadTransactionCallback = function(subTransaction, callback) {
+          var transactionData;
+          transactionData = _.extend(subTransaction, walletTransaction);
+          return TransactionHelper.loadTransaction(transactionData, currency, callback);
+        };
+        return async.mapSeries(subTransactions, loadTransactionCallback, function(err, result) {
+          if (err) {
+            console.error(err);
+          }
+          return res.send("" + (new Date()) + " - Added transactino " + txId + " " + currency);
+        });
       });
     });
     app.post("/load_latest_transactions/:currency", function(req, res, next) {

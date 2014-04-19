@@ -22,16 +22,19 @@ describe "Transactions Api", ->
         .put("/transaction/BTC/1")
         .send()
         .expect(200)
-        .expect({}, done)
+        .end (e, res = {})->
+          throw e if e
+          res.body.should.endWith "- Added transactino 1 BTC"
+          done()
 
       describe "when the category is not move", ()->
-        it "adds the transaction in the db", (done)->
+        xit "adds the transaction in the db", (done)->
           request('http://localhost:6000')
           .put("/transaction/BTC/1")
           .send()
           .expect(200)
           .expect {}, ()->
-            GLOBAL.db.Transaction.findByTxid "unique_tx_id", (err, tx)->
+            GLOBAL.db.Transaction.find({where: {txid: "unique_tx_id"}}).complete (err, tx)->
               tx.account.should.eql "account"
               done()
 

@@ -6,6 +6,7 @@ Payment = GLOBAL.db.Payment
 JsonRenderer = require "../../lib/json_renderer"
 TransactionHelper = require "../../lib/transaction_helper"
 paymentsProcessedUserIds = []
+_ = require "underscore"
 
 module.exports = (app)->
 
@@ -14,8 +15,15 @@ module.exports = (app)->
     currency = req.params.currency
     console.log txId
     console.log currency
-    TransactionHelper.loadTransaction txId, currency, ()->
-      res.end()
+    GLOBAL.wallets[currency].getTransaction txId, (err, walletTransaction)->
+      subTransactions = _.clone walletTransaction.details
+      delete walletTransaction.details
+      loadTransactionCallback = (subTransaction, callback)->
+        transactionData = _.extend subTransaction, walletTransaction
+        TransactionHelper.loadTransaction transactionData, currency, callback
+      async.mapSeries subTransactions, loadTransactionCallback, (err, result)->
+        console.error err  if err
+        res.send("#{new Date()} - Added transactino #{txId} #{currency}")
 
   app.post "/load_latest_transactions/:currency", (req, res, next)->
     currency = req.params.currency

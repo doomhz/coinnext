@@ -9,12 +9,10 @@ describe "Transaction", ->
     txid: "unique_tx_id"
     confirmations: 6
     time: trTime
-    details: [{
-      account:  "account"
-      fee:      0.0001
-      address:  "address"
-      category: "send"
-    }]
+    account:  "account"
+    fee:      0.0001
+    address:  "address"
+    category: "send"
 
   beforeEach (done)->
     transaction = GLOBAL.db.Transaction.build()

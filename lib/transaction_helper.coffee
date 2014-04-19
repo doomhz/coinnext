@@ -52,51 +52,48 @@ TransactionHelper =
       return payment.errored err, callback  if err
       payment.process response, callback
 
-  loadTransaction: (transactionOrId, currency, callback)->
-    txId = if typeof(transactionOrId) is "string" then transactionOrId else transactionOrId.txid
+  loadTransaction: (transactionData, currency, callback)->
+    txId = transactionData.txid
     return callback()  if not txId
     MarketStats.findEnabledMarket currency, "BTC", (err, market)->
       if not market
         console.error "#{new Date()} - Will not load the transaction #{txId}, the market for #{currency} is disabled."
         return callback()
-      GLOBAL.wallets[currency].getTransaction txId, (err, walletTransaction)->
-        console.error err  if err
-        return callback()  if err
-        category = walletTransaction.details[0].category
-        address = walletTransaction.details[0].address
-        return callback()  if not Transaction.isValidFormat category
-        Wallet.findByAddress address, (err, wallet)->
-          Transaction.addFromWallet walletTransaction, currency, wallet, (err, updatedTransaction)->
-            if wallet
-              usersSocket.send
-                type: "transaction-update"
-                user_id: updatedTransaction.user_id
-                eventData: JsonRenderer.transaction updatedTransaction
-              return callback()  if category isnt "receive" or updatedTransaction.balance_loaded or not GLOBAL.wallets[currency].isBalanceConfirmed(updatedTransaction.confirmations)
-              GLOBAL.db.sequelize.transaction (transaction)->
-                wallet.addBalance updatedTransaction.amount, transaction, (err)->
+      category = transactionData.category
+      address = transactionData.address
+      return callback()  if not Transaction.isValidFormat category
+      Wallet.findByAddress address, (err, wallet)->
+        Transaction.addFromWallet transactionData, currency, wallet, (err, updatedTransaction)->
+          if wallet
+            usersSocket.send
+              type: "transaction-update"
+              user_id: updatedTransaction.user_id
+              eventData: JsonRenderer.transaction updatedTransaction
+            return callback()  if category isnt "receive" or updatedTransaction.balance_loaded or not GLOBAL.wallets[currency].isBalanceConfirmed(updatedTransaction.confirmations)
+            GLOBAL.db.sequelize.transaction (transaction)->
+              wallet.addBalance updatedTransaction.amount, transaction, (err)->
+                if err
+                  return transaction.rollback().success ()->
+                    console.error "Could not load user balance #{updatedTransaction.amount} - #{err}"
+                    return callback()
+                Transaction.markAsLoaded updatedTransaction.id, transaction, (err)->
                   if err
                     return transaction.rollback().success ()->
-                      console.error "Could not load user balance #{updatedTransaction.amount} - #{err}"
+                      console.error "Could not mark the transaction as loaded #{updatedTransaction.id} - #{err}"
                       return callback()
-                  Transaction.markAsLoaded updatedTransaction.id, transaction, (err)->
-                    if err
-                      return transaction.rollback().success ()->
-                        console.error "Could not mark the transaction as loaded #{updatedTransaction.id} - #{err}"
-                        return callback()
-                    transaction.commit().success ()->
-                      callback()
-                      usersSocket.send
-                        type: "wallet-balance-loaded"
-                        user_id: wallet.user_id
-                        eventData: JsonRenderer.wallet wallet
-                    transaction.done (err)->
-                      console.error "Could not load transaction #{updatedTransaction.id} - #{err}"
-                      return callback()
-            else
-              Payment.findByTransaction txId, (err, payment)->
-                return callback()  if not payment
-                Transaction.setUserAndWalletById txId, payment.user_id, payment.wallet_id, ()->
-                  callback()
+                  transaction.commit().success ()->
+                    callback()
+                    usersSocket.send
+                      type: "wallet-balance-loaded"
+                      user_id: wallet.user_id
+                      eventData: JsonRenderer.wallet wallet
+                  transaction.done (err)->
+                    console.error "Could not load transaction #{updatedTransaction.id} - #{err}"
+                    return callback()
+          else
+            Payment.findByTransaction txId, (err, payment)->
+              return callback()  if not payment
+              Transaction.setUserAndWalletById txId, payment.user_id, payment.wallet_id, ()->
+                callback()
 
 exports = module.exports = TransactionHelper
