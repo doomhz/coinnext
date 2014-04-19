@@ -28,6 +28,8 @@ module.exports =
 
     migration.addIndex "transactions", ["user_id"]
     migration.addIndex "transactions", ["wallet_id"]
+    migration.addIndex "transactions", ["category"]
+    migration.addIndex "transactions", ["txid"]
     migration.addIndex "transactions", ["balance_loaded"]
     migration.addIndex "transactions", ["created_at"]
 
@@ -81,6 +83,8 @@ module.exports =
 
     migration.removeIndex "transactions", ["user_id"]
     migration.removeIndex "transactions", ["wallet_id"]
+    migration.removeIndex "transactions", ["category"]
+    migration.removeIndex "transactions", ["txid"]
     migration.removeIndex "transactions", ["balance_loaded"]
     migration.removeIndex "transactions", ["created_at"]
 
