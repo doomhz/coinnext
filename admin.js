@@ -52,6 +52,11 @@ app.configure(function () {
       next();
     });
     app.use(helmet.xframe('sameorigin'));
+    app.use(helmet.hsts());
+    app.use(helmet.iexss({setOnOldIE: true}));
+    app.use(helmet.ienoopen());
+    app.use(helmet.contentTypeOptions());
+    app.use(helmet.cacheControl());
   }
   app.use(express.static(__dirname + '/public'));
   app.use(require('connect-assets')(connectAssetsOptions));
@@ -80,19 +85,6 @@ var server = http.createServer(app);
 server.listen(app.get('port'), function(){
   console.log("Coinnext admin is running on port %d in %s mode", app.get("port"), app.settings.env);
 });
-
-
-//User validation
-if (GLOBAL.appConfig().admin_auth) {
-  var auth = function (req, res, next) {
-    if ((req.query.u === GLOBAL.appConfig().admin_auth.user) && (req.query.p === GLOBAL.appConfig().admin_auth.pass)) {
-      req.session.admin_auth = true;
-    }
-    if (!req.session.admin_auth) return res.redirect("http://www.youtube.com/watch?v=oHg5SJYRHA0");
-    next();
-  }
-  app.get('*', auth);
-}
 
 
 // Routes
