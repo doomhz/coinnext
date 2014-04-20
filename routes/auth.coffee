@@ -120,8 +120,10 @@ module.exports = (app)->
             req.logout()
             return JsonRenderer.error "Invalid Google Authenticator code", res, 401
           oldSessionPassport = req.session.passport
+          oldStagingAuth = req.session.staging_auth
           req.session.regenerate ()->
             req.session.passport = oldSessionPassport
+            req.session.staging_auth = oldStagingAuth
             res.json JsonRenderer.user req.user
             AuthStats.log {ip: req.ip, user: req.user}, req.user.email_auth_enabled
     )(req, res, next)
