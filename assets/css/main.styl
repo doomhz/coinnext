@@ -160,17 +160,17 @@ textarea
 .hero-unit
   background $darkblue url("/img/hero/hero-bg.png") 100% 100%
   border-top 1px solid darken($darkblue, 80%)
-  border-bottom 1px solid darken($darkblue, 80%)
   margin-top -11px
   color #a7abb1
   text-align center
   position relative
   padding 50px 0
   z-index 1
-  h1, h2, h3
+  h1.tagline
     color #fff
-    margin 0
-  h1
+    font-weight 700
+    font-family "Open Sans", helvetica, arial, sans-serif
+    letter-spacing .5px
     margin 0 0 20px 0
   .cta
     btn($teal)
@@ -181,6 +181,7 @@ textarea
 #features
   margin-bottom 10px
   border-bottom 1px solid $border-color
+  border-top 1px solid #fff
 
 .feature-list
   reset-list()
@@ -203,8 +204,8 @@ textarea
 .feature-text
   padding-top 10px
   text-transform uppercase
-  font-weight 500
-  color $lightgray
+  font-weight 700
+  color $darkblue
 
 /* Body */
 .main-content
