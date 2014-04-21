@@ -157,7 +157,7 @@ textarea
         line-height 23px
 
 /* Index Page */
-.hero-unit
+.hero-unit, .bottom-cta
   background $darkblue url("/img/hero/hero-bg.png") 100% 100%
   border-top 1px solid darken($darkblue, 80%)
   margin-top -11px
@@ -166,7 +166,7 @@ textarea
   position relative
   padding 50px 0
   z-index 1
-  h1.tagline
+  .tagline
     color #fff
     font-weight 700
     font-family "Open Sans", helvetica, arial, sans-serif
@@ -177,6 +177,20 @@ textarea
     box-shadow inset 0 1px 0 rgba(#fff,.15)
     font-size 16px
     padding 17px 40px
+
+.bottom-cta
+  background $darkblue
+  padding 25px 0
+  margin-top 10px
+  margin-bottom -1px
+  position relative
+  z-index 1
+  .tagline
+    margin 0
+    font-size 24px
+  .subline
+    font-size 16px
+    color rgba(#fff,.3)
 
 #features
   margin-bottom 10px

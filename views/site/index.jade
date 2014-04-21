@@ -61,3 +61,8 @@ block content
                 td(class="rate #{info.growth_ratio >= 0 ? 'up' : 'down'}") #{info.last_price}
                 td #{info.volume1} #{type.split("_")[0]}
                 td #{info.growth_ratio * (info.growth_ratio < 0 ? -1 : 1)}
+
+  .bottom-cta
+    h3.tagline Open an account and start trading today
+    p.subline Register now and pay no fees for 90 days
+    a(href='/signup').cta Get Started Now
