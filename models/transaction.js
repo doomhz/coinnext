@@ -66,8 +66,7 @@
       },
       txid: {
         type: DataTypes.STRING(64),
-        allowNull: false,
-        unique: true
+        allowNull: false
       },
       confirmations: {
         type: DataTypes.INTEGER.UNSIGNED,
@@ -84,31 +83,31 @@
           return Transaction.find(id).complete(callback);
         },
         addFromWallet: function(transactionData, currency, wallet, callback) {
-          var data, details, key;
+          var data, key;
           if (callback == null) {
             callback = function() {};
           }
-          details = transactionData.details[0] || {};
           data = {
             user_id: (wallet ? wallet.user_id : void 0),
             wallet_id: (wallet ? wallet.id : void 0),
             currency: currency,
-            account: details.account,
-            fee: details.fee,
-            address: details.address,
-            category: details.category,
+            account: transactionData.account,
+            fee: transactionData.fee,
+            address: transactionData.address,
+            category: transactionData.category,
             amount: transactionData.amount,
             txid: transactionData.txid,
             confirmations: transactionData.confirmations,
             created_at: new Date(transactionData.time * 1000)
           };
           for (key in data) {
-            if (!data[key] && data[key] !== 0) {
+            if (data[key] == null) {
               delete data[key];
             }
           }
           return Transaction.findOrCreate({
-            txid: data.txid
+            txid: data.txid,
+            category: MarketHelper.getTransactionCategory(data.category)
           }, data).complete(function(err, transaction, created) {
             if (created) {
               return callback(err, transaction);
@@ -153,13 +152,6 @@
             order: [["created_at", "DESC"]]
           };
           return Transaction.findAll(query).complete(callback);
-        },
-        findByTxid: function(txid, callback) {
-          return Transaction.find({
-            where: {
-              txid: txid
-            }
-          }).complete(callback);
         },
         isValidFormat: function(category) {
           return !!MarketHelper.getTransactionCategory(category);

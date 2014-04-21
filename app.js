@@ -60,6 +60,11 @@ app.configure(function () {
       next();
     });
     app.use(helmet.xframe('sameorigin'));
+    app.use(helmet.hsts());
+    app.use(helmet.iexss({setOnOldIE: true}));
+    app.use(helmet.ienoopen());
+    app.use(helmet.contentTypeOptions());
+    app.use(helmet.cacheControl());
   }
   app.use(express.static(__dirname + '/public'));
   app.use(require('connect-assets')(connectAssetsOptions));

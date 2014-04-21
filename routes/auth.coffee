@@ -119,6 +119,11 @@ module.exports = (app)->
           if googleToken and not googleToken.isValidGAuthPass req.body.gauth_pass
             req.logout()
             return JsonRenderer.error "Invalid Google Authenticator code", res, 401
-          res.json JsonRenderer.user req.user
-          AuthStats.log {ip: req.ip, user: req.user}, req.user.email_auth_enabled
+          oldSessionPassport = req.session.passport
+          oldStagingAuth = req.session.staging_auth
+          req.session.regenerate ()->
+            req.session.passport = oldSessionPassport
+            req.session.staging_auth = oldStagingAuth
+            res.json JsonRenderer.user req.user
+            AuthStats.log {ip: req.ip, user: req.user}, req.user.email_auth_enabled
     )(req, res, next)

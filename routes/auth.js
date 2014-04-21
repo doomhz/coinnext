@@ -200,15 +200,22 @@
             return JsonRenderer.error("Invalid credentials", res, 401);
           }
           return UserToken.findByUserAndType(user.id, "google_auth", function(err, googleToken) {
+            var oldSessionPassport, oldStagingAuth;
             if (googleToken && !googleToken.isValidGAuthPass(req.body.gauth_pass)) {
               req.logout();
               return JsonRenderer.error("Invalid Google Authenticator code", res, 401);
             }
-            res.json(JsonRenderer.user(req.user));
-            return AuthStats.log({
-              ip: req.ip,
-              user: req.user
-            }, req.user.email_auth_enabled);
+            oldSessionPassport = req.session.passport;
+            oldStagingAuth = req.session.staging_auth;
+            return req.session.regenerate(function() {
+              req.session.passport = oldSessionPassport;
+              req.session.staging_auth = oldStagingAuth;
+              res.json(JsonRenderer.user(req.user));
+              return AuthStats.log({
+                ip: req.ip,
+                user: req.user
+              }, req.user.email_auth_enabled);
+            });
           });
         });
       })(req, res, next);

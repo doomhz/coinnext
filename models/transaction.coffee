@@ -48,7 +48,6 @@ module.exports = (sequelize, DataTypes) ->
       txid:
         type: DataTypes.STRING(64)
         allowNull: false
-        unique: true
       confirmations:
         type: DataTypes.INTEGER.UNSIGNED
         defaultValue: 0
@@ -64,22 +63,21 @@ module.exports = (sequelize, DataTypes) ->
           Transaction.find(id).complete callback
 
         addFromWallet: (transactionData, currency, wallet, callback = ()->)->
-          details = transactionData.details[0] or {}
           data =
             user_id:       (wallet.user_id if wallet)
             wallet_id:     (wallet.id if wallet)
             currency:      currency
-            account:       details.account
-            fee:           details.fee
-            address:       details.address
-            category:      details.category
+            account:       transactionData.account
+            fee:           transactionData.fee
+            address:       transactionData.address
+            category:      transactionData.category
             amount:        transactionData.amount
             txid:          transactionData.txid
             confirmations: transactionData.confirmations
-            created_at:       new Date(transactionData.time * 1000)
+            created_at:    new Date(transactionData.time * 1000)
           for key of data
-            delete data[key]  if not data[key] and data[key] isnt 0
-          Transaction.findOrCreate({txid: data.txid}, data).complete (err, transaction, created)->
+            delete data[key]  if not data[key]?
+          Transaction.findOrCreate({txid: data.txid, category: MarketHelper.getTransactionCategory(data.category)}, data).complete (err, transaction, created)->
             return callback err, transaction  if created
             transaction.updateAttributes(data).complete callback
 
@@ -115,9 +113,6 @@ module.exports = (sequelize, DataTypes) ->
               ["created_at", "DESC"]
             ]
           Transaction.findAll(query).complete callback
-
-        findByTxid: (txid, callback)->
-          Transaction.find({where: {txid: txid}}).complete callback
 
         isValidFormat: (category)->
           !!MarketHelper.getTransactionCategory category

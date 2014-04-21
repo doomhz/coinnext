@@ -124,27 +124,34 @@ module.exports = (app)->
   app.get "/legal/terms", (req, res)->
     res.render "static/terms",
       title: 'Terms'
+      user: req.user
 
   app.get "/legal/privacy", (req, res)->
     res.render "static/privacy",
       title: 'Privacy'
+      user: req.user
 
   app.get "/legal/cookie", (req, res)->
     res.render "static/cookie",
       title: 'Cookie'
+      user: req.user
 
   app.get "/fees", (req, res)->
     res.render "static/fees",
       title: 'Fees'
+      user: req.user
 
   app.get "/company", (req, res)->
     res.render "static/company",
       title: 'Company'
+      user: req.user
 
   app.get "/security", (req, res)->
     res.render "static/security",
       title: 'Security'
+      user: req.user
 
   app.get "/whitehat", (req, res)->
     res.render "static/whitehat",
       title: 'White Hat'
+      user: req.user

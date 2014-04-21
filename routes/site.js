@@ -174,37 +174,44 @@
     });
     app.get("/legal/terms", function(req, res) {
       return res.render("static/terms", {
-        title: 'Terms'
+        title: 'Terms',
+        user: req.user
       });
     });
     app.get("/legal/privacy", function(req, res) {
       return res.render("static/privacy", {
-        title: 'Privacy'
+        title: 'Privacy',
+        user: req.user
       });
     });
     app.get("/legal/cookie", function(req, res) {
       return res.render("static/cookie", {
-        title: 'Cookie'
+        title: 'Cookie',
+        user: req.user
       });
     });
     app.get("/fees", function(req, res) {
       return res.render("static/fees", {
-        title: 'Fees'
+        title: 'Fees',
+        user: req.user
       });
     });
     app.get("/company", function(req, res) {
       return res.render("static/company", {
-        title: 'Company'
+        title: 'Company',
+        user: req.user
       });
     });
     app.get("/security", function(req, res) {
       return res.render("static/security", {
-        title: 'Security'
+        title: 'Security',
+        user: req.user
       });
     });
     return app.get("/whitehat", function(req, res) {
       return res.render("static/whitehat", {
-        title: 'White Hat'
+        title: 'White Hat',
+        user: req.user
       });
     });
   };

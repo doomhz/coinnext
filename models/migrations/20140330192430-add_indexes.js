@@ -23,6 +23,8 @@
       migration.addIndex("trade_stats", ["start_time"]);
       migration.addIndex("transactions", ["user_id"]);
       migration.addIndex("transactions", ["wallet_id"]);
+      migration.addIndex("transactions", ["category"]);
+      migration.addIndex("transactions", ["txid"]);
       migration.addIndex("transactions", ["balance_loaded"]);
       migration.addIndex("transactions", ["created_at"]);
       migration.addIndex("users", ["updated_at"]);
@@ -64,6 +66,8 @@
       migration.removeIndex("trade_stats", ["start_time"]);
       migration.removeIndex("transactions", ["user_id"]);
       migration.removeIndex("transactions", ["wallet_id"]);
+      migration.removeIndex("transactions", ["category"]);
+      migration.removeIndex("transactions", ["txid"]);
       migration.removeIndex("transactions", ["balance_loaded"]);
       migration.removeIndex("transactions", ["created_at"]);
       migration.removeIndex("users", ["updated_at"]);
