@@ -62,7 +62,8 @@ block content
                 td #{info.volume1} #{type.split("_")[0]}
                 td #{info.growth_ratio * (info.growth_ratio < 0 ? -1 : 1)}
 
-  .bottom-cta
-    h3.tagline Open an account and start trading today!
-    p.subline Register now and <strong>pay no fees for 90 days</strong>.
-    a(href='/signup').cta Get Started Now
+  - if (!user)
+    .bottom-cta
+      h3.tagline Open an account and start trading today!
+      p.subline Register now and <strong>pay no fees for 90 days</strong>.
+      a(href='/signup').cta Get Started Now
