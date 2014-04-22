@@ -62,6 +62,7 @@
             return GLOBAL.db.sequelize.transaction(function(transaction) {
               return wallet.holdBalance(holdBalance, transaction, function(err, wallet) {
                 if (err || !wallet) {
+                  console.error(err);
                   return transaction.rollback().success(function() {
                     return JsonRenderer.error("Not enough " + data.sell_currency + " to open an order.", res);
                   });
@@ -70,6 +71,7 @@
                   transaction: transaction
                 }).complete(function(err, newOrder) {
                   if (err) {
+                    console.error(err);
                     return transaction.rollback().success(function() {
                       return JsonRenderer.error("Sorry, could not open an order...", res);
                     });

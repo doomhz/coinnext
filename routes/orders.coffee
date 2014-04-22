@@ -32,10 +32,12 @@ module.exports = (app)->
           GLOBAL.db.sequelize.transaction (transaction)->
             wallet.holdBalance holdBalance, transaction, (err, wallet)->
               if err or not wallet
+                console.error err
                 return transaction.rollback().success ()->
                   JsonRenderer.error "Not enough #{data.sell_currency} to open an order.", res
               Order.create(data, {transaction: transaction}).complete (err, newOrder)->
                 if err
+                  console.error err
                   return transaction.rollback().success ()->
                     JsonRenderer.error "Sorry, could not open an order...", res
                 transaction.commit().success ()->
