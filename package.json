@@ -39,7 +39,7 @@
     , "request": "latest"
     , "amqp": "latest"
     , "mysql": "latest"
-    , "sequelize": "latest"
+    , "sequelize": "1.7.1"
     , "lodash": "latest"
     , "ip": "latest"
     , "phonetic": "latest"
