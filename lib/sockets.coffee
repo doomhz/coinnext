@@ -22,7 +22,7 @@ initSockets = (server, env, sessionStore, cookieParser)->
     sockets.io.enable "browser client minification"
     sockets.io.enable "browser client etag"
     sockets.io.enable "browser client gzip"
-    sockets.io.set "origins", "#{GLOBAL.appConfig().app_host}/*"
+    sockets.io.set "origins", "#{GLOBAL.appConfig().users.hostname}*"
 
   sockets.io.set "store", new SocketsRedisStore
     redis: redis
