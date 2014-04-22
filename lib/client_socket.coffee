@@ -8,8 +8,7 @@ class ClientSocket
 
   constructor: (options = {})->
     @namespace = options.namespace  if options.namespace
-    @pub = redis.createClient options.redis.port, options.redis.host
-    @pub.auth options.redis.pass
+    @pub = redis.createClient options.redis.port, options.redis.host, {auth_pass: options.redis.pass}
 
   send: (data)->
     data.namespace = @namespace

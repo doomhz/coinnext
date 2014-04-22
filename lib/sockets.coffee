@@ -2,10 +2,10 @@ io = require "socket.io"
 SessionSockets = require "session.socket.io"
 redis = require "redis"
 SocketsRedisStore = require "socket.io/lib/stores/redis"
-socketPub = redis.createClient GLOBAL.appConfig().redis.port, GLOBAL.appConfig().redis.host
-socketSub = redis.createClient GLOBAL.appConfig().redis.port, GLOBAL.appConfig().redis.host
-socketClient = redis.createClient GLOBAL.appConfig().redis.port, GLOBAL.appConfig().redis.host
-externalEventsSub = redis.createClient GLOBAL.appConfig().redis.port, GLOBAL.appConfig().redis.host
+socketPub = redis.createClient GLOBAL.appConfig().redis.port, GLOBAL.appConfig().redis.host, {auth_pass: GLOBAL.appConfig().redis.pass}
+socketSub = redis.createClient GLOBAL.appConfig().redis.port, GLOBAL.appConfig().redis.host, {auth_pass: GLOBAL.appConfig().redis.pass}
+socketClient = redis.createClient GLOBAL.appConfig().redis.port, GLOBAL.appConfig().redis.host, {auth_pass: GLOBAL.appConfig().redis.pass}
+externalEventsSub = redis.createClient GLOBAL.appConfig().redis.port, GLOBAL.appConfig().redis.host, {auth_pass: GLOBAL.appConfig().redis.pass}
 
 Chat = GLOBAL.db.Chat
 JsonRenderer = require "./json_renderer"
@@ -24,11 +24,8 @@ initSockets = (server, env, sessionStore, cookieParser)->
     sockets.io.enable "browser client gzip"
     sockets.io.set "origins", "#{GLOBAL.appConfig().app_host}/*"
 
-  socketPub.auth GLOBAL.appConfig().redis.pass
-  socketSub.auth GLOBAL.appConfig().redis.pass
-  socketClient.auth GLOBAL.appConfig().redis.pass
-
   sockets.io.set "store", new SocketsRedisStore
+    redis: redis
     redisPub: socketPub
     redisSub: socketSub
     redisClient: socketClient
