@@ -1,28 +1,23 @@
-ioClient = require "socket.io-client"
+redis = require "redis"
 
 class ClientSocket
 
-  host: "http://localhost:5000"
+  namespace: "users"
 
-  path: "users"
+  pub: null
 
   constructor: (options = {})->
-    @host = options.host  if options.host
-    @host = "http://#{@host}"  if @host.indexOf("http") is -1
-    @path = options.path  if options.path
+    @namespace = options.namespace  if options.namespace
+    @pub = redis.createClient options.redis.port, options.redis.host
 
   send: (data)->
-    if not @socket
-      @socket = ioClient.connect("#{@host}/#{@path}")
-      @socket.on "connect", (s)=>
-        @socket.emit "external-event", data
-    else
-      @socket.emit "external-event", data
+    data.namespace = @namespace
+    @pub.publish "external-events", JSON.stringify data
 
   close: ()->
     try
-      @socket.socket.disconnect()  if @socket
+      @pub.disconnect()  if @pub
     catch e
-      console.error "Could not close client socket #{@path}", e
+      console.error "Could not close Pub connection #{@namespace}", e
 
 exports = module.exports = ClientSocket

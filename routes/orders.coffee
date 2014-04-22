@@ -5,8 +5,8 @@ MarketHelper = require "../lib/market_helper"
 JsonRenderer = require "../lib/json_renderer"
 ClientSocket = require "../lib/client_socket"
 usersSocket = new ClientSocket
-  host: GLOBAL.appConfig().app_host
-  path: "users"
+  namespace: "users"
+  redis: GLOBAL.appConfig().redis
 math = require("mathjs")
   number: "bignumber"
   decimals: 8

@@ -15,6 +15,7 @@
     , "bcrypt": "latest"
     , "connect-redis": "1.4.7"
     , "hiredis": "latest"
+    , "redis": "latest"
     , "passport": "latest"
     , "passport-local": "latest"
     , "sha1": "latest"
