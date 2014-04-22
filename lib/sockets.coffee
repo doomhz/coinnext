@@ -24,6 +24,10 @@ initSockets = (server, env, sessionStore, cookieParser)->
     sockets.io.enable "browser client gzip"
     sockets.io.set "origins", "#{GLOBAL.appConfig().app_host}/*"
 
+  socketPub.auth GLOBAL.appConfig().redis.pass
+  socketSub.auth GLOBAL.appConfig().redis.pass
+  socketClient.auth GLOBAL.appConfig().redis.pass
+
   sockets.io.set "store", new SocketsRedisStore
     redisPub: socketPub
     redisSub: socketSub
