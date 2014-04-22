@@ -95,10 +95,8 @@ textarea
     width 160px
     padding 0 6px 0 23px
     font-size 12px
-
     &:focus
       width 250px
-
 
 .search-bar-form
   position relative
@@ -141,29 +139,6 @@ textarea
       &:active
       &.active
         color #14294e
-      &.active
-        &:before
-          content ""
-          border-left 9px solid transparent
-          border-right 9px solid transparent
-          border-bottom 9px solid $border-color
-          display inline-block
-          left 50%
-          margin-left -9px
-          position absolute
-          vertical-align top
-          bottom -1px
-        &:after
-          content ""
-          border-left 8px solid transparent
-          border-right 8px solid transparent
-          border-bottom 8px solid $bgcolor
-          display inline-block
-          left 50%
-          margin-left -8px
-          position absolute
-          vertical-align top
-          bottom -1px
 
 .auth-nav
   margin 0 5px
@@ -180,6 +155,89 @@ textarea
         padding 0 20px
         font-size 11px
         line-height 23px
+
+/* Index Page */
+.hero-unit
+  background $darkblue url("/img/hero/hero-bg.png") 100% 100%
+  border-top 1px solid darken($darkblue, 80%)
+  margin-top -11px
+  color #a7abb1
+  text-align center
+  position relative
+  padding 40px 0
+  z-index 1
+  .tagline
+    color #fff
+    font-weight 700
+    font-family "Open Sans", helvetica, arial, sans-serif
+    letter-spacing .5px
+    margin 0 0 20px 0
+  .cta
+    btn($teal)
+    box-shadow inset 0 1px 0 rgba(#fff,.15)
+    font-size 16px
+    padding 17px 40px
+
+.footer-cta
+  clearfix()
+  background #fff
+  padding 15px
+  text-align center
+  margin-top 20px
+  position relative
+  border-top 1px solid $border-color
+  border-bottom 1px solid #ecedef
+  margin-bottom -1px
+  z-index 1
+  .tagline
+    margin 0
+    font-size 20px
+    font-family "Open Sans", helvetica, arial, sans-serif
+    font-weight 500
+    color $darkblue
+    display inline-block
+  .cta
+    btn($teal)
+    display inline-block
+    margin 0 0 0 20px
+    color #fff
+    box-shadow none
+    font-size 16px
+    padding 12px 18px
+    border-color rgba(#fff,.3)
+    &:hover
+      border-color #fff
+      color #fff
+
+#features
+  background #fff
+  margin-bottom 20px
+  border-bottom 1px solid $border-color
+  border-top 1px solid #fff
+
+.feature-list
+  reset-list()
+  clearfix()
+  width 1000px
+  margin 0 auto
+  .feature-item
+    float left
+    width 25%
+    height 125px
+    border-left 1px solid #ecedef
+    padding 20px
+    text-align center
+    &:first-child
+      border-left none
+
+.feature-img
+  height 60px
+
+.feature-text
+  padding-top 10px
+  text-transform uppercase
+  font-weight 700
+  color $darkblue
 
 /* Body */
 .main-content
@@ -272,7 +330,8 @@ hr
 
 .page-foot
   clearfix()
-  background #13294e
+  background $darkblue
+  border-top 1px solid darken($darkblue, 80%)
   color #cad0d6
   font-size 12px
   padding 15px 0

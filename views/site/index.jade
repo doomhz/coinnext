@@ -2,6 +2,25 @@ extends ../layout
 
 block content
   .main-content(role='main')
+    - if (!user)
+      .hero-unit
+        h1.tagline The Fast, Secure and Reliable<br /> Cryptocurrency Exchange
+        a(href='/signup').cta Get Started Now
+      #features
+        .wrapper
+          ul.feature-list
+            li.feature-item
+              img(src="/img/hero/coins.svg").feature-img
+              .feature-text Wide range of Coins
+            li.feature-item
+              img(src="/img/hero/safe.svg").feature-img
+              .feature-text Bank-Grade Security
+            li.feature-item
+              img(src="/img/hero/save.svg").feature-img
+              .feature-text Low Fees
+            li.feature-item
+              img(src="/img/hero/support.svg").feature-img
+              .feature-text Fast Support
     .wrapper
       .col-left
         include _market-ticker
@@ -17,6 +36,7 @@ block content
 
       .col-center
         include _warnings
+
         section#announcements.container
           .con-header
             h3.con-header-title Announcements
@@ -30,7 +50,7 @@ block content
           table.trade-data
             tr
               th Market
-              th Currency
+              th Coin Name
               th Last Price
               th Volume (24h)
               th % Change (24h)

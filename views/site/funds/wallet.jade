@@ -49,7 +49,6 @@ block content
                     button#copy-address(data-clipboard-text="#{wallet.address ? wallet.address : ''}") Copy
                 #qr-address-cnt.qr-address(data-address="#{wallet.address ? wallet.address : ''}")
                 ul.terms
-                  li Minimal deposit amount is 0.0001  #{wallet.currency}.
                   li Your deposit will be credited after 6 network confirmations.
           .two-col-wrap
             .transaction-con.container
@@ -69,7 +68,6 @@ block content
                   .confirm-order
                     button Withdraw
                   ul.terms
-                    li Minimal amount for withdrawal is 0.01 #{wallet.currency}.
                     li Fee for withdrawal is #{wallet.withdrawal_fee} #{wallet.currency}.
 
         // Open Orders (All)

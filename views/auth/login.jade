@@ -8,15 +8,20 @@ block content
         form#login-form(action="/login", method="post")
           #error-cnt
           .control-group
+            label(for="email").label Email address
             .input-prepend
               span.add-on
                 i.icon-envelope
               input#login-email(type="email", name="email", placeholder="Email", tabindex="1", autofocus)
+          .control-group
+            label(for="password").label Password <a href="/send-password">Forgot password?</a>
             .input-prepend
               span.add-on
                 i.icon-lock
               input#login-password(type="password", name="password", placeholder="Password", tabindex="2")
-            input#login-gauth(type="text", name="gauth_pass", value="", placeholder="Google Authenticator (optional)", tabindex="3")
+          .control-group
+            label(for="gauth_pass").label Two Factor
+            input#login-gauth(type="text", name="gauth_pass", value="", placeholder="Auth Token (optional)", tabindex="3")
           input#login-btn(type="submit", value="Log In", tabindex="4")
       .auth-links
-        a(href="/send-password") Forgot your password?
+        

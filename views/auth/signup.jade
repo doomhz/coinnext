@@ -4,47 +4,30 @@ block content
   .main-content.auth(role='main')
     .wrapper
       .auth-wrap
-        .auth-features-box
-          ul
-            li
-              i.icon-bolt
-              h2 Lightning Speed Trading
-              p
-                | Our trading engine matches thousands of orders per second without breaking a sweat.
-            li
-              i.icon-thumbs-up
-              h2 Reliable
-              p
-                | Fast turnaround on deposits and withdrawals.
-            li
-              i.icon-shield
-              h2 Bank Grade Secure
-              p
-                | The highest security measures are in place to safeguard your money.
-            li
-              i.icon-support
-              h2 Customer Service
-              p
-                | Our support team is available 24/7 to help you with any questions you may have.
-
-
         .auth-box
-          h1 Create your account
+          h1
+            | Create your account
+            .promo Register now and <b>pay no fees for 90 days</b>.
           form#signup-form(action="/user", method="post")
             #error-cnt
             .control-group
+              label(for="email").label Email address
               .input-prepend
                 span.add-on
                   i.icon-envelope
                 input#signup-email(type="email", name="email", placeholder="Email", tabindex="1", autofocus)
+            .control-group
+              label(for="password").label Choose a password
               .input-prepend
                 span.add-on
                   i.icon-lock
-                input#signup-password(type="password", name="password" placeholder="Password", tabindex="2")
+                input#signup-password(type="password", name="password" placeholder="Minimum of 8 characters, at least 1 number", tabindex="2")
+            .control-group
+              label(for="repeat_password").label Confirm your password
               .input-prepend
                 span.add-on
                   i.icon-lock
-                input(type="password", name="repeat_password" placeholder="Confirm Password", tabindex="3")
+                input(type="password", name="repeat_password" placeholder="Confirm password", tabindex="3")
               #password-strength
                 span#s0.cell
                 span#s1.cell
@@ -53,5 +36,7 @@ block content
                 span#s4.cell
               span#strength-text
             input#login-btn(type="submit", value="Create Account", tabindex="4")
-            p.terms
-              | By creating an account, you agree to<br /> our <a href="/legal/terms">Terms of Service</a> and <a href="/legal/privacy">Privacy Policy</a>.
+            p.misc There is <b>no further ID verification required</b> to get started.
+
+        p.terms
+          | By creating an account you agree<br /> to our <a href="/legal/terms">Terms of Service</a> and <a href="/legal/privacy">Privacy Policy</a>.
