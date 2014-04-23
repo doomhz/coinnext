@@ -96,7 +96,7 @@ module.exports = (app)->
     currency = if req.query.currency? then req.query.currency else "BTC"
     query =
       where:
-        currency: currency
+        currency: MarketHelper.getCurrency currency
       order: [
         ["balance", "DESC"]
       ]
