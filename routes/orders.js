@@ -105,6 +105,9 @@
       });
     });
     app.get("/orders", function(req, res) {
+      if (req.query.user_id != null) {
+        req.query.user_id = req.user.id;
+      }
       return Order.findByOptions(req.query, function(err, orders) {
         if (err) {
           return JsonRenderer.error("Sorry, could not get open orders...", res);

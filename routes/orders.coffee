@@ -53,6 +53,7 @@ module.exports = (app)->
                   JsonRenderer.error "Could not open an order. Please try again later.", res  if err
 
   app.get "/orders", (req, res)->
+    req.query.user_id = req.user.id  if req.query.user_id?
     Order.findByOptions req.query, (err, orders)->
       return JsonRenderer.error "Sorry, could not get open orders...", res  if err
       res.json JsonRenderer.orders orders

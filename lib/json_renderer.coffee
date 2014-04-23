@@ -4,8 +4,7 @@ _str = require "underscore.string"
 JsonRenderer =
 
   user: (user)->
-    uuid:               user.uuid
-    id:                 user.id
+    id:                 user.uuid
     email:              user.email
     username:           user.username
     gauth_qr:           user.gauth_qr
@@ -17,7 +16,6 @@ JsonRenderer =
 
   wallet: (wallet)->
     id:            wallet.id
-    user_id:       wallet.user_id
     currency:      wallet.currency
     balance:       wallet.balance
     hold_balance:  wallet.hold_balance
@@ -33,7 +31,6 @@ JsonRenderer =
 
   payment: (payment)->
     id:             payment.id
-    user_id:        payment.user_id
     wallet_id:      payment.wallet_id
     transaction_id: payment.transaction_id
     address:        payment.address
@@ -51,7 +48,6 @@ JsonRenderer =
 
   transaction: (transaction)->
     id:             transaction.id
-    user_id:        transaction.user_id
     wallet_id:      transaction.wallet_id
     currency:       transaction.currency
     fee:            transaction.fee
@@ -72,7 +68,6 @@ JsonRenderer =
 
   order: (order)->
     id:             order.id
-    user_id:        order.user_id
     type:           order.type
     action:         order.action
     buy_currency:   order.buy_currency

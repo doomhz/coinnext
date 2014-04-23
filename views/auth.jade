@@ -18,7 +18,7 @@ html(lang='en')
           hostname: "#{GLOBAL.appConfig().users.hostname}"
         },
         currentUser: {
-          id: "#{user ? user.id : ''}"
+          id: "#{user ? user.uuid : ''}"
         }
       }
 
