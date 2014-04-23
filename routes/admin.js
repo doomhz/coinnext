@@ -132,7 +132,7 @@
       currency = req.query.currency != null ? req.query.currency : "BTC";
       query = {
         where: {
-          currency: currency
+          currency: MarketHelper.getCurrency(currency)
         },
         order: [["balance", "DESC"]],
         limit: count,

@@ -5,8 +5,8 @@ MarketHelper = require "../lib/market_helper"
 JsonRenderer = require "../lib/json_renderer"
 ClientSocket = require "../lib/client_socket"
 usersSocket = new ClientSocket
-  host: GLOBAL.appConfig().app_host
-  path: "users"
+  namespace: "users"
+  redis: GLOBAL.appConfig().redis
 math = require("mathjs")
   number: "bignumber"
   decimals: 8
@@ -32,10 +32,12 @@ module.exports = (app)->
           GLOBAL.db.sequelize.transaction (transaction)->
             wallet.holdBalance holdBalance, transaction, (err, wallet)->
               if err or not wallet
+                console.error err
                 return transaction.rollback().success ()->
                   JsonRenderer.error "Not enough #{data.sell_currency} to open an order.", res
               Order.create(data, {transaction: transaction}).complete (err, newOrder)->
                 if err
+                  console.error err
                   return transaction.rollback().success ()->
                     JsonRenderer.error "Sorry, could not open an order...", res
                 transaction.commit().success ()->
@@ -51,6 +53,7 @@ module.exports = (app)->
                   JsonRenderer.error "Could not open an order. Please try again later.", res  if err
 
   app.get "/orders", (req, res)->
+    req.query.user_id = req.user.id  if req.query.user_id?
     Order.findByOptions req.query, (err, orders)->
       return JsonRenderer.error "Sorry, could not get open orders...", res  if err
       res.json JsonRenderer.orders orders

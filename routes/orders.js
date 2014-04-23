@@ -14,8 +14,8 @@
   ClientSocket = require("../lib/client_socket");
 
   usersSocket = new ClientSocket({
-    host: GLOBAL.appConfig().app_host,
-    path: "users"
+    namespace: "users",
+    redis: GLOBAL.appConfig().redis
   });
 
   math = require("mathjs")({
@@ -62,6 +62,7 @@
             return GLOBAL.db.sequelize.transaction(function(transaction) {
               return wallet.holdBalance(holdBalance, transaction, function(err, wallet) {
                 if (err || !wallet) {
+                  console.error(err);
                   return transaction.rollback().success(function() {
                     return JsonRenderer.error("Not enough " + data.sell_currency + " to open an order.", res);
                   });
@@ -70,6 +71,7 @@
                   transaction: transaction
                 }).complete(function(err, newOrder) {
                   if (err) {
+                    console.error(err);
                     return transaction.rollback().success(function() {
                       return JsonRenderer.error("Sorry, could not open an order...", res);
                     });
@@ -103,6 +105,9 @@
       });
     });
     app.get("/orders", function(req, res) {
+      if (req.query.user_id != null) {
+        req.query.user_id = req.user.id;
+      }
       return Order.findByOptions(req.query, function(err, orders) {
         if (err) {
           return JsonRenderer.error("Sorry, could not get open orders...", res);
