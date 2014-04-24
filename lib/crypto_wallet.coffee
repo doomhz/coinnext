@@ -59,7 +59,7 @@ class CryptoWallet
 
   getBankBalance: (callback)->
     @client.getBalance "*", (err, balance)=>
-      balance = balance.result  if typeof balance is Object
+      balance = balance.result  if typeof balance is "object"
       callback(err, balance) if callback
 
   isBalanceConfirmed: (existentConfirmations)->
