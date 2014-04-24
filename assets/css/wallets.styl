@@ -117,6 +117,7 @@
     color inherit
     border-radius 3px
     margin-right 3px
+    position relative
     padding 0 8px
     text-transform uppercase
     border 1px solid $border-color
@@ -126,7 +127,7 @@
       color $blue
       border-color $blue
     &:active
-      color $darkblue
+      top 1px
 
 .coin-deposit-actions
   white-space nowrap
@@ -137,11 +138,10 @@
       color $blue
       border-color $blue
     &.zeroclipboard-is-active
-      color $darkblue
+      top 1px
     &:last-child
       margin-right 0
       
-
 .qr-address
   text-align center
   width 100px

@@ -301,6 +301,7 @@
   .action
     background #fff
     color inherit
+    position relative
     border-radius 3px
     padding 2px 5px
     text-transform uppercase
@@ -313,11 +314,13 @@
       text-decoration none
       border-color $blue
     &:active
-      color $darkblue
+      top 1px
     &.cancel
       &:hover
         color $red
         border-color $red
+      &:active
+        top 1px
 
 @media screen and (max-width: 800px)
   .two-col-wrap

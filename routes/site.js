@@ -196,9 +196,9 @@
         user: req.user
       });
     });
-    app.get("/company", function(req, res) {
-      return res.render("static/company", {
-        title: 'Company',
+    app.get("/about", function(req, res) {
+      return res.render("static/about", {
+        title: 'About',
         user: req.user
       });
     });
