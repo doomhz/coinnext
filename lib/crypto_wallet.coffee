@@ -58,9 +58,9 @@ class CryptoWallet
     @client.getTransaction txId, callback
 
   getBankBalance: (callback)->
-    @client.getBalance "*", (responseOrErr, balance)=>
-      return callback(responseOrErr.error, responseOrErr.result)  if responseOrErr and responseOrErr.result?
-      callback(responseOrErr, balance) if callback
+    @client.getBalance "*", (err, balance)=>
+      balance = balance.result  if typeof balance is Object
+      callback(err, balance) if callback
 
   isBalanceConfirmed: (existentConfirmations)->
     existentConfirmations >= @confirmations
