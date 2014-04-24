@@ -141,9 +141,9 @@ module.exports = (app)->
       title: 'Fees'
       user: req.user
 
-  app.get "/company", (req, res)->
-    res.render "static/company",
-      title: 'Company'
+  app.get "/about", (req, res)->
+    res.render "static/about",
+      title: 'About'
       user: req.user
 
   app.get "/security", (req, res)->
