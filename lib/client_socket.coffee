@@ -16,7 +16,7 @@ class ClientSocket
 
   close: ()->
     try
-      @pub.disconnect()  if @pub
+      @pub.quit()  if @pub
     catch e
       console.error "Could not close Pub connection #{@namespace}", e
 
