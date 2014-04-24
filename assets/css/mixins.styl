@@ -14,7 +14,6 @@ image(path, w = auto, h = auto, min_pixel_ratio = 1.5)
   s = s + '(min--moz-device-pixel-ratio:' + min_pixel_ratio + '),'
   s = s + '(-o-min-device-pixel-ratio:' + min_pixel_ratio + '/1),'
   s = s + '(min-device-pixel-ratio:' + min_pixel_ratio + '),'
-  s = s + '(min-resolution:' + unit(min_pixel_ratio*92, dpi) + '),'
   s = s + '(min-resolution:' + unit(min_pixel_ratio, dppx) + ')'
 
   @media s
