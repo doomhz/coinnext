@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.STRING(34)
         allowNull: false
       amount:
-        type: DataTypes.BIGINT.UNSIGNED
+        type: DataTypes.BIGINT
         defaultValue: 0
         allowNull: false
         get: ()->
@@ -86,6 +86,7 @@ module.exports = (sequelize, DataTypes) ->
             where:
               user_id: userId
               wallet_id: walletId
+              category: MarketHelper.getTransactionCategory "receive"
               balance_loaded: false
             order: [
               ["created_at", "DESC"]
@@ -97,10 +98,10 @@ module.exports = (sequelize, DataTypes) ->
             where:
               user_id: userId
               wallet_id: walletId
-              balance_loaded: true
             order: [
               ["created_at", "DESC"]
             ]
+          query.where = sequelize.and(query.where, sequelize.or({category: MarketHelper.getTransactionCategory("receive"), balance_loaded: true}, {category: MarketHelper.getTransactionCategory("send")}))
           Transaction.findAll(query).complete callback
 
         findPendingByIds: (ids, callback)->
@@ -109,6 +110,7 @@ module.exports = (sequelize, DataTypes) ->
             where:
               txid: ids
               balance_loaded: false
+              category: MarketHelper.getTransactionCategory "receive"
             order: [
               ["created_at", "DESC"]
             ]

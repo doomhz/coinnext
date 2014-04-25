@@ -42,7 +42,7 @@
         allowNull: false
       },
       amount: {
-        type: DataTypes.BIGINT.UNSIGNED,
+        type: DataTypes.BIGINT,
         defaultValue: 0,
         allowNull: false,
         get: function() {
@@ -121,6 +121,7 @@
             where: {
               user_id: userId,
               wallet_id: walletId,
+              category: MarketHelper.getTransactionCategory("receive"),
               balance_loaded: false
             },
             order: [["created_at", "DESC"]]
@@ -132,11 +133,16 @@
           query = {
             where: {
               user_id: userId,
-              wallet_id: walletId,
-              balance_loaded: true
+              wallet_id: walletId
             },
             order: [["created_at", "DESC"]]
           };
+          query.where = sequelize.and(query.where, sequelize.or({
+            category: MarketHelper.getTransactionCategory("receive"),
+            balance_loaded: true
+          }, {
+            category: MarketHelper.getTransactionCategory("send")
+          }));
           return Transaction.findAll(query).complete(callback);
         },
         findPendingByIds: function(ids, callback) {
@@ -147,7 +153,8 @@
           query = {
             where: {
               txid: ids,
-              balance_loaded: false
+              balance_loaded: false,
+              category: MarketHelper.getTransactionCategory("receive")
             },
             order: [["created_at", "DESC"]]
           };
