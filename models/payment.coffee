@@ -35,7 +35,9 @@ module.exports = (sequelize, DataTypes) ->
         validate:
           isFloat: true
           notNull: true
-          min: 0.00000001
+          isBiggerThanFee: (value)->
+            fee = MarketHelper.convertToBigint MarketHelper.getWithdrawalFee @currency
+            throw new Error "The amount is too low."  if value <= fee
         get: ()->
           MarketHelper.convertFromBigint @getDataValue("amount")
         set: (amount)->

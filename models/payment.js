@@ -51,7 +51,13 @@
         validate: {
           isFloat: true,
           notNull: true,
-          min: 0.00000001
+          isBiggerThanFee: function(value) {
+            var fee;
+            fee = MarketHelper.convertToBigint(MarketHelper.getWithdrawalFee(this.currency));
+            if (value <= fee) {
+              throw new Error("The amount is too low.");
+            }
+          }
         },
         get: function() {
           return MarketHelper.convertFromBigint(this.getDataValue("amount"));
