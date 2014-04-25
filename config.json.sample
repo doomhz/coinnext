@@ -15,7 +15,7 @@
       "cookie_secret": "secretkey",
       "session_key": "cnxweb",
       "cookie": {
-        "maxAge": 2592000000,
+        "maxAge": 43200000,
         "path": "/",
         "httpOnly": true,
         "secure": true
@@ -145,7 +145,7 @@
       "cookie_secret": "secretkey",
       "session_key": "cnxweb",
       "cookie": {
-        "maxAge": 2592000000,
+        "maxAge": 43200000,
         "path": "/",
         "httpOnly": true,
         "secure": true
@@ -274,7 +274,7 @@
       "cookie_secret": "secretkey",
       "session_key": "cnxweb",
       "cookie": {
-        "maxAge": 2592000000,
+        "maxAge": 43200000,
         "path": "/",
         "httpOnly": true,
         "secure": true

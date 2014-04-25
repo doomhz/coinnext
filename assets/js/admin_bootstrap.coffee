@@ -64,9 +64,23 @@ $(document).ready ()->
         dataType: "json"
         success: (response)->
           $el.parent().find(".payment-status").text response.status
-          $el.hide()
+          $el.parent().find("button").hide()
         error: (xhr)->
           alert xhr.responseText
+
+    $paymentsTable.delegate ".remove", "click", (ev)->
+      ev.preventDefault()
+      if confirm "Are you sure?"
+        $el = $(ev.currentTarget)
+        $.ajax
+          url: "#{rootUrl}/payment/#{$el.data('id')}"
+          type: "delete"
+          dataType: "json"
+          success: (response)->
+            $el.parent().find(".payment-status").text response.status
+            $el.parent().find("button").hide()
+          error: (xhr)->
+            alert xhr.responseText
 
     $("#clear-pending-payments").click (ev)->
       ev.preventDefault()

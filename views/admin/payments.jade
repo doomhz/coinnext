@@ -43,6 +43,8 @@ block content
               br
               button.pay.btn.btn-warning(data-id="#{payment.id}")
                 | Pay
+              button.remove.btn.btn-danger(data-id="#{payment.id}")
+                | Remove
           td #{payment.created_at.toFormat("DD MMM YYYY HH24:MI")}
 
   p
