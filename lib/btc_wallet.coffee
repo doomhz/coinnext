@@ -5,6 +5,10 @@ class BtcWallet extends CryptoWallet
 
   currency: "BTC"
 
+  initialCurrency: "BTC"
+
+  currencyName: "Bitcoin"
+
   createClient: (options)->
     @client = new bitcoin.Client options.client
 

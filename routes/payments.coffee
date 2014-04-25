@@ -12,6 +12,7 @@ module.exports = (app)->
     Wallet.findUserWallet req.user.id, walletId, (err, wallet)->
       return JsonRenderer.error "Wrong wallet.", res  if not wallet
       return JsonRenderer.error "You don't have enough funds.", res  if not wallet.canWithdraw amount, true
+      return JsonRenderer.error "You can't withdraw to the same address.", res  if address is wallet.address
       data =
         user_id: req.user.id
         wallet_id: walletId

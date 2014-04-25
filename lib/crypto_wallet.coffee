@@ -1,10 +1,10 @@
 class CryptoWallet
 
-  configPath: "config.json"
+  confirmations: null
 
-  confirmations: 0
-
-  transactionFee: 0.0001
+  address: null
+  
+  account: null
 
   passphrase: null
 
@@ -12,31 +12,33 @@ class CryptoWallet
 
   currency: null
 
+  initialCurrency: null
+
+  currencyName: null
+
+  convertionRates: {}
+
   constructor: (options)->
-    @configPath = options.configPath if options and options.configPath
-    options = @loadOptionsFromFile() if not options
+    options = @loadOptions() if not options
     @createClient(options)
     @setupConfirmations(options)
-    @setupTransactionFee(options)
-    @setupPassphrase(options)
+    @setupWallet(options)
 
   createClient: (options)->
 
   setupConfirmations: (options)->
     @confirmations = options.confirmations or @confirmations
 
-  setupTransactionFee: (options)->
-    @transactionFee = options.transaction_fee or @transactionFee
-    @client.setTxFee @transactionFee
-
-  setupPassphrase: (options)->
-    @passphrase = options.wallet.passphrase or @passphrase
+  setupWallet: (options)->
+    @account = options.wallet.account
+    @address = options.wallet.address
+    @passphrase = options.wallet.passphrase
 
   generateAddress: (account, callback)->
     @client.getNewAddress account, callback
 
   sendToAddress: (address, amount, callback)->
-    amount = @parseAmount amount
+    amount = @convert @currency, @initialCurrency, amount
     @submitPassphrase (err)=>
       return callback err  if err
       @client.sendToAddress address, amount, callback
@@ -45,8 +47,10 @@ class CryptoWallet
     return callback()  if not @passphrase
     @client.walletPassphrase @passphrase, @passphraseTimeout, callback
 
-  parseAmount: (amount)->
-    parseFloat(parseFloat(amount).toFixed(9))
+  convert: (fromCurrency, toCurrency, amount)->
+    if @convertionRates?["#{fromCurrency}_#{toCurrency}"]
+      return parseFloat(parseFloat(amount * @convertionRates["#{fromCurrency}_#{toCurrency}"]).toFixed(8))
+    parseFloat(parseFloat(amount).toFixed(8))
 
   getInfo: (callback)->
     @client.getInfo callback
@@ -57,20 +61,18 @@ class CryptoWallet
   getTransaction: (txId, callback)->
     @client.getTransaction txId, callback
 
-  getBankBalance: (callback)->
-    @client.getBalance "*", (err, balance)=>
-      balance = balance.result  if typeof balance is "object"
+  getBalance: (account, callback)->
+    @client.getBalance account, (err, balance)=>
+      balance = @convert @initialCurrency, @currency, balance
       callback(err, balance) if callback
+
+  getBankBalance: (callback)->
+    @getBalance "*", callback
 
   isBalanceConfirmed: (existentConfirmations)->
     existentConfirmations >= @confirmations
 
-  loadOptionsFromFile: ()->
-    options = GLOBAL.appConfig()
-    if not options
-      fs = require "fs"
-      environment = process.env.NODE_ENV or "development"
-      options = JSON.parse(fs.readFileSync("#{process.cwd()}/#{@configPath}", "utf8"))[environment]
-    options.wallets[@currency.toLowerCase()]
+  loadOptions: ()->
+    GLOBAL.appConfig().wallets[@initialCurrency.toLowerCase()]
 
 exports = module.exports = CryptoWallet

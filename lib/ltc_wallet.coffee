@@ -5,6 +5,10 @@ class LtcWallet extends CryptoWallet
 
   currency: "LTC"
 
+  initialCurrency: "LTC"
+
+  currencyName: "Litecoin"
+
   createClient: (options)->
     @client = new litecoin.Client options.client
 

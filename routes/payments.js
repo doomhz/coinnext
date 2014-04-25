@@ -24,6 +24,9 @@
         if (!wallet.canWithdraw(amount, true)) {
           return JsonRenderer.error("You don't have enough funds.", res);
         }
+        if (address === wallet.address) {
+          return JsonRenderer.error("You can't withdraw to the same address.", res);
+        }
         data = {
           user_id: req.user.id,
           wallet_id: walletId,
