@@ -163,7 +163,7 @@
         return "Trade amount is too low, please submit a bigger amount.";
       }
       if (!Order.isValidFee(orderData.amount, orderData.action, orderData.unit_price)) {
-        return "The fee is too low, please submit a bigger amount.";
+        return "Trade amount is too low, please submit a bigger amount.";
       }
       return false;
     };
