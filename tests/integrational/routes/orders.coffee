@@ -56,7 +56,7 @@ describe "Orders Routes", ->
           it "returns 200 and the new order", (done)->
             auth.login (err, cookie, user)->
               GLOBAL.db.Wallet.findOrCreateUserWalletByCurrency user.id, "BTC", (err, wallet)->
-                wallet.addBalance 10, null, ()->
+                wallet.addBalance 0.05, null, ()->
                   resultData =
                     id: 1, type: 'limit', action: 'buy', buy_currency: 'LTC', sell_currency: 'BTC',
                     amount: 5, matched_amount: 0, result_amount: 0, fee: 0, unit_price: 0.01, status: 'open',
@@ -75,7 +75,7 @@ describe "Orders Routes", ->
           it "puts the balance on hold", (done)->
             auth.login (err, cookie, user)->
               GLOBAL.db.Wallet.findOrCreateUserWalletByCurrency user.id, "BTC", (err, wallet)->
-                wallet.addBalance 10, null, ()->
+                wallet.addBalance 0.05, null, ()->
                   request(GLOBAL.appConfig().app_host)
                   .post("/orders")
                   .set("cookie", cookie)
@@ -88,20 +88,20 @@ describe "Orders Routes", ->
           it "decreases the balance", (done)->
             auth.login (err, cookie, user)->
               GLOBAL.db.Wallet.findOrCreateUserWalletByCurrency user.id, "BTC", (err, wallet)->
-                wallet.addBalance 10, null, ()->
+                wallet.addBalance 0.05, null, ()->
                   request(GLOBAL.appConfig().app_host)
                   .post("/orders")
                   .set("cookie", cookie)
                   .send(orderData)
                   .end (err, res)->
                     GLOBAL.db.Wallet.findUserWalletByCurrency user.id, "BTC", (err, wallet)->
-                      wallet.balance.should.eql 9.95
+                      wallet.balance.should.eql 0
                       done()
 
           xit "publishes a order", (done)->
             auth.login (err, cookie, user)->
               GLOBAL.db.Wallet.findOrCreateUserWalletByCurrency user.id, "BTC", (err, wallet)->
-                wallet.addBalance 10, null, ()->
+                wallet.addBalance 0.05, null, ()->
                   request(GLOBAL.appConfig().app_host)
                   .post("/orders")
                   .set("cookie", cookie)
@@ -114,7 +114,7 @@ describe "Orders Routes", ->
           it "opens the order", (done)->
             auth.login (err, cookie, user)->
               GLOBAL.db.Wallet.findOrCreateUserWalletByCurrency user.id, "BTC", (err, wallet)->
-                wallet.addBalance 10, null, ()->
+                wallet.addBalance 0.05, null, ()->
                   request(GLOBAL.appConfig().app_host)
                   .post("/orders")
                   .set("cookie", cookie)

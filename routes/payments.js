@@ -21,7 +21,7 @@
         if (!wallet) {
           return JsonRenderer.error("Wrong wallet.", res);
         }
-        if (!wallet.canWithdraw(amount)) {
+        if (!wallet.canWithdraw(amount, true)) {
           return JsonRenderer.error("You don't have enough funds.", res);
         }
         data = {

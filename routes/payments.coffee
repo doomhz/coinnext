@@ -11,7 +11,7 @@ module.exports = (app)->
     return JsonRenderer.error "Please auth.", res  if not req.user
     Wallet.findUserWallet req.user.id, walletId, (err, wallet)->
       return JsonRenderer.error "Wrong wallet.", res  if not wallet
-      return JsonRenderer.error "You don't have enough funds.", res  if not wallet.canWithdraw amount
+      return JsonRenderer.error "You don't have enough funds.", res  if not wallet.canWithdraw amount, true
       data =
         user_id: req.user.id
         wallet_id: walletId

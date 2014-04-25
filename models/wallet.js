@@ -223,7 +223,7 @@
         canWithdraw: function(amount, includeFee) {
           var withdrawAmount;
           if (includeFee == null) {
-            includeFee = true;
+            includeFee = false;
           }
           withdrawAmount = parseFloat(amount);
           if (includeFee) {

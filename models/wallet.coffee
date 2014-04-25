@@ -126,7 +126,7 @@ module.exports = (sequelize, DataTypes) ->
           else
             callback "Could not add wallet hold balance #{balance} for #{@id}, invalid balance #{balance}."
 
-        canWithdraw: (amount, includeFee = true)->
+        canWithdraw: (amount, includeFee = false)->
           withdrawAmount = parseFloat amount
           withdrawAmount = math.add(withdrawAmount, @withdrawal_fee)  if includeFee
           @balance >= withdrawAmount
