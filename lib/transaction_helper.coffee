@@ -47,7 +47,7 @@ TransactionHelper =
                   callback null, "#{payment.id} - not processed - #{err}"  if err
 
   pay: (payment, callback = ()->)->
-    GLOBAL.wallets[payment.currency].sendToAddress payment.address, payment.amount, (err, response = "")->
+    GLOBAL.wallets[payment.currency].sendToAddress payment.address, payment.getFloat("amount"), (err, response = "")->
       console.error "Could not withdraw to #{payment.address} #{payment.amount} BTC", err  if err
       return payment.errored err, callback  if err
       payment.process response, callback

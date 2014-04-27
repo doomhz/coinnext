@@ -33,15 +33,11 @@ module.exports = (sequelize, DataTypes) ->
         defaultValue: 0
         allowNull: false
         validate:
-          isFloat: true
+          isInt: true
           notNull: true
           isBiggerThanFee: (value)->
-            fee = MarketHelper.convertToBigint MarketHelper.getWithdrawalFee @currency
+            fee = MarketHelper.getWithdrawalFee @currency
             throw new Error "The amount is too low."  if value <= fee
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("amount")
-        set: (amount)->
-          @setDataValue "amount", MarketHelper.convertToBigint(amount)
         comment: "FLOAT x 100000000"
       status:
         type: DataTypes.INTEGER.UNSIGNED
@@ -90,6 +86,9 @@ module.exports = (sequelize, DataTypes) ->
           Payment.find(query).complete callback
       
       instanceMethods:
+
+        getFloat: (attribute)->
+          MarketHelper.fromBigint @[attribute]
         
         isProcessed: ()->
           @status is "processed"

@@ -1,5 +1,6 @@
 require "./../../helpers/spec_helper"
 marketStats = require './../../../models/seeds/market_stats'
+MarketHelper = require "./../../../lib/market_helper"
 auth = require "./../../helpers/auth_helper"
 
 app = require "./../../../app"
@@ -56,7 +57,7 @@ describe "Orders Routes", ->
           it "returns 200 and the new order", (done)->
             auth.login (err, cookie, user)->
               GLOBAL.db.Wallet.findOrCreateUserWalletByCurrency user.id, "BTC", (err, wallet)->
-                wallet.addBalance 0.05, null, ()->
+                wallet.addBalance MarketHelper.toBigint(0.05), null, ()->
                   resultData =
                     id: 1, type: 'limit', action: 'buy', buy_currency: 'LTC', sell_currency: 'BTC',
                     amount: 5, matched_amount: 0, result_amount: 0, fee: 0, unit_price: 0.01, status: 'open',
@@ -75,20 +76,20 @@ describe "Orders Routes", ->
           it "puts the balance on hold", (done)->
             auth.login (err, cookie, user)->
               GLOBAL.db.Wallet.findOrCreateUserWalletByCurrency user.id, "BTC", (err, wallet)->
-                wallet.addBalance 0.05, null, ()->
+                wallet.addBalance MarketHelper.toBigint(0.05), null, ()->
                   request(GLOBAL.appConfig().app_host)
                   .post("/orders")
                   .set("cookie", cookie)
                   .send(orderData)
                   .end (err, res)->
                     GLOBAL.db.Wallet.findUserWalletByCurrency user.id, "BTC", (err, wallet)->
-                      wallet.hold_balance.should.eql 0.05
+                      wallet.hold_balance.should.eql MarketHelper.toBigint(0.05)
                       done()
 
           it "decreases the balance", (done)->
             auth.login (err, cookie, user)->
               GLOBAL.db.Wallet.findOrCreateUserWalletByCurrency user.id, "BTC", (err, wallet)->
-                wallet.addBalance 0.05, null, ()->
+                wallet.addBalance MarketHelper.toBigint(0.05), null, ()->
                   request(GLOBAL.appConfig().app_host)
                   .post("/orders")
                   .set("cookie", cookie)
@@ -101,7 +102,7 @@ describe "Orders Routes", ->
           xit "publishes a order", (done)->
             auth.login (err, cookie, user)->
               GLOBAL.db.Wallet.findOrCreateUserWalletByCurrency user.id, "BTC", (err, wallet)->
-                wallet.addBalance 0.05, null, ()->
+                wallet.addBalance MarketHelper.toBigint(0.05), null, ()->
                   request(GLOBAL.appConfig().app_host)
                   .post("/orders")
                   .set("cookie", cookie)
@@ -114,7 +115,7 @@ describe "Orders Routes", ->
           it "opens the order", (done)->
             auth.login (err, cookie, user)->
               GLOBAL.db.Wallet.findOrCreateUserWalletByCurrency user.id, "BTC", (err, wallet)->
-                wallet.addBalance 0.05, null, ()->
+                wallet.addBalance MarketHelper.toBigint(0.05), null, ()->
                   request(GLOBAL.appConfig().app_host)
                   .post("/orders")
                   .set("cookie", cookie)

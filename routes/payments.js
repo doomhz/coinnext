@@ -10,7 +10,10 @@
   module.exports = function(app) {
     app.post("/payments", function(req, res) {
       var address, amount, walletId;
-      amount = req.body.amount;
+      amount = parseFloat(req.body.amount);
+      if (_.isNumber(amount) && !_.isNaN(amount) && _.isFinite(amount)) {
+        amount = MarketHelper.toBigInt(amount);
+      }
       walletId = req.body.wallet_id;
       address = req.body.address;
       if (!req.user) {

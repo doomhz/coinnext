@@ -1,5 +1,5 @@
 (function() {
-  var ClientSocket, JsonRenderer, MarketHelper, MarketStats, Order, Wallet, math, usersSocket;
+  var ClientSocket, JsonRenderer, MarketHelper, MarketStats, Order, Wallet, math, usersSocket, _;
 
   Order = GLOBAL.db.Order;
 
@@ -12,6 +12,8 @@
   JsonRenderer = require("../lib/json_renderer");
 
   ClientSocket = require("../lib/client_socket");
+
+  _ = require("underscore");
 
   usersSocket = new ClientSocket({
     namespace: "users",
@@ -36,6 +38,14 @@
       data = req.body;
       data.user_id = req.user.id;
       data.status = "open";
+      data.amount = parseFloat(data.amount);
+      if (_.isNumber(data.amount) && !_.isNaN(data.amount) && _.isFinite(data.amount)) {
+        data.amount = MarketHelper.toBigint(data.amount);
+      }
+      data.unit_price = parseFloat(data.unit_price);
+      if (_.isNumber(data.unit_price) && !_.isNaN(data.unit_price) && _.isFinite(data.unit_price)) {
+        data.unit_price = MarketHelper.toBigint(data.unit_price);
+      }
       if (validationError = notValidOrderData(data)) {
         return JsonRenderer.error(validationError, res);
       }
@@ -46,10 +56,10 @@
           return JsonRenderer.error("Can't submit the order, the " + orderCurrency + " market is closed at the moment.", res);
         }
         if (data.type === "limit" && data.action === "buy") {
-          holdBalance = math.multiply(parseFloat(data.amount), parseFloat(data.unit_price));
+          holdBalance = math.multiply(data.amount, MarketHelper.fromBigint(data.unit_price));
         }
         if (data.type === "limit" && data.action === "sell") {
-          holdBalance = parseFloat(data.amount);
+          holdBalance = data.amount;
         }
         return Wallet.findOrCreateUserWalletByCurrency(req.user.id, data.buy_currency, function(err, buyWallet) {
           if (err || !buyWallet) {
@@ -141,7 +151,7 @@
       if (!Order.isValidTradeAmount(orderData.amount)) {
         return "Please submit a valid amount bigger than 0.0000001.";
       }
-      if (orderData.type === "limit" && !Order.isValidTradeAmount(parseFloat(orderData.unit_price))) {
+      if (orderData.type === "limit" && !Order.isValidTradeAmount(orderData.unit_price)) {
         return "Please submit a valid unit price amount.";
       }
       if (!MarketHelper.getOrderAction(orderData.action)) {

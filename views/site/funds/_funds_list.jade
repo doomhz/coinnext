@@ -7,7 +7,7 @@
     - each wl in wallets
       li(class="#{wallet && wallet.id == wl.id ? 'active' : ''}"): a(href='/funds/#{wl.currency}') 
         .label #{wl.currency}
-        .balance <span class="amount" data-wallet-balance-id="#{wl.id}">#{_str.satoshiRound(wl.balance)}</span> #{wl.currency}
+        .balance <span class="amount" data-wallet-balance-id="#{wl.id}">#{_str.satoshiRound(wl.getFloat('balance'))}</span> #{wl.currency}
       - availableCurrencies.push(wl.currency);
   - if (availableCurrencies.length !== Object.keys(currencies).length)
     .add-wallet

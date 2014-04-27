@@ -4,6 +4,7 @@ MarketStats = GLOBAL.db.MarketStats
 MarketHelper = require "../lib/market_helper"
 JsonRenderer = require "../lib/json_renderer"
 ClientSocket = require "../lib/client_socket"
+_ = require "underscore"
 usersSocket = new ClientSocket
   namespace: "users"
   redis: GLOBAL.appConfig().redis
@@ -19,12 +20,16 @@ module.exports = (app)->
     data = req.body
     data.user_id = req.user.id
     data.status = "open"
+    data.amount = parseFloat data.amount
+    data.amount = MarketHelper.toBigint data.amount  if _.isNumber(data.amount) and not _.isNaN(data.amount) and _.isFinite(data.amount)
+    data.unit_price = parseFloat data.unit_price
+    data.unit_price = MarketHelper.toBigint data.unit_price  if _.isNumber(data.unit_price) and not _.isNaN(data.unit_price) and _.isFinite(data.unit_price)
     return JsonRenderer.error validationError, res  if validationError = notValidOrderData data
     orderCurrency = data["#{data.action}_currency"]
     MarketStats.findEnabledMarket orderCurrency, "BTC", (err, market)->
       return JsonRenderer.error "Can't submit the order, the #{orderCurrency} market is closed at the moment.", res  if not market
-      holdBalance = math.multiply(parseFloat(data.amount), parseFloat(data.unit_price))  if data.type is "limit" and data.action is "buy"
-      holdBalance = parseFloat(data.amount)  if data.type is "limit" and data.action is "sell"
+      holdBalance = math.multiply(data.amount, MarketHelper.fromBigint(data.unit_price))  if data.type is "limit" and data.action is "buy"
+      holdBalance = data.amount  if data.type is "limit" and data.action is "sell"
       Wallet.findOrCreateUserWalletByCurrency req.user.id, data.buy_currency, (err, buyWallet)->
         return JsonRenderer.error "Wallet #{data.buy_currency} does not exist.", res  if err or not buyWallet
         Wallet.findOrCreateUserWalletByCurrency req.user.id, data.sell_currency, (err, wallet)->
@@ -71,7 +76,7 @@ module.exports = (app)->
   notValidOrderData = (orderData)->
     return "Market orders are disabled at the moment."  if orderData.type is "market"
     return "Please submit a valid amount bigger than 0.0000001."  if not Order.isValidTradeAmount orderData.amount
-    return "Please submit a valid unit price amount."  if orderData.type is "limit" and not Order.isValidTradeAmount(parseFloat(orderData.unit_price))
+    return "Please submit a valid unit price amount."  if orderData.type is "limit" and not Order.isValidTradeAmount(orderData.unit_price)
     return "Please submit a valid action."  if not MarketHelper.getOrderAction orderData.action
     return "Please submit a valid buy currency."  if not MarketHelper.isValidCurrency orderData.buy_currency
     return "Please submit a valid sell currency."  if not MarketHelper.isValidCurrency orderData.sell_currency

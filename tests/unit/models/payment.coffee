@@ -4,7 +4,7 @@ describe "Payment", ->
   payment = undefined
 
   beforeEach (done)->
-    payment = GLOBAL.db.Payment.build {id: 1, user_id: 1, wallet_id: 1, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw", status: "pending"}
+    payment = GLOBAL.db.Payment.build {id: 1, user_id: 1, wallet_id: 1, amount: 1000000000, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw", status: "pending"}
     GLOBAL.db.sequelize.sync({force: true}).complete ()->
       done()
 

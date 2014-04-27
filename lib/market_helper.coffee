@@ -52,10 +52,10 @@ TRANSACTION_ACCEPTED_CATEGORIES =
 TRANSACTION_MIN_CONF = 3
 
 WITHDRAWAL_FEES =
-  BTC: 0.0002
-  LTC: 0.002
-  PPC: 0.02
-  DOGE: 2
+  BTC: 20000
+  LTC: 200000
+  PPC: 2000000
+  DOGE: 200000000
 
 TOKENS =
   email_confirmation: 1
@@ -139,11 +139,11 @@ MarketHelper =
   getTransactionMinConf: ()->
     TRANSACTION_MIN_CONF
 
-  convertToBigint: (value)->
-    math.multiply parseFloat(value), 100000000
+  toBigint: (value)->
+    math.round math.multiply(value, 100000000)
 
-  convertFromBigint: (value)->
-    math.divide parseFloat(value), 100000000
+  fromBigint: (value)->
+    math.divide value, 100000000
 
   getTokenTypeLiteral: (intType)->
     _.invert(TOKENS)[intType]
@@ -161,24 +161,24 @@ MarketHelper =
     FEE
 
   getMinTradeAmount: ()->
-    0.0000001
+    10
 
   getMinSpendAmount: ()->
-    0.00000001
+    1
 
   getMinFeeAmount: ()->
-    0.00000001
+    1
 
   calculateResultAmount: (amount, action, unitPrice)->
     return amount  if action is "buy"
-    math.multiply(parseFloat(amount), parseFloat(unitPrice))
+    math.multiply(amount, @fromBigint unitPrice)
 
   calculateFee: (amount)->
-    math.select(parseFloat(amount)).divide(100).multiply(@getTradeFee()).done()
+    math.select(amount).divide(100).multiply(@getTradeFee()).done()
 
   calculateSpendAmount: (amount, action, unitPrice)->
     return amount  if action is "sell"
-    math.multiply(parseFloat(amount), parseFloat(unitPrice))
+    math.multiply(amount, @fromBigint unitPrice)
 
   getWithdrawalFee: (currency)->
     WITHDRAWAL_FEES[currency]

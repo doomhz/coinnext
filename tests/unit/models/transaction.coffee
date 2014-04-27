@@ -25,7 +25,7 @@ describe "Transaction", ->
       it "creates one", (done)->
         GLOBAL.db.Transaction.addFromWallet transactionData, "BTC", wallet, (err, tr)->
           expectedData = {
-            id: 1, currency: "BTC", account: "account", fee: 0.0001, amount: 1, address: "address", category: "send", txid: "unique_tx_id", confirmations: 6
+            id: 1, currency: "BTC", account: "account", fee: 10000, amount: 100000000, address: "address", category: "send", txid: "unique_tx_id", confirmations: 6
           }
           tr.values.should.have.properties expectedData
           done()
@@ -37,7 +37,7 @@ describe "Transaction", ->
           newTransactionData.confirmations = 10
           GLOBAL.db.Transaction.addFromWallet newTransactionData, "BTC", wallet, (err, tr)->
             expectedData = {
-              id: 1, currency: "BTC", account: "account", fee: 0.0001, amount: 1, address: "address", category: "send", txid: "unique_tx_id", confirmations: 10
+              id: 1, currency: "BTC", account: "account", fee: 10000, amount: 100000000, address: "address", category: "send", txid: "unique_tx_id", confirmations: 10
             }
             tr.values.should.have.properties expectedData
             trOld.id.should.eql tr.id

@@ -20,10 +20,6 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.STRING(50)
       fee:
         type: DataTypes.BIGINT.UNSIGNED
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("fee")
-        set: (fee)->
-          @setDataValue "fee", MarketHelper.convertToBigint(fee)
         comment: "FLOAT x 100000000"
       address:
         type: DataTypes.STRING(34)
@@ -32,10 +28,6 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.BIGINT
         defaultValue: 0
         allowNull: false
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("amount")
-        set: (amount)->
-          @setDataValue "amount", MarketHelper.convertToBigint(amount)
         comment: "FLOAT x 100000000"
       category:
         type: DataTypes.INTEGER.UNSIGNED
@@ -68,10 +60,10 @@ module.exports = (sequelize, DataTypes) ->
             wallet_id:     (wallet.id if wallet)
             currency:      currency
             account:       transactionData.account
-            fee:           transactionData.fee
+            fee:           MarketHelper.toBigint transactionData.fee
             address:       transactionData.address
             category:      transactionData.category
-            amount:        transactionData.amount
+            amount:        MarketHelper.toBigint transactionData.amount
             txid:          transactionData.txid
             confirmations: transactionData.confirmations
             created_at:    new Date(transactionData.time * 1000)
@@ -127,5 +119,10 @@ module.exports = (sequelize, DataTypes) ->
 
         markAsLoaded: (id, mysqlTransaction, callback)->
           Transaction.update({balance_loaded: true}, {id: id}, {transaction: mysqlTransaction}).complete callback
+
+      instanceMethods:
+
+        getFloat: (attribute)->
+          MarketHelper.fromBigint @[attribute]
 
   Transaction

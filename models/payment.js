@@ -49,21 +49,15 @@
         defaultValue: 0,
         allowNull: false,
         validate: {
-          isFloat: true,
+          isInt: true,
           notNull: true,
           isBiggerThanFee: function(value) {
             var fee;
-            fee = MarketHelper.convertToBigint(MarketHelper.getWithdrawalFee(this.currency));
+            fee = MarketHelper.getWithdrawalFee(this.currency);
             if (value <= fee) {
               throw new Error("The amount is too low.");
             }
           }
-        },
-        get: function() {
-          return MarketHelper.convertFromBigint(this.getDataValue("amount"));
-        },
-        set: function(amount) {
-          return this.setDataValue("amount", MarketHelper.convertToBigint(amount));
         },
         comment: "FLOAT x 100000000"
       },
@@ -126,6 +120,9 @@
         }
       },
       instanceMethods: {
+        getFloat: function(attribute) {
+          return MarketHelper.fromBigint(this[attribute]);
+        },
         isProcessed: function() {
           return this.status === "processed";
         },

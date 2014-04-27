@@ -29,12 +29,6 @@
       },
       fee: {
         type: DataTypes.BIGINT.UNSIGNED,
-        get: function() {
-          return MarketHelper.convertFromBigint(this.getDataValue("fee"));
-        },
-        set: function(fee) {
-          return this.setDataValue("fee", MarketHelper.convertToBigint(fee));
-        },
         comment: "FLOAT x 100000000"
       },
       address: {
@@ -45,12 +39,6 @@
         type: DataTypes.BIGINT,
         defaultValue: 0,
         allowNull: false,
-        get: function() {
-          return MarketHelper.convertFromBigint(this.getDataValue("amount"));
-        },
-        set: function(amount) {
-          return this.setDataValue("amount", MarketHelper.convertToBigint(amount));
-        },
         comment: "FLOAT x 100000000"
       },
       category: {
@@ -92,10 +80,10 @@
             wallet_id: (wallet ? wallet.id : void 0),
             currency: currency,
             account: transactionData.account,
-            fee: transactionData.fee,
+            fee: MarketHelper.toBigint(transactionData.fee),
             address: transactionData.address,
             category: transactionData.category,
-            amount: transactionData.amount,
+            amount: MarketHelper.toBigint(transactionData.amount),
             txid: transactionData.txid,
             confirmations: transactionData.confirmations,
             created_at: new Date(transactionData.time * 1000)
@@ -186,6 +174,11 @@
           }, {
             transaction: mysqlTransaction
           }).complete(callback);
+        }
+      },
+      instanceMethods: {
+        getFloat: function(attribute) {
+          return MarketHelper.fromBigint(this[attribute]);
         }
       }
     });

@@ -54,10 +54,10 @@ describe "MarketHelper", ->
   TRANSACTION_MIN_CONF = 3
 
   WITHDRAWAL_FEES =
-    BTC: 0.0002
-    LTC: 0.002
-    PPC: 0.02
-    DOGE: 2
+    BTC: 20000
+    LTC: 200000
+    PPC: 2000000
+    DOGE: 200000000
 
   TOKENS =
     email_confirmation: 1
@@ -193,19 +193,18 @@ describe "MarketHelper", ->
     it "returns the min number of confirmations required", ()->
       MarketHelper.getTransactionMinConf().should.equal TRANSACTION_MIN_CONF
 
-  describe "convertToBigint", ()->
+  describe "toBigint", ()->
     it "converts a float to a bigint by multiplying with 10^8", ()->
-      MarketHelper.convertToBigint(0.000000001).should.equal 0.1
-      MarketHelper.convertToBigint(0.00000001).should.equal 1
-      MarketHelper.convertToBigint(0.0000001).should.equal 10
-      MarketHelper.convertToBigint(1).should.equal 100000000
+      MarketHelper.toBigint(0.00000001).should.equal 1
+      MarketHelper.toBigint(0.0000001).should.equal 10
+      MarketHelper.toBigint(1).should.equal 100000000
   
-  describe "convertFromBigint", ()->
+  describe "fromBigint", ()->
     it "converts a bigint to float by dividing it with 10^8", ()->
-      MarketHelper.convertFromBigint(0.1).should.equal 0.000000001
-      MarketHelper.convertFromBigint(1).should.equal 0.00000001
-      MarketHelper.convertFromBigint(10).should.equal 0.0000001
-      MarketHelper.convertFromBigint(100000000).should.equal 1
+      MarketHelper.fromBigint(0.1).should.equal 0.000000001
+      MarketHelper.fromBigint(1).should.equal 0.00000001
+      MarketHelper.fromBigint(10).should.equal 0.0000001
+      MarketHelper.fromBigint(100000000).should.equal 1
 
   describe "getTokenType", ()->
     it "returns the token id for the given token", ()->
@@ -233,24 +232,21 @@ describe "MarketHelper", ->
 
   describe "getMinTradeAmount", ()->
     it "returns the minimum trade amount", ()->
-      MarketHelper.getMinTradeAmount().should.equal MarketHelper.convertFromBigint(10)
-      MarketHelper.getMinTradeAmount().should.equal 0.0000001
+      MarketHelper.getMinTradeAmount().should.equal 10
 
   describe "getMinSpendAmount", ()->
     it "returns the minimum spend amount", ()->
-      MarketHelper.getMinSpendAmount().should.equal MarketHelper.convertFromBigint(1)
-      MarketHelper.getMinSpendAmount().should.equal 0.00000001
+      MarketHelper.getMinSpendAmount().should.equal 1
 
   describe "getMinFeeAmount", ()->
     it "returns the minimum fee amount", ()->
-      MarketHelper.getMinFeeAmount().should.equal MarketHelper.convertFromBigint(1)
-      MarketHelper.getMinFeeAmount().should.equal 0.00000001
+      MarketHelper.getMinFeeAmount().should.equal 1
 
   describe "calculateResultAmount", ()->
     it "returns the amount for buy", ()->
-      MarketHelper.calculateResultAmount(1000, "buy", 0.1).should.equal 1000
+      MarketHelper.calculateResultAmount(1000, "buy", MarketHelper.toBigint(0.1)).should.equal 1000
     it "returns the amount times unitPrice for sell", ()->
-      MarketHelper.calculateResultAmount(1000, "sell", 0.1).should.equal 100
+      MarketHelper.calculateResultAmount(1000, "sell", MarketHelper.toBigint(0.1)).should.equal 100
   
   describe "calculateFee", ()->
     it "calculates the fee amount based on the fee in % ", ()->
@@ -258,9 +254,9 @@ describe "MarketHelper", ->
 
   describe "calculateSpendAmount", ()->
     it "returns the amount for sell", ()->
-      MarketHelper.calculateSpendAmount(1000, "sell", 0.1).should.equal 1000
+      MarketHelper.calculateSpendAmount(1000, "sell", MarketHelper.toBigint(0.1)).should.equal 1000
     it "returns the amount times unitPrice for buy", ()->
-      MarketHelper.calculateSpendAmount(1000, "buy", 0.1).should.equal 100
+      MarketHelper.calculateSpendAmount(1000, "buy", MarketHelper.toBigint(0.1)).should.equal 100
 
   describe "getWithdrawalFee", ()->
     it "returns the withdrawal fee per currency", ()->
