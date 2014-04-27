@@ -106,7 +106,7 @@ JsonRenderer =
     data
 
   marketStats: (marketStats)->
-    for type, stats in marketStats
+    for type, stats of marketStats
       stats.last_price = MarketHelper.fromBigint stats.last_price
       stats.day_high = MarketHelper.fromBigint stats.day_high
       stats.day_low = MarketHelper.fromBigint stats.day_low
