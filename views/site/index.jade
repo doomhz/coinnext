@@ -58,6 +58,6 @@ block content
               tr
                 td <a href="/trade/#{type.replace("_", "/")}">#{type.replace("_", "/")}</a>
                 td #{currencies[info.label]}
-                td(class="rate #{info.growth_ratio >= 0 ? 'up' : 'down'}") #{info.getFloat('last_price')}
-                td #{info.getFloat('volume1')} #{type.split("_")[0]}
+                td(class="rate #{info.growth_ratio >= 0 ? 'up' : 'down'}") #{info.last_price}
+                td #{info.volume1} #{type.split("_")[0]}
                 td #{info.growth_ratio * (info.growth_ratio < 0 ? -1 : 1)}
