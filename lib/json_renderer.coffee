@@ -1,3 +1,4 @@
+MarketHelper = require "./market_helper"
 _ = require "underscore"
 _str = require "underscore.string"
 
@@ -103,6 +104,25 @@ JsonRenderer =
     for message in messages
       data.push @chatMessage message
     data
+
+  marketStats: (marketStats)->
+    for type, stats in marketStats
+      stats.last_price = MarketHelper.fromBigint stats.last_price
+      stats.day_high = MarketHelper.fromBigint stats.day_high
+      stats.day_low = MarketHelper.fromBigint stats.day_low
+      stats.volume1 = MarketHelper.fromBigint stats.volume1
+      stats.volume2 = MarketHelper.fromBigint stats.volume2
+      stats.growth_ratio = MarketHelper.fromBigint stats.growth_ratio
+    marketStats
+
+  tradeStats: (tradeStats)->
+    for stats in tradeStats
+      stats.open_price = MarketHelper.fromBigint stats.open_price
+      stats.close_price = MarketHelper.fromBigint stats.close_price
+      stats.high_price = MarketHelper.fromBigint stats.high_price
+      stats.low_price = MarketHelper.fromBigint stats.low_price
+      stats.volume = MarketHelper.fromBigint stats.volume
+    tradeStats
 
   error: (err, res, code = 409, log = true)->
     console.error err  if log
