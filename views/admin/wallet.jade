@@ -4,8 +4,8 @@ block content
   h2 Wallet #{wallet.id}
 
   p Address: #{wallet.address}
-  p Balance: #{wallet.balance}
-  p Hold balance: #{wallet.hold_balance}
+  p Balance: #{wallet.getFloat('balance')}
+  p Hold balance: #{wallet.getFloat('hold_balance')}
   p Created: #{wallet.created_at.toFormat("DD MMM YYYY HH24:MI")}
   p Updated: #{wallet.updated_at.toFormat("DD MMM YYYY HH24:MI")}
 

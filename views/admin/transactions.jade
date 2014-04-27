@@ -33,7 +33,7 @@ block content
             pre.transaction-log.hidden
               | !{jsonBeautifier.toHTML(transaction)}
           td #{transaction.otheraccount || transaction.address}
-          td #{_str.satoshiRound(transaction.amount, 3)} #{transaction.currency} #{transaction.balance_loaded ? 'loaded' : ''}
+          td #{transaction.getFloat('amount')} #{transaction.currency} #{transaction.balance_loaded ? 'loaded' : ''}
           td #{transaction.created_at.toFormat("DD MMM YYYY HH24:MI")}
 
   p

@@ -36,7 +36,7 @@ block content
               br
               | IP: #{payment.remote_ip}
           td #{payment.address}
-          td #{_str.roundTo(payment.amount)} #{payment.currency}
+          td #{payment.getFloat('amount')} #{payment.currency}
           td
             span.payment-status #{payment.status}
             - if (!payment.isProcessed() && !payment.isCanceled())
