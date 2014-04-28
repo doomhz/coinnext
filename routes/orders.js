@@ -79,7 +79,7 @@
                   transaction.commit().success(function() {
                     newOrder.publish(function(err, order) {
                       if (err) {
-                        console.error("Could not publish newlly created order - " + err);
+                        console.error("Could not publish newly created order - " + err);
                       }
                       if (err) {
                         return res.json(JsonRenderer.order(newOrder));

@@ -42,7 +42,7 @@ module.exports = (app)->
                     JsonRenderer.error "Sorry, could not open an order...", res
                 transaction.commit().success ()->
                   newOrder.publish (err, order)->
-                    console.error "Could not publish newlly created order - #{err}"  if err
+                    console.error "Could not publish newly created order - #{err}"  if err
                     return res.json JsonRenderer.order newOrder  if err
                     res.json JsonRenderer.order order
                   usersSocket.send

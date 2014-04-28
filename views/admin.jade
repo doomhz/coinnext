@@ -20,33 +20,30 @@ html(lang='en')
       }
 
   body
-    .sidebar
-      .page-head
-        .site-logo
-          img(src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==", alt="Coinnext").coinnext-logo
-      - if (adminUser)
-        ul.side-nav.nav
-          li: a(href='/administratie', class=(page === 'stats' ? 'active' : '')) Stats
-          li: a(href='/administratie/transactions', class=(page === 'transactions' ? 'active' : '')) Transactions
-          li: a(href='/administratie/payments', class=(page === 'payments' ? 'active' : '')) Payments
-          li: a(href='/administratie/users', class=(page === 'users' ? 'active' : '')) Users
-          li: a(href='/administratie/markets', class=(page === 'markets' ? 'active' : '')) Markets
-          li
-            a(href='/administratie/wallets', class=(page === 'wallets' ? 'active' : '')) Wallets
-            ul.currency-nav
-              - each currency in currencies
-                li: a(href="/administratie/wallets?currency=#{currency}") #{currency}
+    - if (adminUser)
+      .sidebar
+        .page-head
+          .site-logo
+            img(src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==", alt="Coinnext").coinnext-logo
+          ul.side-nav.nav
+            li: a(href='/administratie', class=(page === 'stats' ? 'active' : '')) Stats
+            li: a(href='/administratie/transactions', class=(page === 'transactions' ? 'active' : '')) Transactions
+            li: a(href='/administratie/payments', class=(page === 'payments' ? 'active' : '')) Payments
+            li: a(href='/administratie/users', class=(page === 'users' ? 'active' : '')) Users
+            li: a(href='/administratie/markets', class=(page === 'markets' ? 'active' : '')) Markets
+            li
+              a(href='/administratie/wallets', class=(page === 'wallets' ? 'active' : '')) Wallets
+              ul.currency-nav
+                - each currency in currencies
+                  li: a(href="/administratie/wallets?currency=#{currency}") #{currency}
           
-
-    .top-bar
-      - if (adminUser)
+      .top-bar
         .quick-search
           form#search-user-form
             input(type="text", placeholder="ID, email or deposit address", name="term")
             button#find-user-bt.btn(type="submit") Find
             a#search-user-result(target="_blank")
 
-      - if (adminUser)
         ul.user-nav.nav
           li: a(href="/administratie/logout") Logout
         p.current-user Logged in as #{adminUser.email}
