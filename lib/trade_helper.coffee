@@ -24,8 +24,8 @@ TradeHelper =
       action: order.action
       buy_currency: order.buy_currency
       sell_currency: order.sell_currency
-      amount: order.getDataValue "amount"
-      unit_price: order.getDataValue "unit_price"
+      amount: order.amount
+      unit_price: order.unit_price
     uri = "#{GLOBAL.appConfig().engine_api_host}/order/#{order.id}"
     options =
       uri: uri
@@ -62,13 +62,13 @@ TradeHelper =
   updateMatchedOrder: (orderToMatch, matchData, transaction, callback)->
     Wallet.findUserWalletByCurrency orderToMatch.user_id, orderToMatch.buy_currency, (err, buyWallet)->
       Wallet.findUserWalletByCurrency orderToMatch.user_id, orderToMatch.sell_currency, (err, sellWallet)->
-        matchedAmount = MarketHelper.convertFromBigint matchData.matched_amount
-        resultAmount = MarketHelper.convertFromBigint matchData.result_amount
-        unitPrice = MarketHelper.convertFromBigint matchData.unit_price
-        fee = MarketHelper.convertFromBigint matchData.fee
+        matchedAmount = matchData.matched_amount
+        resultAmount = matchData.result_amount
+        unitPrice = matchData.unit_price
+        fee = matchData.fee
         status = matchData.status
-        holdBalance = if orderToMatch.action is "buy" then math.multiply(matchedAmount, orderToMatch.unit_price) else matchedAmount
-        changeBalance = if orderToMatch.action is "buy" then math.add(holdBalance, -math.multiply(matchedAmount, unitPrice)) else 0
+        holdBalance = if orderToMatch.action is "buy" then math.multiply(matchedAmount, MarketHelper.fromBigint(orderToMatch.unit_price)) else matchedAmount
+        changeBalance = if orderToMatch.action is "buy" then math.add(holdBalance, -math.multiply(matchedAmount, MarketHelper.fromBigint(unitPrice))) else 0
         sellWallet.addHoldBalance -holdBalance, transaction, (err, sellWallet)->
           return callback err  if err or not sellWallet
           sellWallet.addBalance changeBalance, transaction, (err, sellWallet)->

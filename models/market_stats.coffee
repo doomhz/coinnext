@@ -18,55 +18,31 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("last_price")
-        set: (lastPrice)->
-          @setDataValue "last_price", MarketHelper.convertToBigint(lastPrice)
         comment: "FLOAT x 100000000"
       day_high:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("day_high")
-        set: (dayHigh)->
-          @setDataValue "day_high", MarketHelper.convertToBigint(dayHigh)
         comment: "FLOAT x 100000000"
       day_low:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("day_low")
-        set: (dayLow)->
-          @setDataValue "day_low", MarketHelper.convertToBigint(dayLow)
         comment: "FLOAT x 100000000"
       volume1:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("volume1")
-        set: (volume1)->
-          @setDataValue "volume1", MarketHelper.convertToBigint(volume1)
         comment: "FLOAT x 100000000"
       volume2:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("volume2")
-        set: (volume2)->
-          @setDataValue "volume2", MarketHelper.convertToBigint(volume2)
         comment: "FLOAT x 100000000"
       growth_ratio:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("growth_ratio")
-        set: (growthRatio)->
-          @setDataValue "growth_ratio", MarketHelper.convertToBigint(growthRatio)
         comment: "FLOAT x 100000000"
       today:
         type: DataTypes.DATE
@@ -108,6 +84,7 @@ module.exports = (sequelize, DataTypes) ->
               marketStats.volume2 = math.select(marketStats.volume2).add(order.result_amount).add(order.fee).done()
               marketStats.save().complete callback
 
+        # TODO: Review after switching to bigint
         calculateGrowthRatio: (lastPrice, newPrice)->
           return 100  if not lastPrice
           math.select(newPrice).multiply(100).divide(lastPrice).add(-100).done()
@@ -126,7 +103,10 @@ module.exports = (sequelize, DataTypes) ->
           MarketStats.update({status: status}, {id: id}).complete callback
 
       instanceMethods:
-        
+
+        getFloat: (attribute)->
+          MarketHelper.fromBigint @[attribute]
+
         resetIfNotToday: ()->
           today = new Date().getDate()
           if not @today or (today isnt @today.getDate())

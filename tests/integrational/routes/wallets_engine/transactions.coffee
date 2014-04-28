@@ -1,5 +1,6 @@
 require "./../../../helpers/spec_helper"
 marketStats = require './../../../../models/seeds/market_stats'
+MarketHelper = require "./../../../../lib/market_helper"
 
 app = require "./../../../../wallets"
 request = require "supertest"
@@ -45,15 +46,15 @@ describe "Transactions Api", ->
           .expect(200)
           .expect {}, ()->
             GLOBAL.db.Wallet.findById wallet.id, (err, wl)->
-              wl.balance.should.eql 1
+              wl.balance.should.eql MarketHelper.toBigint 1
               done()
 
   describe "POST /process_pending_payments", ()->
     describe "when the wallet has enough balance", ()->
       it "returns 200 ok and the executed payment ids", (done)->
-        wallet.balance = 10.0002
+        wallet.balance = MarketHelper.toBigint 10.0002
         wallet.save().complete ()->
-          GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
+          GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: MarketHelper.toBigint(10), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
             request('http://localhost:6000')
             .post("/process_pending_payments")
             .send()
@@ -66,10 +67,10 @@ describe "Transactions Api", ->
                 done()
 
       it "updates the user_id from the payment", (done)->
-        wallet.balance = 10.0002
+        wallet.balance = MarketHelper.toBigint 10.0002
         wallet.save().complete ()->
           GLOBAL.db.Transaction.create({wallet_id: wallet.id, currency: "BTC", txid: "unique_tx_id_mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, tx)->
-            GLOBAL.db.Payment.create({wallet_id: wallet.id, user_id: 1, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
+            GLOBAL.db.Payment.create({wallet_id: wallet.id, user_id: 1, amount: MarketHelper.toBigint(10), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
               request('http://localhost:6000')
               .post("/process_pending_payments")
               .send()
@@ -81,7 +82,7 @@ describe "Transactions Api", ->
 
     describe "when the wallet does not have enough balance", ()->
       it "returns 200 ok and the non executed payment ids", (done)->
-        GLOBAL.db.Payment.create({wallet_id: wallet.id, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
+        GLOBAL.db.Payment.create({wallet_id: wallet.id, amount: MarketHelper.toBigint(10), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
           request('http://localhost:6000')
           .post("/process_pending_payments")
           .send()
@@ -95,12 +96,12 @@ describe "Transactions Api", ->
 
     describe "when there are payments for the same user", ()->
       it "processes only one payment", (done)->
-        GLOBAL.db.Wallet.create({currency: "BTC", user_id: 2, balance: 10.0002}).complete (err, wallet2)->
-          wallet.balance = 10.0002
+        GLOBAL.db.Wallet.create({currency: "BTC", user_id: 2, balance: MarketHelper.toBigint(10.0002)}).complete (err, wallet2)->
+          wallet.balance = MarketHelper.toBigint 10.0002
           wallet.save().complete ()->
-            GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: 5, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVa"}).complete (err, pm)->
-              GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: 5, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVb"}).complete (err2, pm2)->
-                GLOBAL.db.Payment.create({user_id: 2, wallet_id: wallet2.id, amount: 10, currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVc"}).complete (err3, pm3)->
+            GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: MarketHelper.toBigint(5), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVa"}).complete (err, pm)->
+              GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: MarketHelper.toBigint(5), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVb"}).complete (err2, pm2)->
+                GLOBAL.db.Payment.create({user_id: 2, wallet_id: wallet2.id, amount: MarketHelper.toBigint(10), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVc"}).complete (err3, pm3)->
                   request('http://localhost:6000')
                   .post("/process_pending_payments")
                   .send()

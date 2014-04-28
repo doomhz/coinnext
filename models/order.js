@@ -64,14 +64,8 @@
         defaultValue: 0,
         allowNull: false,
         validate: {
-          isFloat: true,
+          isInt: true,
           notNull: true
-        },
-        get: function() {
-          return MarketHelper.convertFromBigint(this.getDataValue("amount"));
-        },
-        set: function(amount) {
-          return this.setDataValue("amount", MarketHelper.convertToBigint(amount));
         },
         comment: "FLOAT x 100000000"
       },
@@ -79,13 +73,7 @@
         type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         validate: {
-          isFloat: true
-        },
-        get: function() {
-          return MarketHelper.convertFromBigint(this.getDataValue("matched_amount"));
-        },
-        set: function(matchedAmount) {
-          return this.setDataValue("matched_amount", MarketHelper.convertToBigint(matchedAmount));
+          isInt: true
         },
         comment: "FLOAT x 100000000"
       },
@@ -93,13 +81,7 @@
         type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         validate: {
-          isFloat: true
-        },
-        get: function() {
-          return MarketHelper.convertFromBigint(this.getDataValue("result_amount"));
-        },
-        set: function(resultAmount) {
-          return this.setDataValue("result_amount", MarketHelper.convertToBigint(resultAmount));
+          isInt: true
         },
         comment: "FLOAT x 100000000"
       },
@@ -107,13 +89,7 @@
         type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         validate: {
-          isFloat: true
-        },
-        get: function() {
-          return MarketHelper.convertFromBigint(this.getDataValue("fee"));
-        },
-        set: function(fee) {
-          return this.setDataValue("fee", MarketHelper.convertToBigint(fee));
+          isInt: true
         },
         comment: "FLOAT x 100000000"
       },
@@ -121,13 +97,7 @@
         type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         validate: {
-          isFloat: true
-        },
-        get: function() {
-          return MarketHelper.convertFromBigint(this.getDataValue("unit_price"));
-        },
-        set: function(unitPrice) {
-          return this.setDataValue("unit_price", MarketHelper.convertToBigint(unitPrice));
+          isInt: true
         },
         comment: "FLOAT x 100000000"
       },
@@ -167,7 +137,7 @@
         },
         left_hold_balance: function() {
           if (this.action === "buy") {
-            return math.multiply(this.left_amount, this.unit_price);
+            return math.multiply(this.left_amount, MarketHelper.fromBigint(this.unit_price));
           }
           if (this.action === "sell") {
             return this.left_amount;
@@ -277,6 +247,9 @@
         }
       },
       instanceMethods: {
+        getFloat: function(attribute) {
+          return MarketHelper.fromBigint(this[attribute]);
+        },
         publish: function(callback) {
           if (callback == null) {
             callback = function() {};

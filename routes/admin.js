@@ -43,7 +43,7 @@
     });
     app.get("/administratie", function(req, res) {
       return res.render("admin/stats", {
-        title: "Stats - Admin - Satoshibet",
+        title: "Stats - Admin - CoinNext",
         page: "stats",
         adminUser: req.user,
         _str: _str,
@@ -68,7 +68,7 @@
           };
         }
         return res.render("admin/users", {
-          title: "Users - Admin - Satoshibet",
+          title: "Users - Admin - CoinNext",
           page: "users",
           adminUser: req.user,
           _str: _str,
@@ -98,7 +98,7 @@
           };
           return AuthStats.findAll(query).complete(function(err, authStats) {
             return res.render("admin/user", {
-              title: "User " + user.email + " - " + user.id + " - Admin - Satoshibet",
+              title: "User " + user.email + " - " + user.id + " - Admin - CoinNext",
               page: "users",
               adminUser: req.user,
               _str: _str,
@@ -115,7 +115,7 @@
     app.get("/administratie/wallet/:id", function(req, res) {
       return Wallet.findById(req.params.id, function(err, wallet) {
         return res.render("admin/wallet", {
-          title: "Wallet " + wallet.id + " - Admin - Satoshibet",
+          title: "Wallet " + wallet.id + " - Admin - CoinNext",
           page: "wallets",
           adminUser: req.user,
           _str: _str,
@@ -146,7 +146,7 @@
           };
         }
         return res.render("admin/wallets", {
-          title: "Wallets - Admin - Satoshibet",
+          title: "Wallets - Admin - CoinNext",
           page: "wallets",
           adminUser: req.user,
           _str: _str,
@@ -183,7 +183,7 @@
           };
         }
         return res.render("admin/transactions", {
-          title: "Transactions - Admin - Satoshibet",
+          title: "Transactions - Admin - CoinNext",
           page: "transactions",
           adminUser: req.user,
           _str: _str,
@@ -225,7 +225,7 @@
           };
         }
         return res.render("admin/payments", {
-          title: "Payments - Admin - Satoshibet",
+          title: "Payments - Admin - CoinNext",
           page: "payments",
           adminUser: req.user,
           _str: _str,
@@ -263,9 +263,24 @@
         };
       })(this));
     });
+    app.del("/administratie/payment/:id", function(req, res) {
+      var id;
+      id = req.params.id;
+      return Payment.destroy({
+        id: id,
+        status: MarketHelper.getPaymentStatus("pending")
+      }).complete(function(err, payment) {
+        if (err) {
+          return JsonRenderer.error(err, res);
+        }
+        return res.json(JsonRenderer.payment({
+          status: "removed"
+        }));
+      });
+    });
     app.post("/administratie/clear_pending_payments", function(req, res) {
       return Payment.destroy({
-        status: "pending"
+        status: MarketHelper.getPaymentStatus("pending")
       }).complete(function(err, payment) {
         return res.json({});
       });
@@ -335,7 +350,7 @@
     app.get("/administratie/markets", function(req, res) {
       return MarketStats.getStats(function(err, markets) {
         return res.render("admin/markets", {
-          title: "Markets - Admin - Satoshibet",
+          title: "Markets - Admin - CoinNext",
           page: "markets",
           adminUser: req.user,
           _str: _str,

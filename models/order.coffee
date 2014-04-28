@@ -45,52 +45,32 @@ module.exports = (sequelize, DataTypes) ->
         defaultValue: 0
         allowNull: false
         validate:
-          isFloat: true
+          isInt: true
           notNull: true
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("amount")
-        set: (amount)->
-          @setDataValue "amount", MarketHelper.convertToBigint(amount)
         comment: "FLOAT x 100000000"
       matched_amount:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         validate:
-          isFloat: true
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("matched_amount")
-        set: (matchedAmount)->
-          @setDataValue "matched_amount", MarketHelper.convertToBigint(matchedAmount)
+          isInt: true
         comment: "FLOAT x 100000000"
       result_amount:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         validate:
-          isFloat: true
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("result_amount")
-        set: (resultAmount)->
-          @setDataValue "result_amount", MarketHelper.convertToBigint(resultAmount)
+          isInt: true
         comment: "FLOAT x 100000000"
       fee:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         validate:
-          isFloat: true
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("fee")
-        set: (fee)->
-          @setDataValue "fee", MarketHelper.convertToBigint(fee)
+          isInt: true
         comment: "FLOAT x 100000000"
       unit_price:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         validate:
-          isFloat: true
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("unit_price")
-        set: (unitPrice)->
-          @setDataValue "unit_price", MarketHelper.convertToBigint(unitPrice)
+          isInt: true
         comment: "FLOAT x 100000000"
       status:
         type: DataTypes.INTEGER.UNSIGNED
@@ -119,7 +99,7 @@ module.exports = (sequelize, DataTypes) ->
           math.add(@amount, -@matched_amount)
 
         left_hold_balance: ()->
-          return math.multiply @left_amount, @unit_price  if @action is "buy"
+          return math.multiply @left_amount, MarketHelper.fromBigint @unit_price  if @action is "buy"
           return @left_amount  if @action is "sell"
       
       classMethods:
@@ -189,7 +169,10 @@ module.exports = (sequelize, DataTypes) ->
           MarketHelper.calculateSpendAmount(amount, action, unitPrice) >= MarketHelper.getMinSpendAmount()
 
       instanceMethods:
-        
+
+        getFloat: (attribute)->
+          MarketHelper.fromBigint @[attribute]
+
         publish: (callback = ()->)->
           GLOBAL.walletsClient.send "publish_order", [@id], (err, res, body)=>
             if err

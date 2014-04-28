@@ -36,13 +36,15 @@ block content
               br
               | IP: #{payment.remote_ip}
           td #{payment.address}
-          td #{_str.roundTo(payment.amount)} #{payment.currency}
+          td #{payment.getFloat('amount')} #{payment.currency}
           td
             span.payment-status #{payment.status}
             - if (!payment.isProcessed() && !payment.isCanceled())
               br
               button.pay.btn.btn-warning(data-id="#{payment.id}")
                 | Pay
+              button.remove.btn.btn-danger(data-id="#{payment.id}")
+                | Remove
           td #{payment.created_at.toFormat("DD MMM YYYY HH24:MI")}
 
   p

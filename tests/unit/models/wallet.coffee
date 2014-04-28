@@ -35,7 +35,7 @@ describe "Wallet", ->
 
   describe "withdrawal_fee", ()->
     it "returns the withdrawal fee for the wallet currency", ()->
-      wallet.withdrawal_fee.should.eql 0.0002
+      wallet.withdrawal_fee.should.eql 20000
 
 
   describe "generateAddress", ()->
@@ -56,34 +56,34 @@ describe "Wallet", ->
 
   describe "canWithdraw", ()->
     beforeEach ()->
-      wallet.balance = 10
+      wallet.balance = 1000000000
 
     describe "when it does not include a fee", ()->
       describe "when the balance is bigger than the given amount", ()->
         it "returns true", ()->
-          wallet.canWithdraw(9, false).should.be.true
+          wallet.canWithdraw(900000000).should.be.true
 
       describe "when the balance is equal to the given amount", ()->
         it "returns true", ()->
-          wallet.canWithdraw(10, false).should.be.true
+          wallet.canWithdraw(1000000000).should.be.true
 
       describe "when the balance is lower than the given amount", ()->
         it "returns false", ()->
-          wallet.canWithdraw(10.001, false).should.be.false
+          wallet.canWithdraw(1100000000).should.be.false
 
 
     describe "when it includes the fee", ()->
       describe "when the balance without the fee is bigger than the given amount", ()->
         it "returns true", ()->
-          wallet.canWithdraw(9).should.be.true
+          wallet.canWithdraw(900000000, true).should.be.true
 
       describe "when the balance without the fee is equal to the given amount", ()->
         it "returns true", ()->
-          wallet.canWithdraw(9.9998).should.be.true
+          wallet.canWithdraw(999980000, true).should.be.true
 
       describe "when the balance is lower than the given amount", ()->
         it "returns false", ()->
-          wallet.canWithdraw(9.99981).should.be.false
+          wallet.canWithdraw(999980001, true).should.be.false
 
 
   describe "findUserWalletByCurrency", ()->

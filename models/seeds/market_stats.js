@@ -1,15 +1,19 @@
 (function() {
-  module.exports = [
-    {
-      type: "LTC_BTC",
+  var MarketHelper, int, literal, markets, _ref;
+
+  MarketHelper = require("../../lib/market_helper");
+
+  markets = [];
+
+  _ref = MarketHelper.getMarkets();
+  for (literal in _ref) {
+    int = _ref[literal];
+    markets.push({
+      type: literal,
       status: "enabled"
-    }, {
-      type: "PPC_BTC",
-      status: "enabled"
-    }, {
-      type: "DOGE_BTC",
-      status: "enabled"
-    }
-  ];
+    });
+  }
+
+  module.exports = markets;
 
 }).call(this);

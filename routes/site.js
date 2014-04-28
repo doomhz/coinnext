@@ -1,5 +1,5 @@
 (function() {
-  var AuthStats, MarketHelper, MarketStats, TradeStats, UserToken, Wallet, _str;
+  var AuthStats, JsonRenderer, MarketHelper, MarketStats, TradeStats, UserToken, Wallet, _str;
 
   Wallet = GLOBAL.db.Wallet;
 
@@ -10,6 +10,8 @@
   AuthStats = GLOBAL.db.AuthStats;
 
   UserToken = GLOBAL.db.UserToken;
+
+  JsonRenderer = require("../lib/json_renderer");
 
   MarketHelper = require("../lib/market_helper");
 
@@ -22,7 +24,7 @@
           title: 'Home',
           page: "home",
           user: req.user,
-          marketStats: marketStats,
+          marketStats: JsonRenderer.marketStats(marketStats),
           currencies: MarketHelper.getCurrencyNames()
         });
       });
@@ -60,7 +62,7 @@
                 wallet1: wallet1,
                 wallet2: wallet2,
                 currencies: MarketHelper.getCurrencyNames(),
-                marketStats: marketStats,
+                marketStats: JsonRenderer.marketStats(marketStats),
                 _str: _str
               });
             });
@@ -78,7 +80,7 @@
               currency: currency2
             }),
             currencies: MarketHelper.getCurrencyNames(),
-            marketStats: marketStats,
+            marketStats: JsonRenderer.marketStats(marketStats),
             _str: _str
           });
         }
@@ -125,7 +127,7 @@
     });
     app.get("/market_stats", function(req, res) {
       return MarketStats.getStats(function(err, marketStats) {
-        return res.json(marketStats);
+        return res.json(JsonRenderer.marketStats(marketStats));
       });
     });
     app.get("/trade_stats/:market_type", function(req, res) {
@@ -133,7 +135,7 @@
         if (tradeStats == null) {
           tradeStats = [];
         }
-        return res.json(tradeStats);
+        return res.json(JsonRenderer.tradeStats(tradeStats));
       });
     });
     app.get("/settings", function(req, res) {

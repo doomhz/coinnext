@@ -25,19 +25,11 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("balance")
-        set: (balance)->
-          @setDataValue "balance", MarketHelper.convertToBigint(balance)
         comment: "FLOAT x 100000000"
       hold_balance:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
-        get: ()->
-          MarketHelper.convertFromBigint @getDataValue("hold_balance")
-        set: (holdBalance)->
-          @setDataValue "hold_balance", MarketHelper.convertToBigint(holdBalance)
         comment: "FLOAT x 100000000"
     ,
       tableName: "wallets"
@@ -55,6 +47,9 @@ module.exports = (sequelize, DataTypes) ->
 
         withdrawal_fee: ()->
           MarketHelper.getWithdrawalFee @currency
+
+        total_balance: ()->
+          @balance + @hold_balance
 
       classMethods:
 
@@ -88,6 +83,9 @@ module.exports = (sequelize, DataTypes) ->
 
       instanceMethods:
 
+        getFloat: (attribute)->
+          MarketHelper.fromBigint @[attribute]
+
         generateAddress: (callback = ()->)->
           GLOBAL.walletsClient.send "create_account", [@account, @currency], (err, res, body)=>
             if err
@@ -102,7 +100,7 @@ module.exports = (sequelize, DataTypes) ->
 
         addBalance: (newBalance, transaction, callback = ()->)->
           if not _.isNaN(newBalance) and _.isNumber(newBalance)
-            @increment({balance: MarketHelper.convertToBigint(newBalance)}, {transaction: transaction}).complete (err, wl)=>
+            @increment({balance: newBalance}, {transaction: transaction}).complete (err, wl)=>
               return callback "Could not add the wallet balance #{newBalance} for #{@id}: #{err}"  if err
               Wallet.find(@id).complete callback
           else
@@ -110,7 +108,7 @@ module.exports = (sequelize, DataTypes) ->
 
         addHoldBalance: (newBalance, transaction, callback = ()->)->
           if not _.isNaN(newBalance) and _.isNumber(newBalance)
-            @increment({hold_balance: MarketHelper.convertToBigint(newBalance)}, {transaction: transaction}).complete (err, wl)=>
+            @increment({hold_balance: newBalance}, {transaction: transaction}).complete (err, wl)=>
               return callback "Could not add the wallet hold balance #{newBalance} for #{@id}: #{err}"  if err
               Wallet.find(@id).complete callback
           else
@@ -126,7 +124,7 @@ module.exports = (sequelize, DataTypes) ->
           else
             callback "Could not add wallet hold balance #{balance} for #{@id}, invalid balance #{balance}."
 
-        canWithdraw: (amount, includeFee = true)->
+        canWithdraw: (amount, includeFee = false)->
           withdrawAmount = parseFloat amount
           withdrawAmount = math.add(withdrawAmount, @withdrawal_fee)  if includeFee
           @balance >= withdrawAmount

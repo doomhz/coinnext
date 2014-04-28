@@ -10,7 +10,10 @@
   module.exports = function(app) {
     app.post("/payments", function(req, res) {
       var address, amount, walletId;
-      amount = req.body.amount;
+      amount = parseFloat(req.body.amount);
+      if (_.isNumber(amount) && !_.isNaN(amount) && _.isFinite(amount)) {
+        amount = MarketHelper.toBigInt(amount);
+      }
       walletId = req.body.wallet_id;
       address = req.body.address;
       if (!req.user) {
@@ -21,8 +24,11 @@
         if (!wallet) {
           return JsonRenderer.error("Wrong wallet.", res);
         }
-        if (!wallet.canWithdraw(amount)) {
+        if (!wallet.canWithdraw(amount, true)) {
           return JsonRenderer.error("You don't have enough funds.", res);
+        }
+        if (address === wallet.address) {
+          return JsonRenderer.error("You can't withdraw to the same address.", res);
         }
         data = {
           user_id: req.user.id,

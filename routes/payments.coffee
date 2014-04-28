@@ -5,13 +5,15 @@ JsonRenderer = require "../lib/json_renderer"
 module.exports = (app)->
 
   app.post "/payments", (req, res)->
-    amount = req.body.amount
+    amount = parseFloat req.body.amount
+    amount = MarketHelper.toBigInt amount  if _.isNumber(amount) and not _.isNaN(amount) and _.isFinite(amount)
     walletId = req.body.wallet_id
     address = req.body.address
     return JsonRenderer.error "Please auth.", res  if not req.user
     Wallet.findUserWallet req.user.id, walletId, (err, wallet)->
       return JsonRenderer.error "Wrong wallet.", res  if not wallet
-      return JsonRenderer.error "You don't have enough funds.", res  if not wallet.canWithdraw amount
+      return JsonRenderer.error "You don't have enough funds.", res  if not wallet.canWithdraw amount, true
+      return JsonRenderer.error "You can't withdraw to the same address.", res  if address is wallet.address
       data =
         user_id: req.user.id
         wallet_id: walletId

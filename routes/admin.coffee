@@ -28,7 +28,7 @@ module.exports = (app)->
 
   app.get "/administratie", (req, res)->
     res.render "admin/stats",
-      title: "Stats - Admin - Satoshibet"
+      title: "Stats - Admin - CoinNext"
       page: "stats"
       adminUser: req.user
       _str: _str
@@ -46,7 +46,7 @@ module.exports = (app)->
       offset: from
     User.findAndCountAll(query).complete (err, result = {rows: [], count: 0})->
       res.render "admin/users",
-        title: "Users - Admin - Satoshibet"
+        title: "Users - Admin - CoinNext"
         page: "users"
         adminUser: req.user
         _str: _str
@@ -69,7 +69,7 @@ module.exports = (app)->
           limit: 20
         AuthStats.findAll(query).complete (err, authStats)->
           res.render "admin/user",
-            title: "User #{user.email} - #{user.id} - Admin - Satoshibet"
+            title: "User #{user.email} - #{user.id} - Admin - CoinNext"
             page: "users"
             adminUser: req.user
             _str: _str
@@ -82,7 +82,7 @@ module.exports = (app)->
   app.get "/administratie/wallet/:id", (req, res)->
     Wallet.findById req.params.id, (err, wallet)->
       res.render "admin/wallet",
-        title: "Wallet #{wallet.id} - Admin - Satoshibet"
+        title: "Wallet #{wallet.id} - Admin - CoinNext"
         page: "wallets"
         adminUser: req.user
         _str: _str
@@ -104,7 +104,7 @@ module.exports = (app)->
       offset: from
     Wallet.findAndCountAll(query).complete (err, result = {rows: [], count: 0})->
       res.render "admin/wallets",
-        title: "Wallets - Admin - Satoshibet"
+        title: "Wallets - Admin - CoinNext"
         page: "wallets"
         adminUser: req.user
         _str: _str
@@ -131,7 +131,7 @@ module.exports = (app)->
         user_id: userId
     Transaction.findAndCountAll(query).complete (err, result = {rows: [], count: 0})->
       res.render "admin/transactions",
-        title: "Transactions - Admin - Satoshibet"
+        title: "Transactions - Admin - CoinNext"
         page: "transactions"
         adminUser: req.user
         _str: _str
@@ -161,7 +161,7 @@ module.exports = (app)->
         user_id: userId
     Payment.findAndCountAll(query).complete (err, result = {rows: [], count: 0})->
       res.render "admin/payments",
-        title: "Payments - Admin - Satoshibet"
+        title: "Payments - Admin - CoinNext"
         page: "payments"
         adminUser: req.user
         _str: _str
@@ -185,8 +185,15 @@ module.exports = (app)->
       else
         return JsonRenderer.error "Could not process payment - #{JSON.stringify(body)}", res
 
+  app.del "/administratie/payment/:id", (req, res)->
+    id = req.params.id
+    Payment.destroy({id: id, status: MarketHelper.getPaymentStatus "pending"}).complete (err, payment)->
+      return JsonRenderer.error err, res  if err
+      res.json JsonRenderer.payment
+        status: "removed"
+
   app.post "/administratie/clear_pending_payments", (req, res)->
-    Payment.destroy({status: "pending"}).complete (err, payment)->
+    Payment.destroy({status: MarketHelper.getPaymentStatus "pending"}).complete (err, payment)->
       res.json {}
 
   app.get "/administratie/banksaldo/:currency", (req, res)->
@@ -225,7 +232,7 @@ module.exports = (app)->
   app.get "/administratie/markets", (req, res)->
     MarketStats.getStats (err, markets)->
       res.render "admin/markets",
-        title: "Markets - Admin - Satoshibet"
+        title: "Markets - Admin - CoinNext"
         page: "markets"
         adminUser: req.user
         _str: _str

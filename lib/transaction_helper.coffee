@@ -21,7 +21,7 @@ TransactionHelper =
       Wallet.findById payment.wallet_id, (err, wallet)->
         return callback null, "#{payment.id} - wallet #{payment.wallet_id} not found"  if not wallet
         return callback null, "#{payment.id} - user already had a processed payment"  if TransactionHelper.paymentsProcessedUserIds.indexOf(wallet.user_id) > -1
-        return callback null, "#{payment.id} - not processed - no funds"  if not wallet.canWithdraw payment.amount
+        return callback null, "#{payment.id} - not processed - no funds"  if not wallet.canWithdraw payment.amount, true
         GLOBAL.db.sequelize.transaction (transaction)->
           wallet.addBalance -payment.amount, transaction, (err)->
             if err
@@ -47,7 +47,7 @@ TransactionHelper =
                   callback null, "#{payment.id} - not processed - #{err}"  if err
 
   pay: (payment, callback = ()->)->
-    GLOBAL.wallets[payment.currency].sendToAddress payment.address, payment.amount, (err, response = "")->
+    GLOBAL.wallets[payment.currency].sendToAddress payment.address, payment.getFloat("amount"), (err, response = "")->
       console.error "Could not withdraw to #{payment.address} #{payment.amount} BTC", err  if err
       return payment.errored err, callback  if err
       payment.process response, callback

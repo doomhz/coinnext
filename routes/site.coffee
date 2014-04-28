@@ -3,6 +3,7 @@ MarketStats = GLOBAL.db.MarketStats
 TradeStats = GLOBAL.db.TradeStats
 AuthStats = GLOBAL.db.AuthStats
 UserToken = GLOBAL.db.UserToken
+JsonRenderer = require "../lib/json_renderer"
 MarketHelper = require "../lib/market_helper"
 _str = require "../lib/underscore_string"
 
@@ -14,7 +15,7 @@ module.exports = (app)->
         title: 'Home'
         page: "home"
         user: req.user
-        marketStats: marketStats
+        marketStats: JsonRenderer.marketStats marketStats
         currencies: MarketHelper.getCurrencyNames()
 
   app.get "/trade", (req, res)->
@@ -43,7 +44,7 @@ module.exports = (app)->
               wallet1: wallet1
               wallet2: wallet2
               currencies: MarketHelper.getCurrencyNames()
-              marketStats: marketStats
+              marketStats: JsonRenderer.marketStats marketStats
               _str: _str
       else
         res.render "site/trade",
@@ -56,7 +57,7 @@ module.exports = (app)->
           wallet2: Wallet.build
             currency: currency2
           currencies: MarketHelper.getCurrencyNames()
-          marketStats: marketStats
+          marketStats: JsonRenderer.marketStats marketStats
           _str: _str
 
   app.get "/funds", (req, res)->
@@ -87,11 +88,11 @@ module.exports = (app)->
 
   app.get "/market_stats", (req, res)->
     MarketStats.getStats (err, marketStats)->
-      res.json marketStats
+      res.json JsonRenderer.marketStats marketStats
 
   app.get "/trade_stats/:market_type", (req, res)->
     TradeStats.getLastStats req.params.market_type, (err, tradeStats = [])->
-      res.json tradeStats
+      res.json JsonRenderer.tradeStats tradeStats
 
 
   # Settings

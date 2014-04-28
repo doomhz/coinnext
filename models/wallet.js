@@ -36,24 +36,12 @@
         type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         allowNull: false,
-        get: function() {
-          return MarketHelper.convertFromBigint(this.getDataValue("balance"));
-        },
-        set: function(balance) {
-          return this.setDataValue("balance", MarketHelper.convertToBigint(balance));
-        },
         comment: "FLOAT x 100000000"
       },
       hold_balance: {
         type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         allowNull: false,
-        get: function() {
-          return MarketHelper.convertFromBigint(this.getDataValue("hold_balance"));
-        },
-        set: function(holdBalance) {
-          return this.setDataValue("hold_balance", MarketHelper.convertToBigint(holdBalance));
-        },
         comment: "FLOAT x 100000000"
       }
     }, {
@@ -70,6 +58,9 @@
         },
         withdrawal_fee: function() {
           return MarketHelper.getWithdrawalFee(this.currency);
+        },
+        total_balance: function() {
+          return this.balance + this.hold_balance;
         }
       },
       classMethods: {
@@ -140,6 +131,9 @@
         }
       },
       instanceMethods: {
+        getFloat: function(attribute) {
+          return MarketHelper.fromBigint(this[attribute]);
+        },
         generateAddress: function(callback) {
           if (callback == null) {
             callback = function() {};
@@ -166,7 +160,7 @@
           }
           if (!_.isNaN(newBalance) && _.isNumber(newBalance)) {
             return this.increment({
-              balance: MarketHelper.convertToBigint(newBalance)
+              balance: newBalance
             }, {
               transaction: transaction
             }).complete((function(_this) {
@@ -187,7 +181,7 @@
           }
           if (!_.isNaN(newBalance) && _.isNumber(newBalance)) {
             return this.increment({
-              hold_balance: MarketHelper.convertToBigint(newBalance)
+              hold_balance: newBalance
             }, {
               transaction: transaction
             }).complete((function(_this) {
@@ -223,7 +217,7 @@
         canWithdraw: function(amount, includeFee) {
           var withdrawAmount;
           if (includeFee == null) {
-            includeFee = true;
+            includeFee = false;
           }
           withdrawAmount = parseFloat(amount);
           if (includeFee) {

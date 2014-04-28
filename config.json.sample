@@ -15,7 +15,7 @@
       "cookie_secret": "secretkey",
       "session_key": "cnxweb",
       "cookie": {
-        "maxAge": 2592000000,
+        "maxAge": 43200000,
         "path": "/",
         "httpOnly": true,
         "secure": true
@@ -61,8 +61,6 @@
           "passphrase": ""
         },
         "confirmations": 1,
-        "transaction_fee": 0.0001,
-        "balance_confirmations": 0,
         "currency": "BTC"
       },
       "ltc": {
@@ -78,8 +76,6 @@
           "passphrase": ""
         },
         "confirmations": 1,
-        "transaction_fee": 0.0001,
-        "balance_confirmations": 0,
         "currency": "LTC"
       },
       "ppc": {
@@ -95,8 +91,6 @@
           "passphrase": ""
         },
         "confirmations": 1,
-        "transaction_fee": 0.0001,
-        "balance_confirmations": 0,
         "currency": "PPC"
       },
       "doge": {
@@ -112,9 +106,22 @@
           "passphrase": ""
         },
         "confirmations": 1,
-        "transaction_fee": 0.0001,
-        "balance_confirmations": 0,
         "currency": "DOGE"
+      },
+      "nmc": {
+        "client": {
+          "host": "127.0.0.1",
+          "port": 15332,
+          "user": "",
+          "pass": ""
+        },
+        "wallet": {
+          "address": "",
+          "account": "coinnext_bank",
+          "passphrase": ""
+        },
+        "confirmations": 1,
+        "currency": "NMC"
       }
     },
     "app_host": "localhost:5000",
@@ -145,7 +152,7 @@
       "cookie_secret": "secretkey",
       "session_key": "cnxweb",
       "cookie": {
-        "maxAge": 2592000000,
+        "maxAge": 43200000,
         "path": "/",
         "httpOnly": true,
         "secure": true
@@ -191,8 +198,6 @@
           "passphrase": ""
         },
         "confirmations": 1,
-        "transaction_fee": 0.0001,
-        "balance_confirmations": 0,
         "currency": "BTC"
       },
       "ltc": {
@@ -208,8 +213,6 @@
           "passphrase": ""
         },
         "confirmations": 1,
-        "transaction_fee": 0.0001,
-        "balance_confirmations": 0,
         "currency": "LTC"
       },
       "ppc": {
@@ -225,8 +228,6 @@
           "passphrase": ""
         },
         "confirmations": 1,
-        "transaction_fee": 0.0001,
-        "balance_confirmations": 0,
         "currency": "PPC"
       },
       "doge": {
@@ -242,9 +243,22 @@
           "passphrase": ""
         },
         "confirmations": 1,
-        "transaction_fee": 0.0001,
-        "balance_confirmations": 0,
         "currency": "DOGE"
+      },
+      "nmc": {
+        "client": {
+          "host": "127.0.0.1",
+          "port": 15332,
+          "user": "",
+          "pass": ""
+        },
+        "wallet": {
+          "address": "",
+          "account": "coinnext_bank",
+          "passphrase": ""
+        },
+        "confirmations": 1,
+        "currency": "NMC"
       }
     },
     "app_host": "localhost:5000",
@@ -274,7 +288,7 @@
       "cookie_secret": "secretkey",
       "session_key": "cnxweb",
       "cookie": {
-        "maxAge": 2592000000,
+        "maxAge": 43200000,
         "path": "/",
         "httpOnly": true,
         "secure": true
@@ -320,8 +334,6 @@
           "passphrase": ""
         },
         "confirmations": 1,
-        "transaction_fee": 0.0001,
-        "balance_confirmations": 0,
         "currency": "BTC"
       },
       "ltc": {
@@ -337,8 +349,6 @@
           "passphrase": ""
         },
         "confirmations": 1,
-        "transaction_fee": 0.0001,
-        "balance_confirmations": 0,
         "currency": "LTC"
       },
       "ppc": {
@@ -354,8 +364,6 @@
           "passphrase": ""
         },
         "confirmations": 1,
-        "transaction_fee": 0.0001,
-        "balance_confirmations": 0,
         "currency": "PPC"
       },
       "doge": {
@@ -371,9 +379,22 @@
           "passphrase": ""
         },
         "confirmations": 1,
-        "transaction_fee": 0.0001,
-        "balance_confirmations": 0,
         "currency": "DOGE"
+      },
+      "nmc": {
+        "client": {
+          "host": "127.0.0.1",
+          "port": 5332,
+          "user": "",
+          "pass": ""
+        },
+        "wallet": {
+          "address": "",
+          "account": "coinnext_bank",
+          "passphrase": ""
+        },
+        "confirmations": 1,
+        "currency": "NMC"
       }
     },
     "app_host": "localhost:5000",

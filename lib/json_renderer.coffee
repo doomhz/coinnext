@@ -1,3 +1,4 @@
+MarketHelper = require "./market_helper"
 _ = require "underscore"
 _str = require "underscore.string"
 
@@ -17,8 +18,8 @@ JsonRenderer =
   wallet: (wallet)->
     id:            wallet.id
     currency:      wallet.currency
-    balance:       wallet.balance
-    hold_balance:  wallet.hold_balance
+    balance:       wallet.getFloat "balance"
+    hold_balance:  wallet.getFloat "hold_balance"
     address:       wallet.address
     updated_at:    wallet.updated_at
     created_at:    wallet.created_at
@@ -34,7 +35,7 @@ JsonRenderer =
     wallet_id:      payment.wallet_id
     transaction_id: payment.transaction_id
     address:        payment.address
-    amount:         payment.amount
+    amount:         payment.getFloat "amount"
     currency:       payment.currency
     status:         payment.status
     updated_at:     payment.updated_at
@@ -50,9 +51,9 @@ JsonRenderer =
     id:             transaction.id
     wallet_id:      transaction.wallet_id
     currency:       transaction.currency
-    fee:            transaction.fee
+    fee:            transaction.getFloat "fee"
     address:        transaction.address
-    amount:         transaction.amount
+    amount:         transaction.getFloat "amount"
     category:       transaction.category
     txid:           transaction.txid
     confirmations:  transaction.confirmations
@@ -72,11 +73,11 @@ JsonRenderer =
     action:         order.action
     buy_currency:   order.buy_currency
     sell_currency:  order.sell_currency
-    amount:         order.amount
-    matched_amount: order.matched_amount
-    result_amount:  order.result_amount
-    fee:            order.fee
-    unit_price:     order.unit_price
+    amount:         order.getFloat "amount"
+    matched_amount: order.getFloat "matched_amount"
+    result_amount:  order.getFloat "result_amount"
+    fee:            order.getFloat "fee"
+    unit_price:     order.getFloat "unit_price"
     status:         order.status
     published:      order.published
     updated_at:     order.updated_at
@@ -103,6 +104,25 @@ JsonRenderer =
     for message in messages
       data.push @chatMessage message
     data
+
+  marketStats: (marketStats)->
+    for type, stats of marketStats
+      stats.last_price = MarketHelper.fromBigint stats.last_price
+      stats.day_high = MarketHelper.fromBigint stats.day_high
+      stats.day_low = MarketHelper.fromBigint stats.day_low
+      stats.volume1 = MarketHelper.fromBigint stats.volume1
+      stats.volume2 = MarketHelper.fromBigint stats.volume2
+      stats.growth_ratio = MarketHelper.fromBigint stats.growth_ratio
+    marketStats
+
+  tradeStats: (tradeStats)->
+    for stats in tradeStats
+      stats.open_price = MarketHelper.fromBigint stats.open_price
+      stats.close_price = MarketHelper.fromBigint stats.close_price
+      stats.high_price = MarketHelper.fromBigint stats.high_price
+      stats.low_price = MarketHelper.fromBigint stats.low_price
+      stats.volume = MarketHelper.fromBigint stats.volume
+    tradeStats
 
   error: (err, res, code = 409, log = true)->
     console.error err  if log
