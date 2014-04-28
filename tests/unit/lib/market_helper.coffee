@@ -17,17 +17,20 @@ describe "MarketHelper", ->
     LTC: 2
     PPC: 3
     DOGE: 4
+    NMC: 5
 
   CURRENCY_NAMES =
     BTC: "Bitcoin"
     LTC: "Litecoin"
     PPC: "Peercoin"
     DOGE: "Dogecoin"
+    NMC: "Namecoin"
 
   AVAILABLE_MARKETS =
     LTC_BTC: 1
     PPC_BTC: 2
     DOGE_BTC: 3
+    NMC_BTC: 4
 
   ORDER_TYPES =
     market: 1
@@ -58,6 +61,7 @@ describe "MarketHelper", ->
     LTC: 200000
     PPC: 2000000
     DOGE: 200000000
+    NMC: 200000
 
   TOKENS =
     email_confirmation: 1

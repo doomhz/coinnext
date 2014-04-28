@@ -1,4 +1,4 @@
-CryptoWallet = require "./crypto_wallet"
+CryptoWallet = require "../crypto_wallet"
 peercoin = require("node-peercoin")
 
 class PpcWallet extends CryptoWallet

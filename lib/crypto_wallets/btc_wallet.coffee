@@ -1,4 +1,4 @@
-CryptoWallet = require "./crypto_wallet"
+CryptoWallet = require "../crypto_wallet"
 bitcoin = require("bitcoin")
 
 class BtcWallet extends CryptoWallet

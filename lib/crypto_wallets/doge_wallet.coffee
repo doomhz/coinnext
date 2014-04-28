@@ -1,4 +1,4 @@
-CryptoWallet = require "./crypto_wallet"
+CryptoWallet = require "../crypto_wallet"
 dogecoin = require("node-dogecoin")
 
 class DogeWallet extends CryptoWallet

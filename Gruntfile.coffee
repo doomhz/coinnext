@@ -8,13 +8,14 @@ module.exports = (grunt) ->
   grunt.initConfig
     watch:
       tasks: ["coffee"]
-      files: ["lib/**/*.coffee", "models/**/*.coffee", "routes/**/*.coffee", "tests/helpers/*.coffee"]
+      files: ["configs/**/*.coffee", "lib/**/*.coffee", "models/**/*.coffee", "routes/**/*.coffee", "tests/helpers/*.coffee"]
       options:
         spawn: false
 
     coffee:
       compile:
         files: [
+          {expand: true, cwd: 'configs', src: ['**/*.coffee'], dest: 'configs', rename: coffeeRename}
           {expand: true, cwd: 'models', src: ['**/*.coffee'], dest: 'models', rename: coffeeRename}
           {expand: true, cwd: 'lib', src: ['**/*.coffee'], dest: 'lib', rename: coffeeRename}
           {expand: true, cwd: 'routes', src: ['**/*.coffee'], dest: 'routes', rename: coffeeRename}

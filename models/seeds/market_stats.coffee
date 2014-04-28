@@ -1,5 +1,5 @@
-module.exports = [
-  {type: "LTC_BTC", status: "enabled"}
-  {type: "PPC_BTC", status: "enabled"}
-  {type: "DOGE_BTC", status: "enabled"}
-]
+MarketHelper = require "../../lib/market_helper"
+markets = []
+for literal, int of MarketHelper.getMarkets()
+  markets.push {type: literal, status: "enabled"}
+module.exports = markets
