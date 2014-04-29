@@ -1,54 +1,55 @@
 extends ../admin
 
 block content
-  h2 Payments
+  .content
+    h2 Payments
 
-  p
-    button#clear-pending-payments.btn.btn-danger Clear pending
+    p
+      button#clear-pending-payments.btn.btn-danger Clear pending
 
-  p
-    - if (from - count >= 0)
-      a(href="/administratie/payments?from=#{from - count}&user_id=#{userId ? userId : ''}") Prev
-      |  | 
-    a(href="/general_admiral_sergeant/payments?from=#{from + count}&user_id=#{userId ? userId : ''}") Next
+    p
+      - if (from - count >= 0)
+        a(href="/administratie/payments?from=#{from - count}&user_id=#{userId ? userId : ''}") Prev
+        |  | 
+      a(href="/general_admiral_sergeant/payments?from=#{from + count}&user_id=#{userId ? userId : ''}") Next
 
-  table#payments.table
-    thead
-      tr
-        th User
-        th Address
-        th Amount
-        th Status
-        th Time
-    tbody
-      - each payment in payments
+    table#payments.table
+      thead
         tr
-          td
-            a(href="/administratie/user/#{payment.user_id}", target="_blank") #{payment.user_id}
-            br
-            a.payment-log-toggler(href="#") View log
-            pre.payment-log.hidden
-              - each paymentLog in payment.paymentLogs
-                | !{jsonBeautifier.toHTML(paymentLog.log)}
+          th User
+          th Address
+          th Amount
+          th Status
+          th Time
+      tbody
+        - each payment in payments
+          tr
+            td
+              a(href="/administratie/user/#{payment.user_id}", target="_blank") #{payment.user_id}
+              br
+              a.payment-log-toggler(href="#") View log
+              pre.payment-log.hidden
+                - each paymentLog in payment.paymentLogs
+                  | !{jsonBeautifier.toHTML(paymentLog.log)}
+                  br
+                  | #{paymentLog.created_at}
+                  hr
                 br
-                | #{paymentLog.created_at}
-                hr
-              br
-              | IP: #{payment.remote_ip}
-          td #{payment.address}
-          td #{payment.getFloat('amount')} #{payment.currency}
-          td
-            span.payment-status #{payment.status}
-            - if (!payment.isProcessed() && !payment.isCanceled())
-              br
-              button.pay.btn.btn-warning(data-id="#{payment.id}")
-                | Pay
-              button.remove.btn.btn-danger(data-id="#{payment.id}")
-                | Remove
-          td #{payment.created_at.toFormat("DD MMM YYYY HH24:MI")}
+                | IP: #{payment.remote_ip}
+            td #{payment.address}
+            td #{payment.getFloat('amount')} #{payment.currency}
+            td
+              span.payment-status #{payment.status}
+              - if (!payment.isProcessed() && !payment.isCanceled())
+                br
+                button.pay.btn.btn-warning(data-id="#{payment.id}")
+                  | Pay
+                button.remove.btn.btn-danger(data-id="#{payment.id}")
+                  | Remove
+            td #{payment.created_at.toFormat("DD MMM YYYY HH24:MI")}
 
-  p
-    - if (from - count >= 0)
-      a(href="/administratie/payments?from=#{from - count}&user_id=#{userId ? userId : ''}") Prev
-      |  | 
-    a(href="/administratie/payments?from=#{from + count}&user_id=#{userId ? userId : ''}") Next
+    p
+      - if (from - count >= 0)
+        a(href="/administratie/payments?from=#{from - count}&user_id=#{userId ? userId : ''}") Prev
+        |  | 
+      a(href="/administratie/payments?from=#{from + count}&user_id=#{userId ? userId : ''}") Next

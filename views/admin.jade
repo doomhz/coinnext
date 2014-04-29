@@ -48,7 +48,6 @@ html(lang='en')
           li: a(href="/administratie/logout") Logout
         p.current-user Logged in as #{adminUser.email}
     
-    .content
-      block content
+    block content
 
     != js('admin')
