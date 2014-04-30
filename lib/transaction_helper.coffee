@@ -22,29 +22,14 @@ TransactionHelper =
         return callback null, "#{payment.id} - wallet #{payment.wallet_id} not found"  if not wallet
         return callback null, "#{payment.id} - user already had a processed payment"  if TransactionHelper.paymentsProcessedUserIds.indexOf(wallet.user_id) > -1
         return callback null, "#{payment.id} - not processed - no funds"  if not wallet.canWithdraw payment.amount, true
-        GLOBAL.db.sequelize.transaction (transaction)->
-          wallet.addBalance -payment.amount, transaction, (err)->
-            if err
-              return transaction.rollback().success ()->
-                callback null, "#{payment.id} - not processed - #{err}"
-            wallet.addBalance -wallet.withdrawal_fee, transaction, (err)->
-              if err
-                return transaction.rollback().success ()->
-                  callback null, "#{payment.id} - not processed - #{err}"
-              TransactionHelper.pay payment, (err, p)->
-                if err or not p.isProcessed()
-                  return transaction.rollback().success ()->
-                    callback null, "#{payment.id} - not processed - #{err}"
-                transaction.commit().success ()->
-                  TransactionHelper.paymentsProcessedUserIds.push wallet.user_id
-                  Transaction.setUserById p.transaction_id, p.user_id, ()->
-                    callback null, "#{payment.id} - processed"
-                    usersSocket.send
-                      type: "payment-processed"
-                      user_id: payment.user_id
-                      eventData: JsonRenderer.payment p
-                transaction.done (err)->
-                  callback null, "#{payment.id} - not processed - #{err}"  if err
+        TransactionHelper.pay payment, (err, p)->
+          TransactionHelper.paymentsProcessedUserIds.push wallet.user_id
+          Transaction.setUserById p.transaction_id, p.user_id, ()->
+            callback null, "#{payment.id} - processed"
+            usersSocket.send
+              type: "payment-processed"
+              user_id: payment.user_id
+              eventData: JsonRenderer.payment p
 
   pay: (payment, callback = ()->)->
     GLOBAL.wallets[payment.currency].sendToAddress payment.address, payment.getFloat("amount"), (err, response = "")->

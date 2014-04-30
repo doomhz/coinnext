@@ -8,7 +8,8 @@ class WalletsClient
     "create_account": "post"
     "publish_order":  "post"
     "cancel_order":  "del"
-    "process_payment": "post"
+    "process_payment": "put"
+    "cancel_payment": "del"
     "wallet_balance": "get"
     "wallet_info": "get"
 

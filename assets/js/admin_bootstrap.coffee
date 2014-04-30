@@ -91,13 +91,6 @@ $(document).ready ()->
           error: (xhr)->
             alert xhr.responseText
 
-    $("#clear-pending-payments").click (ev)->
-      ev.preventDefault()
-      if confirm "Are you sure?"
-        $el = $(ev.currentTarget)
-        $.post "#{rootUrl}/clear_pending_payments", ()->
-          window.location.reload()
-
   $markets = $("#markets")
   if $markets.length
     $markets.delegate ".market-switcher", "click", (ev)->

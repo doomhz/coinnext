@@ -187,14 +187,13 @@ module.exports = (app)->
 
   app.del "/administratie/payment/:id", (req, res)->
     id = req.params.id
-    Payment.destroy({id: id, status: MarketHelper.getPaymentStatus "pending"}).complete (err, payment)->
+    GLOBAL.walletsClient.send "cancel_payment", [id], (err, res2, body)=>
       return JsonRenderer.error err, res  if err
-      res.json JsonRenderer.payment
-        status: "removed"
-
-  app.post "/administratie/clear_pending_payments", (req, res)->
-    Payment.destroy({status: MarketHelper.getPaymentStatus "pending"}).complete (err, payment)->
-      res.json {}
+      if body and body.paymentId?
+        res.json JsonRenderer.payment
+          status: "removed"
+      else
+        return JsonRenderer.error "Could not cancel payment - #{JSON.stringify(body)}", res
 
   app.get "/administratie/banksaldo/:currency", (req, res)->
     currency = req.params.currency

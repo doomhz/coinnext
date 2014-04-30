@@ -266,24 +266,20 @@
     app.del("/administratie/payment/:id", function(req, res) {
       var id;
       id = req.params.id;
-      return Payment.destroy({
-        id: id,
-        status: MarketHelper.getPaymentStatus("pending")
-      }).complete(function(err, payment) {
-        if (err) {
-          return JsonRenderer.error(err, res);
-        }
-        return res.json(JsonRenderer.payment({
-          status: "removed"
-        }));
-      });
-    });
-    app.post("/administratie/clear_pending_payments", function(req, res) {
-      return Payment.destroy({
-        status: MarketHelper.getPaymentStatus("pending")
-      }).complete(function(err, payment) {
-        return res.json({});
-      });
+      return GLOBAL.walletsClient.send("cancel_payment", [id], (function(_this) {
+        return function(err, res2, body) {
+          if (err) {
+            return JsonRenderer.error(err, res);
+          }
+          if (body && (body.paymentId != null)) {
+            return res.json(JsonRenderer.payment({
+              status: "removed"
+            }));
+          } else {
+            return JsonRenderer.error("Could not cancel payment - " + (JSON.stringify(body)), res);
+          }
+        };
+      })(this));
     });
     app.get("/administratie/banksaldo/:currency", function(req, res) {
       var currency;
