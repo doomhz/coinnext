@@ -84,6 +84,7 @@ module.exports = (sequelize, DataTypes) ->
       instanceMethods:
 
         getFloat: (attribute)->
+          return @[attribute]  if not @[attribute]?
           MarketHelper.fromBigint @[attribute]
 
         generateAddress: (callback = ()->)->

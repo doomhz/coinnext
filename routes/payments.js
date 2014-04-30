@@ -1,24 +1,29 @@
 (function() {
-  var JsonRenderer, Payment, Wallet;
+  var JsonRenderer, MarketHelper, Payment, Wallet, _;
 
   Payment = GLOBAL.db.Payment;
 
   Wallet = GLOBAL.db.Wallet;
 
+  MarketHelper = require("../lib/market_helper");
+
   JsonRenderer = require("../lib/json_renderer");
+
+  _ = require("underscore");
 
   module.exports = function(app) {
     app.post("/payments", function(req, res) {
       var address, amount, walletId;
       amount = parseFloat(req.body.amount);
-      if (_.isNumber(amount) && !_.isNaN(amount) && _.isFinite(amount)) {
-        amount = MarketHelper.toBigInt(amount);
-      }
-      walletId = req.body.wallet_id;
-      address = req.body.address;
       if (!req.user) {
         return JsonRenderer.error("Please auth.", res);
       }
+      if (!_.isNumber(amount) || _.isNaN(amount) || !_.isFinite(amount)) {
+        return JsonRenderer.error("Please submit a valid amount.", res);
+      }
+      amount = MarketHelper.toBigint(amount);
+      walletId = req.body.wallet_id;
+      address = req.body.address;
       return Wallet.findUserWallet(req.user.id, walletId, function(err, wallet) {
         var data;
         if (!wallet) {

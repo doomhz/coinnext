@@ -121,6 +121,9 @@
       },
       instanceMethods: {
         getFloat: function(attribute) {
+          if (this[attribute] == null) {
+            return this[attribute];
+          }
           return MarketHelper.fromBigint(this[attribute]);
         },
         isProcessed: function() {
