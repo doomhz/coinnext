@@ -265,7 +265,7 @@
     "wallets_host": "localhost:6000",
     "engine_api_host": "http://localhost:7000",
     "users": {
-      hostname: "http://localhost:5000"
+      "hostname": "http://localhost:5000"
     }
   },
   "production" : {
@@ -401,7 +401,7 @@
     "wallets_host": "localhost:6000",
     "engine_api_host": "http://localhost:7000",
     "users": {
-      hostname: "http://direct.coinnext.com"
+      "hostname": "http://direct.coinnext.com"
     },
     "assets_host": "https://d2fsloj9ifsfv5.cloudfront.net",
     "assets_key": "1397587150588",

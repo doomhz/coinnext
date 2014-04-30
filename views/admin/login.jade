@@ -1,17 +1,20 @@
 extends ../admin
 
 block content
-  h1 Login
+  .content.auth
 
-  form(action="/administratie/login", method="post")
-    input(name="_csrf" type="hidden", value="#{csrfToken}")
-    label Email
-    input(name="email", type="email")
-    br
-    label Password
-    input(name="password", type="password")
-    br
-    label Google Token
-    input(name="gauth_pass", type="text")
-    br
-    button.btn(type="submit") Login
+    .auth-box
+      h1 Login
+
+      form(action="/administratie/login", method="post")
+        input(name="_csrf" type="hidden", value="#{csrfToken}")
+        label Email
+        input(name="email", type="email")
+        br
+        label Password
+        input(name="password", type="password")
+        br
+        label Google Token
+        input(name="gauth_pass", type="text")
+        br
+        button.btn(type="submit") Login

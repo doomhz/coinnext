@@ -70,8 +70,6 @@
       border-width: 5px 4px 0 4px
       border-color: $red transparent transparent transparent
 
-
-
 .market-ticker-coin
   clearfix()
   border-bottom 1px solid #ecedef
@@ -82,7 +80,7 @@
   &.active
     a
       color #fff
-      border-radius 1px
+      border-radius 2px
       border 0
       background $blue
       font-weight bold
@@ -133,12 +131,14 @@
     background url(CDN("/img/coin-icons.png")) no-repeat
     height 20px
     width 20px
-    &.Litecoin
+    &.litecoin
       background-position 0 0
-    &.Peercoin
+    &.peercoin
       background-position -20px 0
-    &.Dogecoin
+    &.dogecoin
       background-position -40px 0
+    &.namecoin
+      background-position -60px 0
 
 .coin-stats
   @extends .container
@@ -286,9 +286,9 @@
   tr:nth-child(even)
     background-color #f9f9f9
   tr.highlight
-    background-color $blue
     td
-      font-weight bold
+      color $lightgray
+      
   .buy
     .trade-type
     .trade-amount
