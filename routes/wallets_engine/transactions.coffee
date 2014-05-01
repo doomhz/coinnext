@@ -43,7 +43,7 @@ module.exports = (app)->
         console.log err  if err
         res.send("#{new Date()} - #{result}")
 
-  app.post "/process_payment/:payment_id", (req, res, next)->
+  app.put "/process_payment/:payment_id", (req, res, next)->
     paymentId = req.params.payment_id
     TransactionHelper.paymentsProcessedUserIds = []
     Payment.findById paymentId, (err, payment)->
@@ -58,3 +58,13 @@ module.exports = (app)->
               type: "payment-processed"
               user_id: payment.user_id
               eventData: JsonRenderer.payment processedPayment
+
+  app.del "/cancel_payment/:payment_id", (req, res, next)->
+    paymentId = req.params.payment_id
+    Payment.findById paymentId, (err, payment)->
+      return next(new restify.ConflictError "Could not cancel already processed payment #{paymentId}.")  if payment.isProcessed()
+      TransactionHelper.cancelPayment payment, (err, result)->
+        return next(new restify.ConflictError "Could not cancel already payment #{paymentId} - #{err}")  if err
+        res.send
+          paymentId: paymentId
+          status: "removed"

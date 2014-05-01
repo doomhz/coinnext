@@ -114,3 +114,47 @@ describe "Transactions Api", ->
                         GLOBAL.db.Payment.findById pm3.id, (e, p3)->
                           [p1.status, p2.status, p3.status].toString().should.eql "processed,pending,processed"
                           done()
+
+
+  describe "DELETE /cancel_payment/:payment_id", ()->
+    it "returns 200 ok and the removed payment id", (done)->
+      wallet.balance = 0
+      wallet.save().complete ()->
+        GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: MarketHelper.toBigint(10), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
+          paymentId = pm.id
+          request('http://localhost:6000')
+          .del("/cancel_payment/#{paymentId}")
+          .send()
+          .expect(200)
+          .end done
+
+    it "deletes the payment", (done)->
+      wallet.balance = 0
+      wallet.save().complete ()->
+        GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: MarketHelper.toBigint(10), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
+          paymentId = pm.id
+          request('http://localhost:6000')
+          .del("/cancel_payment/#{paymentId}")
+          .send()
+          .expect(200)
+          .end (e, res = {})->
+            throw e if e
+            GLOBAL.db.Payment.findAndCountAll({where: {id: paymentId}}).complete (err, result)->
+              result.count.should.eql 0
+              done()
+
+    it "refunds the user wallet adding the transaction fee", (done)->
+      wallet.balance = 0
+      wallet.save().complete ()->
+        GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: MarketHelper.toBigint(10), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
+          paymentId = pm.id
+          totalWithdrawalAmount = wallet.withdrawal_fee + pm.amount
+          request('http://localhost:6000')
+          .del("/cancel_payment/#{paymentId}")
+          .send()
+          .expect(200)
+          .end (e, res = {})->
+            throw e if e
+            GLOBAL.db.Wallet.find(wallet.id).complete (err, wallet)->
+              wallet.balance.should.eql totalWithdrawalAmount
+              done()

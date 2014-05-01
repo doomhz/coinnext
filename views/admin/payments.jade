@@ -5,9 +5,6 @@ block content
     h2 Payments
 
     p
-      button#clear-pending-payments.btn.btn-danger Clear pending
-
-    p
       - if (from - count >= 0)
         a(href="/administratie/payments?from=#{from - count}&user_id=#{userId ? userId : ''}") Prev
         |  | 

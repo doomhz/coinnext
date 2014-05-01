@@ -9,6 +9,7 @@ class App.FinancesView extends App.MasterView
   initialize: (options)->
     $.subscribe "payment-processed", @onPaymentProcessed
     $.subscribe "wallet-balance-loaded", @onWalletBalanceLoaded
+    $.subscribe "wallet-balance-changed", @onWalletBalanceChanged
 
   render: ()->
     @renderCopyButton()
@@ -131,4 +132,7 @@ class App.FinancesView extends App.MasterView
     @renderWalletBalance payment.get("wallet_id")
 
   onWalletBalanceLoaded: (ev, wallet)=>
+    @renderWalletBalance wallet.id
+
+  onWalletBalanceChanged: (ev, wallet)=>
     @renderWalletBalance wallet.id

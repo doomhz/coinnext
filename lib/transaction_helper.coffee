@@ -7,6 +7,9 @@ ClientSocket = require "./client_socket"
 usersSocket = new ClientSocket
   namespace: "users"
   redis: GLOBAL.appConfig().redis
+math = require("mathjs")
+  number: "bignumber"
+  decimals: 8
 
 TransactionHelper =
 
@@ -22,29 +25,40 @@ TransactionHelper =
         return callback null, "#{payment.id} - wallet #{payment.wallet_id} not found"  if not wallet
         return callback null, "#{payment.id} - user already had a processed payment"  if TransactionHelper.paymentsProcessedUserIds.indexOf(wallet.user_id) > -1
         return callback null, "#{payment.id} - not processed - no funds"  if not wallet.canWithdraw payment.amount, true
-        GLOBAL.db.sequelize.transaction (transaction)->
-          wallet.addBalance -payment.amount, transaction, (err)->
+        TransactionHelper.pay payment, (err, p)->
+          TransactionHelper.paymentsProcessedUserIds.push wallet.user_id
+          Transaction.setUserById p.transaction_id, p.user_id, ()->
+            callback null, "#{payment.id} - processed"
+            usersSocket.send
+              type: "payment-processed"
+              user_id: payment.user_id
+              eventData: JsonRenderer.payment p
+
+  cancelPayment: (payment, callback)->
+    Wallet.findUserWalletByCurrency payment.user_id, payment.currency, (err, wallet)->
+      return callback err  if err or not wallet
+      totalWithdrawalAmount = math.add(wallet.withdrawal_fee, payment.amount)
+      GLOBAL.db.sequelize.transaction (transaction)->
+        wallet.addBalance totalWithdrawalAmount, transaction, (err, wallet)->
+          if err
+            console.error err
+            return transaction.rollback().success ()->
+              return callback err
+          payment.destroy().complete (err)->
             if err
+              console.error err
               return transaction.rollback().success ()->
-                callback null, "#{payment.id} - not processed - #{err}"
-            wallet.addBalance -wallet.withdrawal_fee, transaction, (err)->
+                return callback err
+            transaction.commit().success ()->
+              callback null, "#{payment.id} - removed"
+              usersSocket.send
+                type: "wallet-balance-changed"
+                user_id: wallet.user_id
+                eventData: JsonRenderer.wallet wallet
+            transaction.done (err)->
               if err
-                return transaction.rollback().success ()->
-                  callback null, "#{payment.id} - not processed - #{err}"
-              TransactionHelper.pay payment, (err, p)->
-                if err or not p.isProcessed()
-                  return transaction.rollback().success ()->
-                    callback null, "#{payment.id} - not processed - #{err}"
-                transaction.commit().success ()->
-                  TransactionHelper.paymentsProcessedUserIds.push wallet.user_id
-                  Transaction.setUserById p.transaction_id, p.user_id, ()->
-                    callback null, "#{payment.id} - processed"
-                    usersSocket.send
-                      type: "payment-processed"
-                      user_id: payment.user_id
-                      eventData: JsonRenderer.payment p
-                transaction.done (err)->
-                  callback null, "#{payment.id} - not processed - #{err}"  if err
+                console.error err
+                callback err
 
   pay: (payment, callback = ()->)->
     GLOBAL.wallets[payment.currency].sendToAddress payment.address, payment.getFloat("amount"), (err, response = "")->

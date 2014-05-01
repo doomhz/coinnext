@@ -2,7 +2,14 @@ Payment = GLOBAL.db.Payment
 Wallet = GLOBAL.db.Wallet
 MarketHelper = require "../lib/market_helper"
 JsonRenderer = require "../lib/json_renderer"
+ClientSocket = require "../lib/client_socket"
 _ = require "underscore"
+usersSocket = new ClientSocket
+  namespace: "users"
+  redis: GLOBAL.appConfig().redis
+math = require("mathjs")
+  number: "bignumber"
+  decimals: 8
 
 module.exports = (app)->
 
@@ -23,9 +30,26 @@ module.exports = (app)->
         currency: wallet.currency
         amount: amount
         address: address
-      Payment.create(data).complete (err, pm)->
-        return JsonRenderer.error err, res  if err
-        res.json JsonRenderer.payment pm
+      GLOBAL.db.sequelize.transaction (transaction)->
+        Payment.create(data, {transaction: transaction}).complete (err, pm)->
+          if err
+            console.error err
+            return transaction.rollback().success ()->
+              JsonRenderer.error "Sorry, could not submit the withdrawal...", res
+          totalWithdrawalAmount = math.add(wallet.withdrawal_fee, pm.amount)
+          wallet.addBalance -totalWithdrawalAmount, transaction, (err, wallet)->
+            if err
+              console.error err
+              return transaction.rollback().success ()->
+                JsonRenderer.error "Sorry, could not submit the withdrawal...", res
+            transaction.commit().success ()->
+              res.json JsonRenderer.payment pm
+              usersSocket.send
+                type: "wallet-balance-changed"
+                user_id: wallet.user_id
+                eventData: JsonRenderer.wallet wallet
+            transaction.done (err)->
+              JsonRenderer.error "Sorry, could not submit the withdrawal...", res  if err
 
   app.get "/payments/pending/:wallet_id", (req, res)->
     walletId = req.params.wallet_id

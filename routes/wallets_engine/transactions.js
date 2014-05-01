@@ -76,7 +76,7 @@
         });
       });
     });
-    return app.post("/process_payment/:payment_id", function(req, res, next) {
+    app.put("/process_payment/:payment_id", function(req, res, next) {
       var paymentId;
       paymentId = req.params.payment_id;
       TransactionHelper.paymentsProcessedUserIds = [];
@@ -95,6 +95,24 @@
                 eventData: JsonRenderer.payment(processedPayment)
               });
             }
+          });
+        });
+      });
+    });
+    return app.del("/cancel_payment/:payment_id", function(req, res, next) {
+      var paymentId;
+      paymentId = req.params.payment_id;
+      return Payment.findById(paymentId, function(err, payment) {
+        if (payment.isProcessed()) {
+          return next(new restify.ConflictError("Could not cancel already processed payment " + paymentId + "."));
+        }
+        return TransactionHelper.cancelPayment(payment, function(err, result) {
+          if (err) {
+            return next(new restify.ConflictError("Could not cancel already payment " + paymentId + " - " + err));
+          }
+          return res.send({
+            paymentId: paymentId,
+            status: "removed"
           });
         });
       });

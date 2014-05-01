@@ -1,5 +1,5 @@
 (function() {
-  var JsonRenderer, MarketHelper, Payment, Wallet, _;
+  var ClientSocket, JsonRenderer, MarketHelper, Payment, Wallet, math, usersSocket, _;
 
   Payment = GLOBAL.db.Payment;
 
@@ -9,7 +9,19 @@
 
   JsonRenderer = require("../lib/json_renderer");
 
+  ClientSocket = require("../lib/client_socket");
+
   _ = require("underscore");
+
+  usersSocket = new ClientSocket({
+    namespace: "users",
+    redis: GLOBAL.appConfig().redis
+  });
+
+  math = require("mathjs")({
+    number: "bignumber",
+    decimals: 8
+  });
 
   module.exports = function(app) {
     app.post("/payments", function(req, res) {
@@ -42,11 +54,40 @@
           amount: amount,
           address: address
         };
-        return Payment.create(data).complete(function(err, pm) {
-          if (err) {
-            return JsonRenderer.error(err, res);
-          }
-          return res.json(JsonRenderer.payment(pm));
+        return GLOBAL.db.sequelize.transaction(function(transaction) {
+          return Payment.create(data, {
+            transaction: transaction
+          }).complete(function(err, pm) {
+            var totalWithdrawalAmount;
+            if (err) {
+              console.error(err);
+              return transaction.rollback().success(function() {
+                return JsonRenderer.error("Sorry, could not submit the withdrawal...", res);
+              });
+            }
+            totalWithdrawalAmount = math.add(wallet.withdrawal_fee, pm.amount);
+            return wallet.addBalance(-totalWithdrawalAmount, transaction, function(err, wallet) {
+              if (err) {
+                console.error(err);
+                return transaction.rollback().success(function() {
+                  return JsonRenderer.error("Sorry, could not submit the withdrawal...", res);
+                });
+              }
+              transaction.commit().success(function() {
+                res.json(JsonRenderer.payment(pm));
+                return usersSocket.send({
+                  type: "wallet-balance-changed",
+                  user_id: wallet.user_id,
+                  eventData: JsonRenderer.wallet(wallet)
+                });
+              });
+              return transaction.done(function(err) {
+                if (err) {
+                  return JsonRenderer.error("Sorry, could not submit the withdrawal...", res);
+                }
+              });
+            });
+          });
         });
       });
     });
