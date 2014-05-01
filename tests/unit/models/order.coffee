@@ -60,5 +60,5 @@ describe "Order", ->
       describe "and is less than or equal to min trade amount", ()->
         it "returns true", ()->
           GLOBAL.db.Order.isValidTradeAmount(MarketHelper.getMinTradeAmount()).should.be.true
-          GLOBAL.db.Order.isValidTradeAmount(MarketHelper.getMinTradeAmount()* 0.1).should.be.true
+          GLOBAL.db.Order.isValidTradeAmount(MarketHelper.getMinTradeAmount()* 0.1).should.be.false
 

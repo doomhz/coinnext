@@ -157,7 +157,7 @@ module.exports = (sequelize, DataTypes) ->
           Order.findAll(query).complete callback
 
         isValidTradeAmount: (amount)->
-          _.isNumber(amount) and not _.isNaN(amount) and _.isFinite(amount) and amount > MarketHelper.getMinTradeAmount()
+          _.isNumber(amount) and not _.isNaN(amount) and _.isFinite(amount) and amount >= MarketHelper.getMinTradeAmount()
 
         isValidFee: (amount, action, unitPrice)->
           return true  if MarketHelper.getTradeFee() is 0
