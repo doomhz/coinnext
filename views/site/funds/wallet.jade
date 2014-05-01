@@ -49,7 +49,7 @@ block content
                     button#copy-address(data-clipboard-text="#{wallet.address ? wallet.address : ''}") Copy
                 #qr-address-cnt.qr-address(data-address="#{wallet.address ? wallet.address : ''}")
                 ul.terms
-                  li Your deposit will be credited after 3 network confirmations.
+                  li Your deposit will be credited after #{wallet.network_confirmations} network confirmations.
           .two-col-wrap
             .transaction-con.container
               .con-header

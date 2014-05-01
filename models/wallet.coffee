@@ -51,6 +51,9 @@ module.exports = (sequelize, DataTypes) ->
         total_balance: ()->
           @balance + @hold_balance
 
+        network_confirmations: ()->
+          MarketHelper.getMinConfirmations @currency
+
       classMethods:
 
         findById: (id, callback)->

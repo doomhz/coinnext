@@ -246,6 +246,14 @@ describe "MarketHelper", ->
     it "returns the minimum fee amount", ()->
       MarketHelper.getMinFeeAmount().should.equal 1
 
+  describe "getMinConfirmations", ()->
+    describe "when the given currency is BTC", ()->
+      it "returns 3", ()->
+        MarketHelper.getMinConfirmations("BTC").should.equal 3
+    describe "when the given currency is not BTC", ()->
+      it "returns 6", ()->
+        MarketHelper.getMinConfirmations("NMC").should.equal 6
+
   describe "calculateResultAmount", ()->
     it "returns the amount for buy", ()->
       MarketHelper.calculateResultAmount(1000, "buy", MarketHelper.toBigint(0.1)).should.equal 1000

@@ -333,7 +333,7 @@
           "account": "coinnext_bank",
           "passphrase": ""
         },
-        "confirmations": 1,
+        "confirmations": 3,
         "currency": "BTC"
       },
       "ltc": {
@@ -348,7 +348,7 @@
           "account": "coinnext_bank",
           "passphrase": ""
         },
-        "confirmations": 1,
+        "confirmations": 6,
         "currency": "LTC"
       },
       "ppc": {
@@ -363,7 +363,7 @@
           "account": "coinnext_bank",
           "passphrase": ""
         },
-        "confirmations": 1,
+        "confirmations": 6,
         "currency": "PPC"
       },
       "doge": {
@@ -378,7 +378,7 @@
           "account": "coinnext_bank",
           "passphrase": ""
         },
-        "confirmations": 1,
+        "confirmations": 6,
         "currency": "DOGE"
       },
       "nmc": {
@@ -393,7 +393,7 @@
           "account": "coinnext_bank",
           "passphrase": ""
         },
-        "confirmations": 1,
+        "confirmations": 6,
         "currency": "NMC"
       }
     },

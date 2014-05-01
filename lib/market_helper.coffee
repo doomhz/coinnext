@@ -173,6 +173,10 @@ MarketHelper =
   getMinFeeAmount: ()->
     1
 
+  getMinConfirmations: (currency)->
+    return 3 if currency is "BTC"
+    6
+
   calculateResultAmount: (amount, action, unitPrice)->
     return amount  if action is "buy"
     math.multiply(amount, @fromBigint unitPrice)
