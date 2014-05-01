@@ -57,8 +57,49 @@ describe "Order", ->
       describe "but is less than min trade amount", ()->
         it "returns false", ()->
           GLOBAL.db.Order.isValidTradeAmount(MarketHelper.getMinTradeAmount() * 0.99).should.be.false
-      describe "and is less than or equal to min trade amount", ()->
+      describe "and is greater than or equal to min trade amount", ()->
         it "returns true", ()->
-          GLOBAL.db.Order.isValidTradeAmount(MarketHelper.getMinTradeAmount()).should.be.true
-          GLOBAL.db.Order.isValidTradeAmount(MarketHelper.getMinTradeAmount()* 0.1).should.be.true
+          #GLOBAL.db.Order.isValidTradeAmount(MarketHelper.getMinTradeAmount()).should.be.true
+          GLOBAL.db.Order.isValidTradeAmount(MarketHelper.getMinTradeAmount()* 1.1).should.be.true
 
+  describe "isValidFee", ()->
+    describe "when amount is not a valid finite number", ()->
+      it "returns false", ()->
+        GLOBAL.db.Order.isValidFee(Number.NaN, "buy", MarketHelper.toBigint(1.5)).should.be.false
+        GLOBAL.db.Order.isValidFee(Number.Infinity, "buy", MarketHelper.toBigint(1.5)).should.be.false
+        GLOBAL.db.Order.isValidFee(Number.NEGATIVE_INFINITY, "buy", MarketHelper.toBigint(1.5)).should.be.false
+  
+  describe "isValidSpendAmount", ()->
+    describe "when amount is not a valid finite number", ()->
+      it "returns false", ()->
+        GLOBAL.db.Order.isValidSpendAmount(Number.NaN, "buy", MarketHelper.toBigint(1.5)).should.be.false
+        GLOBAL.db.Order.isValidSpendAmount(Number.Infinity, "buy", MarketHelper.toBigint(1.5)).should.be.false
+        GLOBAL.db.Order.isValidSpendAmount(Number.NEGATIVE_INFINITY, "buy", MarketHelper.toBigint(1.5)).should.be.false
+
+  describe "getFloat", ()->
+    describe "when there is no such field", ()->
+      it "returns undefined", ()->
+        order.getFloat("no_such_field")?.should.not.be.ok
+    describe "when the field exists", ()->
+      it "converts it from bigint to float", ()->
+        order.unit_price = MarketHelper.toBigint 1.5
+        order.getFloat("unit_price").should.eql 1.5
+    describe "when the field is not numeric", ()->
+      it "returns undefined", ()->
+        console.log order.getFloat("action")
+        order.getFloat("action")?.should.not.be.ok
+
+  describe "publish", ()->
+    describe "when there is such an order id", ()->
+      it "publishes it to the network", ()->
+        order.id = 1
+        # TODO
+        # order.publish ()->
+        #   # how to test this?
+        #   console.log err
+        #   console.dir res
+        #   console.dir body
+        #   done()
+
+  describe "cancel", ()->
+    # TODO
