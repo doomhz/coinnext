@@ -190,7 +190,8 @@ module.exports = (app)->
     GLOBAL.walletsClient.send "cancel_payment", [id], (err, res2, body)=>
       return JsonRenderer.error err, res  if err
       if body and body.paymentId?
-        res.json JsonRenderer.payment
+        res.json
+          id: id
           status: "removed"
       else
         return JsonRenderer.error "Could not cancel payment - #{JSON.stringify(body)}", res

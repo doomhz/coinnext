@@ -272,9 +272,10 @@
             return JsonRenderer.error(err, res);
           }
           if (body && (body.paymentId != null)) {
-            return res.json(JsonRenderer.payment({
+            return res.json({
+              id: id,
               status: "removed"
-            }));
+            });
           } else {
             return JsonRenderer.error("Could not cancel payment - " + (JSON.stringify(body)), res);
           }

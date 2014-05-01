@@ -7,6 +7,9 @@ ClientSocket = require "./client_socket"
 usersSocket = new ClientSocket
   namespace: "users"
   redis: GLOBAL.appConfig().redis
+math = require("mathjs")
+  number: "bignumber"
+  decimals: 8
 
 TransactionHelper =
 
@@ -30,6 +33,32 @@ TransactionHelper =
               type: "payment-processed"
               user_id: payment.user_id
               eventData: JsonRenderer.payment p
+
+  cancelPayment: (payment, callback)->
+    Wallet.findUserWalletByCurrency payment.user_id, payment.currency, (err, wallet)->
+      return callback err  if err or not wallet
+      totalWithdrawalAmount = math.add(wallet.withdrawal_fee, payment.amount)
+      GLOBAL.db.sequelize.transaction (transaction)->
+        wallet.addBalance totalWithdrawalAmount, transaction, (err, wallet)->
+          if err
+            console.error err
+            return transaction.rollback().success ()->
+              return callback err
+          payment.destroy().complete (err)->
+            if err
+              console.error err
+              return transaction.rollback().success ()->
+                return callback err
+            transaction.commit().success ()->
+              callback null, "#{payment.id} - removed"
+              usersSocket.send
+                type: "wallet-balance-changed"
+                user_id: wallet.user_id
+                eventData: JsonRenderer.wallet wallet
+            transaction.done (err)->
+              if err
+                console.error err
+                callback err
 
   pay: (payment, callback = ()->)->
     GLOBAL.wallets[payment.currency].sendToAddress payment.address, payment.getFloat("amount"), (err, response = "")->

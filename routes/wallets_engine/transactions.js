@@ -104,11 +104,16 @@
       paymentId = req.params.payment_id;
       return Payment.findById(paymentId, function(err, payment) {
         if (payment.isProcessed()) {
-          return next(new restify.ConflictError("Could not cancel already processed payment."));
+          return next(new restify.ConflictError("Could not cancel already processed payment " + paymentId + "."));
         }
-        return res.send({
-          paymentId: paymentId,
-          status: "removed"
+        return TransactionHelper.cancelPayment(payment, function(err, result) {
+          if (err) {
+            return next(new restify.ConflictError("Could not cancel already payment " + paymentId + " - " + err));
+          }
+          return res.send({
+            paymentId: paymentId,
+            status: "removed"
+          });
         });
       });
     });

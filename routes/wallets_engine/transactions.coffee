@@ -62,7 +62,9 @@ module.exports = (app)->
   app.del "/cancel_payment/:payment_id", (req, res, next)->
     paymentId = req.params.payment_id
     Payment.findById paymentId, (err, payment)->
-      return next(new restify.ConflictError "Could not cancel already processed payment.")  if payment.isProcessed()
-      res.send
-        paymentId: paymentId
-        status: "removed"
+      return next(new restify.ConflictError "Could not cancel already processed payment #{paymentId}.")  if payment.isProcessed()
+      TransactionHelper.cancelPayment payment, (err, result)->
+        return next(new restify.ConflictError "Could not cancel already payment #{paymentId} - #{err}")  if err
+        res.send
+          paymentId: paymentId
+          status: "removed"
