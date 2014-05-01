@@ -92,7 +92,7 @@ class App.TradeView extends App.MasterView
 
   onOrderSubmit: (form)->
     $form = $(form)
-    amount = _.str.satoshiRound $amount.val()
+    amount = _.str.satoshiRound $form.find("[name='amount']").val()
     order = new App.OrderModel
       type: $form.find("[name='type']").val()
       action: $form.find("[name='action']").val()
