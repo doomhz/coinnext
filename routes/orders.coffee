@@ -82,6 +82,6 @@ module.exports = (app)->
     return "Please submit a valid sell currency."  if not MarketHelper.isValidCurrency orderData.sell_currency
     return "Please submit different currencies."  if orderData.buy_currency is orderData.sell_currency
     return "Invalid market."  if not MarketHelper.isValidMarket orderData.action, orderData.buy_currency, orderData.sell_currency
-    return "Trade amount is too low, please submit a bigger amount."  if not Order.isValidSpendAmount orderData.amount, orderData.action, orderData.unit_price
-    return "Trade amount is too low, please submit a bigger amount."  if not Order.isValidFee orderData.amount, orderData.action, orderData.unit_price
+    return "Total to spend must be minimum 0.000001."  if not Order.isValidSpendAmount orderData.amount, orderData.action, orderData.unit_price
+    return "Total to spend must be minimum 0.000001."  if not Order.isValidFee orderData.amount, orderData.action, orderData.unit_price
     false

@@ -170,10 +170,10 @@
         return "Invalid market.";
       }
       if (!Order.isValidSpendAmount(orderData.amount, orderData.action, orderData.unit_price)) {
-        return "Trade amount is too low, please submit a bigger amount.";
+        return "Total to spend must be minimum 0.000001.";
       }
       if (!Order.isValidFee(orderData.amount, orderData.action, orderData.unit_price)) {
-        return "Trade amount is too low, please submit a bigger amount.";
+        return "Total to spend must be minimum 0.000001.";
       }
       return false;
     };

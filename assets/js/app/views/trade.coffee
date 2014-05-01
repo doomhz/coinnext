@@ -26,6 +26,11 @@ class App.TradeView extends App.MasterView
     $.subscribe "wallet-balance-loaded", @onWalletBalanceLoaded
     $.subscribe "wallet-balance-changed", @onWalletBalanceChanged
     $.subscribe "order-book-order-selected", @onOrderBookOrderSelected
+    $.validator.addMethod "spendAmount", (value, element)->
+        $form = $(element).parents("form:first")
+        $subTotal = $form.find(".subtotal .amount")
+        return $subTotal.text() > 0
+      , "Total to spend must be minimum 0.000001."
 
   render: ()->
     @model.fetch
@@ -53,11 +58,15 @@ class App.TradeView extends App.MasterView
   setupFormValidators: ()->
     for orderForm in @$(".order-form")
       $(orderForm).validate
+        onkeyup: false
+        onclick: false
+        onfocusout: false
         rules:
           amount:
             required: true
             number: true
             min: 0.0000001
+            spendAmount: true
           unit_price:
             required: true
             number: true
@@ -83,7 +92,7 @@ class App.TradeView extends App.MasterView
 
   onOrderSubmit: (form)->
     $form = $(form)
-    amount = _.str.satoshiRound $form.find("[name='amount']").val()
+    amount = _.str.satoshiRound $amount.val()
     order = new App.OrderModel
       type: $form.find("[name='type']").val()
       action: $form.find("[name='action']").val()
