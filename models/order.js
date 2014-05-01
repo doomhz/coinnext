@@ -228,7 +228,7 @@
           return Order.findAll(query).complete(callback);
         },
         isValidTradeAmount: function(amount) {
-          return _.isNumber(amount) && !_.isNaN(amount) && _.isFinite(amount) && amount > MarketHelper.getMinTradeAmount();
+          return _.isNumber(amount) && !_.isNaN(amount) && _.isFinite(amount) && amount >= MarketHelper.getMinTradeAmount();
         },
         isValidFee: function(amount, action, unitPrice) {
           if (MarketHelper.getTradeFee() === 0) {
