@@ -33,7 +33,6 @@ module.exports = (sequelize, DataTypes) ->
         comment: "FLOAT x 100000000"
     ,
       tableName: "wallets"
-
       getterMethods:
 
         account: ()->

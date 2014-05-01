@@ -67,6 +67,11 @@
       }
     }, {
       tableName: "transactions",
+      getterMethods: {
+        network_confirmations: function() {
+          return MarketHelper.getMinConfirmations(this.currency);
+        }
+      },
       classMethods: {
         findById: function(id, callback) {
           return Transaction.find(id).complete(callback);

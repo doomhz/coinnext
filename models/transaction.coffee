@@ -50,6 +50,11 @@ module.exports = (sequelize, DataTypes) ->
 
     ,
       tableName: "transactions"
+      getterMethods:
+
+        network_confirmations: ()->
+          MarketHelper.getMinConfirmations @currency
+
       classMethods:
         
         findById: (id, callback)->

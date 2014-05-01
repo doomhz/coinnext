@@ -16,13 +16,14 @@ JsonRenderer =
     created_at:         user.created_at
 
   wallet: (wallet)->
-    id:            wallet.id
-    currency:      wallet.currency
-    balance:       wallet.getFloat "balance"
-    hold_balance:  wallet.getFloat "hold_balance"
-    address:       wallet.address
-    updated_at:    wallet.updated_at
-    created_at:    wallet.created_at
+    id:                wallet.id
+    currency:          wallet.currency
+    balance:           wallet.getFloat "balance"
+    hold_balance:      wallet.getFloat "hold_balance"
+    address:           wallet.address
+    min_confirmations: wallet.network_confirmations
+    updated_at:        wallet.updated_at
+    created_at:        wallet.created_at
 
   wallets: (wallets)->
     data = []
@@ -48,18 +49,19 @@ JsonRenderer =
     data
 
   transaction: (transaction)->
-    id:             transaction.id
-    wallet_id:      transaction.wallet_id
-    currency:       transaction.currency
-    fee:            transaction.getFloat "fee"
-    address:        transaction.address
-    amount:         transaction.getFloat "amount"
-    category:       transaction.category
-    txid:           transaction.txid
-    confirmations:  transaction.confirmations
-    balance_loaded: transaction.balance_loaded
-    updated_at:     transaction.updated_at
-    created_at:     transaction.created_at
+    id:                transaction.id
+    wallet_id:         transaction.wallet_id
+    currency:          transaction.currency
+    fee:               transaction.getFloat "fee"
+    address:           transaction.address
+    amount:            transaction.getFloat "amount"
+    category:          transaction.category
+    txid:              transaction.txid
+    confirmations:     transaction.confirmations
+    min_confirmations: transaction.network_confirmations
+    balance_loaded:    transaction.balance_loaded
+    updated_at:        transaction.updated_at
+    created_at:        transaction.created_at
 
   transactions: (transactions)->
     data = []
