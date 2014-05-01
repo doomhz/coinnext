@@ -29,6 +29,7 @@
       },
       fee: {
         type: DataTypes.BIGINT.UNSIGNED,
+        defaultValue: 0,
         comment: "FLOAT x 100000000"
       },
       address: {
@@ -80,10 +81,10 @@
             wallet_id: (wallet ? wallet.id : void 0),
             currency: currency,
             account: transactionData.account,
-            fee: MarketHelper.toBigint(transactionData.fee),
+            fee: transactionData.fee ? MarketHelper.toBigint(transactionData.fee) : void 0,
             address: transactionData.address,
             category: transactionData.category,
-            amount: MarketHelper.toBigint(transactionData.amount),
+            amount: transactionData.amount ? MarketHelper.toBigint(transactionData.amount) : void 0,
             txid: transactionData.txid,
             confirmations: transactionData.confirmations,
             created_at: new Date(transactionData.time * 1000)
@@ -178,6 +179,9 @@
       },
       instanceMethods: {
         getFloat: function(attribute) {
+          if (this[attribute] == null) {
+            return this[attribute];
+          }
           return MarketHelper.fromBigint(this[attribute]);
         }
       }

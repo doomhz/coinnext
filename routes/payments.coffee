@@ -1,15 +1,18 @@
 Payment = GLOBAL.db.Payment
 Wallet = GLOBAL.db.Wallet
+MarketHelper = require "../lib/market_helper"
 JsonRenderer = require "../lib/json_renderer"
+_ = require "underscore"
 
 module.exports = (app)->
 
   app.post "/payments", (req, res)->
     amount = parseFloat req.body.amount
-    amount = MarketHelper.toBigInt amount  if _.isNumber(amount) and not _.isNaN(amount) and _.isFinite(amount)
+    return JsonRenderer.error "Please auth.", res  if not req.user
+    return JsonRenderer.error "Please submit a valid amount.", res  if not _.isNumber(amount) or _.isNaN(amount) or not _.isFinite(amount)
+    amount = MarketHelper.toBigint amount
     walletId = req.body.wallet_id
     address = req.body.address
-    return JsonRenderer.error "Please auth.", res  if not req.user
     Wallet.findUserWallet req.user.id, walletId, (err, wallet)->
       return JsonRenderer.error "Wrong wallet.", res  if not wallet
       return JsonRenderer.error "You don't have enough funds.", res  if not wallet.canWithdraw amount, true

@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.STRING(50)
       fee:
         type: DataTypes.BIGINT.UNSIGNED
+        defaultValue: 0
         comment: "FLOAT x 100000000"
       address:
         type: DataTypes.STRING(34)
@@ -60,10 +61,10 @@ module.exports = (sequelize, DataTypes) ->
             wallet_id:     (wallet.id if wallet)
             currency:      currency
             account:       transactionData.account
-            fee:           MarketHelper.toBigint transactionData.fee
+            fee:           MarketHelper.toBigint transactionData.fee  if transactionData.fee
             address:       transactionData.address
             category:      transactionData.category
-            amount:        MarketHelper.toBigint transactionData.amount
+            amount:        MarketHelper.toBigint transactionData.amount  if transactionData.amount
             txid:          transactionData.txid
             confirmations: transactionData.confirmations
             created_at:    new Date(transactionData.time * 1000)
@@ -123,6 +124,7 @@ module.exports = (sequelize, DataTypes) ->
       instanceMethods:
 
         getFloat: (attribute)->
+          return @[attribute]  if not @[attribute]?
           MarketHelper.fromBigint @[attribute]
 
   Transaction

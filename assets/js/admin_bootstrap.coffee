@@ -9,10 +9,19 @@ $(document).ready ()->
   $btcBankBalance = $("#bank-balance-BTC")
   if $btcBankBalance.length
     updateBankBalance = ()->
+      defer = $.Deferred()
+      updateBalanceByCurrency = (currency, index)->
+        defer.then ()->
+          setTimeout ()->
+              $.getJSON "#{rootUrl}/banksaldo/#{currency}", (response)->
+                balance = if _.isNumber(response.balance) then _.str.numberFormat(response.balance, 3) else response.balance
+                $("#bank-balance-#{response.currency}").text balance
+            , index * 500
+      index = 1
       for currency in CONFIG.currencies
-        $.getJSON "#{rootUrl}/banksaldo/#{currency}", (response)->
-          balance = if _.isNumber(response.balance) then _.str.numberFormat(response.balance, 3) else response.balance
-          $("#bank-balance-#{response.currency}").text balance
+        updateBalanceByCurrency currency, index
+        index++
+      defer.resolve()
     setInterval updateBankBalance, 60000
     updateBankBalance()
 
