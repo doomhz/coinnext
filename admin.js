@@ -1,12 +1,10 @@
+// Configure logger
+if (process.env.NODE_ENV === "production") require("./configs/logger");
 
-/**
- * Module dependencies.
- */
-
+// Configure modules
 var express = require('express');
 var http = require('http');
 var RedisStore = require('connect-redis')(express);
-var connectDomain = require('connect-domain');
 var fs = require('fs');
 var helmet = require('helmet');
 var WalletsClient = require('./lib/wallets_client');
@@ -24,9 +22,6 @@ require('./lib/admin_auth');
 
 // Setup express
 var app = express();
-if (environment !== 'development') {
-  app.use(connectDomain());
-}
 var connectAssetsOptions = environment !== 'development' ? {minifyBuilds: true} : {};
 connectAssetsOptions.helperContext = app.locals
 app.enable("trust proxy");

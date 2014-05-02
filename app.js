@@ -1,12 +1,10 @@
+// Configure logger
+if (process.env.NODE_ENV === "production") require("./configs/logger");
 
-/**
- * Module dependencies.
- */
-
+// Configure modules
 var express = require('express');
 var http = require('http');
 var RedisStore = require('connect-redis')(express);
-var connectDomain = require('connect-domain');
 var fs = require('fs');
 var helmet = require('helmet');
 var simpleCdn = require('express-simple-cdn');
@@ -22,12 +20,8 @@ GLOBAL.db = require('./models/index');
 
 require('./lib/auth');
 
-
 // Setup express
 var app = express();
-if (environment !== 'development') {
-  app.use(connectDomain());
-}
 var cookieParser = express.cookieParser(GLOBAL.appConfig().session.cookie_secret);
 var sessionStore = new RedisStore(GLOBAL.appConfig().redis);
 var connectAssetsOptions = environment !== 'development' && environment !== 'test' ? {minifyBuilds: true, servePath: GLOBAL.appConfig().assets_host} : {};

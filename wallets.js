@@ -1,8 +1,7 @@
+// Configure logger
+if (process.env.NODE_ENV === "production") require("./configs/logger");
 
-/**
- * Module dependencies.
- */
-
+// Configure modules
 var restify = require('restify');
 var fs = require('fs');
 var environment = process.env.NODE_ENV || 'development';
