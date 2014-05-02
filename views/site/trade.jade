@@ -35,6 +35,7 @@ block content
               .order-box-body
                 #limit-buy-box.limit-order
                   form#limit-buy-form.order-form
+                    #error-cnt
                     input(name="type", type="hidden", value="limit")
                     input(name="action", type="hidden", value="buy")
                     input(name="sell_currency", type="hidden", value="#{wallet2.currency}")
@@ -68,6 +69,7 @@ block content
               .order-box-body
                 #limit-sell-box.limit-order
                   form#limit-sell-form.order-form
+                    #error-cnt
                     input(name="type", type="hidden", value="limit")
                     input(name="action", type="hidden", value="sell")
                     input(name="sell_currency", type="hidden", value="#{wallet1.currency}")
