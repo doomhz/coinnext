@@ -4,6 +4,10 @@ block content
   .content
     h2 Wallets #{currency}
 
+    ul.currency-nav
+      - each currency in currencies
+        li: a(href="/administratie/wallets?currency=#{currency}") #{currency}
+
     ul#wallets-stats.stats
       li
         | Total wallets: #{totalWallets}

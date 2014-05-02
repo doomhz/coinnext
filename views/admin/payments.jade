@@ -16,15 +16,15 @@ block content
           th User
           th Address
           th Amount
-          th Status
           th Time
+          th Status
+          
       tbody
         - each payment in payments
           tr
             td
               a(href="/administratie/user/#{payment.user_id}", target="_blank") #{payment.user_id}
-              br
-              a.payment-log-toggler(href="#") View log
+              a.payment-log-toggler(href="#") (View log)
               pre.payment-log.hidden
                 - each paymentLog in payment.paymentLogs
                   | !{jsonBeautifier.toHTML(paymentLog.log)}
@@ -35,15 +35,13 @@ block content
                 | IP: #{payment.remote_ip}
             td #{payment.address}
             td #{payment.getFloat('amount')} #{payment.currency}
+            td #{payment.created_at.toFormat("DD MMM YYYY HH24:MI")}
             td
               span.payment-status #{payment.status}
               - if (!payment.isProcessed() && !payment.isCanceled())
-                br
-                button.pay.btn.btn-warning(data-id="#{payment.id}")
-                  | Pay
-                button.remove.btn.btn-danger(data-id="#{payment.id}")
-                  | Remove
-            td #{payment.created_at.toFormat("DD MMM YYYY HH24:MI")}
+                button.pay.btn.btn-success(data-id="#{payment.id}") Accept
+                button.remove.btn.btn-danger(data-id="#{payment.id}") Decline
+            
 
     p
       - if (from - count >= 0)
