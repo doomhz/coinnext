@@ -240,7 +240,11 @@ describe "MarketHelper", ->
 
   describe "getMinSpendAmount", ()->
     it "returns the minimum spend amount", ()->
-      MarketHelper.getMinSpendAmount().should.equal 1
+      MarketHelper.getMinSpendAmount().should.equal 10000
+
+  describe "getMinReceiveAmount", ()->
+    it "returns the minimum receive amount", ()->
+      MarketHelper.getMinReceiveAmount().should.equal 10000
 
   describe "getMinFeeAmount", ()->
     it "returns the minimum fee amount", ()->
