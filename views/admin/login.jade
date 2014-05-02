@@ -1,11 +1,9 @@
 extends ../admin
 
 block content
-  .content.auth
-
+  .content.auth    
     .auth-box
       h1 Login
-
       form(action="/administratie/login", method="post")
         input(name="_csrf" type="hidden", value="#{csrfToken}")
         label Email
