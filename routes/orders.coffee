@@ -83,5 +83,6 @@ module.exports = (app)->
     return "Please submit different currencies."  if orderData.buy_currency is orderData.sell_currency
     return "Invalid market."  if not MarketHelper.isValidMarket orderData.action, orderData.buy_currency, orderData.sell_currency
     return "Total to spend must be minimum 0.000001."  if not Order.isValidSpendAmount orderData.amount, orderData.action, orderData.unit_price
+    return "Total to receive must be minimum 0.000001."  if not Order.isValidReceiveAmount orderData.amount, orderData.action, orderData.unit_price
     return "Minimum fee should be at least 0.00000001."  if not Order.isValidFee orderData.amount, orderData.action, orderData.unit_price
     false

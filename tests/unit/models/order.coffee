@@ -77,6 +77,13 @@ describe "Order", ->
         GLOBAL.db.Order.isValidSpendAmount(Number.Infinity, "buy", MarketHelper.toBigint(1.5)).should.be.false
         GLOBAL.db.Order.isValidSpendAmount(Number.NEGATIVE_INFINITY, "buy", MarketHelper.toBigint(1.5)).should.be.false
 
+  describe "isValidReceiveAmount", ()->
+    describe "when amount is not a valid finite number", ()->
+      it "returns false", ()->
+        GLOBAL.db.Order.isValidReceiveAmount(Number.NaN, "buy", MarketHelper.toBigint(1.5)).should.be.false
+        GLOBAL.db.Order.isValidReceiveAmount(Number.Infinity, "buy", MarketHelper.toBigint(1.5)).should.be.false
+        GLOBAL.db.Order.isValidReceiveAmount(Number.NEGATIVE_INFINITY, "buy", MarketHelper.toBigint(1.5)).should.be.false
+
   describe "getFloat", ()->
     describe "when there is no such field", ()->
       it "returns undefined", ()->

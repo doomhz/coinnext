@@ -170,6 +170,9 @@ MarketHelper =
   getMinSpendAmount: ()->
     1
 
+  getMinReceiveAmount: ()->
+    1
+
   getMinFeeAmount: ()->
     1
 

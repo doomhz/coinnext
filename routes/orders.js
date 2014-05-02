@@ -172,6 +172,9 @@
       if (!Order.isValidSpendAmount(orderData.amount, orderData.action, orderData.unit_price)) {
         return "Total to spend must be minimum 0.000001.";
       }
+      if (!Order.isValidReceiveAmount(orderData.amount, orderData.action, orderData.unit_price)) {
+        return "Total to receive must be minimum 0.000001.";
+      }
       if (!Order.isValidFee(orderData.amount, orderData.action, orderData.unit_price)) {
         return "Minimum fee should be at least 0.00000001.";
       }
