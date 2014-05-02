@@ -3,7 +3,7 @@ math = require("mathjs")
   number: "bignumber"
   decimals: 8
 
-FEE = 0.2
+FEE = 0
 
 #CURRENCIES = [
 #  "BTC", "LTC", "PPC", "WDC", "NMC", "QRK",

@@ -63,11 +63,12 @@ describe "Order", ->
           GLOBAL.db.Order.isValidTradeAmount(MarketHelper.getMinTradeAmount()* 1.1).should.be.true
 
   describe "isValidFee", ()->
-    describe "when amount is not a valid finite number", ()->
-      it "returns false", ()->
-        GLOBAL.db.Order.isValidFee(Number.NaN, "buy", MarketHelper.toBigint(1.5)).should.be.false
-        GLOBAL.db.Order.isValidFee(Number.Infinity, "buy", MarketHelper.toBigint(1.5)).should.be.false
-        GLOBAL.db.Order.isValidFee(Number.NEGATIVE_INFINITY, "buy", MarketHelper.toBigint(1.5)).should.be.false
+    describe "when the fee is zero", ()->
+      describe "when amount is not a valid finite number", ()->
+        it "returns true", ()->
+          GLOBAL.db.Order.isValidFee(Number.NaN, "buy", MarketHelper.toBigint(1.5)).should.be.true
+          GLOBAL.db.Order.isValidFee(Number.Infinity, "buy", MarketHelper.toBigint(1.5)).should.be.true
+          GLOBAL.db.Order.isValidFee(Number.NEGATIVE_INFINITY, "buy", MarketHelper.toBigint(1.5)).should.be.true
   
   describe "isValidSpendAmount", ()->
     describe "when amount is not a valid finite number", ()->

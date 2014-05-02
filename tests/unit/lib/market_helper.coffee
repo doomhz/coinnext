@@ -4,7 +4,7 @@ MarketHelper = require "./../../../lib/market_helper"
 
 describe "MarketHelper", ->
 
-  FEE = 0.2
+  FEE = 0
 
   ###
   CURRENCIES = [
