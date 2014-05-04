@@ -206,15 +206,14 @@ module.exports = (sequelize, DataTypes) ->
           MarketHelper.fromBigint @[attribute]
 
         publish: (callback = ()->)->
-          GLOBAL.walletsClient.send "publish_order", [@id], (err, res, body)=>
+          GLOBAL.walletsClient.sendWithData "publish_order", @values, (err, res, body)=>
             if err
               console.error err
               return callback err, res, body
-            if body and body.published
-              Order.findById @id, callback
-            else
-              console.error "Could not publish the order - #{JSON.stringify(body)}"
-              callback "Could not publish the order to the network"
+            return Order.findById body.id, callback  if body and body.published
+            return Order.findById body.id, callback  if body and body.id
+            console.error "Could not publish the order - #{JSON.stringify(body)}"
+            callback body
 
         cancel: (callback = ()->)->
           GLOBAL.walletsClient.send "cancel_order", [@id], (err, res, body)=>

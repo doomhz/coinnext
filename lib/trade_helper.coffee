@@ -17,6 +17,33 @@ math = require("mathjs")
 
 TradeHelper =
 
+  createOrder: (data, callback = ()->)->
+    holdBalance = math.multiply(data.amount, MarketHelper.fromBigint(data.unit_price))  if data.type is "limit" and data.action is "buy"
+    holdBalance = data.amount  if data.type is "limit" and data.action is "sell"
+    Wallet.findOrCreateUserWalletByCurrency data.user_id, data.buy_currency, (err, buyWallet)->
+      return callback "Wallet #{data.buy_currency} does not exist."  if err or not buyWallet
+      Wallet.findOrCreateUserWalletByCurrency data.user_id, data.sell_currency, (err, wallet)->
+        return callback "Wallet #{data.sell_currency} does not exist."  if err or not wallet
+        GLOBAL.db.sequelize.transaction (transaction)->
+          wallet.holdBalance holdBalance, transaction, (err, wallet)->
+            if err or not wallet
+              console.error err
+              return transaction.rollback().success ()->
+                return callback "Not enough #{data.sell_currency} to open an order."
+            Order.create(data, {transaction: transaction}).complete (err, newOrder)->
+              if err
+                console.error err
+                return transaction.rollback().success ()->
+                  return callback err
+              transaction.commit().success ()->
+                callback null, newOrder
+                TradeHelper.pushUserUpdate
+                  type: "wallet-balance-changed"
+                  user_id: wallet.user_id
+                  eventData: JsonRenderer.wallet wallet
+              transaction.done (err)->
+                return callback "Could not open an order. Please try again later."  if err
+
   submitOrder: (order, callback = ()->)->
     orderData =
       order_id: order.id
@@ -43,10 +70,10 @@ TradeHelper =
 
   sendEngineData: (uri, options, callback)->
     try
-      request options, (err, response, body)->
+      request options, (err, response = {}, body)->
         if err or response.statusCode isnt 200
           err = "#{response.statusCode} - Could not send order data to #{uri} - #{JSON.stringify(options.json)} - #{JSON.stringify(err)} - #{JSON.stringify(body)}"
-          console.log err
+          console.error err
           return callback err
         return callback()
     catch e

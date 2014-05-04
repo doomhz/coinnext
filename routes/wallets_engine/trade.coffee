@@ -8,25 +8,29 @@ MarketHelper = require "../../lib/market_helper"
 
 module.exports = (app)->
 
-  app.post "/publish_order/:order_id", (req, res, next)->
-    orderId = req.params.order_id
-    #console.log orderId
-    Order.findById orderId, (err, order)->
-      return next(new restify.ConflictError err)  if err
-      orderCurrency = order["#{order.action}_currency"]
-      MarketStats.findEnabledMarket orderCurrency, "BTC", (err, market)->
-        return next(new restify.ConflictError "#{new Date()} - Will not process order #{orderId}, the market for #{orderCurrency} is disabled.")  if not market
-        TradeHelper.submitOrder order, (err)->
-          return next(new restify.ConflictError err)  if err
-          order.published = true
-          order.save().complete (err, order)->
-            return next(new restify.ConflictError err)  if err
+  app.post "/publish_order", (req, res, next)->
+    data = req.body
+    orderCurrency = data["#{data.action}_currency"]
+    MarketStats.findEnabledMarket orderCurrency, "BTC", (err, market)->
+      return next(new restify.ConflictError "Market for #{orderCurrency} is disabled.")  if not market
+      TradeHelper.createOrder data, (err, newOrder)->
+        return next(new restify.ConflictError err)  if err
+        TradeHelper.submitOrder newOrder, (err)->
+          # TODO: Make a task that tries to resubmit non published orders...
+          if err
+            console.error "Could not publish the order #{newOrder.id} - #{err}"
+            return res.send
+              id:        newOrder.id
+              published: false
+          newOrder.published = true
+          newOrder.save().complete (err, newOrder)->
+            console.error "Could not set order #{newOrder.id} to published - #{err}"  if err
             res.send
-              id:        orderId
-              published: true
+              id:        newOrder.id
+              published: newOrder.published
             TradeHelper.pushOrderUpdate
               type: "order-published"
-              eventData: JsonRenderer.order order
+              eventData: JsonRenderer.order newOrder
 
   app.del "/cancel_order/:order_id", (req, res, next)->
     orderId = req.params.order_id

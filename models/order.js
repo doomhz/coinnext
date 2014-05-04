@@ -327,18 +327,20 @@
           if (callback == null) {
             callback = function() {};
           }
-          return GLOBAL.walletsClient.send("publish_order", [this.id], (function(_this) {
+          return GLOBAL.walletsClient.sendWithData("publish_order", this.values, (function(_this) {
             return function(err, res, body) {
               if (err) {
                 console.error(err);
                 return callback(err, res, body);
               }
               if (body && body.published) {
-                return Order.findById(_this.id, callback);
-              } else {
-                console.error("Could not publish the order - " + (JSON.stringify(body)));
-                return callback("Could not publish the order to the network");
+                return Order.findById(body.id, callback);
               }
+              if (body && body.id) {
+                return Order.findById(body.id, callback);
+              }
+              console.error("Could not publish the order - " + (JSON.stringify(body)));
+              return callback(body);
             };
           })(this));
         },

@@ -1,5 +1,5 @@
 (function() {
-  var ClientSocket, JsonRenderer, MarketHelper, MarketStats, Order, Wallet, math, usersSocket, _;
+  var JsonRenderer, MarketHelper, MarketStats, Order, Wallet, _;
 
   Order = GLOBAL.db.Order;
 
@@ -11,23 +11,11 @@
 
   JsonRenderer = require("../lib/json_renderer");
 
-  ClientSocket = require("../lib/client_socket");
-
   _ = require("underscore");
-
-  usersSocket = new ClientSocket({
-    namespace: "users",
-    redis: GLOBAL.appConfig().redis
-  });
-
-  math = require("mathjs")({
-    number: "bignumber",
-    decimals: 8
-  });
 
   module.exports = function(app) {
     app.post("/orders", function(req, res) {
-      var data, orderCurrency;
+      var data, errors, newOrder;
       if (!req.user) {
         return JsonRenderer.error("You need to be logged in to place an order.", res);
       }
@@ -45,69 +33,16 @@
       if (_.isNumber(data.unit_price) && !_.isNaN(data.unit_price) && _.isFinite(data.unit_price)) {
         data.unit_price = MarketHelper.toBigint(data.unit_price);
       }
-      orderCurrency = data["" + data.action + "_currency"];
-      return MarketStats.findEnabledMarket(orderCurrency, "BTC", function(err, market) {
-        var holdBalance;
-        if (!market) {
-          return JsonRenderer.error("Can't submit the order, the " + orderCurrency + " market is closed at the moment.", res);
+      newOrder = Order.build(data);
+      errors = newOrder.validate();
+      if (errors) {
+        return JsonRenderer.error(errors, res);
+      }
+      return newOrder.publish(function(err, order) {
+        if (err) {
+          return JsonRenderer.error(err, res);
         }
-        if (data.type === "limit" && data.action === "buy") {
-          holdBalance = math.multiply(data.amount, MarketHelper.fromBigint(data.unit_price));
-        }
-        if (data.type === "limit" && data.action === "sell") {
-          holdBalance = data.amount;
-        }
-        return Wallet.findOrCreateUserWalletByCurrency(req.user.id, data.buy_currency, function(err, buyWallet) {
-          if (err || !buyWallet) {
-            return JsonRenderer.error("Wallet " + data.buy_currency + " does not exist.", res);
-          }
-          return Wallet.findOrCreateUserWalletByCurrency(req.user.id, data.sell_currency, function(err, wallet) {
-            if (err || !wallet) {
-              return JsonRenderer.error("Wallet " + data.sell_currency + " does not exist.", res);
-            }
-            return GLOBAL.db.sequelize.transaction(function(transaction) {
-              return wallet.holdBalance(holdBalance, transaction, function(err, wallet) {
-                if (err || !wallet) {
-                  console.error(err);
-                  return transaction.rollback().success(function() {
-                    return JsonRenderer.error("Not enough " + data.sell_currency + " to open an order.", res);
-                  });
-                }
-                return Order.create(data, {
-                  transaction: transaction
-                }).complete(function(err, newOrder) {
-                  if (err) {
-                    console.error(err);
-                    return transaction.rollback().success(function() {
-                      return JsonRenderer.error(err, res);
-                    });
-                  }
-                  transaction.commit().success(function() {
-                    newOrder.publish(function(err, order) {
-                      if (err) {
-                        console.error("Could not publish newly created order - " + err);
-                      }
-                      if (err) {
-                        return res.json(JsonRenderer.order(newOrder));
-                      }
-                      return res.json(JsonRenderer.order(order));
-                    });
-                    return usersSocket.send({
-                      type: "wallet-balance-changed",
-                      user_id: wallet.user_id,
-                      eventData: JsonRenderer.wallet(wallet)
-                    });
-                  });
-                  return transaction.done(function(err) {
-                    if (err) {
-                      return JsonRenderer.error("Could not open an order. Please try again later.", res);
-                    }
-                  });
-                });
-              });
-            });
-          });
-        });
+        return res.json(JsonRenderer.order(order));
       });
     });
     app.get("/orders", function(req, res) {

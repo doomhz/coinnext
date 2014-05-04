@@ -29,4 +29,19 @@ class WalletsClient
     else
       callback "Invalid command '#{command}'"
 
+  sendWithData:  (command, data, callback = ()->)->
+    uri = "http://#{@host}/#{command}"
+    if @commands[command]
+      options =
+        uri: uri
+        method: @commands[command]
+        json: data
+      try
+        request options, callback
+      catch e
+        console.error e
+        callback "Bad response #{e}"
+    else
+      callback "Invalid command '#{command}'"
+
 exports = module.exports = WalletsClient

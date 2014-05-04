@@ -16,35 +16,38 @@
   MarketHelper = require("../../lib/market_helper");
 
   module.exports = function(app) {
-    app.post("/publish_order/:order_id", function(req, res, next) {
-      var orderId;
-      orderId = req.params.order_id;
-      return Order.findById(orderId, function(err, order) {
-        var orderCurrency;
-        if (err) {
-          return next(new restify.ConflictError(err));
+    app.post("/publish_order", function(req, res, next) {
+      var data, orderCurrency;
+      data = req.body;
+      orderCurrency = data["" + data.action + "_currency"];
+      return MarketStats.findEnabledMarket(orderCurrency, "BTC", function(err, market) {
+        if (!market) {
+          return next(new restify.ConflictError("Market for " + orderCurrency + " is disabled."));
         }
-        orderCurrency = order["" + order.action + "_currency"];
-        return MarketStats.findEnabledMarket(orderCurrency, "BTC", function(err, market) {
-          if (!market) {
-            return next(new restify.ConflictError("" + (new Date()) + " - Will not process order " + orderId + ", the market for " + orderCurrency + " is disabled."));
+        return TradeHelper.createOrder(data, function(err, newOrder) {
+          if (err) {
+            return next(new restify.ConflictError(err));
           }
-          return TradeHelper.submitOrder(order, function(err) {
+          return TradeHelper.submitOrder(newOrder, function(err) {
             if (err) {
-              return next(new restify.ConflictError(err));
+              console.error("Could not publish the order " + newOrder.id + " - " + err);
+              return res.send({
+                id: newOrder.id,
+                published: false
+              });
             }
-            order.published = true;
-            return order.save().complete(function(err, order) {
+            newOrder.published = true;
+            return newOrder.save().complete(function(err, newOrder) {
               if (err) {
-                return next(new restify.ConflictError(err));
+                console.error("Could not set order " + newOrder.id + " to published - " + err);
               }
               res.send({
-                id: orderId,
-                published: true
+                id: newOrder.id,
+                published: newOrder.published
               });
               return TradeHelper.pushOrderUpdate({
                 type: "order-published",
-                eventData: JsonRenderer.order(order)
+                eventData: JsonRenderer.order(newOrder)
               });
             });
           });
