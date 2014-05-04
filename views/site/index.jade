@@ -53,11 +53,11 @@ block content
               th Coin Name
               th Last Price
               th Volume (24h)
-              th % Change (24h)
+              th Change (24h)
             - each info, type in marketStats
               tr
                 td <a href="/trade/#{type.replace("_", "/")}">#{type.replace("_", "/")}</a>
                 td #{currencies[info.label]}
-                td(class="rate #{info.growth_ratio >= 0 ? 'up' : 'down'}") #{info.last_price}
+                td #{info.last_price}
                 td #{info.volume1} #{type.split("_")[0]}
-                td #{info.growth_ratio * (info.growth_ratio < 0 ? -1 : 1)}
+                td(class="rate #{info.growth_ratio >= 0 ? 'up' : 'down'}") #{info.growth_ratio * (info.growth_ratio < 0 ? -1 : 1)}%
