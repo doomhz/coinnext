@@ -18,6 +18,11 @@ module.exports = (sequelize, DataTypes) ->
           MarketHelper.getOrderTypeLiteral @getDataValue("type")
         set: (type)->
           @setDataValue "type", MarketHelper.getOrderType(type)
+        validate:
+          isLimit: (value)->
+            throw new Error "Market orders are disabled at the moment."  if value is MarketHelper.getOrderTypeLiteral("market")
+          existentMarket: (value)->
+            throw new Error "Invalid market."  if not MarketHelper.isValidMarket @action, @buy_currency, @sell_currency
       action:
         type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
@@ -26,6 +31,11 @@ module.exports = (sequelize, DataTypes) ->
           MarketHelper.getOrderActionLiteral @getDataValue("action")
         set: (action)->
           @setDataValue "action", MarketHelper.getOrderAction(action)
+        validate:
+          buyOrSell: (value)->
+            throw new Error "Please submit a valid action."  if not MarketHelper.getOrderAction @action
+          sameCurrency: (value)->
+            throw new Error "Please submit different currencies."  if @buy_currency is @sell_currency
       buy_currency:
         type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
@@ -33,6 +43,9 @@ module.exports = (sequelize, DataTypes) ->
           MarketHelper.getCurrencyLiteral @getDataValue("buy_currency")
         set: (buyCurrency)->
           @setDataValue "buy_currency", MarketHelper.getCurrency(buyCurrency)
+        validate:
+          existentCurrency: (value)->
+            throw new Error "Please submit a valid buy currency."  if not MarketHelper.isValidCurrency @buy_currency
       sell_currency:
         type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
@@ -40,6 +53,9 @@ module.exports = (sequelize, DataTypes) ->
           MarketHelper.getCurrencyLiteral @getDataValue("sell_currency")
         set: (sellCurrency)->
           @setDataValue "sell_currency", MarketHelper.getCurrency(sellCurrency)
+        validate:
+          existentCurrency: (value)->
+            throw new Error "Please submit a valid sell currency."  if not MarketHelper.isValidCurrency @sell_currency
       amount:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
@@ -47,6 +63,11 @@ module.exports = (sequelize, DataTypes) ->
         validate:
           isInt: true
           notNull: true
+          minAmount: (value)->
+            throw new Error "Please submit a valid amount bigger than 0.0000001."  if not Order.isValidTradeAmount value
+          minSpendAmount: (value)->
+            console.log @action, @amount, @action, @unit_price
+            throw new Error "Total to spend must be minimum 0.0001."  if @action is "buy" and not Order.isValidSpendAmount @amount, @action, @unit_price
         comment: "FLOAT x 100000000"
       matched_amount:
         type: DataTypes.BIGINT.UNSIGNED
@@ -59,18 +80,24 @@ module.exports = (sequelize, DataTypes) ->
         defaultValue: 0
         validate:
           isInt: true
+          minReceiveAmount: (value)->
+            throw new Error "Total to receive must be minimum 0.0001."  if @action is "sell" and not Order.isValidReceiveAmount @amount, @action, @unit_price
         comment: "FLOAT x 100000000"
       fee:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         validate:
           isInt: true
+          minFee: (value)->
+            throw new Error "Minimum fee should be at least 0.00000001."  if not Order.isValidFee @amount, @action, @unit_price
         comment: "FLOAT x 100000000"
       unit_price:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         validate:
           isInt: true
+          validPrice: (value)->
+            throw new Error "Please submit a valid unit price amount."  if @type is "limit" and not Order.isValidTradeAmount(value)
         comment: "FLOAT x 100000000"
       status:
         type: DataTypes.INTEGER.UNSIGNED

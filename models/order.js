@@ -26,6 +26,18 @@
         },
         set: function(type) {
           return this.setDataValue("type", MarketHelper.getOrderType(type));
+        },
+        validate: {
+          isLimit: function(value) {
+            if (value === MarketHelper.getOrderTypeLiteral("market")) {
+              throw new Error("Market orders are disabled at the moment.");
+            }
+          },
+          existentMarket: function(value) {
+            if (!MarketHelper.isValidMarket(this.action, this.buy_currency, this.sell_currency)) {
+              throw new Error("Invalid market.");
+            }
+          }
         }
       },
       action: {
@@ -37,6 +49,18 @@
         },
         set: function(action) {
           return this.setDataValue("action", MarketHelper.getOrderAction(action));
+        },
+        validate: {
+          buyOrSell: function(value) {
+            if (!MarketHelper.getOrderAction(this.action)) {
+              throw new Error("Please submit a valid action.");
+            }
+          },
+          sameCurrency: function(value) {
+            if (this.buy_currency === this.sell_currency) {
+              throw new Error("Please submit different currencies.");
+            }
+          }
         }
       },
       buy_currency: {
@@ -47,6 +71,13 @@
         },
         set: function(buyCurrency) {
           return this.setDataValue("buy_currency", MarketHelper.getCurrency(buyCurrency));
+        },
+        validate: {
+          existentCurrency: function(value) {
+            if (!MarketHelper.isValidCurrency(this.buy_currency)) {
+              throw new Error("Please submit a valid buy currency.");
+            }
+          }
         }
       },
       sell_currency: {
@@ -57,6 +88,13 @@
         },
         set: function(sellCurrency) {
           return this.setDataValue("sell_currency", MarketHelper.getCurrency(sellCurrency));
+        },
+        validate: {
+          existentCurrency: function(value) {
+            if (!MarketHelper.isValidCurrency(this.sell_currency)) {
+              throw new Error("Please submit a valid sell currency.");
+            }
+          }
         }
       },
       amount: {
@@ -65,7 +103,18 @@
         allowNull: false,
         validate: {
           isInt: true,
-          notNull: true
+          notNull: true,
+          minAmount: function(value) {
+            if (!Order.isValidTradeAmount(value)) {
+              throw new Error("Please submit a valid amount bigger than 0.0000001.");
+            }
+          },
+          minSpendAmount: function(value) {
+            console.log(this.action, this.amount, this.action, this.unit_price);
+            if (this.action === "buy" && !Order.isValidSpendAmount(this.amount, this.action, this.unit_price)) {
+              throw new Error("Total to spend must be minimum 0.0001.");
+            }
+          }
         },
         comment: "FLOAT x 100000000"
       },
@@ -81,7 +130,12 @@
         type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         validate: {
-          isInt: true
+          isInt: true,
+          minReceiveAmount: function(value) {
+            if (this.action === "sell" && !Order.isValidReceiveAmount(this.amount, this.action, this.unit_price)) {
+              throw new Error("Total to receive must be minimum 0.0001.");
+            }
+          }
         },
         comment: "FLOAT x 100000000"
       },
@@ -89,7 +143,12 @@
         type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         validate: {
-          isInt: true
+          isInt: true,
+          minFee: function(value) {
+            if (!Order.isValidFee(this.amount, this.action, this.unit_price)) {
+              throw new Error("Minimum fee should be at least 0.00000001.");
+            }
+          }
         },
         comment: "FLOAT x 100000000"
       },
@@ -97,7 +156,12 @@
         type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         validate: {
-          isInt: true
+          isInt: true,
+          validPrice: function(value) {
+            if (this.type === "limit" && !Order.isValidTradeAmount(value)) {
+              throw new Error("Please submit a valid unit price amount.");
+            }
+          }
         },
         comment: "FLOAT x 100000000"
       },

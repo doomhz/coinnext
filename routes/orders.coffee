@@ -24,7 +24,6 @@ module.exports = (app)->
     data.amount = MarketHelper.toBigint data.amount  if _.isNumber(data.amount) and not _.isNaN(data.amount) and _.isFinite(data.amount)
     data.unit_price = parseFloat data.unit_price
     data.unit_price = MarketHelper.toBigint data.unit_price  if _.isNumber(data.unit_price) and not _.isNaN(data.unit_price) and _.isFinite(data.unit_price)
-    return JsonRenderer.error validationError, res  if validationError = notValidOrderData data
     orderCurrency = data["#{data.action}_currency"]
     MarketStats.findEnabledMarket orderCurrency, "BTC", (err, market)->
       return JsonRenderer.error "Can't submit the order, the #{orderCurrency} market is closed at the moment.", res  if not market
@@ -44,7 +43,7 @@ module.exports = (app)->
                 if err
                   console.error err
                   return transaction.rollback().success ()->
-                    JsonRenderer.error "Sorry, could not open an order...", res
+                    JsonRenderer.error err, res
                 transaction.commit().success ()->
                   newOrder.publish (err, order)->
                     console.error "Could not publish newly created order - #{err}"  if err
@@ -71,18 +70,3 @@ module.exports = (app)->
         console.error "Could not cancel order - #{err}"  if err
         return res.json JsonRenderer.order order  if err
         res.json {}
-
-  # TODO: Move to the model as field validations
-  notValidOrderData = (orderData)->
-    return "Market orders are disabled at the moment."  if orderData.type is "market"
-    return "Please submit a valid amount bigger than 0.0000001."  if not Order.isValidTradeAmount orderData.amount
-    return "Please submit a valid unit price amount."  if orderData.type is "limit" and not Order.isValidTradeAmount(orderData.unit_price)
-    return "Please submit a valid action."  if not MarketHelper.getOrderAction orderData.action
-    return "Please submit a valid buy currency."  if not MarketHelper.isValidCurrency orderData.buy_currency
-    return "Please submit a valid sell currency."  if not MarketHelper.isValidCurrency orderData.sell_currency
-    return "Please submit different currencies."  if orderData.buy_currency is orderData.sell_currency
-    return "Invalid market."  if not MarketHelper.isValidMarket orderData.action, orderData.buy_currency, orderData.sell_currency
-    return "Total to spend must be minimum 0.0001."  if orderData.action is "buy" and not Order.isValidSpendAmount orderData.amount, orderData.action, orderData.unit_price
-    return "Total to receive must be minimum 0.0001."  if orderData.action is "sell" and not Order.isValidReceiveAmount orderData.amount, orderData.action, orderData.unit_price
-    return "Minimum fee should be at least 0.00000001."  if not Order.isValidFee orderData.amount, orderData.action, orderData.unit_price
-    false
