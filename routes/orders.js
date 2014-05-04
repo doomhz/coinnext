@@ -26,9 +26,8 @@
   });
 
   module.exports = function(app) {
-    var notValidOrderData;
     app.post("/orders", function(req, res) {
-      var data, orderCurrency, validationError;
+      var data, orderCurrency;
       if (!req.user) {
         return JsonRenderer.error("You need to be logged in to place an order.", res);
       }
@@ -45,9 +44,6 @@
       data.unit_price = parseFloat(data.unit_price);
       if (_.isNumber(data.unit_price) && !_.isNaN(data.unit_price) && _.isFinite(data.unit_price)) {
         data.unit_price = MarketHelper.toBigint(data.unit_price);
-      }
-      if (validationError = notValidOrderData(data)) {
-        return JsonRenderer.error(validationError, res);
       }
       orderCurrency = data["" + data.action + "_currency"];
       return MarketStats.findEnabledMarket(orderCurrency, "BTC", function(err, market) {
@@ -83,7 +79,7 @@
                   if (err) {
                     console.error(err);
                     return transaction.rollback().success(function() {
-                      return JsonRenderer.error("Sorry, could not open an order...", res);
+                      return JsonRenderer.error(err, res);
                     });
                   }
                   transaction.commit().success(function() {
@@ -125,7 +121,7 @@
         return res.json(JsonRenderer.orders(orders));
       });
     });
-    app.del("/orders/:id", function(req, res) {
+    return app.del("/orders/:id", function(req, res) {
       if (!req.user) {
         return JsonRenderer.error("You need to be logged in to delete an order.", res);
       }
@@ -144,42 +140,6 @@
         });
       });
     });
-    return notValidOrderData = function(orderData) {
-      if (orderData.type === "market") {
-        return "Market orders are disabled at the moment.";
-      }
-      if (!Order.isValidTradeAmount(orderData.amount)) {
-        return "Please submit a valid amount bigger than 0.0000001.";
-      }
-      if (orderData.type === "limit" && !Order.isValidTradeAmount(orderData.unit_price)) {
-        return "Please submit a valid unit price amount.";
-      }
-      if (!MarketHelper.getOrderAction(orderData.action)) {
-        return "Please submit a valid action.";
-      }
-      if (!MarketHelper.isValidCurrency(orderData.buy_currency)) {
-        return "Please submit a valid buy currency.";
-      }
-      if (!MarketHelper.isValidCurrency(orderData.sell_currency)) {
-        return "Please submit a valid sell currency.";
-      }
-      if (orderData.buy_currency === orderData.sell_currency) {
-        return "Please submit different currencies.";
-      }
-      if (!MarketHelper.isValidMarket(orderData.action, orderData.buy_currency, orderData.sell_currency)) {
-        return "Invalid market.";
-      }
-      if (orderData.action === "buy" && !Order.isValidSpendAmount(orderData.amount, orderData.action, orderData.unit_price)) {
-        return "Total to spend must be minimum 0.0001.";
-      }
-      if (orderData.action === "sell" && !Order.isValidReceiveAmount(orderData.amount, orderData.action, orderData.unit_price)) {
-        return "Total to receive must be minimum 0.0001.";
-      }
-      if (!Order.isValidFee(orderData.amount, orderData.action, orderData.unit_price)) {
-        return "Minimum fee should be at least 0.00000001.";
-      }
-      return false;
-    };
   };
 
 }).call(this);
