@@ -148,7 +148,7 @@
                 to: {
                   email: _this.email
                 },
-                subject: "Change password request on Coinnext.com",
+                subject: "Change password request",
                 template: "change_password"
               };
               emailer = new Emailer(options, data);
@@ -178,7 +178,7 @@
                 to: {
                   email: _this.email
                 },
-                subject: "Account confirmation on Coinnext.com",
+                subject: "Email verification",
                 template: "confirm_email"
               };
               emailer = new Emailer(options, data);

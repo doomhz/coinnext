@@ -17,6 +17,10 @@ $bgcolor = #eff1f3
 html, body
   height 100%
 
+*
+  -moz-box-sizing border-box
+  box-sizing border-box
+
 reset-list()
   list-style none
   padding 0
@@ -28,11 +32,11 @@ btn(color)
   border-radius 2px
   background-image linear-gradient(rgba(#fff,.05), transparent)
   background-color color
-  padding 7px 12px
+  padding 6px 10px
   border 0
-  font-size 14px
+  font-size 13px
   text-shadow 0 -1px 0 rgba(#000,0.15)
-  line-height 14px
+  line-height 13px
   display inline-block
   font-weight bold
   user-select none
@@ -57,6 +61,15 @@ btn(color)
 
 .btn
   btn($teal)
+
+.btn-success
+  btn(#5cb85c)
+
+.btn-danger
+  btn(#d9534f)
+
+.btn + .btn
+  margin-left 3px
 
 body
   color #484c57
@@ -121,20 +134,22 @@ button:focus
 .top-bar
   clearfix()
   margin-left 200px
-  background-image linear-gradient(rgba(#fff,.1), transparent)
+  height 55px
   background-color #333
   color #ccc
 
 .quick-search
   float left
-  padding 6px 10px
+  padding 10px 10px
   input
     border-radius 2px
     border 0
-    padding 6px
+    padding 10px
+    height 35px
     width 300px
   .btn
-    padding 7px 14px
+    padding 10px 14px
+    height 35px
     background $blue
     margin-left 5px
     font-size 13px
@@ -143,41 +158,24 @@ button:focus
 .current-user
   float right
   font-size 13px
-  padding 13px
+  padding 0 10px
   margin 0
   border-right 1px solid rgba(#fff,.1)
+  height 55px
+  line-height 55px
 
 .user-nav
   float right
   a
     font-size 13px
+    height 55px
+    line-height 55px
     display inline-block
-    padding 13px
+    padding 0 10px
     color #ccc
     text-decoration none
 
 /* Content */
-.action
-  background #fff
-  color inherit
-  border-radius 3px
-  padding 2px 5px
-  text-transform uppercase
-  border 1px solid $border-color
-  font-size 12px
-  margin 0
-  transition all .1s linear
-  &:hover
-    color $blue
-    text-decoration none
-    border-color $blue
-  &:active
-    color $darkblue
-  &.disable
-    &:hover
-      color $red
-      border-color $red
-
 .content
   margin-left 200px
   overflow hidden
@@ -205,7 +203,7 @@ th
 .table > tfoot > tr > td
   padding 8px
   line-height 1.428571429
-  vertical-align top
+  vertical-align middle
   border-top 1px solid #ddd
 
 .table > thead > tr > th
@@ -240,6 +238,29 @@ h2
   height 100%
   width 100%
   margin 0
-.authbox
-  width 500px
-  margin 0 auto
+  padding 0
+
+.auth-box
+  width 300px
+  background #fff
+  border-radius 3px
+  padding 30px
+  margin 100px auto
+  h1
+    margin 0 0 10px 0
+    font-size 22px
+  label
+    display block
+    margin-bottom 3px
+    font-size 13px
+  input
+    width 100%
+    border 1px solid #ccc
+    border-radius 2px
+    padding 5px
+    margin-bottom 8px
+    &:focus
+      border-color $blue
+
+.payment-status
+  margin-right 5px
