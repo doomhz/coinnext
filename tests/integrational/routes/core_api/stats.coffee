@@ -1,7 +1,7 @@
 require "./../../../helpers/spec_helper"
 MarketHelper = require "./../../../../lib/market_helper"
 
-app = require "./../../../../wallets"
+app = require "./../../../../core_api"
 request = require "supertest"
 
 describe "Stats Api", ->

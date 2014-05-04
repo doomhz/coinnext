@@ -4,7 +4,7 @@ MarketHelper = require "./../../../lib/market_helper"
 auth = require "./../../helpers/auth_helper"
 
 app = require "./../../../app"
-walletsEngine = require "./../../../wallets"
+walletsEngine = require "./../../../core_api"
 request = require "supertest"
 
 beforeEach (done)->

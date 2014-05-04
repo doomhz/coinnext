@@ -2,7 +2,7 @@ require "./../../../helpers/spec_helper"
 marketStats = require './../../../../models/seeds/market_stats'
 MarketHelper = require "./../../../../lib/market_helper"
 
-app = require "./../../../../wallets"
+app = require "./../../../../core_api"
 request = require "supertest"
 
 describe "Transactions Api", ->
