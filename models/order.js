@@ -110,7 +110,6 @@
             }
           },
           minSpendAmount: function(value) {
-            console.log(this.action, this.amount, this.action, this.unit_price);
             if (this.action === "buy" && !Order.isValidSpendAmount(this.amount, this.action, this.unit_price)) {
               throw new Error("Total to spend must be minimum 0.0001.");
             }

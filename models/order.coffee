@@ -66,7 +66,6 @@ module.exports = (sequelize, DataTypes) ->
           minAmount: (value)->
             throw new Error "Please submit a valid amount bigger than 0.0000001."  if not Order.isValidTradeAmount value
           minSpendAmount: (value)->
-            console.log @action, @amount, @action, @unit_price
             throw new Error "Total to spend must be minimum 0.0001."  if @action is "buy" and not Order.isValidSpendAmount @amount, @action, @unit_price
         comment: "FLOAT x 100000000"
       matched_amount:

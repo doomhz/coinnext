@@ -17,7 +17,7 @@ var server = restify.createServer();
 server.use(restify.bodyParser());
 var port = process.env.PORT || 6000;
 server.listen(process.env.PORT || 6000, function(){
-  console.log("Coinnext Wallets engine is running on port %d in %s mode", port, environment);
+  console.log("Coinnext Core API is running on port %d in %s mode", port, environment);
 });
 
 
