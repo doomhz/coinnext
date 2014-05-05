@@ -120,6 +120,7 @@
     return app.post("/orders_match", function(req, res, next) {
       var matchedData;
       matchedData = req.body;
+      delete matchedData.id;
       return Order.findById(matchedData[0].order_id, function(err, orderToMatch) {
         if (!orderToMatch || err) {
           return next(new restify.ConflictError("Wrong order to complete " + matchedData[0].order_id + " - " + err));
@@ -129,14 +130,14 @@
             return next(new restify.ConflictError("Wrong order to complete " + matchedData[1].order_id + " - " + err));
           }
           return GLOBAL.db.sequelize.transaction(function(transaction) {
-            return TradeHelper.updateMatchedOrder(orderToMatch, matchedData[0], transaction, function(err, updatedOrderToMatch) {
+            return TradeHelper.updateMatchedOrder(orderToMatch, matchedData[0], transaction, function(err, updatedOrderToMatch, updatedOrderToMatchLog) {
               if (err) {
                 console.error("Could not process order " + orderToMatch.id, err);
                 return transaction.rollback().success(function() {
                   return next(new restify.ConflictError("Could not process order " + orderToMatch.id + " - " + err));
                 });
               }
-              return TradeHelper.updateMatchedOrder(matchingOrder, matchedData[1], transaction, function(err, updatedMatchingOrder) {
+              return TradeHelper.updateMatchedOrder(matchingOrder, matchedData[1], transaction, function(err, updatedMatchingOrder, updatedMatchingOrderLog) {
                 if (err) {
                   console.error("Could not process order " + matchingOrder.id, err);
                   return transaction.rollback().success(function() {

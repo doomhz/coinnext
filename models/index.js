@@ -58,6 +58,10 @@
 
   db.PaymentLog.belongsTo(db.Payment);
 
+  db.Order.hasMany(db.OrderLog);
+
+  db.OrderLog.belongsTo(db.Order);
+
   module.exports = lodash.extend({
     sequelize: sequelize,
     Sequelize: Sequelize

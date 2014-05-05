@@ -225,4 +225,12 @@ module.exports = (sequelize, DataTypes) ->
               console.error "Could not cancel the order - #{JSON.stringify(body)}"
               callback "Could not cancel the order on the network"
 
+        updateFromMatchedData: (matchedData, transaction, callback = ()->)->
+          @status = matchedData.status
+          @matched_amount = math.add @matched_amount, matchedData.matched_amount
+          @result_amount = math.add @result_amount, matchedData.result_amount
+          @fee = math.add @fee, matchedData.fee
+          @close_time = new Date matchedData.time  if @status is "completed"
+          @save({transaction: transaction}).complete callback
+
   Order

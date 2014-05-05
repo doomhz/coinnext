@@ -361,6 +361,21 @@
               }
             };
           })(this));
+        },
+        updateFromMatchedData: function(matchedData, transaction, callback) {
+          if (callback == null) {
+            callback = function() {};
+          }
+          this.status = matchedData.status;
+          this.matched_amount = math.add(this.matched_amount, matchedData.matched_amount);
+          this.result_amount = math.add(this.result_amount, matchedData.result_amount);
+          this.fee = math.add(this.fee, matchedData.fee);
+          if (this.status === "completed") {
+            this.close_time = new Date(matchedData.time);
+          }
+          return this.save({
+            transaction: transaction
+          }).complete(callback);
         }
       }
     });

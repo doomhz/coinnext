@@ -69,17 +69,18 @@ module.exports = (app)->
 
   app.post "/orders_match", (req, res, next)->
     matchedData = req.body
+    delete matchedData.id
     Order.findById matchedData[0].order_id, (err, orderToMatch)->
       return next(new restify.ConflictError "Wrong order to complete #{matchedData[0].order_id} - #{err}")  if not orderToMatch or err
       Order.findById matchedData[1].order_id, (err, matchingOrder)->
         return next(new restify.ConflictError "Wrong order to complete #{matchedData[1].order_id} - #{err}")  if not matchingOrder or err
         GLOBAL.db.sequelize.transaction (transaction)->
-          TradeHelper.updateMatchedOrder orderToMatch, matchedData[0], transaction, (err, updatedOrderToMatch)->
+          TradeHelper.updateMatchedOrder orderToMatch, matchedData[0], transaction, (err, updatedOrderToMatch, updatedOrderToMatchLog)->
             if err
               console.error "Could not process order #{orderToMatch.id}", err
               return transaction.rollback().success ()->
                 next(new restify.ConflictError "Could not process order #{orderToMatch.id} - #{err}")
-            TradeHelper.updateMatchedOrder matchingOrder, matchedData[1], transaction, (err, updatedMatchingOrder)->
+            TradeHelper.updateMatchedOrder matchingOrder, matchedData[1], transaction, (err, updatedMatchingOrder, updatedMatchingOrderLog)->
               if err
                 console.error "Could not process order #{matchingOrder.id}", err
                 return transaction.rollback().success ()->
