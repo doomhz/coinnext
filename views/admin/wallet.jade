@@ -2,7 +2,7 @@ extends ../admin
 
 block content
   .content
-    h2 Wallet #{wallet.id}
+    h2.content-title Wallet #{wallet.id}
 
     p Address: #{wallet.address}
     p Balance: #{wallet.getFloat('balance')}

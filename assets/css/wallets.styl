@@ -16,23 +16,12 @@
     width 77%
     font-size 16px
   button
+    btn($teal)
     margin-left 3%
     width 20%
-    color inherit
-    background #fff
     height 25px
-    line-height 25px
-    border-radius 3px
     padding 0 5px
-    text-transform uppercase
-    border 1px solid $border-color
     font-size 12px
-    transition all .1s linear
-    &:hover
-      color $teal
-      border-color $teal
-    &:active
-      color #14294e
 
 .fund-nav
   reset-list()
@@ -158,6 +147,7 @@
 
 #generate-address
   float left
+  width 100%
 
 .qr-code
   display inline-block

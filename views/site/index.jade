@@ -42,8 +42,8 @@ block content
             h3.con-header-title Announcements
           ul.announcement-list
             li.announcement-item
-              .time 24/12/13
-              a(href="/announcements/1").title Bank holiday - December 25th, 26th
+              .time 05/06/14
+              a(href="http://blog.coinnext.com/2014/05/06/welcome_to_coinnext/", target="_blank").title Welcome to Coinnext
         section#market-list.container
           .con-header
             h3.con-header-title All Markets
@@ -60,4 +60,4 @@ block content
                 td #{currencies[info.label]}
                 td #{info.last_price}
                 td #{info.volume1} #{type.split("_")[0]}
-                td(class="rate #{info.growth_ratio >= 0 ? 'up' : 'down'}") #{info.growth_ratio * (info.growth_ratio < 0 ? -1 : 1)}%
+                td(class="rate #{info.growth_ratio > 0 ? 'up' : ''} #{info.growth_ratio < 0 ? 'down' : ''} #{info.growth_ratio == 0 ? 'none' : ''}") #{info.growth_ratio * (info.growth_ratio < 0 ? -1 : 1)}%
