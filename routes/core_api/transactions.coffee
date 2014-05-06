@@ -36,6 +36,12 @@ module.exports = (app)->
         console.error err  if err
         res.send("#{new Date()} - Processed #{result.length} transactions")        
 
+  app.post "/create_payment", (req, res, next)->
+    data = req.body
+    TransactionHelper.createPayment data, (err, payment)->
+      return next(new restify.ConflictError err)  if err
+      res.json JsonRenderer.payment payment
+
   app.post "/process_pending_payments", (req, res, next)->
     TransactionHelper.paymentsProcessedUserIds = []
     Payment.findByStatus "pending", (err, payments)->

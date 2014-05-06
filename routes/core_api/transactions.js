@@ -65,6 +65,16 @@
         });
       });
     });
+    app.post("/create_payment", function(req, res, next) {
+      var data;
+      data = req.body;
+      return TransactionHelper.createPayment(data, function(err, payment) {
+        if (err) {
+          return next(new restify.ConflictError(err));
+        }
+        return res.json(JsonRenderer.payment(payment));
+      });
+    });
     app.post("/process_pending_payments", function(req, res, next) {
       TransactionHelper.paymentsProcessedUserIds = [];
       return Payment.findByStatus("pending", function(err, payments) {

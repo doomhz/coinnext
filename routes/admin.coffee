@@ -175,7 +175,7 @@ module.exports = (app)->
 
   app.put "/administratie/pay/:id", (req, res)->
     id = req.params.id
-    GLOBAL.walletsClient.send "process_payment", [id], (err, res2, body)=>
+    GLOBAL.coreAPIClient.send "process_payment", [id], (err, res2, body)=>
       return JsonRenderer.error err, res  if err
       if body and body.paymentId?
         Payment.findById id, (err, payment)->
@@ -187,7 +187,7 @@ module.exports = (app)->
 
   app.del "/administratie/payment/:id", (req, res)->
     id = req.params.id
-    GLOBAL.walletsClient.send "cancel_payment", [id], (err, res2, body)=>
+    GLOBAL.coreAPIClient.send "cancel_payment", [id], (err, res2, body)=>
       return JsonRenderer.error err, res  if err
       if body and body.paymentId?
         res.json
@@ -198,7 +198,7 @@ module.exports = (app)->
 
   app.get "/administratie/banksaldo/:currency", (req, res)->
     currency = req.params.currency
-    GLOBAL.walletsClient.send "wallet_balance", [currency], (err, res2, body)=>
+    GLOBAL.coreAPIClient.send "wallet_balance", [currency], (err, res2, body)=>
       return JsonRenderer.error err, res  if err
       if body and body.balance?
         res.json body
@@ -209,7 +209,7 @@ module.exports = (app)->
 
   app.post "/administratie/wallet_info", (req, res)->
     currency = req.body.currency
-    GLOBAL.walletsClient.send "wallet_info", [currency], (err, res2, body)=>
+    GLOBAL.coreAPIClient.send "wallet_info", [currency], (err, res2, body)=>
       return JsonRenderer.error err, res  if err
       if body and body.info?
         res.json body

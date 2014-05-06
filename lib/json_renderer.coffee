@@ -150,10 +150,10 @@ JsonRenderer =
 
   error: (err, res, code = 409, log = true)->
     console.error err  if log
-    res.statusCode = code
+    res.statusCode = code  if res
     if _.isObject(err)
       delete err.sql
-      return res.json {error: @formatError("#{err}")}  if err.code is "ER_DUP_ENTRY"
+      return res.json {error: @formatError("#{err}")}  if res and err.code is "ER_DUP_ENTRY"
     message = ""
     if _.isString err
       message = err
@@ -163,7 +163,8 @@ JsonRenderer =
           message += "#{val.join(' ')} "
         else
           message += "#{val} "
-    res.json {error: @formatError(message)}
+    return res.json {error: @formatError(message)}  if res
+    @formatError(message)
 
   formatError: (message)->
     message = message.replace "Error: ER_DUP_ENTRY: ", ""

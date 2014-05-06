@@ -192,7 +192,7 @@ module.exports = (sequelize, DataTypes) ->
           MarketHelper.fromBigint @[attribute]
 
         publish: (callback = ()->)->
-          GLOBAL.walletsClient.sendWithData "publish_order", @values, (err, res, body)=>
+          GLOBAL.coreAPIClient.sendWithData "publish_order", @values, (err, res, body)=>
             if err
               console.error err
               return callback err, res, body
@@ -202,7 +202,7 @@ module.exports = (sequelize, DataTypes) ->
             callback body
 
         cancel: (callback = ()->)->
-          GLOBAL.walletsClient.send "cancel_order", [@id], (err, res, body)=>
+          GLOBAL.coreAPIClient.send "cancel_order", [@id], (err, res, body)=>
             if err
               console.error err
               return callback err, res, body

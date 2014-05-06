@@ -1,6 +1,6 @@
 request = require "request"
 
-class WalletsClient
+class CoreAPIClient
 
   host: null
 
@@ -8,6 +8,7 @@ class WalletsClient
     "create_account": "post"
     "publish_order":  "post"
     "cancel_order":  "del"
+    "create_payment": "post"
     "process_payment": "put"
     "cancel_payment": "del"
     "wallet_balance": "get"
@@ -44,4 +45,4 @@ class WalletsClient
     else
       callback "Invalid command '#{command}'"
 
-exports = module.exports = WalletsClient
+exports = module.exports = CoreAPIClient

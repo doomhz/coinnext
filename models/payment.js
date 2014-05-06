@@ -117,6 +117,24 @@
             }
           };
           return Payment.find(query).complete(callback);
+        },
+        submit: function(data, callback) {
+          if (callback == null) {
+            callback = function() {};
+          }
+          return GLOBAL.coreAPIClient.sendWithData("create_payment", data, (function(_this) {
+            return function(err, res, body) {
+              if (err) {
+                console.error(err);
+                return callback(err, res, body);
+              }
+              if (body && body.id) {
+                return Payment.findById(body.id, callback);
+              }
+              console.error("Could not create payment - " + (JSON.stringify(body)));
+              return callback(body);
+            };
+          })(this));
         }
       },
       instanceMethods: {

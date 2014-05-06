@@ -311,7 +311,7 @@
           if (callback == null) {
             callback = function() {};
           }
-          return GLOBAL.walletsClient.sendWithData("publish_order", this.values, (function(_this) {
+          return GLOBAL.coreAPIClient.sendWithData("publish_order", this.values, (function(_this) {
             return function(err, res, body) {
               if (err) {
                 console.error(err);
@@ -332,7 +332,7 @@
           if (callback == null) {
             callback = function() {};
           }
-          return GLOBAL.walletsClient.send("cancel_order", [this.id], (function(_this) {
+          return GLOBAL.coreAPIClient.send("cancel_order", [this.id], (function(_this) {
             return function(err, res, body) {
               if (err) {
                 console.error(err);
