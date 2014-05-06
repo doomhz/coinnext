@@ -24,3 +24,5 @@ crash.log
 builtAssets
 config.json
 erl_crash.dump
+certs
+certs/*

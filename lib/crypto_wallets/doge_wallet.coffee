@@ -10,6 +10,7 @@ class DogeWallet extends CryptoWallet
   currencyName: "Dogecoin"
 
   createClient: (options)->
+    super options
     @client = dogecoin options.client
 
   getBalance: (account, callback)->

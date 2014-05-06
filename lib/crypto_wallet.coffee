@@ -25,6 +25,7 @@ class CryptoWallet
     @setupWallet(options)
 
   createClient: (options)->
+    options.client.sslCa = @loadCertificate options.client.sslCa  if options.client.sslCa
 
   setupConfirmations: (options)->
     @confirmations = options.confirmations or @confirmations
@@ -74,5 +75,8 @@ class CryptoWallet
 
   loadOptions: ()->
     GLOBAL.appConfig().wallets[@initialCurrency.toLowerCase()]
+
+  loadCertificate: (path)->
+    require("fs").readFileSync("#{__dirname}/../#{path}")
 
 exports = module.exports = CryptoWallet

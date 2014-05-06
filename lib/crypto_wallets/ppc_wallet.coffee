@@ -10,6 +10,7 @@ class PpcWallet extends CryptoWallet
   currencyName: "Peercoin"
 
   createClient: (options)->
+    super options
     @client = new peercoin.Client options.client
 
 exports = module.exports = PpcWallet
