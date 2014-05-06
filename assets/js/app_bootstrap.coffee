@@ -131,8 +131,7 @@ $(document).ready ()->
       overviewClosedOrders = new App.OrdersView
         el: $overviewClosedOrders
         tpl: "wallet-closed-order-tpl"
-        collection: new App.OrdersCollection null,
-          type: "completed"
+        collection: new App.OrderLogsCollection null,
           userId: CONFIG.currentUser.id
         hideOnEmpty: true
       overviewClosedOrders.render()
@@ -206,7 +205,7 @@ $(document).ready ()->
     closedOrders = new App.OrdersView
       el: $closedOrders
       tpl: "site-closed-order-tpl"
-      collection: new App.OrdersCollection null,
+      collection: new App.OrderLogsCollection null,
         type: "completed"
         currency1: $closedOrders.data "currency1"
         currency2: $closedOrders.data "currency2"

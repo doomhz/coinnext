@@ -91,6 +91,28 @@ JsonRenderer =
       data.push @order order
     data
 
+  orderLog: (orderLog)->
+    id:             orderLog.id
+    order_id:       orderLog.order_id
+    action:         orderLog.order.action
+    buy_currency:   orderLog.order.buy_currency
+    sell_currency:  orderLog.order.sell_currency
+    matched_amount: orderLog.getFloat "matched_amount"
+    result_amount:  orderLog.getFloat "result_amount"
+    fee:            orderLog.getFloat "fee"
+    unit_price:     orderLog.getFloat "unit_price"
+    active:         orderLog.active
+    time:           orderLog.time
+    status:         orderLog.status
+    updated_at:     orderLog.updated_at
+    created_at:     orderLog.created_at
+
+  orderLogs: (orderLogs)->
+    data = []
+    for orderLog in orderLogs
+      data.push @orderLog orderLog
+    data
+
   chatMessage: (message, user = {})->
     username = user.username
     username = message.user.username  if message.user?

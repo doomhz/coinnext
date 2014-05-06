@@ -27,12 +27,14 @@
 //= require app/models/payment
 //= require app/models/transaction
 //= require app/models/order
+//= require app/models/order_log
 //= require app/models/market_stats
 
 //= require app/collections/wallets
 //= require app/collections/transactions
 //= require app/collections/payments
 //= require app/collections/orders
+//= require app/collections/order_logs
 //= require app/collections/trade_stats
 
 //= require app/views/master

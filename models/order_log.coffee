@@ -69,4 +69,32 @@ module.exports = (sequelize, DataTypes) ->
             ]
           OrderLog.findAll(query).complete callback
 
+        findActiveByOptions: (options = {}, callback)->
+          query =
+            where:
+              active: true
+            include: [
+              model: GLOBAL.db.Order
+              attributes: ["buy_currency", "sell_currency", "action"]
+              where: {}
+            ]
+            order: [
+              ["time", "DESC"]
+            ]
+          query.include[0].where.user_id = options.user_id  if options.user_id
+          currencies = []
+          currencies.push MarketHelper.getCurrency(options.currency1)  if options.currency1
+          currencies.push MarketHelper.getCurrency(options.currency2)  if options.currency2
+          if currencies.length > 1
+            query.include[0].where.buy_currency = currencies
+            query.include[0].where.sell_currency = currencies
+          query.order = options.sort_by  if options.sort_by
+          OrderLog.findAll(query).complete callback  
+
+      instanceMethods:
+
+        getFloat: (attribute)->
+          return @[attribute]  if not @[attribute]?
+          MarketHelper.fromBigint @[attribute]
+
   OrderLog

@@ -120,7 +120,8 @@
     return app.post("/orders_match", function(req, res, next) {
       var matchedData;
       matchedData = req.body;
-      delete matchedData.id;
+      delete matchedData[0].id;
+      delete matchedData[1].id;
       return Order.findById(matchedData[0].order_id, function(err, orderToMatch) {
         if (!orderToMatch || err) {
           return next(new restify.ConflictError("Wrong order to complete " + matchedData[0].order_id + " - " + err));

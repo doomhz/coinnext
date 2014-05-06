@@ -94,6 +94,51 @@
             order: [["time", "ASC"]]
           };
           return OrderLog.findAll(query).complete(callback);
+        },
+        findActiveByOptions: function(options, callback) {
+          var currencies, query;
+          if (options == null) {
+            options = {};
+          }
+          query = {
+            where: {
+              active: true
+            },
+            include: [
+              {
+                model: GLOBAL.db.Order,
+                attributes: ["buy_currency", "sell_currency", "action"],
+                where: {}
+              }
+            ],
+            order: [["time", "DESC"]]
+          };
+          if (options.user_id) {
+            query.include[0].where.user_id = options.user_id;
+          }
+          currencies = [];
+          if (options.currency1) {
+            currencies.push(MarketHelper.getCurrency(options.currency1));
+          }
+          if (options.currency2) {
+            currencies.push(MarketHelper.getCurrency(options.currency2));
+          }
+          if (currencies.length > 1) {
+            query.include[0].where.buy_currency = currencies;
+            query.include[0].where.sell_currency = currencies;
+          }
+          if (options.sort_by) {
+            query.order = options.sort_by;
+          }
+          return OrderLog.findAll(query).complete(callback);
+        }
+      },
+      instanceMethods: {
+        getFloat: function(attribute) {
+          if (this[attribute] == null) {
+            return this[attribute];
+          }
+          return MarketHelper.fromBigint(this[attribute]);
         }
       }
     });

@@ -69,7 +69,8 @@ module.exports = (app)->
 
   app.post "/orders_match", (req, res, next)->
     matchedData = req.body
-    delete matchedData.id
+    delete matchedData[0].id
+    delete matchedData[1].id
     Order.findById matchedData[0].order_id, (err, orderToMatch)->
       return next(new restify.ConflictError "Wrong order to complete #{matchedData[0].order_id} - #{err}")  if not orderToMatch or err
       Order.findById matchedData[1].order_id, (err, matchingOrder)->

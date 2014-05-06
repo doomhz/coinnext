@@ -229,7 +229,7 @@ describe "Trade Api", ->
             orderLog.status.should.eql "partiallyCompleted"
             done()
 
-      xit "adds a matching order log", (done)->
+      it "adds a matching order log", (done)->
         request('http://localhost:6000')
         .post("/orders_match")
         .send(matchData)
