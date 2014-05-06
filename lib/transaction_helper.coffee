@@ -18,6 +18,33 @@ TransactionHelper =
   pushToUser: (data)->
     usersSocket.send data
 
+  createPayment: (data, callback)->
+    Wallet.findUserWallet data.user_id, data.wallet_id, (err, wallet)->
+      return callback "Wrong wallet."  if not wallet
+      return callback "You don't have enough funds."  if not wallet.canWithdraw data.amount, true
+      return callback "You can't withdraw to the same address."  if data.address is wallet.address
+      data.currency = wallet.currency
+      GLOBAL.db.sequelize.transaction (transaction)->
+        Payment.create(data, {transaction: transaction}).complete (err, pm)->
+          if err
+            console.error err
+            return transaction.rollback().success ()->
+              return callback JsonRenderer.error err
+          totalWithdrawalAmount = math.add(wallet.withdrawal_fee, pm.amount)
+          wallet.addBalance -totalWithdrawalAmount, transaction, (err, wallet)->
+            if err
+              console.error err
+              return transaction.rollback().success ()->
+                return callback JsonRenderer.error err
+            transaction.commit().success ()->
+              callback null, pm
+              TransactionHelper.pushToUser
+                type: "wallet-balance-changed"
+                user_id: wallet.user_id
+                eventData: JsonRenderer.wallet wallet
+            transaction.done (err)->
+              callback JsonRenderer.error err  if err
+
   processPayment: (payment, callback)->
     MarketStats.findEnabledMarket payment.currency, "BTC", (err, market)->
       return callback null, "#{new Date()} - Will not process payment #{payment.id}, the market for #{payment.currency} is disabled."  if not market

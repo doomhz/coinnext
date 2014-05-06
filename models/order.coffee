@@ -169,19 +169,6 @@ module.exports = (sequelize, DataTypes) ->
           query.order = options.sort_by  if options.sort_by
           Order.findAll(query).complete callback  
 
-        findCompletedByTimeAndAction: (startTime, endTime, action, callback)->
-          query =
-            where:
-              status: MarketHelper.getOrderStatus("completed")
-              action: MarketHelper.getOrderAction action
-              close_time:
-                gte: new Date(startTime)
-                lte: new Date(endTime)
-            order: [
-              ["close_time", "ASC"]
-            ]
-          Order.findAll(query).complete callback
-
         isValidTradeAmount: (amount)->
           _.isNumber(amount) and not _.isNaN(amount) and _.isFinite(amount) and amount >= MarketHelper.getMinTradeAmount()
 
@@ -205,7 +192,7 @@ module.exports = (sequelize, DataTypes) ->
           MarketHelper.fromBigint @[attribute]
 
         publish: (callback = ()->)->
-          GLOBAL.walletsClient.sendWithData "publish_order", @values, (err, res, body)=>
+          GLOBAL.coreAPIClient.sendWithData "publish_order", @values, (err, res, body)=>
             if err
               console.error err
               return callback err, res, body
@@ -215,7 +202,7 @@ module.exports = (sequelize, DataTypes) ->
             callback body
 
         cancel: (callback = ()->)->
-          GLOBAL.walletsClient.send "cancel_order", [@id], (err, res, body)=>
+          GLOBAL.coreAPIClient.send "cancel_order", [@id], (err, res, body)=>
             if err
               console.error err
               return callback err, res, body
@@ -224,5 +211,13 @@ module.exports = (sequelize, DataTypes) ->
             else
               console.error "Could not cancel the order - #{JSON.stringify(body)}"
               callback "Could not cancel the order on the network"
+
+        updateFromMatchedData: (matchedData, transaction, callback = ()->)->
+          @status = matchedData.status
+          @matched_amount = math.add @matched_amount, matchedData.matched_amount
+          @result_amount = math.add @result_amount, matchedData.result_amount
+          @fee = math.add @fee, matchedData.fee
+          @close_time = new Date matchedData.time  if @status is "completed"
+          @save({transaction: transaction}).complete callback
 
   Order

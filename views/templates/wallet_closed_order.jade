@@ -5,7 +5,7 @@ script(type="text/template", id="wallet-closed-order-tpl")
     | <% } else { %>
     td.trade-date <a href="/trade/<%= order.get('buy_currency') %>/<%= order.get('sell_currency') %>"><%= order.get('buy_currency') %>/<%= order.get('sell_currency') %></a>
     | <% } %>
-    td.trade-type <%= order.getCreatedDate() %>
+    td.trade-type <%= order.getTime() %>
     td.trade-type <%= order.get('action') %>
     td.trade-price <%= _.str.satoshiRound(order.get('unit_price')) %>
     td.trade-amount <%= _.str.toFixed(order.calculateFirstAmount()) %>

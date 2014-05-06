@@ -38,6 +38,8 @@ db.Chat.belongsTo db.User
 db.UserToken.belongsTo db.User
 db.Payment.hasMany db.PaymentLog
 db.PaymentLog.belongsTo db.Payment
+db.Order.hasMany db.OrderLog
+db.OrderLog.belongsTo db.Order
 
 module.exports = lodash.extend(
   sequelize: sequelize

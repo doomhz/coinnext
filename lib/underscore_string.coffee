@@ -7,4 +7,7 @@ _str.roundTo = (number, decimals = 8)->
 _str.satoshiRound = (number)->
   _str.roundTo number, 8
 
+_str.toFixed = (number, decimals = 8)->
+  _str.rtrim(_str.rtrim(parseFloat(number).toFixed(decimals), "0"), ".")
+
 exports = module.exports = _str

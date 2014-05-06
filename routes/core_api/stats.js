@@ -1,9 +1,7 @@
 (function() {
-  var MarketHelper, Order, TradeStats, math, restify, _;
+  var MarketHelper, OrderLog, TradeStats, math, _;
 
-  restify = require("restify");
-
-  Order = GLOBAL.db.Order;
+  OrderLog = GLOBAL.db.OrderLog;
 
   TradeStats = GLOBAL.db.TradeStats;
 
@@ -24,11 +22,11 @@
       endTime = now - now % halfHour;
       startTime = endTime - halfHour;
       markets = {};
-      return Order.findCompletedByTimeAndAction(startTime, endTime, "sell", function(err, orders) {
-        var marketType, order, _i, _len;
-        for (_i = 0, _len = orders.length; _i < _len; _i++) {
-          order = orders[_i];
-          marketType = "" + order.sell_currency + "_" + order.buy_currency;
+      return OrderLog.findByTimeAndAction(startTime, endTime, "sell", function(err, orderLogs) {
+        var marketType, orderLog, _i, _len;
+        for (_i = 0, _len = orderLogs.length; _i < _len; _i++) {
+          orderLog = orderLogs[_i];
+          marketType = "" + orderLog.order.sell_currency + "_" + orderLog.order.buy_currency;
           if (!markets[marketType]) {
             markets[marketType] = {
               type: marketType,
@@ -41,16 +39,16 @@
             };
           }
           if (markets[marketType].open_price === 0) {
-            markets[marketType].open_price = order.unit_price;
+            markets[marketType].open_price = orderLog.unit_price;
           }
-          markets[marketType].close_price = order.unit_price;
-          if (order.unit_price > markets[marketType].high_price) {
-            markets[marketType].high_price = order.unit_price;
+          markets[marketType].close_price = orderLog.unit_price;
+          if (orderLog.unit_price > markets[marketType].high_price) {
+            markets[marketType].high_price = orderLog.unit_price;
           }
-          if (order.unit_price < markets[marketType].low_price || markets[marketType].low_price === 0) {
-            markets[marketType].low_price = order.unit_price;
+          if (orderLog.unit_price < markets[marketType].low_price || markets[marketType].low_price === 0) {
+            markets[marketType].low_price = orderLog.unit_price;
           }
-          markets[marketType].volume = math.add(markets[marketType].volume, order.amount);
+          markets[marketType].volume = math.add(markets[marketType].volume, orderLog.matched_amount);
         }
         markets = _.values(markets);
         return TradeStats.bulkCreate(markets).complete(function(err, result) {

@@ -84,6 +84,15 @@ module.exports = (sequelize, DataTypes) ->
             where:
               transaction_id: transactionId
           Payment.find(query).complete callback
+
+        submit: (data, callback = ()->)->
+          GLOBAL.coreAPIClient.sendWithData "create_payment", data, (err, res, body)=>
+            if err
+              console.error err
+              return callback err, res, body
+            return Payment.findById body.id, callback  if body and body.id
+            console.error "Could not create payment - #{JSON.stringify(body)}"
+            callback body
       
       instanceMethods:
 

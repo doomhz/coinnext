@@ -91,6 +91,28 @@ JsonRenderer =
       data.push @order order
     data
 
+  orderLog: (orderLog)->
+    id:             orderLog.id
+    order_id:       orderLog.order_id
+    action:         orderLog.order.action
+    buy_currency:   orderLog.order.buy_currency
+    sell_currency:  orderLog.order.sell_currency
+    matched_amount: orderLog.getFloat "matched_amount"
+    result_amount:  orderLog.getFloat "result_amount"
+    fee:            orderLog.getFloat "fee"
+    unit_price:     orderLog.getFloat "unit_price"
+    active:         orderLog.active
+    time:           orderLog.time
+    status:         orderLog.status
+    updated_at:     orderLog.updated_at
+    created_at:     orderLog.created_at
+
+  orderLogs: (orderLogs)->
+    data = []
+    for orderLog in orderLogs
+      data.push @orderLog orderLog
+    data
+
   chatMessage: (message, user = {})->
     username = user.username
     username = message.user.username  if message.user?
@@ -128,10 +150,10 @@ JsonRenderer =
 
   error: (err, res, code = 409, log = true)->
     console.error err  if log
-    res.statusCode = code
+    res.statusCode = code  if res
     if _.isObject(err)
       delete err.sql
-      return res.json {error: @formatError("#{err}")}  if err.code is "ER_DUP_ENTRY"
+      return res.json {error: @formatError("#{err}")}  if res and err.code is "ER_DUP_ENTRY"
     message = ""
     if _.isString err
       message = err
@@ -141,7 +163,8 @@ JsonRenderer =
           message += "#{val.join(' ')} "
         else
           message += "#{val} "
-    res.json {error: @formatError(message)}
+    return res.json {error: @formatError(message)}  if res
+    @formatError(message)
 
   formatError: (message)->
     message = message.replace "Error: ER_DUP_ENTRY: ", ""

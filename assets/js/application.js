@@ -6,7 +6,6 @@
 //= require vendor/underscore.string
 //= require vendor/backbone
 //= require vendor/qrcode
-//= require vendor/pace.min
 //= require vendor/ba-tiny-pubsub
 //= require vendor/jquery.validate
 //= require vendor/jquery.tmpload
@@ -27,12 +26,14 @@
 //= require app/models/payment
 //= require app/models/transaction
 //= require app/models/order
+//= require app/models/order_log
 //= require app/models/market_stats
 
 //= require app/collections/wallets
 //= require app/collections/transactions
 //= require app/collections/payments
 //= require app/collections/orders
+//= require app/collections/order_logs
 //= require app/collections/trade_stats
 
 //= require app/views/master

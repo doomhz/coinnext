@@ -8,14 +8,14 @@ var RedisStore = require('connect-redis')(express);
 var fs = require('fs');
 var helmet = require('helmet');
 var simpleCdn = require('express-simple-cdn');
-var WalletsClient = require('./lib/wallets_client');
+var CoreAPIClient = require('./lib/core_api_client');
 var environment = process.env.NODE_ENV || 'development';
 var config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', encoding='utf8'))[environment];
 
 // Configure globals
 GLOBAL.passport = require('passport');
 GLOBAL.appConfig = function () {return config;};
-GLOBAL.walletsClient = new WalletsClient({host: GLOBAL.appConfig().wallets_host});
+GLOBAL.coreAPIClient = new CoreAPIClient({host: GLOBAL.appConfig().wallets_host});
 GLOBAL.db = require('./models/index');
 
 require('./lib/auth');
@@ -112,5 +112,6 @@ require('./routes/wallets')(app);
 require('./routes/payments')(app);
 require('./routes/transactions')(app);
 require('./routes/orders')(app);
+require('./routes/order_logs')(app);
 require('./routes/chat')(app);
 require('./routes/errors')(app);

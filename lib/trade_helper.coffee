@@ -1,5 +1,6 @@
 request = require "request"
 Order = GLOBAL.db.Order
+OrderLog = GLOBAL.db.OrderLog
 Wallet = GLOBAL.db.Wallet
 MarketStats = GLOBAL.db.MarketStats
 JsonRenderer = require "./json_renderer"
@@ -92,8 +93,6 @@ TradeHelper =
         matchedAmount = matchData.matched_amount
         resultAmount = matchData.result_amount
         unitPrice = matchData.unit_price
-        fee = matchData.fee
-        status = matchData.status
         holdBalance = if orderToMatch.action is "buy" then math.multiply(matchedAmount, MarketHelper.fromBigint(orderToMatch.unit_price)) else matchedAmount
         changeBalance = if orderToMatch.action is "buy" then math.add(holdBalance, -math.multiply(matchedAmount, MarketHelper.fromBigint(unitPrice))) else 0
         sellWallet.addHoldBalance -holdBalance, transaction, (err, sellWallet)->
@@ -102,38 +101,32 @@ TradeHelper =
             return callback err  if err or not sellWallet
             buyWallet.addBalance resultAmount, transaction, (err, buyWallet)->
               return callback err  if err or not buyWallet
-              orderToMatch.status = status
-              orderToMatch.matched_amount = math.add orderToMatch.matched_amount, matchedAmount
-              orderToMatch.result_amount = math.add orderToMatch.result_amount, resultAmount
-              orderToMatch.fee = math.add orderToMatch.fee, fee
-              orderToMatch.close_time = Date.now()  if status is "completed"
-              orderToMatch.save({transaction: transaction}).complete (err, updatedOrder)->
+              orderToMatch.updateFromMatchedData matchData, transaction, (err, updatedOrder)->
                 console.error "Could not process order ", err  if err
                 return callback err  if err
-                callback null, updatedOrder
-                TradeHelper.pushUserUpdate
-                  type: "wallet-balance-changed"
-                  user_id: sellWallet.user_id
-                  eventData: JsonRenderer.wallet sellWallet
-                TradeHelper.pushUserUpdate
-                  type: "wallet-balance-changed"
-                  user_id: buyWallet.user_id
-                  eventData: JsonRenderer.wallet buyWallet
+                OrderLog.logMatch matchData, transaction, (err, orderLog)->
+                  console.error "Could not save order log ", err  if err
+                  return callback err  if err
+                  callback null, updatedOrder, orderLog
+                  TradeHelper.pushUserUpdate
+                    type: "wallet-balance-changed"
+                    user_id: sellWallet.user_id
+                    eventData: JsonRenderer.wallet sellWallet
+                  TradeHelper.pushUserUpdate
+                    type: "wallet-balance-changed"
+                    user_id: buyWallet.user_id
+                    eventData: JsonRenderer.wallet buyWallet
 
-  trackMatchedOrder: (order, callback = ()->)->
-    if order.status is "completed"
-      MarketStats.trackFromOrder order, (err, mkSt)->
-        callback err, mkSt
-        TradeHelper.send
-          type: "market-stats-updated"
-          eventData: mkSt.toJSON()
+  trackMatchedOrder: (orderLog, callback = ()->)->
+    eventType = if orderLog.status is "completed" then "order-completed" else "order-partially-completed"
+    MarketStats.trackFromOrderLog orderLog, (err, mkSt)->
+      callback err, mkSt
+      TradeHelper.send
+        type: "market-stats-updated"
+        eventData: mkSt.toJSON()
+    orderLog.getOrder().complete (err, order)->
       TradeHelper.pushOrderUpdate
-        type: "order-completed"
-        eventData: JsonRenderer.order order
-    if order.status is "partiallyCompleted"
-      callback()
-      TradeHelper.pushOrderUpdate
-        type: "order-partially-completed"
+        type: eventType
         eventData: JsonRenderer.order order
 
 exports = module.exports = TradeHelper

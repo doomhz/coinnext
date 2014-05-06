@@ -31,10 +31,11 @@ describe "Trade Api", ->
           GLOBAL.db.Order.bulkCreate(orders).complete ()->
             done()
 
+      matchTime = new Date()
       matchData =
         [
-          {id: 1, order_id: 1, matched_amount: 500000000, result_amount: 499000000, fee: 1000000, unit_price: 10000000, status: 'partiallyCompleted'}
-          {id: 2, order_id: 2, matched_amount: 500000000, result_amount: 49900000, fee: 100000, unit_price: 10000000, status: 'completed'}
+          {id: 1, order_id: 1, matched_amount: 500000000, result_amount: 499000000, fee: 1000000, unit_price: 10000000, status: 'partiallyCompleted', active: false, time: matchTime}
+          {id: 2, order_id: 2, matched_amount: 500000000, result_amount: 49900000, fee: 100000, unit_price: 10000000, status: 'completed', active: true, time: matchTime}
         ]
       
       it "returns 200 ok", (done)->
@@ -72,6 +73,38 @@ describe "Trade Api", ->
             order.fee.should.eql MarketHelper.toBigint 0.001
             order.unit_price.should.eql MarketHelper.toBigint 0.1
             order.status.should.eql "completed"
+            done()
+
+      it "adds a matched order log", (done)->
+        request('http://localhost:6000')
+        .post("/orders_match")
+        .send(matchData)
+        .expect(200)
+        .end ()->
+          GLOBAL.db.OrderLog.find({where: {order_id: 1}}).complete (err, orderLog)->
+            orderLog.matched_amount.should.eql MarketHelper.toBigint 5
+            orderLog.result_amount.should.eql MarketHelper.toBigint 4.99
+            orderLog.fee.should.eql MarketHelper.toBigint 0.01
+            orderLog.unit_price.should.eql MarketHelper.toBigint 0.1
+            orderLog.active.should.eql false
+            #orderLog.time.should.eql matchTime
+            orderLog.status.should.eql "partiallyCompleted"
+            done()
+
+      it "adds a matching order log", (done)->
+        request('http://localhost:6000')
+        .post("/orders_match")
+        .send(matchData)
+        .expect(200)
+        .end ()->
+          GLOBAL.db.OrderLog.find({where: {order_id: 2}}).complete (err, orderLog)->
+            orderLog.matched_amount.should.eql MarketHelper.toBigint 5
+            orderLog.result_amount.should.eql MarketHelper.toBigint 0.499
+            orderLog.fee.should.eql MarketHelper.toBigint 0.001
+            orderLog.unit_price.should.eql MarketHelper.toBigint 0.1
+            orderLog.active.should.eql true
+            #orderLog.time.should.eql matchTime
+            orderLog.status.should.eql "completed"
             done()
 
       it "sets the balances of the matched order wallets", (done)->
@@ -137,10 +170,11 @@ describe "Trade Api", ->
           GLOBAL.db.Order.bulkCreate(orders).complete ()->
             done()
 
+      matchTime = new Date()
       matchData =
         [
-          {id: 1, order_id: 1, matched_amount: 500000000, result_amount: 499000000, fee: 1000000, unit_price: 5000000, status: 'partiallyCompleted'}
-          {id: 2, order_id: 2, matched_amount: 500000000, result_amount: 24950000, fee: 50000, unit_price: 5000000, status: 'completed'}
+          {id: 1, order_id: 1, matched_amount: 500000000, result_amount: 499000000, fee: 1000000, unit_price: 5000000, status: 'partiallyCompleted', active: true, time: matchTime}
+          {id: 2, order_id: 2, matched_amount: 500000000, result_amount: 24950000, fee: 50000, unit_price: 5000000, status: 'completed', active: false, time: matchTime}
         ]
       
       it "returns 200 ok", (done)->
@@ -178,6 +212,36 @@ describe "Trade Api", ->
             order.fee.should.eql MarketHelper.toBigint 0.0005
             order.unit_price.should.eql MarketHelper.toBigint 0.05
             order.status.should.eql "completed"
+            done()
+
+      xit "adds a matched order log", (done)->
+        request('http://localhost:6000')
+        .post("/orders_match")
+        .send(matchData)
+        .expect(200)
+        .end ()->
+          GLOBAL.db.OrderLog.find({where: {order_id: 1}}).complete (err, orderLog)->
+            orderLog.matched_amount.should.eql MarketHelper.toBigint 5
+            orderLog.result_amount.should.eql MarketHelper.toBigint 4.99
+            orderLog.fee.should.eql MarketHelper.toBigint 0.01
+            orderLog.unit_price.should.eql MarketHelper.toBigint 0.1
+            orderLog.active.should.eql true
+            orderLog.status.should.eql "partiallyCompleted"
+            done()
+
+      it "adds a matching order log", (done)->
+        request('http://localhost:6000')
+        .post("/orders_match")
+        .send(matchData)
+        .expect(200)
+        .end ()->
+          GLOBAL.db.OrderLog.find({where: {order_id: 2}}).complete (err, orderLog)->
+            orderLog.matched_amount.should.eql MarketHelper.toBigint 5
+            orderLog.result_amount.should.eql MarketHelper.toBigint 0.2495
+            orderLog.fee.should.eql MarketHelper.toBigint 0.0005
+            orderLog.unit_price.should.eql MarketHelper.toBigint 0.05
+            orderLog.active.should.eql false
+            orderLog.status.should.eql "completed"
             done()
 
       it "sets the balances of the matched order wallets", (done)->

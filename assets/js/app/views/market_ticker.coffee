@@ -7,7 +7,6 @@ class App.MarketTickerView extends App.MasterView
   activeCurrency: null
 
   initialize: (options = {})->
-    $.subscribe "new-balance", @onNewBalance
     $.subscribe "market-stats-updated", @onMarketStatsUpdated
 
   render: ()->

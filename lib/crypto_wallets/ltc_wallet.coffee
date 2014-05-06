@@ -10,6 +10,7 @@ class LtcWallet extends CryptoWallet
   currencyName: "Litecoin"
 
   createClient: (options)->
+    super options
     @client = new litecoin.Client options.client
 
 exports = module.exports = LtcWallet

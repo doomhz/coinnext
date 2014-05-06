@@ -14,7 +14,7 @@ describe "Wallet", ->
   ]
 
   beforeEach (done)->
-    GLOBAL.walletsClient =
+    GLOBAL.coreAPIClient =
       send: (action, data, callback)->
         if action is "create_account"
           return callback null, null, {address: "address_#{data[0]}_#{data[1]}"}
@@ -25,7 +25,7 @@ describe "Wallet", ->
         done()
   
   afterEach ()->
-    GLOBAL.walletsClient = undefined
+    GLOBAL.coreAPIClient = undefined
 
 
   describe "account", ()->

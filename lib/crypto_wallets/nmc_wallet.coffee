@@ -10,6 +10,7 @@ class NmcWallet extends CryptoWallet
   currencyName: "Namecoin"
 
   createClient: (options)->
+    super options
     @client = new namecoin.Client options.client
 
 exports = module.exports = NmcWallet

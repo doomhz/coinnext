@@ -275,21 +275,6 @@
           }
           return Order.findAll(query).complete(callback);
         },
-        findCompletedByTimeAndAction: function(startTime, endTime, action, callback) {
-          var query;
-          query = {
-            where: {
-              status: MarketHelper.getOrderStatus("completed"),
-              action: MarketHelper.getOrderAction(action),
-              close_time: {
-                gte: new Date(startTime),
-                lte: new Date(endTime)
-              }
-            },
-            order: [["close_time", "ASC"]]
-          };
-          return Order.findAll(query).complete(callback);
-        },
         isValidTradeAmount: function(amount) {
           return _.isNumber(amount) && !_.isNaN(amount) && _.isFinite(amount) && amount >= MarketHelper.getMinTradeAmount();
         },
@@ -326,7 +311,7 @@
           if (callback == null) {
             callback = function() {};
           }
-          return GLOBAL.walletsClient.sendWithData("publish_order", this.values, (function(_this) {
+          return GLOBAL.coreAPIClient.sendWithData("publish_order", this.values, (function(_this) {
             return function(err, res, body) {
               if (err) {
                 console.error(err);
@@ -347,7 +332,7 @@
           if (callback == null) {
             callback = function() {};
           }
-          return GLOBAL.walletsClient.send("cancel_order", [this.id], (function(_this) {
+          return GLOBAL.coreAPIClient.send("cancel_order", [this.id], (function(_this) {
             return function(err, res, body) {
               if (err) {
                 console.error(err);
@@ -361,6 +346,21 @@
               }
             };
           })(this));
+        },
+        updateFromMatchedData: function(matchedData, transaction, callback) {
+          if (callback == null) {
+            callback = function() {};
+          }
+          this.status = matchedData.status;
+          this.matched_amount = math.add(this.matched_amount, matchedData.matched_amount);
+          this.result_amount = math.add(this.result_amount, matchedData.result_amount);
+          this.fee = math.add(this.fee, matchedData.fee);
+          if (this.status === "completed") {
+            this.close_time = new Date(matchedData.time);
+          }
+          return this.save({
+            transaction: transaction
+          }).complete(callback);
         }
       }
     });

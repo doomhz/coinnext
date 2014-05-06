@@ -242,7 +242,7 @@
     app.put("/administratie/pay/:id", function(req, res) {
       var id;
       id = req.params.id;
-      return GLOBAL.walletsClient.send("process_payment", [id], (function(_this) {
+      return GLOBAL.coreAPIClient.send("process_payment", [id], (function(_this) {
         return function(err, res2, body) {
           if (err) {
             return JsonRenderer.error(err, res);
@@ -266,7 +266,7 @@
     app.del("/administratie/payment/:id", function(req, res) {
       var id;
       id = req.params.id;
-      return GLOBAL.walletsClient.send("cancel_payment", [id], (function(_this) {
+      return GLOBAL.coreAPIClient.send("cancel_payment", [id], (function(_this) {
         return function(err, res2, body) {
           if (err) {
             return JsonRenderer.error(err, res);
@@ -285,7 +285,7 @@
     app.get("/administratie/banksaldo/:currency", function(req, res) {
       var currency;
       currency = req.params.currency;
-      return GLOBAL.walletsClient.send("wallet_balance", [currency], (function(_this) {
+      return GLOBAL.coreAPIClient.send("wallet_balance", [currency], (function(_this) {
         return function(err, res2, body) {
           if (err) {
             return JsonRenderer.error(err, res);
@@ -304,7 +304,7 @@
     app.post("/administratie/wallet_info", function(req, res) {
       var currency;
       currency = req.body.currency;
-      return GLOBAL.walletsClient.send("wallet_info", [currency], (function(_this) {
+      return GLOBAL.coreAPIClient.send("wallet_info", [currency], (function(_this) {
         return function(err, res2, body) {
           if (err) {
             return JsonRenderer.error(err, res);

@@ -1,5 +1,4 @@
-restify = require "restify"
-Order = GLOBAL.db.Order
+OrderLog = GLOBAL.db.OrderLog
 TradeStats = GLOBAL.db.TradeStats
 MarketHelper = require "../../lib/market_helper"
 _ = require "underscore"
@@ -15,9 +14,9 @@ module.exports = (app)->
     endTime =  now - now % halfHour
     startTime = endTime - halfHour
     markets = {}
-    Order.findCompletedByTimeAndAction startTime, endTime, "sell", (err, orders)->
-      for order in orders
-        marketType = "#{order.sell_currency}_#{order.buy_currency}"
+    OrderLog.findByTimeAndAction startTime, endTime, "sell", (err, orderLogs)->
+      for orderLog in orderLogs
+        marketType = "#{orderLog.order.sell_currency}_#{orderLog.order.buy_currency}"
         if not markets[marketType]
           markets[marketType] =
             type: marketType
@@ -27,11 +26,11 @@ module.exports = (app)->
             high_price: 0
             low_price: 0
             volume: 0
-        markets[marketType].open_price = order.unit_price  if markets[marketType].open_price is 0
-        markets[marketType].close_price = order.unit_price
-        markets[marketType].high_price = order.unit_price  if order.unit_price > markets[marketType].high_price
-        markets[marketType].low_price = order.unit_price  if order.unit_price < markets[marketType].low_price or markets[marketType].low_price is 0
-        markets[marketType].volume = math.add markets[marketType].volume, order.amount
+        markets[marketType].open_price = orderLog.unit_price  if markets[marketType].open_price is 0
+        markets[marketType].close_price = orderLog.unit_price
+        markets[marketType].high_price = orderLog.unit_price  if orderLog.unit_price > markets[marketType].high_price
+        markets[marketType].low_price = orderLog.unit_price  if orderLog.unit_price < markets[marketType].low_price or markets[marketType].low_price is 0
+        markets[marketType].volume = math.add markets[marketType].volume, orderLog.matched_amount
       markets = _.values markets
       TradeStats.bulkCreate(markets).complete (err, result)->
         res.send
