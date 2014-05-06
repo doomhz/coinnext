@@ -169,19 +169,6 @@ module.exports = (sequelize, DataTypes) ->
           query.order = options.sort_by  if options.sort_by
           Order.findAll(query).complete callback  
 
-        findCompletedByTimeAndAction: (startTime, endTime, action, callback)->
-          query =
-            where:
-              status: MarketHelper.getOrderStatus("completed")
-              action: MarketHelper.getOrderAction action
-              close_time:
-                gte: new Date(startTime)
-                lte: new Date(endTime)
-            order: [
-              ["close_time", "ASC"]
-            ]
-          Order.findAll(query).complete callback
-
         isValidTradeAmount: (amount)->
           _.isNumber(amount) and not _.isNaN(amount) and _.isFinite(amount) and amount >= MarketHelper.getMinTradeAmount()
 

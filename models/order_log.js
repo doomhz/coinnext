@@ -72,6 +72,28 @@
           return OrderLog.create(matchedData, {
             transaction: transaction
           }).complete(callback);
+        },
+        findByTimeAndAction: function(startTime, endTime, action, callback) {
+          var query;
+          query = {
+            where: {
+              time: {
+                gte: new Date(startTime),
+                lte: new Date(endTime)
+              }
+            },
+            include: [
+              {
+                model: GLOBAL.db.Order,
+                attributes: ["buy_currency", "sell_currency"],
+                where: {
+                  action: MarketHelper.getOrderAction(action)
+                }
+              }
+            ],
+            order: [["time", "ASC"]]
+          };
+          return OrderLog.findAll(query).complete(callback);
         }
       }
     });

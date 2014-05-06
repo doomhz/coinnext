@@ -275,21 +275,6 @@
           }
           return Order.findAll(query).complete(callback);
         },
-        findCompletedByTimeAndAction: function(startTime, endTime, action, callback) {
-          var query;
-          query = {
-            where: {
-              status: MarketHelper.getOrderStatus("completed"),
-              action: MarketHelper.getOrderAction(action),
-              close_time: {
-                gte: new Date(startTime),
-                lte: new Date(endTime)
-              }
-            },
-            order: [["close_time", "ASC"]]
-          };
-          return Order.findAll(query).complete(callback);
-        },
         isValidTradeAmount: function(amount) {
           return _.isNumber(amount) && !_.isNaN(amount) && _.isFinite(amount) && amount >= MarketHelper.getMinTradeAmount();
         },

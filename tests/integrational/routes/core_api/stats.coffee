@@ -18,22 +18,38 @@ describe "Stats Api", ->
     startTime = endTime - halfHour
     beforeEach (done)->
       orders = [
-        {user_id: 1, type: "limit", action: "buy", buy_currency: "LTC", sell_currency: "BTC", amount: MarketHelper.toBigint(10), unit_price: MarketHelper.toBigint(0.1), status: "completed", published: true, close_time: startTime + 60000}
+        {id: 1, user_id: 1, type: "limit", action: "buy", buy_currency: "LTC", sell_currency: "BTC", unit_price: MarketHelper.toBigint(0.1), status: "completed", published: true, close_time: startTime + 60000}
         
-        {user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "LTC", amount: MarketHelper.toBigint(1000), unit_price: MarketHelper.toBigint(0.99999), status: "completed", published: true, close_time: startTime - 1}
+        {id: 2, user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "LTC", unit_price: MarketHelper.toBigint(0.99999), status: "completed", published: true, close_time: startTime - 1}
 
-        {user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "LTC", amount: MarketHelper.toBigint(5), unit_price: MarketHelper.toBigint(0.2), status: "completed", published: true, close_time: startTime + 130000}
-        {user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "LTC", amount: MarketHelper.toBigint(5), unit_price: MarketHelper.toBigint(0.5), status: "completed", published: true, close_time: startTime + 150000}
-        {user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "LTC", amount: MarketHelper.toBigint(5), unit_price: MarketHelper.toBigint(0.95), status: "completed", published: true, close_time: startTime + 170000}
-        {user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "LTC", amount: MarketHelper.toBigint(5), unit_price: MarketHelper.toBigint(0.01), status: "completed", published: true, close_time: startTime + 190000}
+        {id: 3, user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "LTC", unit_price: MarketHelper.toBigint(0.2), status: "completed", published: true, close_time: startTime + 130000}
+        {id: 4, user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "LTC", unit_price: MarketHelper.toBigint(0.5), status: "completed", published: true, close_time: startTime + 150000}
+        {id: 5, user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "LTC", unit_price: MarketHelper.toBigint(0.95), status: "completed", published: true, close_time: startTime + 170000}
+        {id: 6, user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "LTC", unit_price: MarketHelper.toBigint(0.01), status: "completed", published: true, close_time: startTime + 190000}
 
-        {user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "DOGE", amount: MarketHelper.toBigint(300000000), unit_price: MarketHelper.toBigint(0.5), status: "completed", published: true, close_time: startTime + 130000}
-        {user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "DOGE", amount: MarketHelper.toBigint(100000000), unit_price: MarketHelper.toBigint(0.23), status: "completed", published: true, close_time: startTime + 150000}
-        {user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "DOGE", amount: MarketHelper.toBigint(3000000), unit_price: MarketHelper.toBigint(0.56), status: "completed", published: true, close_time: startTime + 170000}
-        {user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "DOGE", amount: MarketHelper.toBigint(2000000), unit_price: MarketHelper.toBigint(0.07), status: "completed", published: true, close_time: startTime + 190000}
+        {id: 7, user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "DOGE", unit_price: MarketHelper.toBigint(0.5), status: "completed", published: true, close_time: startTime + 130000}
+        {id: 8, user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "DOGE", unit_price: MarketHelper.toBigint(0.23), status: "completed", published: true, close_time: startTime + 150000}
+        {id: 9, user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "DOGE", unit_price: MarketHelper.toBigint(0.56), status: "completed", published: true, close_time: startTime + 170000}
+        {id: 10, user_id: 1, type: "limit", action: "sell", buy_currency: "BTC", sell_currency: "DOGE", unit_price: MarketHelper.toBigint(0.07), status: "completed", published: true, close_time: startTime + 190000}
+      ]
+      orderLogs = [
+        {order_id: 1, matched_amount: MarketHelper.toBigint(10), unit_price: MarketHelper.toBigint(0.1), status: "completed", time: startTime + 60000}
+        
+        {order_id: 2, matched_amount: MarketHelper.toBigint(1000), unit_price: MarketHelper.toBigint(0.99999), status: "completed", time: startTime - 1}
+
+        {order_id: 3, matched_amount: MarketHelper.toBigint(5), unit_price: MarketHelper.toBigint(0.2), status: "completed", time: startTime + 130000}
+        {order_id: 4, matched_amount: MarketHelper.toBigint(5), unit_price: MarketHelper.toBigint(0.5), status: "completed", time: startTime + 150000}
+        {order_id: 5, matched_amount: MarketHelper.toBigint(5), unit_price: MarketHelper.toBigint(0.95), status: "completed", time: startTime + 170000}
+        {order_id: 6, matched_amount: MarketHelper.toBigint(5), unit_price: MarketHelper.toBigint(0.01), status: "completed", time: startTime + 190000}
+
+        {order_id: 7, matched_amount: MarketHelper.toBigint(300000000), unit_price: MarketHelper.toBigint(0.5), status: "completed", time: startTime + 130000}
+        {order_id: 8, matched_amount: MarketHelper.toBigint(100000000), unit_price: MarketHelper.toBigint(0.23), status: "completed", time: startTime + 150000}
+        {order_id: 9, matched_amount: MarketHelper.toBigint(3000000), unit_price: MarketHelper.toBigint(0.56), status: "completed", time: startTime + 170000}
+        {order_id: 10, matched_amount: MarketHelper.toBigint(2000000), unit_price: MarketHelper.toBigint(0.07), status: "completed", time: startTime + 190000}
       ]
       GLOBAL.db.Order.bulkCreate(orders).complete ()->
-        done()
+        GLOBAL.db.OrderLog.bulkCreate(orderLogs).complete ()->
+          done()
 
     it "returns 200 ok", (done)->
       request('http://localhost:6000')

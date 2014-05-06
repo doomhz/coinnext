@@ -52,4 +52,21 @@ module.exports = (sequelize, DataTypes) ->
         logMatch: (matchedData, transaction, callback = ()->)->
           OrderLog.create(matchedData, {transaction: transaction}).complete callback
 
+        findByTimeAndAction: (startTime, endTime, action, callback)->
+          query =
+            where:
+              time:
+                gte: new Date(startTime)
+                lte: new Date(endTime)
+            include: [
+              model: GLOBAL.db.Order
+              attributes: ["buy_currency", "sell_currency"]
+              where:
+                action: MarketHelper.getOrderAction action
+            ]
+            order: [
+              ["time", "ASC"]
+            ]
+          OrderLog.findAll(query).complete callback
+
   OrderLog

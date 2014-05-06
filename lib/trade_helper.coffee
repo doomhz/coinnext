@@ -117,20 +117,16 @@ TradeHelper =
                     user_id: buyWallet.user_id
                     eventData: JsonRenderer.wallet buyWallet
 
-  trackMatchedOrder: (order, callback = ()->)->
-    if order.status is "completed"
-      MarketStats.trackFromOrder order, (err, mkSt)->
-        callback err, mkSt
-        TradeHelper.send
-          type: "market-stats-updated"
-          eventData: mkSt.toJSON()
+  trackMatchedOrder: (orderLog, callback = ()->)->
+    eventType = if orderLog.status is "completed" then "order-completed" else "order-partially-completed"
+    MarketStats.trackFromOrderLog orderLog, (err, mkSt)->
+      callback err, mkSt
+      TradeHelper.send
+        type: "market-stats-updated"
+        eventData: mkSt.toJSON()
+    orderLog.getOrder().complete (err, order)->
       TradeHelper.pushOrderUpdate
-        type: "order-completed"
-        eventData: JsonRenderer.order order
-    if order.status is "partiallyCompleted"
-      callback()
-      TradeHelper.pushOrderUpdate
-        type: "order-partially-completed"
+        type: eventType
         eventData: JsonRenderer.order order
 
 exports = module.exports = TradeHelper
