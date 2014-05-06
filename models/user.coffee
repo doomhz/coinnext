@@ -5,6 +5,14 @@ Emailer   = require "../lib/emailer"
 phonetic  = require "phonetic"
 _         = require "underscore"
 
+BANNED_USERNAMES = [
+  "admin",
+  "administrator",
+  "coinnext",
+  "coinnext_admin",
+  "coinnext_administrator"
+]
+
 module.exports = (sequelize, DataTypes) ->
 
   User = sequelize.define "User",
@@ -34,6 +42,9 @@ module.exports = (sequelize, DataTypes) ->
           isAlphanumericAndUnderscore: (value)->
             message = "The username can have letters, numbers and underscores and should be longer than 4 characters and shorter than 16."
             throw new Error message  if not /^[a-zA-Z0-9_]{4,15}$/.test(value)
+          isAllowedUsername: (value)->
+            message = "This username is not allowed"
+            throw new Error message if BANNED_USERNAMES.indexOf(value.toLowerCase()) isnt -1
       email_verified:
         type: DataTypes.BOOLEAN
         allowNull: false

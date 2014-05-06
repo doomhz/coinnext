@@ -1,5 +1,5 @@
 (function() {
-  var Emailer, MarketHelper, crypto, phonetic, speakeasy, _;
+  var BANNED_USERNAMES, Emailer, MarketHelper, crypto, phonetic, speakeasy, _;
 
   MarketHelper = require("../lib/market_helper");
 
@@ -12,6 +12,8 @@
   phonetic = require("phonetic");
 
   _ = require("underscore");
+
+  BANNED_USERNAMES = ["admin", "administrator", "coinnext", "coinnext_admin", "coinnext_administrator"];
 
   module.exports = function(sequelize, DataTypes) {
     var User;
@@ -49,6 +51,13 @@
             var message;
             message = "The username can have letters, numbers and underscores and should be longer than 4 characters and shorter than 16.";
             if (!/^[a-zA-Z0-9_]{4,15}$/.test(value)) {
+              throw new Error(message);
+            }
+          },
+          isAllowedUsername: function(value) {
+            var message;
+            message = "This username is not allowed";
+            if (BANNED_USERNAMES.indexOf(value.toLowerCase()) !== -1) {
               throw new Error(message);
             }
           }
