@@ -139,16 +139,6 @@
         return res.json(JsonRenderer.tradeStats(tradeStats));
       });
     });
-    app.get("/settings", function(req, res) {
-      if (!req.user) {
-        return res.redirect("/login");
-      }
-      return res.render("site/settings/settings", {
-        title: 'Settings',
-        page: 'settings',
-        user: req.user
-      });
-    });
     app.get("/settings/preferences", function(req, res) {
       if (!req.user) {
         return res.redirect("/login");
