@@ -67,6 +67,7 @@ module.exports = (app)->
           res.end()
         user.changePassword password, (err, u)->
           console.error err  if err
+          return JsonRenderer.error err, res  if err
           UserToken.invalidateByToken token
           res.writeHead(303, {"Location": "/login"})
           res.end()
@@ -78,6 +79,7 @@ module.exports = (app)->
     return JsonRenderer.error "The old password is incorrect.", res  if User.hashPassword(password) isnt req.user.password
     req.user.changePassword newPassword, (err, u)->
       console.error err  if err
+      return JsonRenderer.error err, res  if err
       res.json
         message: "The password was successfully changed."
 

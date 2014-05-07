@@ -80,8 +80,15 @@ module.exports = (sequelize, DataTypes) ->
         hashPassword: (password)->
           crypto.createHash("sha256").update("#{password}#{GLOBAL.appConfig().salt}", "utf8").digest("hex")
         
+        passwordMeetsRequirements: (password = "")->
+          return false if password.length < 8           # min 8 characters
+          return false if not /[0-9]/.test(password)    # at least one number
+          return true
+
         createNewUser: (data, callback)->
           userData = _.extend({}, data)
+          if not User.passwordMeetsRequirements(userData.password)
+            return callback "Your password doest not meet the minimum requirements. It must be at least 8 characters and cointain at least one one number.", null
           userData.password = User.hashPassword userData.password
           userData.username = User.generateUsername data.email
           User.create(userData).complete callback
@@ -131,7 +138,11 @@ module.exports = (sequelize, DataTypes) ->
             callback()
 
         changePassword: (password, callback = ()->)->
-          @password = User.hashPassword password
+          oldHash = @password
+          newHash = User.hashPassword password
+          if newHash is oldHash then return callback "You new password must be different from the old one.", null
+          if not User.passwordMeetsRequirements(password) then return callback "Your password doest not meet the minimum requirements. It must be at least 8 characters and cointain at least one one number.", null
+          @password = newHash
           @save().complete callback
 
         setEmailVerified: (callback = ()->)->

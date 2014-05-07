@@ -122,9 +122,24 @@
         hashPassword: function(password) {
           return crypto.createHash("sha256").update("" + password + (GLOBAL.appConfig().salt), "utf8").digest("hex");
         },
+        passwordMeetsRequirements: function(password) {
+          if (password == null) {
+            password = "";
+          }
+          if (password.length < 8) {
+            return false;
+          }
+          if (!/[0-9]/.test(password)) {
+            return false;
+          }
+          return true;
+        },
         createNewUser: function(data, callback) {
           var userData;
           userData = _.extend({}, data);
+          if (!User.passwordMeetsRequirements(userData.password)) {
+            return callback("Your password doest not meet the minimum requirements. It must be at least 8 characters and cointain at least one one number.", null);
+          }
           userData.password = User.hashPassword(userData.password);
           userData.username = User.generateUsername(data.email);
           return User.create(userData).complete(callback);
@@ -201,10 +216,19 @@
           })(this));
         },
         changePassword: function(password, callback) {
+          var newHash, oldHash;
           if (callback == null) {
             callback = function() {};
           }
-          this.password = User.hashPassword(password);
+          oldHash = this.password;
+          newHash = User.hashPassword(password);
+          if (newHash === oldHash) {
+            return callback("You new password must be different from the old one.", null);
+          }
+          if (!User.passwordMeetsRequirements(password)) {
+            return callback("Your password doest not meet the minimum requirements. It must be at least 8 characters and cointain at least one one number.", null);
+          }
+          this.password = newHash;
           return this.save().complete(callback);
         },
         setEmailVerified: function(callback) {

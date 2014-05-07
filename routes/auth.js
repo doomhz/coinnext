@@ -108,6 +108,9 @@
             if (err) {
               console.error(err);
             }
+            if (err) {
+              return JsonRenderer.error(err, res);
+            }
             UserToken.invalidateByToken(token);
             res.writeHead(303, {
               "Location": "/login"
@@ -130,6 +133,9 @@
       return req.user.changePassword(newPassword, function(err, u) {
         if (err) {
           console.error(err);
+        }
+        if (err) {
+          return JsonRenderer.error(err, res);
         }
         return res.json({
           message: "The password was successfully changed."
