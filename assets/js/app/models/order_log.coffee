@@ -13,4 +13,4 @@ class App.OrderLogModel extends Backbone.Model
     return _.str.satoshiRound App.math.multiply @get("matched_amount"), @get("unit_price")  if @get("action") is "buy"
 
   getTime: ()->
-    new Date(@get('time')).format('dd.mm.yy hh:ss')
+    new Date(@get('time')).format('dd.mm.yy H:MM')
