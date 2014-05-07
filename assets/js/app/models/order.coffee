@@ -48,7 +48,7 @@ class App.OrderModel extends Backbone.Model
     return _.str.satoshiRound App.math.multiply(@get("amount"), @get("unit_price"))
 
   getCreatedDate: ()->
-    new Date(@get('created_at')).format('dd.mm.yy hh:ss')
+    new Date(@get('created_at')).format('dd.mm.yy H:MM')
 
   mergeWithOrder: (orderToMerge)->
     attributes = orderToMerge.toJSON()
