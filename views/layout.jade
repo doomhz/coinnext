@@ -31,3 +31,6 @@ html(lang='en')
     include templates/chat_message
 
     != js('application')
+
+    - if (process.env.NODE_ENV === "production")
+      include _analytics

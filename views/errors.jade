@@ -13,3 +13,6 @@ html(lang='en')
 
   body
     block content
+
+    - if (process.env.NODE_ENV === "production")
+      include _analytics

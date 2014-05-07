@@ -47,3 +47,6 @@ html(lang='en')
     block content
 
     != js('application')
+
+    - if (process.env.NODE_ENV === "production")
+      include _analytics
