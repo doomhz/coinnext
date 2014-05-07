@@ -4,7 +4,7 @@ script(type="text/template", id="coin-stats-tpl")
       th Last Price:
       td
         <%= _.str.satoshiRound(coinStats.last_price) %> <%= currency2 %> 
-        span(class="rate <%= coinStats.growth_ratio > 0 ? 'up' : '' %> <%= coinStats.growth_ratio < 0 ? 'down' : '' %> <%= coinStats.growth_ratio == 0 ? 'none' : '' %>") <%= _.str.roundTo(coinStats.growth_ratio, 2) * (coinStats.growth_ratio < 0 ? -1 : 1) %>
+        span(class="rate <%= coinStats.growth_ratio > 0 ? 'up' : '' %> <%= coinStats.growth_ratio < 0 ? 'down' : '' %> <%= coinStats.growth_ratio == 0 ? 'none' : '' %>") <%= _.str.roundTo(coinStats.growth_ratio, 2) * (coinStats.growth_ratio < 0 ? -1 : 1) %>%
     tr.high-price
       th 24hr High:
       td <%= _.str.satoshiRound(coinStats.day_high) %> <%= currency2 %>
