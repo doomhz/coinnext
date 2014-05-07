@@ -17,6 +17,7 @@ module.exports = (app)->
         user: req.user
         marketStats: JsonRenderer.marketStats marketStats
         currencies: MarketHelper.getCurrencyNames()
+        _str: _str
 
   app.get "/trade", (req, res)->
     res.redirect "/trade/LTC/BTC"

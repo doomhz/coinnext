@@ -25,7 +25,8 @@
           page: "home",
           user: req.user,
           marketStats: JsonRenderer.marketStats(marketStats),
-          currencies: MarketHelper.getCurrencyNames()
+          currencies: MarketHelper.getCurrencyNames(),
+          _str: _str
         });
       });
     });
