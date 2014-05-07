@@ -218,10 +218,10 @@
           oldHash = this.password;
           newHash = User.hashPassword(password);
           if (newHash === oldHash) {
-            return callback("You new password must be different from the old one.", null);
+            return callback("You new password must be different from the old one.");
           }
           if (!User.passwordMeetsRequirements(password)) {
-            return callback("Your password doest not meet the minimum requirements. It must be at least 8 characters and cointain at least one one number.", null);
+            return callback("Your password doest not meet the minimum requirements. It must be at least 8 characters and cointain at least one one number.");
           }
           this.password = newHash;
           return this.save().complete(callback);
@@ -250,6 +250,9 @@
             this.username = data.username;
           }
           return this.save().complete(callback);
+        },
+        recenltySignedUp: function() {
+          return this.created_at > (Date.now() - 60000);
         }
       }
     });

@@ -127,5 +127,5 @@ module.exports = (app)->
             req.session.passport = oldSessionPassport
             req.session.staging_auth = oldStagingAuth
             res.json JsonRenderer.user req.user
-            AuthStats.log {ip: req.ip, user: req.user}, req.user.email_auth_enabled
+            AuthStats.log {ip: req.ip, user: req.user}, req.user.email_auth_enabled and not req.user.recenltySignedUp()
     )(req, res, next)

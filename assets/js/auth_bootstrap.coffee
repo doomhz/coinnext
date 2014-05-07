@@ -37,9 +37,9 @@ $(document).ready ()->
           window.location = "/"
       error: (model, response)->
         if response.responseJSON and response.responseJSON.error
-            $form.find("#error-cnt").text response.responseJSON.error
-          else
-            $form.find("#error-cnt").text "Invalid credentials."
+          $form.find("#error-cnt").text response.responseJSON.error
+        else
+          $form.find("#error-cnt").text "Invalid credentials."
 
   # Password Strength Meter
   setStrength = (number) ->

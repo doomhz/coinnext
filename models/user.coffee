@@ -135,8 +135,8 @@ module.exports = (sequelize, DataTypes) ->
         changePassword: (password, callback = ()->)->
           oldHash = @password
           newHash = User.hashPassword password
-          if newHash is oldHash then return callback "You new password must be different from the old one.", null
-          if not User.passwordMeetsRequirements(password) then return callback "Your password doest not meet the minimum requirements. It must be at least 8 characters and cointain at least one one number.", null
+          return callback "You new password must be different from the old one."  if newHash is oldHash
+          return callback "Your password doest not meet the minimum requirements. It must be at least 8 characters and cointain at least one one number."  if not User.passwordMeetsRequirements(password)
           @password = newHash
           @save().complete callback
 
@@ -152,5 +152,8 @@ module.exports = (sequelize, DataTypes) ->
           @email_auth_enabled = !!data.email_auth_enabled  if data.email_auth_enabled?
           @username = data.username  if data.username? and data.username isnt @username
           @save().complete callback
+
+        recenltySignedUp: ()->
+          @created_at > (Date.now() - 60000)
 
   User
