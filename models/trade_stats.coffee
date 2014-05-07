@@ -58,6 +58,29 @@ module.exports = (sequelize, DataTypes) ->
             ]
           TradeStats.findAll(query).complete callback
 
+        findLast24hByType: (type, callback)->
+          type = MarketHelper.getMarket type
+          halfHour = 1800000
+          aDayAgo = Date.now() - 86400000 + halfHour
+          query =
+            where:
+              type: type
+              start_time:
+                lt: aDayAgo
+            order: [
+              ["start_time", "DESC"]
+            ]
+          TradeStats.find(query).complete (err, tradeStats)->
+            return callback err, tradeStats  if tradeStats
+            query =
+              where:
+                type: type
+              order: [
+                ["start_time", "ASC"]
+              ]
+            TradeStats.find(query).complete (err, tradeStats)->
+              callback err, tradeStats
+
       instanceMethods:
 
         getFloat: (attribute)->

@@ -76,7 +76,6 @@ module.exports = (sequelize, DataTypes) ->
             type = if order.action is "buy" then "#{order.buy_currency}_#{order.sell_currency}" else "#{order.sell_currency}_#{order.buy_currency}"
             MarketStats.find({where: {type: MarketHelper.getMarket(type)}}).complete (err, marketStats)->
               marketStats.resetIfNotToday()
-              marketStats.growth_ratio = MarketStats.calculateGrowthRatio marketStats.last_price, orderLog.unit_price  if orderLog.unit_price isnt marketStats.last_price
               marketStats.last_price = orderLog.unit_price
               marketStats.day_high = orderLog.unit_price  if orderLog.unit_price > marketStats.day_high
               marketStats.day_low = orderLog.unit_price  if orderLog.unit_price < marketStats.day_low or marketStats.day_low is 0
@@ -85,7 +84,10 @@ module.exports = (sequelize, DataTypes) ->
                 marketStats.volume1 = math.add marketStats.volume1, orderLog.matched_amount
                 # BTC Volume Traded
                 marketStats.volume2 = math.select(marketStats.volume2).add(orderLog.result_amount).add(orderLog.fee).done()
-              marketStats.save().complete callback
+                GLOBAL.db.TradeStats.findLast24hByType type, (err, tradeStats = {})->
+                  growthRatio = MarketStats.calculateGrowthRatio tradeStats.close_price, orderLog.unit_price
+                  marketStats.growth_ratio = math.round MarketHelper.toBigint(growthRatio), 0
+                  marketStats.save().complete callback
 
         calculateGrowthRatio: (lastPrice, newPrice)->
           return 100  if not lastPrice

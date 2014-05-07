@@ -74,6 +74,35 @@
             order: [["start_time", "ASC"]]
           };
           return TradeStats.findAll(query).complete(callback);
+        },
+        findLast24hByType: function(type, callback) {
+          var aDayAgo, halfHour, query;
+          type = MarketHelper.getMarket(type);
+          halfHour = 1800000;
+          aDayAgo = Date.now() - 86400000 + halfHour;
+          query = {
+            where: {
+              type: type,
+              start_time: {
+                lt: aDayAgo
+              }
+            },
+            order: [["start_time", "DESC"]]
+          };
+          return TradeStats.find(query).complete(function(err, tradeStats) {
+            if (tradeStats) {
+              return callback(err, tradeStats);
+            }
+            query = {
+              where: {
+                type: type
+              },
+              order: [["start_time", "ASC"]]
+            };
+            return TradeStats.find(query).complete(function(err, tradeStats) {
+              return callback(err, tradeStats);
+            });
+          });
         }
       },
       instanceMethods: {

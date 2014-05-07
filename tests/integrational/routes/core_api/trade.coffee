@@ -143,7 +143,7 @@ describe "Trade Api", ->
         .end ()->
           setTimeout ()->
               GLOBAL.db.MarketStats.getStats (err, stats)->
-                stats["LTC_BTC"].growth_ratio.should.eql 100
+                stats["LTC_BTC"].growth_ratio.should.eql MarketHelper.toBigint 100
                 stats["LTC_BTC"].last_price.should.eql MarketHelper.toBigint 0.1
                 stats["LTC_BTC"].day_high.should.eql MarketHelper.toBigint 0.1
                 stats["LTC_BTC"].day_low.should.eql MarketHelper.toBigint 0.1
@@ -280,7 +280,7 @@ describe "Trade Api", ->
         .end ()->
           setTimeout ()->
               GLOBAL.db.MarketStats.getStats (err, stats)->
-                stats["LTC_BTC"].growth_ratio.should.eql 100
+                stats["LTC_BTC"].growth_ratio.should.eql MarketHelper.toBigint 100
                 stats["LTC_BTC"].last_price.should.eql MarketHelper.toBigint 0.05
                 stats["LTC_BTC"].day_high.should.eql MarketHelper.toBigint 0.05
                 stats["LTC_BTC"].day_low.should.eql MarketHelper.toBigint 0.05

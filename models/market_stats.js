@@ -108,9 +108,6 @@
               }
             }).complete(function(err, marketStats) {
               marketStats.resetIfNotToday();
-              if (orderLog.unit_price !== marketStats.last_price) {
-                marketStats.growth_ratio = MarketStats.calculateGrowthRatio(marketStats.last_price, orderLog.unit_price);
-              }
               marketStats.last_price = orderLog.unit_price;
               if (orderLog.unit_price > marketStats.day_high) {
                 marketStats.day_high = orderLog.unit_price;
@@ -121,8 +118,16 @@
               if (order.action === "sell") {
                 marketStats.volume1 = math.add(marketStats.volume1, orderLog.matched_amount);
                 marketStats.volume2 = math.select(marketStats.volume2).add(orderLog.result_amount).add(orderLog.fee).done();
+                return GLOBAL.db.TradeStats.findLast24hByType(type, function(err, tradeStats) {
+                  var growthRatio;
+                  if (tradeStats == null) {
+                    tradeStats = {};
+                  }
+                  growthRatio = MarketStats.calculateGrowthRatio(tradeStats.close_price, orderLog.unit_price);
+                  marketStats.growth_ratio = math.round(MarketHelper.toBigint(growthRatio), 0);
+                  return marketStats.save().complete(callback);
+                });
               }
-              return marketStats.save().complete(callback);
             });
           });
         },
