@@ -5,6 +5,9 @@ script(type="text/template", id="market-ticker-tpl")
       // a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
       a(href="/trade/<%= type.replace('_', '/') %>")
         .label <%= info.label %>
-        div(class="rate <%= info.growth_ratio >= 0 ? 'up' : 'down' %>") <%= _.str.roundTo(info.last_price) %>
+        div(class="rate <%= info.growth_ratio > 0 ? 'up' : '' %> <%= info.growth_ratio < 0 ? 'down' : '' %> <%= info.growth_ratio == 0 ? 'none' : '' %>") <%= _.str.roundTo(info.last_price) %>
         .move-coin <i class="icon-reorder"></i>
     |<% }); %>
+
+
+    

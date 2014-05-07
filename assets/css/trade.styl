@@ -43,6 +43,16 @@
     width 100%
 
 .rate
+  &.none
+    color $text-color
+    &:after
+      display inline-block
+      content ""
+      vertical-align middle
+      width 6px
+      height 2px
+      background $text-color
+      margin-left 3px
   &.up
     color $teal
     transition color .3s ease-out
@@ -145,10 +155,7 @@
   background #f9f9f9
   .last-price
     font-weight bold
-  .up
-    color #72b54c
-  .down
-    color #da4444
+
 
 .graph
   width 100%
