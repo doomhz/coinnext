@@ -161,11 +161,9 @@
           }
           return GLOBAL.db.UserToken.generateChangePasswordTokenForUser(this.id, this.uuid, (function(_this) {
             return function(err, userToken) {
-              var data, emailer, options, passUrl, siteUrl;
-              siteUrl = GLOBAL.appConfig().emailer.host;
-              passUrl = "" + siteUrl + "/change-password/" + userToken.token;
+              var data, emailer, options, passUrl;
+              passUrl = "/change-password/" + userToken.token;
               data = {
-                "site_url": siteUrl,
                 "pass_url": passUrl
               };
               options = {
@@ -191,12 +189,9 @@
           }
           return GLOBAL.db.UserToken.generateEmailConfirmationTokenForUser(this.id, this.uuid, (function(_this) {
             return function(err, userToken) {
-              var data, emailer, options, siteUrl, verificationUrl;
-              siteUrl = GLOBAL.appConfig().emailer.host;
-              verificationUrl = "" + siteUrl + "/verify/" + userToken.token;
+              var data, emailer, options;
               data = {
-                "site_url": siteUrl,
-                "verification_url": verificationUrl
+                "verification_url": "/verify/" + userToken.token
               };
               options = {
                 to: {
@@ -223,10 +218,10 @@
           oldHash = this.password;
           newHash = User.hashPassword(password);
           if (newHash === oldHash) {
-            return callback("You new password must be different from the old one.", null);
+            return callback("You new password must be different from the old one.");
           }
           if (!User.passwordMeetsRequirements(password)) {
-            return callback("Your password doest not meet the minimum requirements. It must be at least 8 characters and cointain at least one one number.", null);
+            return callback("Your password doest not meet the minimum requirements. It must be at least 8 characters and cointain at least one one number.");
           }
           this.password = newHash;
           return this.save().complete(callback);
@@ -255,6 +250,9 @@
             this.username = data.username;
           }
           return this.save().complete(callback);
+        },
+        recenltySignedUp: function() {
+          return this.created_at > (Date.now() - 60000);
         }
       }
     });
