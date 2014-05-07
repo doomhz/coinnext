@@ -161,11 +161,9 @@
           }
           return GLOBAL.db.UserToken.generateChangePasswordTokenForUser(this.id, this.uuid, (function(_this) {
             return function(err, userToken) {
-              var data, emailer, options, passUrl, siteUrl;
-              siteUrl = GLOBAL.appConfig().emailer.host;
-              passUrl = "" + siteUrl + "/change-password/" + userToken.token;
+              var data, emailer, options, passUrl;
+              passUrl = "/change-password/" + userToken.token;
               data = {
-                "site_url": siteUrl,
                 "pass_url": passUrl
               };
               options = {
@@ -191,12 +189,9 @@
           }
           return GLOBAL.db.UserToken.generateEmailConfirmationTokenForUser(this.id, this.uuid, (function(_this) {
             return function(err, userToken) {
-              var data, emailer, options, siteUrl, verificationUrl;
-              siteUrl = GLOBAL.appConfig().emailer.host;
-              verificationUrl = "" + siteUrl + "/verify/" + userToken.token;
+              var data, emailer, options;
               data = {
-                "site_url": siteUrl,
-                "verification_url": verificationUrl
+                "verification_url": "/verify/" + userToken.token
               };
               options = {
                 to: {

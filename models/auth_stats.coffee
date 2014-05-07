@@ -31,9 +31,7 @@ module.exports = (sequelize, DataTypes) ->
             callback err, stats
 
         sendUserLoginNotice: (stats, email, callback = ()->)->
-          siteUrl = GLOBAL.appConfig().emailer.host
           data =
-            site_url: siteUrl
             ip: stats.ip or "unknown"
             auth_date: stats.created_at.toFormat "MMMM D, YYYY at HH24:MI"
             email: email

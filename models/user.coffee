@@ -105,10 +105,8 @@ module.exports = (sequelize, DataTypes) ->
 
         sendChangePasswordLink: (callback = ()->)->
           GLOBAL.db.UserToken.generateChangePasswordTokenForUser @id, @uuid, (err, userToken)=>
-            siteUrl = GLOBAL.appConfig().emailer.host
-            passUrl = "#{siteUrl}/change-password/#{userToken.token}"
+            passUrl = "/change-password/#{userToken.token}"
             data =
-              "site_url": siteUrl
               "pass_url": passUrl
             options =
               to:
@@ -122,11 +120,8 @@ module.exports = (sequelize, DataTypes) ->
 
         sendEmailVerificationLink: (callback = ()->)->
           GLOBAL.db.UserToken.generateEmailConfirmationTokenForUser @id, @uuid, (err, userToken)=>
-            siteUrl = GLOBAL.appConfig().emailer.host
-            verificationUrl = "#{siteUrl}/verify/#{userToken.token}"
             data =
-              "site_url": siteUrl
-              "verification_url": verificationUrl
+              "verification_url": "/verify/#{userToken.token}"
             options =
               to:
                 email: @email

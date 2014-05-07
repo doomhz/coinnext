@@ -57,13 +57,11 @@
           });
         },
         sendUserLoginNotice: function(stats, email, callback) {
-          var data, emailer, options, siteUrl;
+          var data, emailer, options;
           if (callback == null) {
             callback = function() {};
           }
-          siteUrl = GLOBAL.appConfig().emailer.host;
           data = {
-            site_url: siteUrl,
             ip: stats.ip || "unknown",
             auth_date: stats.created_at.toFormat("MMMM D, YYYY at HH24:MI"),
             email: email

@@ -9,14 +9,10 @@ class Emailer
   data: {}
 
   attachments: [
-    {
-      fileName: "logo.jpg"
-      filePath: "./public/img/email/logo.png"
-      cid: "logo@coinnext"
-    }
   ]
 
   constructor: (@options, @data)->
+    @setUrls()
 
   send: (callback)->
     html = @getHtml(@options.template, @data)
@@ -45,5 +41,10 @@ class Emailer
     for attachment in @attachments
       attachments.push(attachment) if html.search("cid:#{attachment.cid}") > -1
     attachments
+
+  setUrls: ()->
+    @data.site_url = (GLOBAL.appConfig().emailer.host or @data.site_url)
+    @data.img_path = (GLOBAL.appConfig().assets_host or @data.site_url) + "/img/email"
+    @data.img_version = if GLOBAL.appConfig().assets_key then "?v=#{GLOBAL.appConfig().assets_key}" else ""
 
 exports = module.exports = Emailer
