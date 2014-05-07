@@ -60,4 +60,5 @@ block content
                 td #{currencies[info.label]}
                 td #{_str.toFixed(info.last_price)}
                 td #{_str.toFixed(info.volume1)} #{type.split("_")[0]}
-                td(class="rate #{info.growth_ratio > 0 ? 'up' : ''} #{info.growth_ratio < 0 ? 'down' : ''} #{info.growth_ratio == 0 ? 'none' : ''}") #{_str.toFixed(info.growth_ratio * (info.growth_ratio < 0 ? -1 : 1))}%
+                -var growthRatio = _str.roundTo(info.growth_ratio, 2)
+                td(class="rate #{growthRatio > 0 ? 'up' : ''} #{growthRatio < 0 ? 'down' : ''} #{growthRatio == 0 ? 'none' : ''}") #{_str.toFixed(Math.abs(growthRatio), 2)}%
