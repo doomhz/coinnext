@@ -13,11 +13,11 @@ header.page-head
         - if (user)
           li: a(href='/funds', class=(page === 'funds' ? 'active' : '')) Funds
           li.dropdown
-            a(href="/settings", class=(page === 'settings' ? 'active' : '')).dropdown-toggle
+            a(href="/settings/preferences", class=(page === 'preferences' ? 'active' : '')).dropdown-toggle
               | #{user.email}
               .caret
             ul.dropdown-menu
-              li: a(href="/settings") Settings
+              li: a(href="/settings/preferences") Settings
               li: a(href="http://support.coinnext.com") Support
               li: a(href='/logout') Logout
         - else

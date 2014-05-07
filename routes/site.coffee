@@ -97,12 +97,12 @@ module.exports = (app)->
 
 
   # Settings
-  app.get "/settings", (req, res)->
-    return res.redirect "/login"  if not req.user
-    res.render "site/settings/settings",
-      title: 'Settings'
-      page: 'settings'
-      user: req.user
+  #app.get "/settings", (req, res)->
+  #  return res.redirect "/login"  if not req.user
+  #  res.render "site/settings/settings",
+  #    title: 'Settings'
+  #    page: 'settings'
+  #    user: req.user
 
   app.get "/settings/preferences", (req, res)->
     return res.redirect "/login"  if not req.user
