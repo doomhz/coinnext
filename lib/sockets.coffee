@@ -54,7 +54,6 @@ initSockets = (server, env, sessionStore, cookieParser)->
   sockets.sessionSockets.of("/chat").on "connection", (err, socket, session)->
     socket.user_id = session.passport.user  if session and session.passport
     socket.on "add-message", (data)->
-      console.log socket.user_id
       return  if not socket.user_id
       data.user_id = socket.user_id
       Chat.addMessage data, (err, message)->
