@@ -15,19 +15,19 @@ block content
               .input-prepend
                 span.add-on
                   i.icon-envelope
-                input#signup-email(type="email", name="email", placeholder="Email", tabindex="1", autofocus)
+                input#signup-email(type="email", name="email", placeholder="Email", tabindex="1", autofocus, autocomplete="off")
             .control-group
               label(for="password").label Choose a password
               .input-prepend
                 span.add-on
                   i.icon-lock
-                input#signup-password(type="password", name="password" placeholder="Minimum of 8 characters, at least 1 number", tabindex="2")
+                input#signup-password(type="password", name="password" placeholder="Minimum of 8 characters, at least 1 number", tabindex="2", autocomplete="off")
             .control-group
               label(for="repeat_password").label Confirm your password
               .input-prepend
                 span.add-on
                   i.icon-lock
-                input(type="password", name="repeat_password" placeholder="Confirm password", tabindex="3")
+                input(type="password", name="repeat_password" placeholder="Confirm password", tabindex="3", autocomplete="off")
               #password-strength
                 span#s0.cell
                 span#s1.cell
