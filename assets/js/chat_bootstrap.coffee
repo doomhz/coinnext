@@ -14,6 +14,6 @@ $(document).ready ()->
         globalChat = new App.ChatView
           el: $globalChat
           user: user
-          chatSocketUrl: "/chat"
+          chatSocketUrl: "#{CONFIG.users.hostname}/chat"
           messageHistoryRootUrl: "/chat/messages"
         globalChat.render()
