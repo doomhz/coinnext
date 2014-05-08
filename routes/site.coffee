@@ -152,8 +152,3 @@ module.exports = (app)->
     res.render "static/security",
       title: 'Security'
       user: req.user
-
-  app.get "/whitehat", (req, res)->
-    res.render "static/whitehat",
-      title: 'White Hat'
-      user: req.user
