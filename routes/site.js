@@ -195,15 +195,9 @@
         user: req.user
       });
     });
-    app.get("/security", function(req, res) {
+    return app.get("/security", function(req, res) {
       return res.render("static/security", {
         title: 'Security',
-        user: req.user
-      });
-    });
-    return app.get("/whitehat", function(req, res) {
-      return res.render("static/whitehat", {
-        title: 'White Hat',
         user: req.user
       });
     });
