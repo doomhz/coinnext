@@ -11,16 +11,7 @@ html(lang='en')
 
     != css('main')
 
-    script.
-      CONFIG = {
-        csrf: "#{csrfToken}",
-        users: {
-          hostname: "#{GLOBAL.appConfig().users.hostname}"
-        },
-        currentUser: {
-          id: "#{user ? user.uuid : ''}"
-        }
-      }
+    include _config
 
   body
     include site/_header
