@@ -51,7 +51,7 @@ TransactionHelper =
       Wallet.findById payment.wallet_id, (err, wallet)->
         return callback null, "#{payment.id} - wallet #{payment.wallet_id} not found"  if not wallet
         return callback null, "#{payment.id} - user already had a processed payment"  if TransactionHelper.paymentsProcessedUserIds.indexOf(wallet.user_id) > -1
-        return callback null, "#{payment.id} - not processed - no funds"  if not wallet.canWithdraw payment.amount, true
+        #return callback null, "#{payment.id} - not processed - no funds"  if not wallet.canWithdraw payment.amount, true
         TransactionHelper.pay payment, (err, p)->
           TransactionHelper.paymentsProcessedUserIds.push wallet.user_id
           Transaction.setUserById p.transaction_id, p.user_id, ()->
