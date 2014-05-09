@@ -1,7 +1,7 @@
 (function() {
   module.exports = function(app) {
     return app.use(function(req, res) {
-      console.error("404 - [" + req.method + "] " + req.originalUrl);
+      console.error("404 - [" + req.method + "][" + req.ip + "] " + req.originalUrl);
       res.statusCode = 404;
       if (req.accepts("html")) {
         return res.render("errors/404", {
