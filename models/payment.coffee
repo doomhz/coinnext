@@ -61,6 +61,9 @@ module.exports = (sequelize, DataTypes) ->
 
         findById: (id, callback)->
           Payment.find(id).complete callback
+
+        findNonProcessedById: (id, callback)->
+          Payment.find({where: {id: id, status: MarketHelper.getPaymentStatus("pending")}}).complete callback
         
         findByUserAndWallet: (userId, walletId, status, callback)->
           query =

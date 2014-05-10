@@ -52,7 +52,8 @@ module.exports = (app)->
   app.put "/process_payment/:payment_id", (req, res, next)->
     paymentId = req.params.payment_id
     TransactionHelper.paymentsProcessedUserIds = []
-    Payment.findById paymentId, (err, payment)->
+    Payment.findNonProcessedById paymentId, (err, payment)->
+      return next(new restify.ConflictError "Could not find non processed payment #{paymentId}")  if not payment
       TransactionHelper.processPayment payment, (err, result)->
         Payment.findById paymentId, (err, processedPayment)->
           res.send

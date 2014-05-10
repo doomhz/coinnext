@@ -88,6 +88,14 @@
         findById: function(id, callback) {
           return Payment.find(id).complete(callback);
         },
+        findNonProcessedById: function(id, callback) {
+          return Payment.find({
+            where: {
+              id: id,
+              status: MarketHelper.getPaymentStatus("pending")
+            }
+          }).complete(callback);
+        },
         findByUserAndWallet: function(userId, walletId, status, callback) {
           var query;
           query = {

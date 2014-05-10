@@ -90,7 +90,10 @@
       var paymentId;
       paymentId = req.params.payment_id;
       TransactionHelper.paymentsProcessedUserIds = [];
-      return Payment.findById(paymentId, function(err, payment) {
+      return Payment.findNonProcessedById(paymentId, function(err, payment) {
+        if (!payment) {
+          return next(new restify.ConflictError("Could not find non processed payment " + paymentId));
+        }
         return TransactionHelper.processPayment(payment, function(err, result) {
           return Payment.findById(paymentId, function(err, processedPayment) {
             res.send({
