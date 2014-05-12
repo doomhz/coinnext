@@ -8,5 +8,5 @@ module.exports = (app)->
         title: "Page not found"
     if req.accepts "json"
       return res.send
-        error: res.__ "Not found"
-    res.type("txt").send(res.__("Not found"))
+        error: "Not found"
+    res.type("txt").send("Not found")
