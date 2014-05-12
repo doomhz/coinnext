@@ -10,10 +10,10 @@
       }
       if (req.accepts("json")) {
         return res.send({
-          error: res.__("Not found")
+          error: "Not found"
         });
       }
-      return res.type("txt").send(res.__("Not found"));
+      return res.type("txt").send("Not found");
     });
   };
 
