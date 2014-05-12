@@ -24,7 +24,6 @@ body
 
 body
   min-width 1000px
-  background $bgcolor
   color $text-color
   -webkit-font-smoothing antialiased
   font 14px "Helvetica Neue", Helvetica, Arial, sans-serif
@@ -228,7 +227,8 @@ textarea
 /* Body */
 .main-content
   clearfix()
-  margin 10px 0
+  background $bgcolor
+  padding 10px 0
 
 .content
   @extends .container

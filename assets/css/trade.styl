@@ -211,7 +211,6 @@
     &:hover
       color $blue
 
-.market-order
 .limit-order
   padding 10px
   label
@@ -219,11 +218,20 @@
     display block
 .confirm-order
   button
-    btn($teal)
     width 100%
     padding 0
     height 30px
     line-height 30px
+
+#buy-box
+  .confirm-order
+    button
+      btn($teal)
+
+#sell-box
+  .confirm-order
+    button
+      btn($red)
 
 .order-overview
   width 100%
