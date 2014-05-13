@@ -65,7 +65,7 @@ block content
                   label Enter a #{currencies[wallet.currency]} address:
                   .address-input
                     input(type="text", name="address", placeholder="#{wallet.currency} address", data-currency="#{wallet.currency}")
-                  .confirm-order
+                  .withdraw-button
                     button Withdraw
                   ul.terms
                     li Fee for withdrawal is #{wallet.getFloat('withdrawal_fee')} #{wallet.currency}.
