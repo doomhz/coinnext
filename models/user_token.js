@@ -47,12 +47,14 @@
           query = {
             where: {
               token: token,
-              active: true,
-              created_at: {
-                gt: UserToken.getMaxExpirationTime()
-              }
+              active: true
             }
           };
+          if (UserToken.expiresInTime(type)) {
+            query.where.created_at = {
+              gt: UserToken.getMaxExpirationTime()
+            };
+          }
           return UserToken.find(query).complete(callback);
         },
         findByUserAndType: function(userId, type, callback) {
@@ -64,12 +66,14 @@
             where: {
               user_id: userId,
               type: MarketHelper.getTokenType(type),
-              active: true,
-              created_at: {
-                gt: UserToken.getMaxExpirationTime()
-              }
+              active: true
             }
           };
+          if (UserToken.expiresInTime(type)) {
+            query.where.created_at = {
+              gt: UserToken.getMaxExpirationTime()
+            };
+          }
           return UserToken.find(query).complete(callback);
         },
         generateGAuthPassByKey: function(key) {
@@ -160,6 +164,9 @@
           }, {
             token: token
           }).complete(callback);
+        },
+        expiresInTime: function(type) {
+          return type !== "google_auth";
         }
       },
       instanceMethods: {

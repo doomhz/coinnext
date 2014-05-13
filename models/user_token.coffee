@@ -35,8 +35,9 @@ module.exports = (sequelize, DataTypes) ->
             where:
               token: token
               active: true
-              created_at:
-                gt: UserToken.getMaxExpirationTime()
+          if UserToken.expiresInTime type
+            query.where.created_at =
+              gt: UserToken.getMaxExpirationTime()
           UserToken.find(query).complete callback
 
         findByUserAndType: (userId, type, callback = ()->)->
@@ -45,8 +46,9 @@ module.exports = (sequelize, DataTypes) ->
               user_id: userId
               type: MarketHelper.getTokenType(type)
               active: true
-              created_at:
-                gt: UserToken.getMaxExpirationTime()
+          if UserToken.expiresInTime type
+            query.where.created_at =
+              gt: UserToken.getMaxExpirationTime()
           UserToken.find(query).complete callback
 
         generateGAuthPassByKey: (key)->
@@ -100,6 +102,9 @@ module.exports = (sequelize, DataTypes) ->
 
         invalidateByToken: (token, callback = ()->)->
           UserToken.update({active: false}, {token: token}).complete callback
+
+        expiresInTime: (type)->
+          type isnt "google_auth"
 
       instanceMethods:
 
