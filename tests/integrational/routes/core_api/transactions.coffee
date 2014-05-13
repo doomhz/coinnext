@@ -80,20 +80,6 @@ describe "Transactions Api", ->
                   t.user_id.should.eql 1
                   done()
 
-    describe "when the wallet does not have enough balance", ()->
-      it "returns 200 ok and the non executed payment ids", (done)->
-        GLOBAL.db.Payment.create({wallet_id: wallet.id, amount: MarketHelper.toBigint(10), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
-          request('http://localhost:6000')
-          .post("/process_pending_payments")
-          .send()
-          .expect(200)
-          .end (e, res)->
-            throw e if e
-            res.body.should.endWith "#{pm.id} - not processed - no funds"
-            GLOBAL.db.Payment.findById pm.id, (e, p)->
-              p.status.should.eql "pending"
-              done()
-
     describe "when there are payments for the same user", ()->
       it "processes only one payment", (done)->
         GLOBAL.db.Wallet.create({currency: "BTC", user_id: 2, balance: MarketHelper.toBigint(10.0002)}).complete (err, wallet2)->
