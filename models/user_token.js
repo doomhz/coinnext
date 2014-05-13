@@ -47,14 +47,12 @@
           query = {
             where: {
               token: token,
-              active: true
+              active: true,
+              created_at: {
+                gt: UserToken.getMaxExpirationTime()
+              }
             }
           };
-          if (UserToken.expiresInTime(type)) {
-            query.where.created_at = {
-              gt: UserToken.getMaxExpirationTime()
-            };
-          }
           return UserToken.find(query).complete(callback);
         },
         findByUserAndType: function(userId, type, callback) {
