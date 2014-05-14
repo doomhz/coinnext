@@ -18,6 +18,8 @@ describe "MarketHelper", ->
     PPC: 3
     DOGE: 4
     NMC: 5
+    DRK: 6
+    XPM: 7
 
   CURRENCY_NAMES =
     BTC: "Bitcoin"
@@ -25,12 +27,16 @@ describe "MarketHelper", ->
     PPC: "Peercoin"
     DOGE: "Dogecoin"
     NMC: "Namecoin"
+    DRK: "Darkcoin"
+    XPM: "Primecoin"
 
   AVAILABLE_MARKETS =
     LTC_BTC: 1
     PPC_BTC: 2
     DOGE_BTC: 3
     NMC_BTC: 4
+    DRK_BTC: 5
+    XPM_BTC: 6
 
   ORDER_TYPES =
     market: 1
@@ -54,14 +60,14 @@ describe "MarketHelper", ->
     send: 1
     receive: 2
 
-  TRANSACTION_MIN_CONF = 3
-
   WITHDRAWAL_FEES =
     BTC: 20000
     LTC: 200000
     PPC: 2000000
     DOGE: 200000000
     NMC: 200000
+    DRK: 200000
+    XPM: 200000
 
   TOKENS =
     email_confirmation: 1
@@ -192,10 +198,6 @@ describe "MarketHelper", ->
     it "returns the category for the given id", ()->
       for category, categoryId of TRANSACTION_ACCEPTED_CATEGORIES
         MarketHelper.getTransactionCategoryLiteral(categoryId).should.equal category
-
-  describe "getTransactionMinConf", ()->
-    it "returns the min number of confirmations required", ()->
-      MarketHelper.getTransactionMinConf().should.equal TRANSACTION_MIN_CONF
 
   describe "toBigint", ()->
     it "converts a float to a bigint by multiplying with 10^8", ()->

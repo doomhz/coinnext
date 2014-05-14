@@ -16,6 +16,8 @@ CURRENCIES =
   PPC: 3
   DOGE: 4
   NMC: 5
+  DRK: 6
+  XPM: 7
 
 CURRENCY_NAMES =
   BTC: "Bitcoin"
@@ -23,12 +25,16 @@ CURRENCY_NAMES =
   PPC: "Peercoin"
   DOGE: "Dogecoin"
   NMC: "Namecoin"
+  DRK: "Darkcoin"
+  XPM: "Primecoin"
 
 AVAILABLE_MARKETS =
   LTC_BTC: 1
   PPC_BTC: 2
   DOGE_BTC: 3
   NMC_BTC: 4
+  DRK_BTC: 5
+  XPM_BTC: 6
 
 ORDER_TYPES =
   market: 1
@@ -52,14 +58,14 @@ TRANSACTION_ACCEPTED_CATEGORIES =
   send: 1
   receive: 2
 
-TRANSACTION_MIN_CONF = 3
-
 WITHDRAWAL_FEES =
   BTC: 20000
   LTC: 200000
   PPC: 2000000
   DOGE: 200000000
   NMC: 200000
+  DRK: 200000
+  XPM: 200000
 
 TOKENS =
   email_confirmation: 1
@@ -139,9 +145,6 @@ MarketHelper =
 
   getTransactionCategoryLiteral: (intCategory)->
     _.invert(TRANSACTION_ACCEPTED_CATEGORIES)[intCategory]
-
-  getTransactionMinConf: ()->
-    TRANSACTION_MIN_CONF
 
   toBigint: (value)->
     math.round math.multiply(value, 100000000)

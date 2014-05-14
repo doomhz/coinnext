@@ -13,10 +13,8 @@ task "db:create_tables_force", "Drop and create all tables", ()->
 task "db:seed_market_stats", "Seed default market stats", ()->
   MarketStats = GLOBAL.db.MarketStats
   marketStats = require './models/seeds/market_stats'
-  GLOBAL.db.sequelize.query("TRUNCATE TABLE #{MarketStats.tableName}").complete ()->
-    MarketStats.bulkCreate(marketStats).success ()->
-      MarketStats.findAll().success (result)->
-        console.log JSON.stringify result
+  for stats in marketStats
+    MarketStats.create(stats).complete ()->
 
 task "db:seed_trade_stats", "Seed default trade stats", ()->
   TradeStats = GLOBAL.db.TradeStats
