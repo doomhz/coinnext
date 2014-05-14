@@ -10,6 +10,7 @@ class BcWallet extends CryptoWallet
   currencyName: "Blackcoin"
 
   createClient: (options)->
+    super options
     @client = new blackcoin.Client options.client
 
 exports = module.exports = BcWallet
