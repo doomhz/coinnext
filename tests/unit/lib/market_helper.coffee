@@ -20,6 +20,7 @@ describe "MarketHelper", ->
     NMC: 5
     DRK: 6
     XPM: 7
+    BC: 8
 
   CURRENCY_NAMES =
     BTC: "Bitcoin"
@@ -29,6 +30,7 @@ describe "MarketHelper", ->
     NMC: "Namecoin"
     DRK: "Darkcoin"
     XPM: "Primecoin"
+    BC: "Blackcoin"
 
   AVAILABLE_MARKETS =
     LTC_BTC: 1
@@ -37,6 +39,7 @@ describe "MarketHelper", ->
     NMC_BTC: 4
     DRK_BTC: 5
     XPM_BTC: 6
+    BC_BTC: 7
 
   ORDER_TYPES =
     market: 1
@@ -68,6 +71,7 @@ describe "MarketHelper", ->
     NMC: 200000
     DRK: 200000
     XPM: 200000
+    BC: 200000
 
   TOKENS =
     email_confirmation: 1
