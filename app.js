@@ -5,16 +5,14 @@ if (process.env.NODE_ENV === "production") require("./configs/logger");
 var express = require('express');
 var http = require('http');
 var RedisStore = require('connect-redis')(express);
-var fs = require('fs');
 var helmet = require('helmet');
 var simpleCdn = require('express-simple-cdn');
 var CoreAPIClient = require('./lib/core_api_client');
 var environment = process.env.NODE_ENV || 'development';
-var config = JSON.parse(fs.readFileSync(process.cwd() + '/config.json', encoding='utf8'))[environment];
 
 // Configure globals
+GLOBAL.appConfig = require("./configs/config");
 GLOBAL.passport = require('passport');
-GLOBAL.appConfig = function () {return config;};
 GLOBAL.coreAPIClient = new CoreAPIClient({host: GLOBAL.appConfig().wallets_host});
 GLOBAL.db = require('./models/index');
 

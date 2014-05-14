@@ -26,3 +26,5 @@ config.json
 erl_crash.dump
 certs
 certs/*
+
+configs/wallets_config/*.json

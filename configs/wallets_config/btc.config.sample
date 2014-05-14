@@ -1,0 +1,19 @@
+{
+  "client": {
+    "host": "127.0.0.1",
+    "port": 18332,
+    "user": "",
+    "pass": "",
+    "ssl": true,
+    "sslStrict": false,
+    "sslCa": false
+  },
+  "wallet": {
+    "address": "",
+    "account": "",
+    "passphrase": ""
+  },
+  "confirmations": 1,
+  "transaction_fee": 0.0001,
+  "currency": "BTC"
+}
