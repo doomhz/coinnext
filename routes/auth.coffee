@@ -53,11 +53,15 @@ module.exports = (app)->
 
   app.get "/change-password/:token", (req, res)->
     token = req.params.token
-    UserToken.findByToken token, (err, userToken)->
-      return res.redirect "/404"  if not userToken
-      if req.query.error
-        errors = [req.query.error]
-      res.render "auth/change_password", {title: "Change Password - Coinnext.com", token: token, errors: errors}
+    req.logout()
+    oldStagingAuth = req.session.staging_auth
+    req.session.regenerate ()->
+      req.session.staging_auth = oldStagingAuth
+      UserToken.findByToken token, (err, userToken)->
+        return res.redirect "/404"  if not userToken
+        if req.query.error
+          errors = [req.query.error]
+        res.render "auth/change_password", {title: "Change Password - Coinnext.com", token: token, errors: errors}
 
   app.post "/change-password", (req, res)->
     token = req.body.token
@@ -88,13 +92,17 @@ module.exports = (app)->
 
   app.get "/verify/:token", (req, res)->
     token = req.params.token
-    UserToken.findByToken token, (err, userToken)->
-      return res.redirect "/404"  if not userToken
-      User.findByToken token, (err, user)->
-        return res.redirect "/404"  if not user
-        user.setEmailVerified (err, u)->
-          res.render "auth/verify", {title: "Verify Account - Coinnext.com", user: u}
-          UserToken.invalidateByToken token
+    req.logout()
+    oldStagingAuth = req.session.staging_auth
+    req.session.regenerate ()->
+      req.session.staging_auth = oldStagingAuth
+      UserToken.findByToken token, (err, userToken)->
+        return res.redirect "/404"  if not userToken
+        User.findByToken token, (err, user)->
+          return res.redirect "/404"  if not user
+          user.setEmailVerified (err, u)->
+            res.render "auth/verify", {title: "Verify Account - Coinnext.com", user: u}
+            UserToken.invalidateByToken token
 
   app.post "/google_auth", (req, res)->
     return JsonRenderer.error null, res, 401, false  if not req.user

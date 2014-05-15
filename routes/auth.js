@@ -77,20 +77,25 @@
       return recaptcha.checkAnswer(GLOBAL.appConfig().recaptcha.private_key, req.connection.remoteAddress, req.body.recaptcha_challenge_field, req.body.recaptcha_response_field);
     });
     app.get("/change-password/:token", function(req, res) {
-      var token;
+      var oldStagingAuth, token;
       token = req.params.token;
-      return UserToken.findByToken(token, function(err, userToken) {
-        var errors;
-        if (!userToken) {
-          return res.redirect("/404");
-        }
-        if (req.query.error) {
-          errors = [req.query.error];
-        }
-        return res.render("auth/change_password", {
-          title: "Change Password - Coinnext.com",
-          token: token,
-          errors: errors
+      req.logout();
+      oldStagingAuth = req.session.staging_auth;
+      return req.session.regenerate(function() {
+        req.session.staging_auth = oldStagingAuth;
+        return UserToken.findByToken(token, function(err, userToken) {
+          var errors;
+          if (!userToken) {
+            return res.redirect("/404");
+          }
+          if (req.query.error) {
+            errors = [req.query.error];
+          }
+          return res.render("auth/change_password", {
+            title: "Change Password - Coinnext.com",
+            token: token,
+            errors: errors
+          });
         });
       });
     });
@@ -148,22 +153,27 @@
       });
     });
     app.get("/verify/:token", function(req, res) {
-      var token;
+      var oldStagingAuth, token;
       token = req.params.token;
-      return UserToken.findByToken(token, function(err, userToken) {
-        if (!userToken) {
-          return res.redirect("/404");
-        }
-        return User.findByToken(token, function(err, user) {
-          if (!user) {
+      req.logout();
+      oldStagingAuth = req.session.staging_auth;
+      return req.session.regenerate(function() {
+        req.session.staging_auth = oldStagingAuth;
+        return UserToken.findByToken(token, function(err, userToken) {
+          if (!userToken) {
             return res.redirect("/404");
           }
-          return user.setEmailVerified(function(err, u) {
-            res.render("auth/verify", {
-              title: "Verify Account - Coinnext.com",
-              user: u
+          return User.findByToken(token, function(err, user) {
+            if (!user) {
+              return res.redirect("/404");
+            }
+            return user.setEmailVerified(function(err, u) {
+              res.render("auth/verify", {
+                title: "Verify Account - Coinnext.com",
+                user: u
+              });
+              return UserToken.invalidateByToken(token);
             });
-            return UserToken.invalidateByToken(token);
           });
         });
       });
