@@ -21,6 +21,7 @@ CURRENCIES =
   BC: 8
   VTC: 9
   METH: 10
+  NLG: 11
 
 CURRENCY_NAMES =
   BTC: "Bitcoin"
@@ -33,6 +34,7 @@ CURRENCY_NAMES =
   BC: "Blackcoin"
   VTC: "Vertcoin"
   METH: "Cryptometh"
+  NLG: "Guldencoin"
 
 AVAILABLE_MARKETS =
   LTC_BTC: 1
@@ -44,6 +46,7 @@ AVAILABLE_MARKETS =
   BC_BTC: 7
   VTC_BTC: 8
   METH_BTC: 9
+  NLG_BTC: 10
 
 ORDER_TYPES =
   market: 1
@@ -78,6 +81,7 @@ WITHDRAWAL_FEES =
   BC: 200000
   VTC: 200000
   METH: 200000
+  NLG: 200000
 
 TOKENS =
   email_confirmation: 1
