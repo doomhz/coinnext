@@ -26,11 +26,16 @@
       return login(req, res, next);
     });
     app.get("/logout", function(req, res) {
+      var oldStagingAuth;
       req.logout();
-      if (req.accepts("html")) {
-        return res.redirect("/");
-      }
-      return res.json({});
+      oldStagingAuth = req.session.staging_auth;
+      return req.session.regenerate(function() {
+        req.session.staging_auth = oldStagingAuth;
+        if (req.accepts("html")) {
+          return res.redirect("/");
+        }
+        return res.json({});
+      });
     });
     app.get("/send-password", function(req, res) {
       var errors, success;

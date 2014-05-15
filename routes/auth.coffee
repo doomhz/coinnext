@@ -20,8 +20,11 @@ module.exports = (app)->
 
   app.get "/logout", (req, res)->
     req.logout()
-    return res.redirect "/"  if req.accepts "html"
-    res.json({})
+    oldStagingAuth = req.session.staging_auth
+    req.session.regenerate ()->
+      req.session.staging_auth = oldStagingAuth
+      return res.redirect "/"  if req.accepts "html"
+      res.json({})
 
   app.get "/send-password", (req, res)->
     if req.query.error
