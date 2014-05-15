@@ -12,7 +12,7 @@ module.exports = (app)->
   app.get "/", (req, res)->
     MarketStats.getStats (err, marketStats)->
       res.render "site/index",
-        title: if req.user then 'Home' else 'Coinnext - Cryptocurrency Exchange'
+        title: if req.user then 'Home - Coinnext' else 'Coinnext - Cryptocurrency Exchange'
         page: "home"
         user: req.user
         marketStats: JsonRenderer.marketStats marketStats
@@ -65,7 +65,7 @@ module.exports = (app)->
     return res.redirect "/login"  if not req.user
     Wallet.findUserWallets req.user.id, (err, wallets)->
       res.render "site/funds",
-        title: 'Funds'
+        title: 'Funds - Coinnext'
         page: "funds"
         user: req.user
         wallets: wallets
@@ -79,7 +79,7 @@ module.exports = (app)->
         console.error err  if err
         return res.redirect "/"  if not wallet
         res.render "site/funds/wallet",
-          title: "#{req.params.currency} - Funds"
+          title: "#{req.params.currency} - Funds - Coinnext"
           page: "funds"
           user: req.user
           wallet: wallet
@@ -107,7 +107,7 @@ module.exports = (app)->
   app.get "/settings/preferences", (req, res)->
     return res.redirect "/login"  if not req.user
     res.render "site/settings/preferences",
-      title: 'Preferences - Settings'
+      title: 'Preferences - Settings - Coinnext'
       page: 'settings'
       user: req.user
 
@@ -116,7 +116,7 @@ module.exports = (app)->
     AuthStats.findByUser req.user.id, (err, authStats)->
       UserToken.findByUserAndType req.user.id, "google_auth", (err, googleToken)->
         res.render "site/settings/security",
-          title: 'Security - Settings'
+          title: 'Security - Settings - Coinnext'
           page: 'settings'
           user: req.user
           authStats: authStats
