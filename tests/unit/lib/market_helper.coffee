@@ -22,6 +22,7 @@ describe "MarketHelper", ->
     XPM: 7
     BC: 8
     VTC: 9
+    METH: 10
 
   CURRENCY_NAMES =
     BTC: "Bitcoin"
@@ -33,6 +34,7 @@ describe "MarketHelper", ->
     XPM: "Primecoin"
     BC: "Blackcoin"
     VTC: "Vertcoin"
+    METH: "Cryptometh"
 
   AVAILABLE_MARKETS =
     LTC_BTC: 1
@@ -43,6 +45,7 @@ describe "MarketHelper", ->
     XPM_BTC: 6
     BC_BTC: 7
     VTC_BTC: 8
+    METH_BTC: 9
 
   ORDER_TYPES =
     market: 1
@@ -76,6 +79,7 @@ describe "MarketHelper", ->
     XPM: 200000
     BC: 200000
     VTC: 200000
+    METH: 200000
 
   TOKENS =
     email_confirmation: 1
