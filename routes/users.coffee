@@ -15,11 +15,11 @@ module.exports = (app)->
       res.json JsonRenderer.user newUser
 
   app.get "/user/:id?", (req, res)->
-    return JsonRenderer.error null, res  if not req.user
+    return JsonRenderer.error null, res, 401, false  if not req.user
     res.json JsonRenderer.user req.user
 
   app.put "/user/:id?", (req, res)->
-    return JsonRenderer.error null, res  if not req.user
+    return JsonRenderer.error null, res, 401, false  if not req.user
     req.user.updateSettings req.body, (err, user)->
       return JsonRenderer.error err, res  if err
       res.json JsonRenderer.user user

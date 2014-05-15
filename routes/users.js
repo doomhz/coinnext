@@ -25,13 +25,13 @@
     });
     app.get("/user/:id?", function(req, res) {
       if (!req.user) {
-        return JsonRenderer.error(null, res);
+        return JsonRenderer.error(null, res, 401, false);
       }
       return res.json(JsonRenderer.user(req.user));
     });
     return app.put("/user/:id?", function(req, res) {
       if (!req.user) {
-        return JsonRenderer.error(null, res);
+        return JsonRenderer.error(null, res, 401, false);
       }
       return req.user.updateSettings(req.body, function(err, user) {
         if (err) {

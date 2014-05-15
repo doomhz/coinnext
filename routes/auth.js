@@ -170,13 +170,13 @@
     });
     app.post("/google_auth", function(req, res) {
       if (!req.user) {
-        return JsonRenderer.error(null, res);
+        return JsonRenderer.error(null, res, 401, false);
       }
       return res.json(UserToken.generateGAuthData());
     });
     app.put("/google_auth/:id?", function(req, res) {
       if (!req.user) {
-        return JsonRenderer.error(null, res);
+        return JsonRenderer.error(null, res, 401, false);
       }
       if (!UserToken.isValidGAuthPassForKey(req.body.gauth_pass, req.body.gauth_key)) {
         return JsonRenderer.error("Invalid Google Authenticator code", res, 401);
@@ -187,7 +187,7 @@
     });
     app.del("/google_auth/:id?", function(req, res) {
       if (!req.user) {
-        return JsonRenderer.error(null, res);
+        return JsonRenderer.error(null, res, 401, false);
       }
       return UserToken.isValidGAuthPassForUser(req.user.id, req.body.gauth_pass, function(err, isValid) {
         if (!isValid) {

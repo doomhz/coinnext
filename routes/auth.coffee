@@ -97,17 +97,17 @@ module.exports = (app)->
           UserToken.invalidateByToken token
 
   app.post "/google_auth", (req, res)->
-    return JsonRenderer.error null, res  if not req.user
+    return JsonRenderer.error null, res, 401, false  if not req.user
     res.json UserToken.generateGAuthData()
 
   app.put "/google_auth/:id?", (req, res)->
-    return JsonRenderer.error null, res  if not req.user
+    return JsonRenderer.error null, res, 401, false  if not req.user
     return JsonRenderer.error "Invalid Google Authenticator code", res, 401  if not UserToken.isValidGAuthPassForKey req.body.gauth_pass, req.body.gauth_key
     UserToken.addGAuthTokenForUser req.body.gauth_key, req.user.id, (err, user)->
       res.json user
 
   app.del "/google_auth/:id?", (req, res)->
-    return JsonRenderer.error null, res  if not req.user
+    return JsonRenderer.error null, res, 401, false  if not req.user
     UserToken.isValidGAuthPassForUser req.user.id, req.body.gauth_pass, (err, isValid)->
       return JsonRenderer.error "Invalid Google Authenticator code", res, 401  if not isValid
       UserToken.dropGAuthDataForUser req.user.id, ()->
