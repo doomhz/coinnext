@@ -1,67 +1,25 @@
 (function() {
+  var JsonRenderer, MarketStats;
+
+  MarketStats = GLOBAL.db.MarketStats;
+
+  JsonRenderer = require("./../lib/json_renderer");
+
   module.exports = function(app) {
     app.get("/v1/market/summary", function(req, res, next) {
-      return res.send([
-        {
-          "market_id": "25",
-          "code": "AUR",
-          "exchange": "BTC",
-          "last_price": "0.04600001",
-          "yesterday_price": "0.04300000",
-          "change": "+6.98",
-          "24hhigh": "0.04980000",
-          "24hlow": "0.04000050",
-          "24hvol": "21.737",
-          "top_bid": "0.04590000",
-          "top_ask": "0.04600005"
-        }, {
-          "market_id": "25",
-          "code": "AUR",
-          "exchange": "BTC",
-          "last_price": "0.04600001",
-          "yesterday_price": "0.04300000",
-          "change": "+6.98",
-          "24hhigh": "0.04980000",
-          "24hlow": "0.04000050",
-          "24hvol": "21.737",
-          "top_bid": "0.04590000",
-          "top_ask": "0.04600005"
-        }
-      ]);
+      return MarketStats.findEnabledMarkets(null, null, function(err, marketStats) {
+        return res.send(JsonRenderer.marketSummary(marketStats));
+      });
     });
     app.get("/v1/market/summary/:exchange", function(req, res, next) {
-      return res.send([
-        {
-          "market_id": "25",
-          "code": "AUR",
-          "exchange": "BTC",
-          "last_price": "0.04600001",
-          "yesterday_price": "0.04300000",
-          "change": "+6.98",
-          "24hhigh": "0.04980000",
-          "24hlow": "0.04000050",
-          "24hvol": "21.737",
-          "top_bid": "0.04590000",
-          "top_ask": "0.04600005"
-        }
-      ]);
+      return MarketStats.findEnabledMarkets(null, req.params.exchange).complete(function(err, marketStats) {
+        return res.send(JsonRenderer.marketSummary(marketStats));
+      });
     });
     app.get("/v1/market/stats/:coin/:exchange", function(req, res, next) {
-      return res.send([
-        {
-          "market_id": "25",
-          "code": "AUR",
-          "exchange": "BTC",
-          "last_price": "0.04600001",
-          "yesterday_price": "0.04300000",
-          "change": "+6.98",
-          "24hhigh": "0.04980000",
-          "24hlow": "0.04000050",
-          "24hvol": "21.737",
-          "top_bid": "0.04590000",
-          "top_ask": "0.04600005"
-        }
-      ]);
+      return MarketStats.findEnabledMarkets(req.params.coin, req.params.exchange).complete(function(err, marketStats) {
+        return res.send(JsonRenderer.marketSummary(marketStats));
+      });
     });
     app.get("/v1/market/trades/:coin/:exchange", function(req, res, next) {
       return res.send([

@@ -121,6 +121,12 @@ MarketHelper =
   getMarketLiteral: (intType)->
     _.invert(AVAILABLE_MARKETS)[intType]
 
+  getExchangeMarketsId: (exchange)->
+    marketsId = []
+    for marketType, id of AVAILABLE_MARKETS
+      marketsId.push id  if marketType.indexOf("_#{exchange}") > -1
+    marketsId
+
   isValidMarket: (action, buyCurrency, sellCurrency)->
     market = "#{buyCurrency}_#{sellCurrency}"  if action is "buy"
     market = "#{sellCurrency}_#{buyCurrency}"  if action is "sell"

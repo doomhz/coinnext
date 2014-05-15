@@ -62,6 +62,9 @@ module.exports = (sequelize, DataTypes) ->
         label: ()->
           @type.substr 0, @type.indexOf("_")
 
+        exchange: ()->
+          @type.substr @type.indexOf("_") + 1
+
       classMethods:
         
         getStats: (callback = ()->)->
@@ -105,6 +108,17 @@ module.exports = (sequelize, DataTypes) ->
       
         setMarketStatus: (id, status, callback = ()->)->
           MarketStats.update({status: status}, {id: id}).complete callback
+
+        findEnabledMarkets: (currency1, currency2, callback = ()->)->
+          query =
+            where:
+              status: MarketHelper.getMarketStatus("enabled")
+          if currency1 isnt null and currency2 isnt null
+            query.where.type = MarketHelper.getMarket("#{currency1}_#{currency2}")
+          else if currency1 is null and currency2 isnt null
+            query.where.type = {}
+            query.where.type.in = MarketHelper.getExchangeMarketsId(currency2)
+          MarketStats.findAll(query).complete callback
 
       instanceMethods:
 

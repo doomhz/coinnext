@@ -1,67 +1,24 @@
+MarketStats = GLOBAL.db.MarketStats
+JsonRenderer = require "./../lib/json_renderer"
 
 module.exports = (app)->
 
   # Provides an overview of all our markets
   app.get "/v1/market/summary", (req, res, next)->
-    res.send [{
-        "market_id":"25",
-        "code":"AUR",
-        "exchange":"BTC",
-        "last_price":"0.04600001",
-        "yesterday_price":"0.04300000",
-        "change":"+6.98",
-        "24hhigh":"0.04980000",
-        "24hlow":"0.04000050",
-        "24hvol":"21.737",
-        "top_bid":"0.04590000",
-        "top_ask":"0.04600005"
-      },{
-        "market_id":"25",
-        "code":"AUR",
-        "exchange":"BTC",
-        "last_price":"0.04600001",
-        "yesterday_price":"0.04300000",
-        "change":"+6.98",
-        "24hhigh":"0.04980000",
-        "24hlow":"0.04000050",
-        "24hvol":"21.737",
-        "top_bid":"0.04590000",
-        "top_ask":"0.04600005",
-      }]
+    MarketStats.findEnabledMarkets null, null, (err, marketStats)->
+      res.send JsonRenderer.marketSummary marketStats
   
   # Provides an overview of only BTC markets at this time
   # Example: /v1/market/summary/BTC
   app.get "/v1/market/summary/:exchange", (req, res, next)->
-    res.send [{
-        "market_id":"25",
-        "code":"AUR",
-        "exchange":"BTC",
-        "last_price":"0.04600001",
-        "yesterday_price":"0.04300000",
-        "change":"+6.98",
-        "24hhigh":"0.04980000",
-        "24hlow":"0.04000050",
-        "24hvol":"21.737",
-        "top_bid":"0.04590000",
-        "top_ask":"0.04600005"
-      }]
+    MarketStats.findEnabledMarkets(null, req.params.exchange).complete (err, marketStats)->
+      res.send JsonRenderer.marketSummary marketStats
   
   # Provides the statistics for a single market.
   # Example: /v1/market/trades/AUR/BTC
   app.get "/v1/market/stats/:coin/:exchange", (req, res, next)->
-    res.send [{
-        "market_id":"25",
-        "code":"AUR",
-        "exchange":"BTC",
-        "last_price":"0.04600001",
-        "yesterday_price":"0.04300000",
-        "change":"+6.98",
-        "24hhigh":"0.04980000",
-        "24hlow":"0.04000050",
-        "24hvol":"21.737",
-        "top_bid":"0.04590000",
-        "top_ask":"0.04600005",
-      }]
+    MarketStats.findEnabledMarkets(req.params.coin, req.params.exchange).complete (err, marketStats)->
+      res.send JsonRenderer.marketSummary marketStats
 
   # Fetches the last 100 trades for a given market.
   # Example: /v1/market/trades/MINT/BTC

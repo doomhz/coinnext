@@ -173,4 +173,23 @@ JsonRenderer =
     message = message.replace "ConflictError ", ""
     _str.trim message
 
+  marketSummary: (marketStats)->
+    marketSummaryStats = []
+    for stats in marketStats
+      summary = 
+        "market_id": stats.id
+        "code": stats.label
+        "exchange": stats.exchange
+        "last_price": MarketHelper.fromBigint stats.last_price
+        "yesterday_price": MarketHelper.fromBigint stats.last_price
+        "change": MarketHelper.fromBigint stats.growth_ratio
+        "24hhigh": MarketHelper.fromBigint stats.day_high
+        "24hlow": MarketHelper.fromBigint stats.day_low
+        "24hvol": MarketHelper.fromBigint stats.volume1
+        "top_bid": 0 # TODO
+        "top_ask": 0 # TODO
+      marketSummaryStats.push summary
+    marketSummaryStats
+
+
 exports = module.exports = JsonRenderer

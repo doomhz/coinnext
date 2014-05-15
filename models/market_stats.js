@@ -78,6 +78,9 @@
       getterMethods: {
         label: function() {
           return this.type.substr(0, this.type.indexOf("_"));
+        },
+        exchange: function() {
+          return this.type.substr(this.type.indexOf("_") + 1);
         }
       },
       classMethods: {
@@ -163,6 +166,24 @@
           }, {
             id: id
           }).complete(callback);
+        },
+        findEnabledMarkets: function(currency1, currency2, callback) {
+          var query;
+          if (callback == null) {
+            callback = function() {};
+          }
+          query = {
+            where: {
+              status: MarketHelper.getMarketStatus("enabled")
+            }
+          };
+          if (currency1 !== null && currency2 !== null) {
+            query.where.type = MarketHelper.getMarket("" + currency1 + "_" + currency2);
+          } else if (currency1 === null && currency2 !== null) {
+            query.where.type = {};
+            query.where.type["in"] = MarketHelper.getExchangeMarketsId(currency2);
+          }
+          return MarketStats.findAll(query).complete(callback);
         }
       },
       instanceMethods: {
