@@ -21,7 +21,7 @@
     app.get("/", function(req, res) {
       return MarketStats.getStats(function(err, marketStats) {
         return res.render("site/index", {
-          title: req.user ? 'Home' : 'Coinnext - Cryptocurrency Exchange',
+          title: req.user ? 'Home - Coinnext' : 'Coinnext - Cryptocurrency Exchange',
           page: "home",
           user: req.user,
           marketStats: JsonRenderer.marketStats(marketStats),
@@ -93,7 +93,7 @@
       }
       return Wallet.findUserWallets(req.user.id, function(err, wallets) {
         return res.render("site/funds", {
-          title: 'Funds',
+          title: 'Funds - Coinnext',
           page: "funds",
           user: req.user,
           wallets: wallets,
@@ -115,7 +115,7 @@
             return res.redirect("/");
           }
           return res.render("site/funds/wallet", {
-            title: "" + req.params.currency + " - Funds",
+            title: "" + req.params.currency + " - Funds - Coinnext",
             page: "funds",
             user: req.user,
             wallet: wallet,
@@ -144,7 +144,7 @@
         return res.redirect("/login");
       }
       return res.render("site/settings/preferences", {
-        title: 'Preferences - Settings',
+        title: 'Preferences - Settings - Coinnext',
         page: 'settings',
         user: req.user
       });
@@ -156,7 +156,7 @@
       return AuthStats.findByUser(req.user.id, function(err, authStats) {
         return UserToken.findByUserAndType(req.user.id, "google_auth", function(err, googleToken) {
           return res.render("site/settings/security", {
-            title: 'Security - Settings',
+            title: 'Security - Settings - Coinnext',
             page: 'settings',
             user: req.user,
             authStats: authStats,
