@@ -21,7 +21,7 @@
     app.get("/", function(req, res) {
       return MarketStats.getStats(function(err, marketStats) {
         return res.render("site/index", {
-          title: 'Home',
+          title: req.user ? 'Home' : 'Coinnext - Cryptocurrency Exchange',
           page: "home",
           user: req.user,
           marketStats: JsonRenderer.marketStats(marketStats),
@@ -55,7 +55,7 @@
                 });
               }
               return res.render("site/trade", {
-                title: "Trade " + currency1 + " to " + currency2,
+                title: "Trade " + currency1 + " to " + currency2 + " - Coinnext",
                 page: "trade",
                 user: req.user,
                 currency1: currency1,
@@ -70,7 +70,7 @@
           });
         } else {
           return res.render("site/trade", {
-            title: "Trade " + currency1 + " to " + currency2,
+            title: "Trade " + currency1 + " to " + currency2 + " - Coinnext - Cryptocurrency Exchange",
             page: "trade",
             currency1: currency1,
             currency2: currency2,
@@ -115,7 +115,7 @@
             return res.redirect("/");
           }
           return res.render("site/funds/wallet", {
-            title: 'Wallet overview',
+            title: "" + req.params.currency + " - Funds",
             page: "funds",
             user: req.user,
             wallet: wallet,
@@ -167,37 +167,37 @@
     });
     app.get("/legal/terms", function(req, res) {
       return res.render("static/terms", {
-        title: 'Terms',
+        title: 'Terms - Coinnext',
         user: req.user
       });
     });
     app.get("/legal/privacy", function(req, res) {
       return res.render("static/privacy", {
-        title: 'Privacy',
+        title: 'Privacy - Coinnext',
         user: req.user
       });
     });
     app.get("/legal/cookie", function(req, res) {
       return res.render("static/cookie", {
-        title: 'Cookie',
+        title: 'Cookie - Coinnext',
         user: req.user
       });
     });
     app.get("/fees", function(req, res) {
       return res.render("static/fees", {
-        title: 'Fees',
+        title: 'Fees - Coinnext',
         user: req.user
       });
     });
     app.get("/about", function(req, res) {
       return res.render("static/about", {
-        title: 'About',
+        title: 'About - Coinnext',
         user: req.user
       });
     });
     return app.get("/security", function(req, res) {
       return res.render("static/security", {
-        title: 'Security',
+        title: 'Security - Coinnext',
         user: req.user
       });
     });

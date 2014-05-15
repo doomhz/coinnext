@@ -12,7 +12,7 @@ module.exports = (app)->
   app.get "/", (req, res)->
     MarketStats.getStats (err, marketStats)->
       res.render "site/index",
-        title: 'Home'
+        title: if req.user then 'Home' else 'Coinnext - Cryptocurrency Exchange'
         page: "home"
         user: req.user
         marketStats: JsonRenderer.marketStats marketStats
@@ -37,7 +37,7 @@ module.exports = (app)->
               wallet2 = Wallet.build
                 currency: currency2
             res.render "site/trade",
-              title: "Trade #{currency1} to #{currency2}"
+              title: "Trade #{currency1} to #{currency2} - Coinnext"
               page: "trade"
               user: req.user
               currency1: currency1
@@ -49,7 +49,7 @@ module.exports = (app)->
               _str: _str
       else
         res.render "site/trade",
-          title: "Trade #{currency1} to #{currency2}"
+          title: "Trade #{currency1} to #{currency2} - Coinnext - Cryptocurrency Exchange"
           page: "trade"
           currency1: currency1
           currency2: currency2
@@ -79,7 +79,7 @@ module.exports = (app)->
         console.error err  if err
         return res.redirect "/"  if not wallet
         res.render "site/funds/wallet",
-          title: 'Wallet overview'
+          title: "#{req.params.currency} - Funds"
           page: "funds"
           user: req.user
           wallet: wallet
@@ -125,30 +125,30 @@ module.exports = (app)->
   # Static Pages
   app.get "/legal/terms", (req, res)->
     res.render "static/terms",
-      title: 'Terms'
+      title: 'Terms - Coinnext'
       user: req.user
 
   app.get "/legal/privacy", (req, res)->
     res.render "static/privacy",
-      title: 'Privacy'
+      title: 'Privacy - Coinnext'
       user: req.user
 
   app.get "/legal/cookie", (req, res)->
     res.render "static/cookie",
-      title: 'Cookie'
+      title: 'Cookie - Coinnext'
       user: req.user
 
   app.get "/fees", (req, res)->
     res.render "static/fees",
-      title: 'Fees'
+      title: 'Fees - Coinnext'
       user: req.user
 
   app.get "/about", (req, res)->
     res.render "static/about",
-      title: 'About'
+      title: 'About - Coinnext'
       user: req.user
 
   app.get "/security", (req, res)->
     res.render "static/security",
-      title: 'Security'
+      title: 'Security - Coinnext'
       user: req.user
