@@ -28,6 +28,7 @@
     , "node-primecoin": "1.0.2"
     , "node-darkcoin": "1.0.2"
     , "node-blackcoin": "1.0.1"
+    , "node-vertcoin": "1.0.3"
     , "date-utils": "1.2.15"
     , "socket.io": "0.9.16"
     , "socket.io-client": "0.9.16"
