@@ -186,6 +186,7 @@
       }
     }, {
       tableName: "orders",
+      paranoid: true,
       getterMethods: {
         inversed_action: function() {
           if (this.action === "sell") {

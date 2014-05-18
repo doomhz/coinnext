@@ -115,6 +115,7 @@ module.exports = (sequelize, DataTypes) ->
         type: DataTypes.DATE
     ,
       tableName: "orders"
+      paranoid: true
       getterMethods:
 
         inversed_action: ()->
