@@ -7,6 +7,8 @@ var http = require('http');
 var RedisStore = require('connect-redis')(express);
 var helmet = require('helmet');
 var CoreAPIClient = require('./lib/core_api_client');
+var _str = require("./lib/underscore_string");
+var _ = require("underscore");
 var environment = process.env.NODE_ENV || 'development';
 
 // Configure globals
@@ -22,6 +24,8 @@ require('./lib/admin_auth');
 var app = express();
 var connectAssetsOptions = environment !== 'development' ? {minifyBuilds: true} : {};
 connectAssetsOptions.helperContext = app.locals
+app.locals._ = _;
+app.locals._str = _str;
 app.enable("trust proxy");
 app.disable('x-powered-by');
 app.configure(function () {

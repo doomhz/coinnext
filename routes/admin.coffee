@@ -7,8 +7,6 @@ MarketStats = GLOBAL.db.MarketStats
 MarketHelper = require "../lib/market_helper"
 JsonRenderer = require "../lib/json_renderer"
 jsonBeautifier = require "../lib/json_beautifier"
-_ = require "underscore"
-_str = require "../lib/underscore_string"
 
 module.exports = (app)->
 
@@ -31,8 +29,6 @@ module.exports = (app)->
       title: "Stats - Admin - CoinNext"
       page: "stats"
       adminUser: req.user
-      _str: _str
-      _: _
       currencies: MarketHelper.getCurrencyTypes()
 
   app.get "/administratie/users", (req, res)->
@@ -49,8 +45,6 @@ module.exports = (app)->
         title: "Users - Admin - CoinNext"
         page: "users"
         adminUser: req.user
-        _str: _str
-        _: _
         currencies: MarketHelper.getCurrencyTypes()
         users: result.rows
         totalUsers: result.count
@@ -72,8 +66,6 @@ module.exports = (app)->
             title: "User #{user.email} - #{user.id} - Admin - CoinNext"
             page: "users"
             adminUser: req.user
-            _str: _str
-            _: _
             currencies: MarketHelper.getCurrencyTypes()
             user: user
             wallets: wallets
@@ -85,8 +77,6 @@ module.exports = (app)->
         title: "Wallet #{wallet.id} - Admin - CoinNext"
         page: "wallets"
         adminUser: req.user
-        _str: _str
-        _: _
         currencies: MarketHelper.getCurrencyTypes()
         wallet: wallet
 
@@ -107,8 +97,6 @@ module.exports = (app)->
         title: "Wallets - Admin - CoinNext"
         page: "wallets"
         adminUser: req.user
-        _str: _str
-        _: _
         currencies: MarketHelper.getCurrencyTypes()
         wallets: result.rows
         totalWallets: result.count
@@ -134,8 +122,6 @@ module.exports = (app)->
         title: "Transactions - Admin - CoinNext"
         page: "transactions"
         adminUser: req.user
-        _str: _str
-        _: _
         currencies: MarketHelper.getCurrencyTypes()
         transactions: result.rows
         totalTransactions: result.count
@@ -164,8 +150,6 @@ module.exports = (app)->
         title: "Payments - Admin - CoinNext"
         page: "payments"
         adminUser: req.user
-        _str: _str
-        _: _
         currencies: MarketHelper.getCurrencyTypes()
         payments: result.rows
         totalPayments: result.count
@@ -235,8 +219,6 @@ module.exports = (app)->
         title: "Markets - Admin - CoinNext"
         page: "markets"
         adminUser: req.user
-        _str: _str
-        _: _
         currencies: MarketHelper.getCurrencyTypes()
         markets: markets
 

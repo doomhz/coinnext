@@ -1,5 +1,5 @@
 (function() {
-  var AuthStats, JsonRenderer, MarketHelper, MarketStats, Payment, Transaction, User, Wallet, jsonBeautifier, _, _str;
+  var AuthStats, JsonRenderer, MarketHelper, MarketStats, Payment, Transaction, User, Wallet, jsonBeautifier;
 
   Wallet = GLOBAL.db.Wallet;
 
@@ -18,10 +18,6 @@
   JsonRenderer = require("../lib/json_renderer");
 
   jsonBeautifier = require("../lib/json_beautifier");
-
-  _ = require("underscore");
-
-  _str = require("../lib/underscore_string");
 
   module.exports = function(app) {
     var login;
@@ -46,8 +42,6 @@
         title: "Stats - Admin - CoinNext",
         page: "stats",
         adminUser: req.user,
-        _str: _str,
-        _: _,
         currencies: MarketHelper.getCurrencyTypes()
       });
     });
@@ -71,8 +65,6 @@
           title: "Users - Admin - CoinNext",
           page: "users",
           adminUser: req.user,
-          _str: _str,
-          _: _,
           currencies: MarketHelper.getCurrencyTypes(),
           users: result.rows,
           totalUsers: result.count,
@@ -101,8 +93,6 @@
               title: "User " + user.email + " - " + user.id + " - Admin - CoinNext",
               page: "users",
               adminUser: req.user,
-              _str: _str,
-              _: _,
               currencies: MarketHelper.getCurrencyTypes(),
               user: user,
               wallets: wallets,
@@ -118,8 +108,6 @@
           title: "Wallet " + wallet.id + " - Admin - CoinNext",
           page: "wallets",
           adminUser: req.user,
-          _str: _str,
-          _: _,
           currencies: MarketHelper.getCurrencyTypes(),
           wallet: wallet
         });
@@ -149,8 +137,6 @@
           title: "Wallets - Admin - CoinNext",
           page: "wallets",
           adminUser: req.user,
-          _str: _str,
-          _: _,
           currencies: MarketHelper.getCurrencyTypes(),
           wallets: result.rows,
           totalWallets: result.count,
@@ -186,8 +172,6 @@
           title: "Transactions - Admin - CoinNext",
           page: "transactions",
           adminUser: req.user,
-          _str: _str,
-          _: _,
           currencies: MarketHelper.getCurrencyTypes(),
           transactions: result.rows,
           totalTransactions: result.count,
@@ -228,8 +212,6 @@
           title: "Payments - Admin - CoinNext",
           page: "payments",
           adminUser: req.user,
-          _str: _str,
-          _: _,
           currencies: MarketHelper.getCurrencyTypes(),
           payments: result.rows,
           totalPayments: result.count,
@@ -350,8 +332,6 @@
           title: "Markets - Admin - CoinNext",
           page: "markets",
           adminUser: req.user,
-          _str: _str,
-          _: _,
           currencies: MarketHelper.getCurrencyTypes(),
           markets: markets
         });

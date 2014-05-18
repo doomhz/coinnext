@@ -35,9 +35,9 @@ block content
             td
               a(href="/administratie/user/#{wallet.user_id}", target="_blank") #{wallet.user_id}
             td
-              | #{wallet.getFloat('balance')}
+              | #{_str.toFixed(wallet.getFloat('balance'))} #{wallet.currency}
             td
-              | #{wallet.getFloat('hold_balance')}
+              | #{_str.toFixed(wallet.getFloat('hold_balance'))} #{wallet.currency}
             td
               | #{wallet.created_at.toFormat("DD MMM YYYY HH24:MI")}
             td
