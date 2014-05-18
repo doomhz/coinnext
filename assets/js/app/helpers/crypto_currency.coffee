@@ -5,11 +5,12 @@ window.App.Helpers.CryptoCurrency =
   isValidAddress: (address) ->
     decoded = @base58_decode(address)
     return false  unless decoded.length is 25
-    cksum = decoded.substr(decoded.length - 4)
-    rest = decoded.substr(0, decoded.length - 4)
-    good_cksum = @hex2a(sha256_digest(@hex2a(sha256_digest(rest)))).substr(0, 4)
-    return false  unless cksum is good_cksum
     true
+    #cksum = decoded.substr(decoded.length - 4)
+    #rest = decoded.substr(0, decoded.length - 4)
+    #good_cksum = @hex2a(sha256_digest(@hex2a(sha256_digest(rest)))).substr(0, 4)
+    #return false  unless cksum is good_cksum
+    #true
   
   base58_decode: (string) ->
     table = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
