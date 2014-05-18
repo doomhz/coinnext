@@ -21,8 +21,10 @@ module.exports = (app)->
   app.get "/logout", (req, res)->
     req.logout()
     oldStagingAuth = req.session.staging_auth
+    oldCsrf = req.session.csrfSecret
     req.session.regenerate ()->
       req.session.staging_auth = oldStagingAuth
+      req.session.csrfSecret = oldCsrf
       return res.redirect "/"  if req.accepts "html"
       res.json({})
 
@@ -55,8 +57,10 @@ module.exports = (app)->
     token = req.params.token
     req.logout()
     oldStagingAuth = req.session.staging_auth
+    oldCsrf = req.session.csrfSecret
     req.session.regenerate ()->
       req.session.staging_auth = oldStagingAuth
+      req.session.csrfSecret = oldCsrf
       UserToken.findByToken token, (err, userToken)->
         return res.redirect "/404"  if not userToken
         if req.query.error
@@ -94,8 +98,10 @@ module.exports = (app)->
     token = req.params.token
     req.logout()
     oldStagingAuth = req.session.staging_auth
+    oldCsrf = req.session.csrfSecret
     req.session.regenerate ()->
       req.session.staging_auth = oldStagingAuth
+      req.session.csrfSecret = oldCsrf
       UserToken.findByToken token, (err, userToken)->
         return res.redirect "/404"  if not userToken
         User.findByToken token, (err, user)->
@@ -134,9 +140,11 @@ module.exports = (app)->
             return JsonRenderer.error "Invalid Google Authenticator code", res, 401
           oldSessionPassport = req.session.passport
           oldStagingAuth = req.session.staging_auth
+          oldCsrf = req.session.csrfSecret
           req.session.regenerate ()->
             req.session.passport = oldSessionPassport
             req.session.staging_auth = oldStagingAuth
+            req.session.csrfSecret = oldCsrf
             res.json JsonRenderer.user req.user
             AuthStats.log {ip: req.ip, user: req.user}, req.user.email_auth_enabled and not req.user.recenltySignedUp()
     )(req, res, next)

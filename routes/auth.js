@@ -26,11 +26,13 @@
       return login(req, res, next);
     });
     app.get("/logout", function(req, res) {
-      var oldStagingAuth;
+      var oldCsrf, oldStagingAuth;
       req.logout();
       oldStagingAuth = req.session.staging_auth;
+      oldCsrf = req.session.csrfSecret;
       return req.session.regenerate(function() {
         req.session.staging_auth = oldStagingAuth;
+        req.session.csrfSecret = oldCsrf;
         if (req.accepts("html")) {
           return res.redirect("/");
         }
@@ -77,12 +79,14 @@
       return recaptcha.checkAnswer(GLOBAL.appConfig().recaptcha.private_key, req.connection.remoteAddress, req.body.recaptcha_challenge_field, req.body.recaptcha_response_field);
     });
     app.get("/change-password/:token", function(req, res) {
-      var oldStagingAuth, token;
+      var oldCsrf, oldStagingAuth, token;
       token = req.params.token;
       req.logout();
       oldStagingAuth = req.session.staging_auth;
+      oldCsrf = req.session.csrfSecret;
       return req.session.regenerate(function() {
         req.session.staging_auth = oldStagingAuth;
+        req.session.csrfSecret = oldCsrf;
         return UserToken.findByToken(token, function(err, userToken) {
           var errors;
           if (!userToken) {
@@ -153,12 +157,14 @@
       });
     });
     app.get("/verify/:token", function(req, res) {
-      var oldStagingAuth, token;
+      var oldCsrf, oldStagingAuth, token;
       token = req.params.token;
       req.logout();
       oldStagingAuth = req.session.staging_auth;
+      oldCsrf = req.session.csrfSecret;
       return req.session.regenerate(function() {
         req.session.staging_auth = oldStagingAuth;
+        req.session.csrfSecret = oldCsrf;
         return UserToken.findByToken(token, function(err, userToken) {
           if (!userToken) {
             return res.redirect("/404");
@@ -221,16 +227,18 @@
             return JsonRenderer.error("Invalid credentials", res, 401);
           }
           return UserToken.findByUserAndType(user.id, "google_auth", function(err, googleToken) {
-            var oldSessionPassport, oldStagingAuth;
+            var oldCsrf, oldSessionPassport, oldStagingAuth;
             if (googleToken && !googleToken.isValidGAuthPass(req.body.gauth_pass)) {
               req.logout();
               return JsonRenderer.error("Invalid Google Authenticator code", res, 401);
             }
             oldSessionPassport = req.session.passport;
             oldStagingAuth = req.session.staging_auth;
+            oldCsrf = req.session.csrfSecret;
             return req.session.regenerate(function() {
               req.session.passport = oldSessionPassport;
               req.session.staging_auth = oldStagingAuth;
+              req.session.csrfSecret = oldCsrf;
               res.json(JsonRenderer.user(req.user));
               return AuthStats.log({
                 ip: req.ip,

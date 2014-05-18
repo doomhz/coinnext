@@ -123,11 +123,11 @@
       delete matchedData[0].id;
       delete matchedData[1].id;
       return Order.findById(matchedData[0].order_id, function(err, orderToMatch) {
-        if (!orderToMatch || err) {
+        if (!orderToMatch || err || orderToMatch.status === "completed") {
           return next(new restify.ConflictError("Wrong order to complete " + matchedData[0].order_id + " - " + err));
         }
         return Order.findById(matchedData[1].order_id, function(err, matchingOrder) {
-          if (!matchingOrder || err) {
+          if (!matchingOrder || err || orderToMatch.status === "completed") {
             return next(new restify.ConflictError("Wrong order to complete " + matchedData[1].order_id + " - " + err));
           }
           return GLOBAL.db.sequelize.transaction(function(transaction) {
