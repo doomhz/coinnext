@@ -27,6 +27,7 @@ describe "MarketHelper", ->
     TCO: 12
     CX: 13
     BANK: 14
+    BRM: 15
 
   CURRENCY_NAMES =
     BTC: "Bitcoin"
@@ -43,6 +44,7 @@ describe "MarketHelper", ->
     TCO: "Tacocoin"
     CX: "Xtracoin"
     BANK: "Bankcoin"
+    BRM: "Bitraam"
 
   AVAILABLE_MARKETS =
     LTC_BTC: 1
@@ -58,6 +60,7 @@ describe "MarketHelper", ->
     TCO_BTC: 11
     CX_BTC: 12
     BANK_BTC: 13
+    BRM_BTC: 14
 
   ORDER_TYPES =
     market: 1
@@ -96,6 +99,7 @@ describe "MarketHelper", ->
     TCO: 200000
     CX: 200000
     BANK: 200000
+    BRM: 200000
 
   TOKENS =
     email_confirmation: 1
