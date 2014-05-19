@@ -8,7 +8,9 @@ block content
       .col-main
         #balance.container
           .con-header
-            h3.con-header-title #{currencies[wallet.currency]} Balance
+            h3.con-header-title
+              img(src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==", alt="icon", class="coin-icon #{wallet.currency_name.toLowerCase()}")
+              | #{currencies[wallet.currency]} Balance
           table.trade-data
             tr
               th Balance
