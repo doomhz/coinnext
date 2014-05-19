@@ -23,6 +23,7 @@ CURRENCIES =
   METH: 10
   NLG: 11
   TCO: 12
+  CX: 13
 
 CURRENCY_NAMES =
   BTC: "Bitcoin"
@@ -37,6 +38,7 @@ CURRENCY_NAMES =
   METH: "Cryptometh"
   NLG: "Guldencoin"
   TCO: "Tacocoin"
+  CX: "Xtracoin"
 
 AVAILABLE_MARKETS =
   LTC_BTC: 1
@@ -50,6 +52,7 @@ AVAILABLE_MARKETS =
   METH_BTC: 9
   NLG_BTC: 10
   TCO_BTC: 11
+  CX_BTC: 12
 
 ORDER_TYPES =
   market: 1
@@ -86,6 +89,7 @@ WITHDRAWAL_FEES =
   METH: 200000
   NLG: 200000
   TCO: 200000
+  CX: 200000
 
 TOKENS =
   email_confirmation: 1
