@@ -33,6 +33,7 @@
     , "node-guldencoin": "1.0.2"
     , "node-tacocoin": "1.0.2"
     , "node-xtracoin": "1.0.1"
+    , "node-bankcoin": "1.0.1"
     , "date-utils": "1.2.15"
     , "socket.io": "0.9.16"
     , "socket.io-client": "0.9.16"
