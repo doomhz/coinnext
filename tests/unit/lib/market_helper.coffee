@@ -26,6 +26,7 @@ describe "MarketHelper", ->
     NLG: 11
     TCO: 12
     CX: 13
+    BANK: 14
 
   CURRENCY_NAMES =
     BTC: "Bitcoin"
@@ -41,6 +42,7 @@ describe "MarketHelper", ->
     NLG: "Guldencoin"
     TCO: "Tacocoin"
     CX: "Xtracoin"
+    BANK: "Bankcoin"
 
   AVAILABLE_MARKETS =
     LTC_BTC: 1
@@ -55,6 +57,7 @@ describe "MarketHelper", ->
     NLG_BTC: 10
     TCO_BTC: 11
     CX_BTC: 12
+    BANK_BTC: 13
 
   ORDER_TYPES =
     market: 1
@@ -92,6 +95,7 @@ describe "MarketHelper", ->
     NLG: 200000
     TCO: 200000
     CX: 200000
+    BANK: 200000
 
   TOKENS =
     email_confirmation: 1
