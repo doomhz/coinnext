@@ -5,11 +5,6 @@ math = require("mathjs")
 
 FEE = 0
 
-#CURRENCIES = [
-#  "BTC", "LTC", "PPC", "WDC", "NMC", "QRK",
-#  "NVC", "ZET", "FTC", "XPM", "MEC", "TRC"
-#]
-
 CURRENCIES =
   BTC: 1
   LTC: 2
@@ -26,6 +21,7 @@ CURRENCIES =
   CX: 13
   BANK: 14
   BRM: 15
+  GAY: 16
 
 CURRENCY_NAMES =
   BTC: "Bitcoin"
@@ -43,6 +39,7 @@ CURRENCY_NAMES =
   CX: "Xtracoin"
   BANK: "Bankcoin"
   BRM: "Bitraam"
+  GAY: "Homocoin"
 
 AVAILABLE_MARKETS =
   LTC_BTC: 1
@@ -59,6 +56,7 @@ AVAILABLE_MARKETS =
   CX_BTC: 12
   BANK_BTC: 13
   BRM_BTC: 14
+  GAY_BTC: 15
 
 ORDER_TYPES =
   market: 1
@@ -98,6 +96,7 @@ WITHDRAWAL_FEES =
   CX: 200000
   BANK: 200000
   BRM: 200000
+  GAY: 200000
 
 TOKENS =
   email_confirmation: 1
