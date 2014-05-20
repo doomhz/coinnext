@@ -23,6 +23,9 @@ CURRENCIES =
   BRM: 15
   GAY: 16
   MAX: 17
+  ACC: 18
+  VIO: 19
+  VRC: 20
 
 CURRENCY_NAMES =
   BTC: "Bitcoin"
@@ -42,6 +45,9 @@ CURRENCY_NAMES =
   BRM: "Bitraam"
   GAY: "Homocoin"
   MAX: "Maxcoin"
+  ACC: "Antarcticcoin"
+  VIO: "Violincoin"
+  VRC: "Vericoin"
 
 AVAILABLE_MARKETS =
   LTC_BTC: 1
@@ -60,6 +66,9 @@ AVAILABLE_MARKETS =
   BRM_BTC: 14
   GAY_BTC: 15
   MAX_BTC: 16
+  ACC_BTC: 17
+  VIO_BTC: 18
+  VRC_BTC: 19
 
 ORDER_TYPES =
   market: 1
@@ -101,6 +110,9 @@ WITHDRAWAL_FEES =
   BRM: 200000
   GAY: 200000
   MAX: 200000
+  ACC: 200000
+  VIO: 200000
+  VRC: 200000
 
 TOKENS =
   email_confirmation: 1
