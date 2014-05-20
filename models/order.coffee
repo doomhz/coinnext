@@ -143,6 +143,7 @@ module.exports = (sequelize, DataTypes) ->
             order: [
               ["created_at", "DESC"]
             ]
+          query.limit = options.limit  if options.limit
           if options.status is "open"
             query.where.status = [MarketHelper.getOrderStatus("partiallyCompleted"), MarketHelper.getOrderStatus("open")]
           if options.status is "completed"

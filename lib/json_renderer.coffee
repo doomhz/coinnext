@@ -191,5 +191,31 @@ JsonRenderer =
       marketSummaryStats.push summary
     marketSummaryStats
 
+  lastTrades: (orderLogs)->
+    result = {}
+    result.count = orderLogs.length
+    result.trades = []
+    for orderLog in orderLogs
+      trade = {}
+      trade.type = if orderLog.order.action is "buy" then 0 else 1
+      trade.amount = orderLog.getFloat "matched_amount"
+      trade.price = orderLog.getFloat "unit_price"
+      trade.total = _str.toFixed(trade.amount * trade.price) # TODO review, shold we use math.js?
+      trade.time = orderLog.time
+      result.trades.push trade
+    result
+
+  lastOrders: (action, orders)->
+    result = {}
+    result.count = orders.length
+    result.type = action.toUpperCase()
+    result.orders = []
+    for order in orders
+      lastOrder = {}
+      lastOrder.price = order.getFloat "unit_price"
+      lastOrder.amount = order.getFloat "amount"
+      lastOrder.total =_str.toFixed(lastOrder.amount * lastOrder.price) # TODO review
+      result.orders.push lastOrder
+    result
 
 exports = module.exports = JsonRenderer

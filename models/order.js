@@ -229,6 +229,9 @@
             where: {},
             order: [["created_at", "DESC"]]
           };
+          if (options.limit) {
+            query.limit = options.limit;
+          }
           if (options.status === "open") {
             query.where.status = [MarketHelper.getOrderStatus("partiallyCompleted"), MarketHelper.getOrderStatus("open")];
           }
