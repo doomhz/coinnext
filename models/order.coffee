@@ -148,7 +148,7 @@ module.exports = (sequelize, DataTypes) ->
           if options.status is "completed"
             query.where.status = MarketHelper.getOrderStatus(options.status)
           query.where.action = MarketHelper.getOrderAction(options.action)    if !!MarketHelper.getOrderAction(options.action)
-          query.where.user_id = options.user_id  if options.user_id
+          query.where.user_id = options.user_id  if options.user_id?
           if options.action is "buy"
             query.where.buy_currency = MarketHelper.getCurrency options.currency1
             query.where.sell_currency = MarketHelper.getCurrency options.currency2

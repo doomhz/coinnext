@@ -238,7 +238,7 @@
           if (!!MarketHelper.getOrderAction(options.action)) {
             query.where.action = MarketHelper.getOrderAction(options.action);
           }
-          if (options.user_id) {
+          if (options.user_id != null) {
             query.where.user_id = options.user_id;
           }
           if (options.action === "buy") {

@@ -25,7 +25,9 @@ module.exports = (app)->
       res.json JsonRenderer.order order
 
   app.get "/orders", (req, res)->
-    req.query.user_id = req.user.id  if req.query.user_id?
+    if req.query.user_id?
+      req.query.user_id = req.user.id  if req.user
+      req.query.user_id = 0  if not req.user
     Order.findByOptions req.query, (err, orders)->
       return JsonRenderer.error "Sorry, could not get open orders...", res  if err
       res.json JsonRenderer.orders orders

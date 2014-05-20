@@ -163,7 +163,7 @@ $(document).ready ()->
         type: "open"
         currency1: $openOrders.data "currency1"
         currency2: $openOrders.data "currency2"
-        userId: CONFIG.currentUser.id
+        userId: CONFIG.currentUser.id or "guest"
       hideOnEmpty: true
     openOrders.render()
 

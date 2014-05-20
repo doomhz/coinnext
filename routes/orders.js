@@ -47,7 +47,12 @@
     });
     app.get("/orders", function(req, res) {
       if (req.query.user_id != null) {
-        req.query.user_id = req.user.id;
+        if (req.user) {
+          req.query.user_id = req.user.id;
+        }
+        if (!req.user) {
+          req.query.user_id = 0;
+        }
       }
       return Order.findByOptions(req.query, function(err, orders) {
         if (err) {
