@@ -23,6 +23,7 @@ describe "MarketHelper", ->
     BANK: 14
     BRM: 15
     GAY: 16
+    MAX: 17
 
   CURRENCY_NAMES =
     BTC: "Bitcoin"
@@ -41,6 +42,7 @@ describe "MarketHelper", ->
     BANK: "Bankcoin"
     BRM: "Bitraam"
     GAY: "Homocoin"
+    MAX: "Maxcoin"
 
   AVAILABLE_MARKETS =
     LTC_BTC: 1
@@ -58,6 +60,7 @@ describe "MarketHelper", ->
     BANK_BTC: 13
     BRM_BTC: 14
     GAY_BTC: 15
+    MAX_BTC: 16
 
   ORDER_TYPES =
     market: 1
@@ -98,6 +101,7 @@ describe "MarketHelper", ->
     BANK: 200000
     BRM: 200000
     GAY: 200000
+    MAX: 200000
 
   TOKENS =
     email_confirmation: 1
