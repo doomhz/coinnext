@@ -89,7 +89,8 @@ module.exports = (sequelize, DataTypes) ->
             query.include[0].where.buy_currency = currencies
             query.include[0].where.sell_currency = currencies
           query.order = options.sort_by  if options.sort_by
-          OrderLog.findAll(query).complete callback  
+          query.limit = options.limit  if options.limit
+          OrderLog.findAll(query).complete callback
 
       instanceMethods:
 

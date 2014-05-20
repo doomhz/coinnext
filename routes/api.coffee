@@ -1,4 +1,6 @@
 MarketStats = GLOBAL.db.MarketStats
+TradeStats = GLOBAL.db.TradeStats
+OrderLog = GLOBAL.db.OrderLog
 JsonRenderer = require "./../lib/json_renderer"
 
 module.exports = (app)->
@@ -23,7 +25,12 @@ module.exports = (app)->
   # Fetches the last 100 trades for a given market.
   # Example: /v1/market/trades/MINT/BTC
   app.get "/v1/market/trades/:coin/:exchange", (req, res, next)->
-    res.send [{
+    options = {}
+    options.currency1 = req.params.coin
+    options.currency2 = req.params.exchange
+    OrderLog.findActiveByOptions options, (err, lastTrades)->
+      res.send lastTrades
+    ###res.send [{
         "count":"100",
         "trades":[{
           "type":"1",
@@ -39,7 +46,7 @@ module.exports = (app)->
             "time":"1394498289.2727",  
           }
         ]
-      }]
+      }]###
 
   # Fetches the 50 best priced orders of a given type for a given market.
   # Example: /v1/market/orders/MINT/BTC/BUY

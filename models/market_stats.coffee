@@ -109,6 +109,9 @@ module.exports = (sequelize, DataTypes) ->
         setMarketStatus: (id, status, callback = ()->)->
           MarketStats.update({status: status}, {id: id}).complete callback
 
+        # findEnabledMarkets null, null -> all markets
+        # findEnabledMarkets null, BTC -> all BTC markets
+        # findEnabledMarkets LTC, BTC -> return LTC_BTC market
         findEnabledMarkets: (currency1, currency2, callback = ()->)->
           query =
             where:

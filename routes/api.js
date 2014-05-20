@@ -1,7 +1,11 @@
 (function() {
-  var JsonRenderer, MarketStats;
+  var JsonRenderer, MarketStats, OrderLog, TradeStats;
 
   MarketStats = GLOBAL.db.MarketStats;
+
+  TradeStats = GLOBAL.db.TradeStats;
+
+  OrderLog = GLOBAL.db.OrderLog;
 
   JsonRenderer = require("./../lib/json_renderer");
 
@@ -22,26 +26,32 @@
       });
     });
     app.get("/v1/market/trades/:coin/:exchange", function(req, res, next) {
-      return res.send([
-        {
-          "count": "100",
-          "trades": [
-            {
-              "type": "1",
-              "price": "0.00000023",
-              "amount": "412128.80177019",
-              "total": "0.09478962",
-              "time": "1394498289.2727"
-            }, {
-              "type": "1",
-              "price": "0.00000023",
-              "amount": "412128.80177019",
-              "total": "0.09478962",
-              "time": "1394498289.2727"
+      var options;
+      options = {};
+      options.currency1 = req.params.coin;
+      options.currency2 = req.params.exchange;
+      return OrderLog.findActiveByOptions(options, function(err, lastTrades) {
+        return res.send(lastTrades);
+      });
+
+      /*res.send [{
+          "count":"100",
+          "trades":[{
+            "type":"1",
+            "price":"0.00000023",
+            "amount":"412128.80177019",
+            "total":"0.09478962",
+            "time":"1394498289.2727"
+            },{
+              "type":"1",
+              "price":"0.00000023",
+              "amount":"412128.80177019",
+              "total":"0.09478962",
+              "time":"1394498289.2727",  
             }
           ]
-        }
-      ]);
+        }]
+       */
     });
     app.get("/v1/market/orders/:coin/:exchange/:type", function(req, res, next) {
       return res.send([

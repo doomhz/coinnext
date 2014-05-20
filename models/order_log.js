@@ -130,6 +130,9 @@
           if (options.sort_by) {
             query.order = options.sort_by;
           }
+          if (options.limit) {
+            query.limit = options.limit;
+          }
           return OrderLog.findAll(query).complete(callback);
         }
       },
