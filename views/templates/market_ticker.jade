@@ -1,12 +1,14 @@
 script(type="text/template", id="market-ticker-tpl")
   ul
     |<% _.each(marketStats.attributes, function (info, type) { var growthRatio = _.str.roundTo(info.growth_ratio, 2); %>
+    |<% if (info.label) { %>
     li.market-ticker-coin(data-market-type="<%= type %>", data-market-currency="<%= info.label %>")
       // a(href='', title='Hide Exchange').hide-coin <i class='icon-hide'></i>
       a(href="/trade/<%= type.replace('_', '/') %>")
         .label <%= info.label %>
         div(class="rate <%= growthRatio > 0 ? 'up' : '' %> <%= growthRatio < 0 ? 'down' : '' %> <%= growthRatio == 0 ? 'none' : '' %>") <%= _.str.toFixed(info.last_price, 8) %>
         .move-coin <i class="icon-reorder"></i>
+    |<% } %>
     |<% }); %>
 
 

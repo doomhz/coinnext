@@ -1,4 +1,7 @@
 MarketHelper = require "../lib/market_helper"
+math = require("mathjs")
+  number: "bignumber"
+  decimals: 8
 
 module.exports = (sequelize, DataTypes) ->
 
@@ -47,6 +50,11 @@ module.exports = (sequelize, DataTypes) ->
           @setDataValue "status", MarketHelper.getOrderStatus(status)
     ,
       tableName: "order_logs"
+      getterMethods:
+
+        total: ()->
+          math.multiply @matched_amount, @unit_price
+
       classMethods:
 
         logMatch: (matchedData, transaction, callback = ()->)->
@@ -89,7 +97,8 @@ module.exports = (sequelize, DataTypes) ->
             query.include[0].where.buy_currency = currencies
             query.include[0].where.sell_currency = currencies
           query.order = options.sort_by  if options.sort_by
-          OrderLog.findAll(query).complete callback  
+          query.limit = options.limit  if options.limit
+          OrderLog.findAll(query).complete callback
 
       instanceMethods:
 

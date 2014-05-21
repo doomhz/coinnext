@@ -113,3 +113,4 @@ require('./routes/orders')(app);
 require('./routes/order_logs')(app);
 require('./routes/chat')(app);
 require('./routes/errors')(app);
+require('./routes/api')(app);
