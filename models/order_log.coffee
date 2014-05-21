@@ -53,7 +53,7 @@ module.exports = (sequelize, DataTypes) ->
       getterMethods:
 
         total: ()->
-          math.multiply @matched_amount, @unit_price
+          math.multiply @matched_amount, MarketHelper.fromBigint @unit_price
 
       classMethods:
 

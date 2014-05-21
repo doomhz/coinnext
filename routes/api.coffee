@@ -43,6 +43,16 @@ module.exports = (app)->
     options.currency2 = req.params.exchange
     options.published = true
     options.limit = 50
+    if options.action is "buy"
+      options.sort_by = [
+        ["unit_price", "DESC"],
+        ["created_at", "ASC"]
+      ]
+    else if options.action is "sell"
+      options.sort_by = [
+        ["unit_price", "ASC"],
+        ["created_at", "ASC"]
+      ]
     Order.findByOptions options, (err, orders)->
       res.send JsonRenderer.lastOrders options.action, orders
 

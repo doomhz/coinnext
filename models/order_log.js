@@ -71,7 +71,7 @@
       tableName: "order_logs",
       getterMethods: {
         total: function() {
-          return math.multiply(this.matched_amount, this.unit_price);
+          return math.multiply(this.matched_amount, MarketHelper.fromBigint(this.unit_price));
         }
       },
       classMethods: {

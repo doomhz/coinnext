@@ -46,6 +46,11 @@
       options.currency2 = req.params.exchange;
       options.published = true;
       options.limit = 50;
+      if (options.action === "buy") {
+        options.sort_by = [["unit_price", "DESC"], ["created_at", "ASC"]];
+      } else if (options.action === "sell") {
+        options.sort_by = [["unit_price", "ASC"], ["created_at", "ASC"]];
+      }
       return Order.findByOptions(options, function(err, orders) {
         return res.send(JsonRenderer.lastOrders(options.action, orders));
       });

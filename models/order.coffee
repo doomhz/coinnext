@@ -130,7 +130,7 @@ module.exports = (sequelize, DataTypes) ->
           return @left_amount  if @action is "sell"
 
         total: ()->
-          math.multiply @amount, @unit_price
+          math.multiply @amount, MarketHelper.fromBigint @unit_price
       
       classMethods:
         
