@@ -53,7 +53,6 @@ module.exports = (app)->
         ["unit_price", "ASC"],
         ["created_at", "ASC"]
       ]
-
     Order.findByOptions options, (err, orders)->
       res.send JsonRenderer.lastOrders options.action, orders
 

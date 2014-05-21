@@ -208,7 +208,7 @@
           }
         },
         total: function() {
-          return math.multiply(this.amount, this.unit_price);
+          return math.multiply(this.amount, MarketHelper.fromBigint(this.unit_price));
         }
       },
       classMethods: {
