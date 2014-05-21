@@ -28,6 +28,12 @@
         allowNull: false,
         comment: "FLOAT x 100000000"
       },
+      yesterday_price: {
+        type: DataTypes.BIGINT.UNSIGNED,
+        defaultValue: 0,
+        allowNull: false,
+        comment: "FLOAT x 100000000"
+      },
       day_high: {
         type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
@@ -35,6 +41,18 @@
         comment: "FLOAT x 100000000"
       },
       day_low: {
+        type: DataTypes.BIGINT.UNSIGNED,
+        defaultValue: 0,
+        allowNull: false,
+        comment: "FLOAT x 100000000"
+      },
+      top_bid: {
+        type: DataTypes.BIGINT.UNSIGNED,
+        defaultValue: 0,
+        allowNull: false,
+        comment: "FLOAT x 100000000"
+      },
+      top_ask: {
         type: DataTypes.BIGINT.UNSIGNED,
         defaultValue: 0,
         allowNull: false,
@@ -123,9 +141,12 @@
                 marketStats.day_low = orderLog.unit_price;
               }
               if (order.action === "sell") {
+                if (orderLog.unit_price > marketStats.top_ask) {
+                  marketStats.top_ask = orderLog.unit_price;
+                }
                 marketStats.volume1 = math.add(marketStats.volume1, orderLog.matched_amount);
                 marketStats.volume2 = math.select(marketStats.volume2).add(orderLog.result_amount).add(orderLog.fee).done();
-                return GLOBAL.db.TradeStats.findLast24hByType(type, function(err, tradeStats) {
+                GLOBAL.db.TradeStats.findLast24hByType(type, function(err, tradeStats) {
                   var growthRatio;
                   if (tradeStats == null) {
                     tradeStats = {};
@@ -134,6 +155,11 @@
                   marketStats.growth_ratio = math.round(MarketHelper.toBigint(growthRatio), 0);
                   return marketStats.save().complete(callback);
                 });
+              }
+              if (order.action === "buy") {
+                if (orderLog.unit_price > marketStats.top_bid) {
+                  return marketStats.top_bid = orderLog.unit_price;
+                }
               }
             });
           });
@@ -199,8 +225,11 @@
           today = new Date().getDate();
           if (!this.today || (today !== this.today.getDate())) {
             this.today = new Date();
+            this.yesterday_price = this.last_price;
             this.day_high = 0;
             this.day_low = 0;
+            this.top_bid = 0;
+            this.top_ask = 0;
             this.volume1 = 0;
             return this.volume2 = 0;
           }

@@ -19,12 +19,27 @@ module.exports = (sequelize, DataTypes) ->
         defaultValue: 0
         allowNull: false
         comment: "FLOAT x 100000000"
+      yesterday_price:
+        type: DataTypes.BIGINT.UNSIGNED
+        defaultValue: 0
+        allowNull: false
+        comment: "FLOAT x 100000000"
       day_high:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
         comment: "FLOAT x 100000000"
       day_low:
+        type: DataTypes.BIGINT.UNSIGNED
+        defaultValue: 0
+        allowNull: false
+        comment: "FLOAT x 100000000"
+      top_bid:
+        type: DataTypes.BIGINT.UNSIGNED
+        defaultValue: 0
+        allowNull: false
+        comment: "FLOAT x 100000000"
+      top_ask:
         type: DataTypes.BIGINT.UNSIGNED
         defaultValue: 0
         allowNull: false
@@ -83,6 +98,7 @@ module.exports = (sequelize, DataTypes) ->
               marketStats.day_high = orderLog.unit_price  if orderLog.unit_price > marketStats.day_high
               marketStats.day_low = orderLog.unit_price  if orderLog.unit_price < marketStats.day_low or marketStats.day_low is 0
               if order.action is "sell"
+                marketStats.top_ask = orderLog.unit_price  if orderLog.unit_price > marketStats.top_ask
                 # Alt currency volume traded
                 marketStats.volume1 = math.add marketStats.volume1, orderLog.matched_amount
                 # BTC Volume Traded
@@ -91,6 +107,8 @@ module.exports = (sequelize, DataTypes) ->
                   growthRatio = MarketStats.calculateGrowthRatio tradeStats.close_price, orderLog.unit_price
                   marketStats.growth_ratio = math.round MarketHelper.toBigint(growthRatio), 0
                   marketStats.save().complete callback
+              if order.action is "buy"
+                marketStats.top_bid = orderLog.unit_price  if orderLog.unit_price > marketStats.top_bid
 
         calculateGrowthRatio: (lastPrice, newPrice)->
           return 100  if not lastPrice
@@ -132,8 +150,11 @@ module.exports = (sequelize, DataTypes) ->
           today = new Date().getDate()
           if not @today or (today isnt @today.getDate())
             @today = new Date()
+            @yesterday_price = @last_price
             @day_high = 0
             @day_low = 0
+            @top_bid = 0
+            @top_ask = 0
             @volume1 = 0
             @volume2 = 0
   

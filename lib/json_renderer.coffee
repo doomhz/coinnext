@@ -131,9 +131,12 @@ JsonRenderer =
 
   marketStats: (marketStats)->
     for type, stats of marketStats
+      stats.yesterday_price = stats.getFloat "yesterday_price"
       stats.last_price = stats.getFloat "last_price"
       stats.day_high = stats.getFloat "day_high"
       stats.day_low = stats.getFloat "day_low"
+      stats.top_bid = stats.getFloat "top_bid"
+      stats.top_ask = stats.getFloat "top_ask"
       stats.volume1 = stats.getFloat "volume1"
       stats.volume2 = stats.getFloat "volume2"
       stats.growth_ratio = stats.getFloat "growth_ratio"
@@ -181,13 +184,13 @@ JsonRenderer =
         "code": stats.label
         "exchange": stats.exchange
         "last_price": stats.getFloat "last_price"
-        #"yesterday_price": stats.getFloat "last_price"
+        "yesterday_price": stats.getFloat "yesterday_price"
         "change": stats.getFloat "growth_ratio"
         "24hhigh": stats.getFloat "day_high"
         "24hlow": stats.getFloat "day_low"
         "24hvol": stats.getFloat "volume1"
-        # "top_bid": 0 # TODO
-        # "top_ask": 0 # TODO
+        "top_bid": stats.getFloat "top_bid"
+        "top_ask": stats.getFloat "top_ask"
       marketSummaryStats.push summary
     marketSummaryStats
 

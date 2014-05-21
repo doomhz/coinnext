@@ -17,6 +17,7 @@ task "db:seed_market_stats", "Seed default market stats", ()->
     MarketStats.create(stats).complete ()->
 
 task "db:seed_trade_stats", "Seed default trade stats", ()->
+  return console.log "Not in production!"  if environment is "production"
   TradeStats = GLOBAL.db.TradeStats
   tradeStats = require './models/seeds/trade_stats'
   now = Date.now()

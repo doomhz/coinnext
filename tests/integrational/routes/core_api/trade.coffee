@@ -284,6 +284,7 @@ describe "Trade Api", ->
                 stats["LTC_BTC"].last_price.should.eql MarketHelper.toBigint 0.05
                 stats["LTC_BTC"].day_high.should.eql MarketHelper.toBigint 0.05
                 stats["LTC_BTC"].day_low.should.eql MarketHelper.toBigint 0.05
+                stats["LTC_BTC"].top_ask.should.eql MarketHelper.toBigint 0.05
                 stats["LTC_BTC"].volume1.should.eql MarketHelper.toBigint 5
                 stats["LTC_BTC"].volume2.should.eql MarketHelper.toBigint 0.25
                 new Date(stats["LTC_BTC"].today).getDate().should.eql new Date().getDate()
