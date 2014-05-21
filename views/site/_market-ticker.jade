@@ -5,6 +5,14 @@
       // a(href='').edit-ticker <i class='icon-list-ul'></i>
     nav#market-ticker.market-ticker-coins
 
+      ul
+        - for (i = 1; i < 20; i++)
+          li.market-ticker-coin(data-market-type="", data-market-currency="")
+            a(href="#")
+              .label
+              div(class="rate")
+              .move-coin <i class="icon-reorder"></i>
+
     .add-coin
       select
         option(val='') Display Exchange

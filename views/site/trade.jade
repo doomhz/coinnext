@@ -8,6 +8,20 @@ block content
       .col-right
         - var coinStats = marketStats[currency1 + "_" + currency2];
         #coin-stats.coin-stats
+          table.trade-data
+            tr.last-price
+              th Last Price:
+              td
+                span(class="rate")
+            tr.high-price
+              th 24hr High:
+              td 
+            tr.low-price
+              th 24hr Low:
+              td 
+            tr.volume
+              th Volume:
+              td 
         
         - if (user)
           - if (user.chat_enabled)
