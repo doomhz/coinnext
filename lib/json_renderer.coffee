@@ -181,7 +181,7 @@ JsonRenderer =
         "code": stats.label
         "exchange": stats.exchange
         "last_price": stats.getFloat "last_price"
-        "yesterday_price": stats.getFloat "last_price"
+        #"yesterday_price": stats.getFloat "last_price"
         "change": stats.getFloat "growth_ratio"
         "24hhigh": stats.getFloat "day_high"
         "24hlow": stats.getFloat "day_low"
