@@ -50,8 +50,8 @@ TradeHelper =
       order_id: order.id
       type: order.type
       action: order.action
-      buy_currency: order.buy_currency
-      sell_currency: order.sell_currency
+      buy_currency: MarketHelper.getCurrency order.buy_currency
+      sell_currency: MarketHelper.getCurrency order.sell_currency
       amount: order.amount
       unit_price: order.unit_price
     uri = "#{GLOBAL.appConfig().engine_api_host}/order/#{order.id}"
