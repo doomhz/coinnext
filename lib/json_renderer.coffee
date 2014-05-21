@@ -131,21 +131,21 @@ JsonRenderer =
 
   marketStats: (marketStats)->
     for type, stats of marketStats
-      stats.last_price = MarketHelper.fromBigint stats.last_price
-      stats.day_high = MarketHelper.fromBigint stats.day_high
-      stats.day_low = MarketHelper.fromBigint stats.day_low
-      stats.volume1 = MarketHelper.fromBigint stats.volume1
-      stats.volume2 = MarketHelper.fromBigint stats.volume2
-      stats.growth_ratio = MarketHelper.fromBigint stats.growth_ratio
+      stats.last_price = stats.getFloat "last_price"
+      stats.day_high = stats.getFloat "day_high"
+      stats.day_low = stats.getFloat "day_low"
+      stats.volume1 = stats.getFloat "volume1"
+      stats.volume2 = stats.getFloat "volume2"
+      stats.growth_ratio = stats.getFloat "growth_ratio"
     marketStats
 
   tradeStats: (tradeStats)->
     for stats in tradeStats
-      stats.open_price = MarketHelper.fromBigint stats.open_price
-      stats.close_price = MarketHelper.fromBigint stats.close_price
-      stats.high_price = MarketHelper.fromBigint stats.high_price
-      stats.low_price = MarketHelper.fromBigint stats.low_price
-      stats.volume = MarketHelper.fromBigint stats.volume
+      stats.open_price = stats.getFloat "open_price"
+      stats.close_price = stats.getFloat "close_price"
+      stats.high_price = stats.getFloat "high_price"
+      stats.low_price = stats.getFloat "low_price"
+      stats.volume = stats.getFloat "volume"
     tradeStats
 
   error: (err, res, code = 409, log = true)->
@@ -180,14 +180,14 @@ JsonRenderer =
         "market_id": stats.id
         "code": stats.label
         "exchange": stats.exchange
-        "last_price": MarketHelper.fromBigint stats.last_price
-        "yesterday_price": MarketHelper.fromBigint stats.last_price
-        "change": MarketHelper.fromBigint stats.growth_ratio
-        "24hhigh": MarketHelper.fromBigint stats.day_high
-        "24hlow": MarketHelper.fromBigint stats.day_low
-        "24hvol": MarketHelper.fromBigint stats.volume1
-        "top_bid": 0 # TODO
-        "top_ask": 0 # TODO
+        "last_price": stats.getFloat "last_price"
+        "yesterday_price": stats.getFloat "last_price"
+        "change": stats.getFloat "growth_ratio"
+        "24hhigh": stats.getFloat "day_high"
+        "24hlow": stats.getFloat "day_low"
+        "24hvol": stats.getFloat "volume1"
+        # "top_bid": 0 # TODO
+        # "top_ask": 0 # TODO
       marketSummaryStats.push summary
     marketSummaryStats
 
@@ -200,7 +200,7 @@ JsonRenderer =
       trade.type = if orderLog.order.action is "buy" then 0 else 1
       trade.amount = orderLog.getFloat "matched_amount"
       trade.price = orderLog.getFloat "unit_price"
-      trade.total = _str.toFixed(trade.amount * trade.price) # TODO review, shold we use math.js?
+      trade.total = orderLog.getFloat "total"
       trade.time = orderLog.time
       result.trades.push trade
     result
@@ -214,7 +214,7 @@ JsonRenderer =
       lastOrder = {}
       lastOrder.price = order.getFloat "unit_price"
       lastOrder.amount = order.getFloat "amount"
-      lastOrder.total =_str.toFixed(lastOrder.amount * lastOrder.price) # TODO review
+      lastOrder.total = order.getFloat "total"
       result.orders.push lastOrder
     result
 

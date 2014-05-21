@@ -1,7 +1,12 @@
 (function() {
-  var MarketHelper;
+  var MarketHelper, math;
 
   MarketHelper = require("../lib/market_helper");
+
+  math = require("mathjs")({
+    number: "bignumber",
+    decimals: 8
+  });
 
   module.exports = function(sequelize, DataTypes) {
     var OrderLog;
@@ -64,6 +69,11 @@
       }
     }, {
       tableName: "order_logs",
+      getterMethods: {
+        total: function() {
+          return math.multiply(this.matched_amount, this.unit_price);
+        }
+      },
       classMethods: {
         logMatch: function(matchedData, transaction, callback) {
           if (callback == null) {

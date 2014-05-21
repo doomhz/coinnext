@@ -58,10 +58,11 @@ block content
               th Volume (24h)
               th Change (24h)
             - each info, type in marketStats
-              tr
-                td <a href="/trade/#{type.replace("_", "/")}">#{type.replace("_", "/")}</a>
-                td #{currencies[info.label]}
-                td #{_str.toFixed(info.last_price)}
-                td #{_str.toFixed(info.volume1)} #{type.split("_")[0]}
-                -var growthRatio = _str.roundTo(info.growth_ratio, 2)
-                td(class="rate #{growthRatio > 0 ? 'up' : ''} #{growthRatio < 0 ? 'down' : ''} #{growthRatio == 0 ? 'none' : ''}") #{_str.toFixed(Math.abs(growthRatio), 2)}%
+              - if (info.label)
+                tr
+                  td <a href="/trade/#{type.replace("_", "/")}">#{type.replace("_", "/")}</a>
+                  td #{currencies[info.label]}
+                  td #{_str.toFixed(info.last_price)}
+                  td #{_str.toFixed(info.volume1)} #{type.split("_")[0]}
+                  -var growthRatio = _str.roundTo(info.growth_ratio, 2)
+                  td(class="rate #{growthRatio > 0 ? 'up' : ''} #{growthRatio < 0 ? 'down' : ''} #{growthRatio == 0 ? 'none' : ''}") #{_str.toFixed(Math.abs(growthRatio), 2)}%

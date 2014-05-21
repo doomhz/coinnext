@@ -77,10 +77,14 @@
       tableName: "market_stats",
       getterMethods: {
         label: function() {
-          return this.type.substr(0, this.type.indexOf("_"));
+          if (this.type) {
+            return this.type.substr(0, this.type.indexOf("_"));
+          }
         },
         exchange: function() {
-          return this.type.substr(this.type.indexOf("_") + 1);
+          if (this.type) {
+            return this.type.substr(this.type.indexOf("_") + 1);
+          }
         }
       },
       classMethods: {

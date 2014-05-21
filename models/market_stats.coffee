@@ -60,10 +60,10 @@ module.exports = (sequelize, DataTypes) ->
       getterMethods:
 
         label: ()->
-          @type.substr 0, @type.indexOf("_")
+          @type.substr 0, @type.indexOf("_")  if @type
 
         exchange: ()->
-          @type.substr @type.indexOf("_") + 1
+          @type.substr @type.indexOf("_") + 1  if @type
 
       classMethods:
         
