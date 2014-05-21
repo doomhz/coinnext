@@ -14,7 +14,7 @@ $(document).ready ()->
     _.str.roundTo number, 8
 
   _.str.toFixed = (number, decimals = 8)->
-    _.str.rtrim(_.str.rtrim(parseFloat(number).toFixed(decimals), "0"), ".")
+    parseFloat(number).toFixed(decimals)
 
   errorLogger = new App.ErrorLogger
 
