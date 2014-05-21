@@ -103,6 +103,43 @@
               return callback(err, tradeStats);
             });
           });
+        },
+        findByOptions: function(options, callback) {
+          var halfHour, marketId, oneDay, oneHour, period, query, sixHours, startTime, threeDays;
+          if (options.marketId) {
+            marketId = options.marketId;
+          }
+          if (options.period) {
+            period = options.period;
+          }
+          halfHour = 1800000;
+          oneHour = 2 * halfHour;
+          sixHours = 6 * oneHour;
+          oneDay = 24 * oneHour;
+          threeDays = 3 * oneDay;
+          switch (period) {
+            case "6hh":
+              startTime = Date.now() - sixHours - halfHour;
+              break;
+            case "1DD":
+              startTime = Date.now() - oneDay - halfHour;
+              break;
+            case "3DD":
+              startTime = Date.now() - threeDays - halfHour;
+              break;
+            default:
+              startTime = Date.now() - sixHours - halfHour;
+          }
+          query = {
+            where: {
+              type: marketId,
+              start_time: {
+                gt: startTime
+              }
+            },
+            order: [["start_time", "DESC"]]
+          };
+          return TradeStats.findAll(query).complete(callback);
         }
       },
       instanceMethods: {

@@ -221,4 +221,18 @@ JsonRenderer =
       result.orders.push lastOrder
     result
 
+  chartData: (tradeStats)->
+    result = []
+    for periodStat in tradeStats
+      stat = {}
+      stat.date = periodStat.start_time
+      stat.open = periodStat.getFloat "open_price"
+      stat.close = periodStat.getFloat "close_price"
+      stat.high = periodStat.getFloat "high_price"
+      stat.low = periodStat.getFloat "low_price"
+      stat.coin_volume = periodStat.getFloat "volume"
+      #stat.exchange_volume = periodStat.getFloat "" # TODO get BTC volume here
+      result.push stat
+    result
+
 exports = module.exports = JsonRenderer

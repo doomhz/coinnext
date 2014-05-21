@@ -37,7 +37,7 @@
         return res.send(JsonRenderer.lastTrades(orderLogs));
       });
     });
-    return app.get("/v1/market/orders/:coin/:exchange/:type", function(req, res, next) {
+    app.get("/v1/market/orders/:coin/:exchange/:type", function(req, res, next) {
       var options;
       options = {};
       options.status = "open";
@@ -55,26 +55,17 @@
         return res.send(JsonRenderer.lastOrders(options.action, orders));
       });
     });
-
-    /*app.get "/v1/market/chartdata/:market_id/:period?", (req, res, next)->
-      res.send [{
-          "date":"2014-02-09 14:20",
-          "open":"0.00000006",
-          "close":"0.00000006",
-          "high":"0.00000006",
-          "low":"0.00000003",
-          "exchange_volume":"0.00002145",
-          "coin_volume":"608.50000000",
-        },{
-          "date":"2014-02-09 14:20",
-          "open":"0.00000006",
-          "close":"0.00000006",
-          "high":"0.00000006",
-          "low":"0.00000003",
-          "exchange_volume":"0.00002145",
-          "coin_volume":"608.50000000",
-        }]
-     */
+    return app.get("/v1/market/chartdata/:market_id/:period?", function(req, res, next) {
+      var options;
+      options = {};
+      options.marketId = req.params.market_id;
+      if (req.params.period != null) {
+        options.period = req.params.period;
+      }
+      return TradeStats.findByOptions(options, function(err, tradeStats) {
+        return res.send(JsonRenderer.chartData(tradeStats));
+      });
+    });
   };
 
 }).call(this);

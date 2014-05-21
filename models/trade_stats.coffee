@@ -81,6 +81,30 @@ module.exports = (sequelize, DataTypes) ->
             TradeStats.find(query).complete (err, tradeStats)->
               callback err, tradeStats
 
+        findByOptions: (options, callback)->
+          marketId = options.marketId if options.marketId
+          period = options.period if options.period
+          halfHour = 1800000
+          oneHour = 2 * halfHour
+          sixHours = 6 * oneHour
+          oneDay = 24 * oneHour
+          threeDays = 3 * oneDay
+          switch period
+            when "6hh" then startTime = Date.now() - sixHours - halfHour
+            when "1DD" then startTime = Date.now() - oneDay - halfHour
+            when "3DD" then startTime = Date.now() - threeDays - halfHour
+            else startTime = Date.now() - sixHours - halfHour
+          query = 
+            where:
+              type: marketId
+              start_time:
+                gt: startTime
+            order: [
+              ["start_time", "DESC"]
+            ]
+          TradeStats.findAll(query).complete callback
+
+
       instanceMethods:
 
         getFloat: (attribute)->
