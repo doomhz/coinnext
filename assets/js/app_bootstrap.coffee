@@ -58,7 +58,7 @@ $(document).ready ()->
     marketTicker = new App.MarketTickerView
       el: $marketTicker
       model: new App.MarketStatsModel
-    marketTicker.render()
+    #marketTicker.render()
 
   # Funds page
   $finances = $("#finances")
@@ -147,7 +147,7 @@ $(document).ready ()->
       model: new App.MarketStatsModel
       currency1: $trade.data "currency1"
       currency2: $trade.data "currency2"
-    trade.render()
+    trade.setupFormValidators()
 
     tradeChart = new App.TradeChartView
       el: $trade.find("#trade-chart")

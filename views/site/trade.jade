@@ -12,16 +12,17 @@ block content
             tr.last-price
               th Last Price:
               td
-                span(class="rate")
+                | #{_str.toFixed(coinStats.last_price)} #{currency2} 
+                span(class="rate #{coinStats.growth_ratio > 0 ? 'up' : ''} #{coinStats.growth_ratio < 0 ? 'down' : ''} #{coinStats.growth_ratio == 0 ? 'none' : ''}") #{_str.roundTo(coinStats.growth_ratio, 2) * (coinStats.growth_ratio < 0 ? -1 : 1)}%
             tr.high-price
               th 24hr High:
-              td 
+              td #{_str.toFixed(coinStats.day_high)} #{currency2}
             tr.low-price
               th 24hr Low:
-              td 
+              td #{_str.toFixed(coinStats.day_low)} #{currency2}
             tr.volume
               th Volume:
-              td 
+              td #{_str.satoshiRound(coinStats.volume2)} #{currency2}
         
         - if (user)
           - if (user.chat_enabled)
