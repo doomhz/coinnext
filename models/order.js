@@ -206,6 +206,9 @@
           if (this.action === "sell") {
             return this.left_amount;
           }
+        },
+        total: function() {
+          return math.multiply(this.matched_amount, this.unit_price);
         }
       },
       classMethods: {

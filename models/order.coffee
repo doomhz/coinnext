@@ -128,6 +128,9 @@ module.exports = (sequelize, DataTypes) ->
         left_hold_balance: ()->
           return math.multiply @left_amount, MarketHelper.fromBigint @unit_price  if @action is "buy"
           return @left_amount  if @action is "sell"
+
+        total: ()->
+          math.multiply @matched_amount, @unit_price
       
       classMethods:
         
