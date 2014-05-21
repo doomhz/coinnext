@@ -1,3 +1,5 @@
+coind = require "node-coind"
+
 class CryptoWallet
 
   confirmations: null
@@ -21,11 +23,18 @@ class CryptoWallet
   constructor: (options)->
     options = @loadOptions() if not options
     @createClient(options)
+    @setupCurrency(options)
     @setupConfirmations(options)
     @setupWallet(options)
 
   createClient: (options)->
     options.client.sslCa = @loadCertificate options.client.sslCa  if options.client.sslCa
+    @client = new coind.Client options.client
+
+  setupCurrency: (options)->
+    @currency = options.currency
+    @initialCurrency = options.initialCurrency or @currency
+    @currencyName = options.currencyName
 
   setupConfirmations: (options)->
     @confirmations = options.confirmations or @confirmations
