@@ -7,69 +7,26 @@ describe "MarketHelper", ->
   FEE = 0
 
   CURRENCIES =
-    BTC: 1
-    LTC: 2
-    PPC: 3
-    DOGE: 4
-    NMC: 5
-    DRK: 6
-    XPM: 7
-    BC: 8
-    VTC: 9
-    METH: 10
-    NLG: 11
-    TCO: 12
-    CX: 13
-    BANK: 14
-    BRM: 15
-    GAY: 16
-    MAX: 17
-    ACC: 18
-    VIO: 19
+    BTC: 1, LTC: 2, PPC: 3, DOGE: 4, NMC: 5, DRK: 6, XPM: 7
+    BC: 8, VTC: 9, METH: 10, NLG: 11, TCO: 12, CX: 13
+    BANK: 14, BRM: 15, GAY: 16, MAX: 17, ACC: 18, VIO: 19
     VRC: 20
 
   CURRENCY_NAMES =
-    BTC: "Bitcoin"
-    LTC: "Litecoin"
-    PPC: "Peercoin"
-    DOGE: "Dogecoin"
-    NMC: "Namecoin"
-    DRK: "Darkcoin"
-    XPM: "Primecoin"
-    BC: "Blackcoin"
-    VTC: "Vertcoin"
-    METH: "Cryptometh"
-    NLG: "Guldencoin"
-    TCO: "Tacocoin"
-    CX: "Xtracoin"
-    BANK: "Bankcoin"
-    BRM: "Bitraam"
-    GAY: "Homocoin"
-    MAX: "Maxcoin"
-    ACC: "Antarcticcoin"
-    VIO: "Violincoin"
-    VRC: "Vericoin"
+    BTC: "Bitcoin", LTC: "Litecoin", PPC: "Peercoin"
+    DOGE: "Dogecoin", NMC: "Namecoin", DRK: "Darkcoin"
+    XPM: "Primecoin", BC: "Blackcoin", VTC: "Vertcoin"
+    METH: "Cryptometh", NLG: "Guldencoin", TCO: "Tacocoin"
+    CX: "Xtracoin", BANK: "Bankcoin", BRM: "Bitraam"
+    GAY: "Homocoin", MAX: "Maxcoin", ACC: "Antarcticcoin"
+    VIO: "Violincoin", VRC: "Vericoin"
 
   AVAILABLE_MARKETS =
-    LTC_BTC: 1
-    PPC_BTC: 2
-    DOGE_BTC: 3
-    NMC_BTC: 4
-    DRK_BTC: 5
-    XPM_BTC: 6
-    BC_BTC: 7
-    VTC_BTC: 8
-    METH_BTC: 9
-    NLG_BTC: 10
-    TCO_BTC: 11
-    CX_BTC: 12
-    BANK_BTC: 13
-    BRM_BTC: 14
-    GAY_BTC: 15
-    MAX_BTC: 16
-    ACC_BTC: 17
-    VIO_BTC: 18
-    VRC_BTC: 19
+    LTC_BTC: 1, PPC_BTC: 2, DOGE_BTC: 3, NMC_BTC: 4
+    DRK_BTC: 5, XPM_BTC: 6, BC_BTC: 7, VTC_BTC: 8, METH_BTC: 9
+    NLG_BTC: 10, TCO_BTC: 11, CX_BTC: 12, BANK_BTC: 13
+    BRM_BTC: 14, GAY_BTC: 15, MAX_BTC: 16, ACC_BTC: 17
+    VIO_BTC: 18, VRC_BTC: 19
 
   ORDER_TYPES =
     market: 1
@@ -98,23 +55,9 @@ describe "MarketHelper", ->
     LTC: 200000
     PPC: 2000000
     DOGE: 200000000
-    NMC: 200000
-    DRK: 200000
-    XPM: 200000
-    BC: 200000
-    VTC: 200000
-    METH: 200000
-    NLG: 200000
-    TCO: 200000
-    CX: 200000
-    BANK: 200000
-    BRM: 200000
-    GAY: 200000
-    MAX: 200000
-    ACC: 200000
-    VIO: 200000
-    VRC: 200000
 
+  DEFAULT_WITHDRAWAL_FEE = 200000
+    
   TOKENS =
     email_confirmation: 1
     google_auth: 2
@@ -324,5 +267,8 @@ describe "MarketHelper", ->
 
   describe "getWithdrawalFee", ()->
     it "returns the withdrawal fee per currency", ()->
-      for currency, fee of WITHDRAWAL_FEES
-        MarketHelper.getWithdrawalFee(currency).should.equal fee
+      for currency of CURRENCIES
+        if WITHDRAWAL_FEES[currency]?
+          MarketHelper.getWithdrawalFee(currency).should.equal WITHDRAWAL_FEES[currency]
+        else
+          MarketHelper.getWithdrawalFee(currency).should.equal DEFAULT_WITHDRAWAL_FEE
