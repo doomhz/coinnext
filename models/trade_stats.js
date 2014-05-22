@@ -134,7 +134,7 @@
             where: {
               type: marketId,
               start_time: {
-                gt: startTime
+                gt: new Date(startTime)
               }
             },
             order: [["start_time", "DESC"]]
