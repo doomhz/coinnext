@@ -122,15 +122,15 @@
       matchedData = req.body;
       delete matchedData[0].id;
       delete matchedData[1].id;
-      return Order.findById(matchedData[0].order_id, function(err, orderToMatch) {
-        if (!orderToMatch || err || orderToMatch.status === "completed") {
-          return next(new restify.ConflictError("Wrong order to complete " + matchedData[0].order_id + " - " + err));
-        }
-        return Order.findById(matchedData[1].order_id, function(err, matchingOrder) {
-          if (!matchingOrder || err || orderToMatch.status === "completed") {
-            return next(new restify.ConflictError("Wrong order to complete " + matchedData[1].order_id + " - " + err));
+      return GLOBAL.db.sequelize.transaction(function(transaction) {
+        return Order.findByIdWithTransaction(matchedData[0].order_id, transaction, function(err, orderToMatch) {
+          if (!orderToMatch || err || orderToMatch.status === "completed") {
+            return next(new restify.ConflictError("Wrong order to complete " + matchedData[0].order_id + " - " + err));
           }
-          return GLOBAL.db.sequelize.transaction(function(transaction) {
+          return Order.findByIdWithTransaction(matchedData[1].order_id, transaction, function(err, matchingOrder) {
+            if (!matchingOrder || err || orderToMatch.status === "completed") {
+              return next(new restify.ConflictError("Wrong order to complete " + matchedData[1].order_id + " - " + err));
+            }
             return TradeHelper.updateMatchedOrder(orderToMatch, matchedData[0], transaction, function(err, updatedOrderToMatch, updatedOrderToMatchLog) {
               if (err) {
                 console.error("Could not process order " + orderToMatch.id, err);

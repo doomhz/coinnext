@@ -215,6 +215,15 @@
         findById: function(id, callback) {
           return Order.find(id).complete(callback);
         },
+        findByIdWithTransaction: function(id, transaction, callback) {
+          return Order.find({
+            where: {
+              id: id
+            }
+          }, {
+            transaction: transaction
+          }).complete(callback);
+        },
         findByUserAndId: function(id, userId, callback) {
           return Order.find({
             where: {
