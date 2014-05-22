@@ -20,7 +20,7 @@ block content
             | https://api.coinnext.com/v1/market/summary/{EXCHANGE}
           p 
             | Provides an overview of our BTC market at this time. Data refreshes every minute.
-            | Example: https://api.coinnext.com/v1/market/summary/BTC
+          p.example Example: https://api.coinnext.com/v1/market/summary/BTC
           h4 Response
           pre.api
             |  [{
@@ -46,7 +46,7 @@ block content
             | https://api.coinnext.com/v1/market/stats/{COIN}/{EXCHANGE}
           p
             | Provides the statistics for a single market. Data refreshes every minute.
-            | Example: https://api.coinnext.com/v1/market/stats/LTC/BTC
+          p.example Example: https://api.coinnext.com/v1/market/stats/LTC/BTC
           h4 Response
           pre.api
             |  [{
@@ -70,7 +70,7 @@ block content
             | https://api.coinnext.com/v1/market/trades/{COIN}/{EXCHANGE}
           p
             | Fetches the last 100 trades for a given market.
-            | Example: https://api.coinnext.com/v1/market/trades/LTC/BTC
+          p.example Example: https://api.coinnext.com/v1/market/trades/LTC/BTC
           h4 Response
           pre.api
             |  {
@@ -93,9 +93,8 @@ block content
           code.api
             label.get GET
             | https://api.coinnext.com/v1/market/orders/{COIN}/{EXCHANGE}/{TYPE}
-          p
-            | Fetches the 50 best priced orders of a given type for a given market.
-            | Example: https://api.coinnext.com/v1/market/orders/LTC/BTC/BUY
+          p Fetches the 50 best priced orders of a given type for a given market.
+          p.example Example: https://api.coinnext.com/v1/market/orders/LTC/BTC/BUY
           h4 Response
           pre.api
             |  {
@@ -120,7 +119,7 @@ block content
             | Fetches the chart data that we use for our candlestick graphs for a market for a given time period.
             | The period is an optional parameter and can be either '6hh' (6 hours), '1DD' (24 hours), '3DD' (3 days), '7DD' (1 week) or 'MAX'.
             | If no period is defined, it will default to 6 hours. The market ID can be found by checking the market summary or market stats.
-            | Example: https://api.coinnext.com/v1/market/chartdata/1/1DD
+          p.example Example: https://api.coinnext.com/v1/market/chartdata/1/1DD
           h4 Response
           pre.api
             |  [{
