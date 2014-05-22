@@ -22,7 +22,7 @@ block content
             | Provides an overview of our BTC market at this time. Data refreshes every minute.
             | Example: https://api.coinnext.com/v1/market/summary/BTC
           h4 Response
-          code.api
+          pre.api
             |  [{
             |    "market_id":1,
             |    "code":"LTC",
@@ -48,7 +48,7 @@ block content
             | Provides the statistics for a single market. Data refreshes every minute.
             | Example: https://api.coinnext.com/v1/market/stats/LTC/BTC
           h4 Response
-          code.api
+          pre.api
             |  [{
             |    "market_id":1,
             |    "code":"LTC",
@@ -72,7 +72,7 @@ block content
             | Fetches the last 100 trades for a given market.
             | Example: https://api.coinnext.com/v1/market/trades/LTC/BTC
           h4 Response
-          code.api
+          pre.api
             |  {
             |    "count":100,
             |    "trades":
@@ -97,7 +97,7 @@ block content
             | Fetches the 50 best priced orders of a given type for a given market.
             | Example: https://api.coinnext.com/v1/market/orders/LTC/BTC/BUY
           h4 Response
-          code.api
+          pre.api
             |  {
             |    "count":50,
             |    "type":"BUY",
@@ -122,7 +122,7 @@ block content
             | If no period is defined, it will default to 6 hours. The market ID can be found by checking the market summary or market stats.
             | Example: https://api.coinnext.com/v1/market/chartdata/1/1DD
           h4 Response
-          code.api
+          pre.api
             |  [{
             |    "date":"2014-05-22T15:00:00.000Z",
             |    "open":0.02362821,
