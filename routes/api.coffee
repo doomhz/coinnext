@@ -67,21 +67,3 @@ module.exports = (app)->
     options.period = req.params.period if req.params.period?
     TradeStats.findByOptions options, (err, tradeStats)->
       res.send JsonRenderer.chartData tradeStats
-    # res.send [{
-    #     "date":"2014-02-09 14:20",
-    #     "open":"0.00000006",
-    #     "close":"0.00000006",
-    #     "high":"0.00000006",
-    #     "low":"0.00000003",
-    #     "exchange_volume":"0.00002145",
-    #     "coin_volume":"608.50000000",
-    #   },{
-    #     "date":"2014-02-09 14:20",
-    #     "open":"0.00000006",
-    #     "close":"0.00000006",
-    #     "high":"0.00000006",
-    #     "low":"0.00000003",
-    #     "exchange_volume":"0.00002145",
-    #     "coin_volume":"608.50000000",
-    #   }]
-
