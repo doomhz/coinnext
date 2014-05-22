@@ -8,7 +8,12 @@
   module.exports = function(app) {
     return app.get("/order_logs", function(req, res) {
       if (req.query.user_id != null) {
-        req.query.user_id = req.user.id;
+        if (req.user) {
+          req.query.user_id = req.user.id;
+        }
+        if (!req.user) {
+          req.query.user_id = 0;
+        }
       }
       return OrderLog.findActiveByOptions(req.query, function(err, orderLogs) {
         if (err) {
