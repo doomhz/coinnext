@@ -22,7 +22,7 @@ var processEvents = function () {
           setTimeout(processEvents, QUEUE_DELAY);
         });
       } else {
-        console.error("Could not process event #{event.id}", err);
+        console.error("Could not process event " + event.id, err);
         setTimeout(processEvents, QUEUE_DELAY)
       }
     });
