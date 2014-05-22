@@ -195,9 +195,15 @@
         user: req.user
       });
     });
-    return app.get("/security", function(req, res) {
+    app.get("/security", function(req, res) {
       return res.render("static/security", {
         title: 'Security - Coinnext',
+        user: req.user
+      });
+    });
+    return app.get("/api", function(req, res) {
+      return res.render("static/api", {
+        title: 'API - Coinnext',
         user: req.user
       });
     });

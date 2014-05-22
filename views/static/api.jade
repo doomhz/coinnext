@@ -1,0 +1,137 @@
+extends ../layout
+
+block content
+  .main-content(role='main')
+    .wrapper
+      .one-col.content
+        h1.page-title API
+
+        h2 Overview
+        p This is a REST API to retrieve information about our markets. The API responses are JSON encoded arrays.
+
+        article
+          h3 Market Summary
+          code.api
+            label.get GET
+            | https://api.coinnext.com/v1/market/summary
+          p Provides an overview of all markets. Data refreshes every minute.
+          code.api
+            label.get GET
+            | https://api.coinnext.com/v1/market/summary/{EXCHANGE}
+          p 
+            | Provides an overview of our BTC market at this time. Data refreshes every minute.
+            | Example: https://api.coinnext.com/v1/market/summary/BTC
+          h4 Response
+          pre.api
+            |  [{
+            |    "market_id":1,
+            |    "code":"LTC",
+            |    "exchange":"BTC",
+            |    "last_price":0.02362821,
+            |    "yesterday_price":0.02362821,
+            |    "change":-3.55832653,
+            |    "24hhigh":0.02362821,
+            |    "24hlow":0.02362821,
+            |    "24hvol":0.25,
+            |    "top_bid":0.02157211,
+            |    "top_ask":0.02362821
+            |  },
+            |  ...
+            |  ]
+
+        article
+          h3 Market Stats
+          code.api
+            label.get GET
+            | https://api.coinnext.com/v1/market/stats/{COIN}/{EXCHANGE}
+          p
+            | Provides the statistics for a single market. Data refreshes every minute.
+            | Example: https://api.coinnext.com/v1/market/stats/LTC/BTC
+          h4 Response
+          pre.api
+            |  [{
+            |    "market_id":1,
+            |    "code":"LTC",
+            |    "exchange":"BTC",
+            |    "last_price":0.02362821,
+            |    "yesterday_price":0.02362821,
+            |    "change":-3.55832653,
+            |    "24hhigh":0.02362821,
+            |    "24hlow":0.02362821,
+            |    "24hvol":0.25,
+            |    "top_bid":0.02127001,
+            |    "top_ask":0.02362821
+            |  }]
+        
+        article
+          h3 Market Trades
+          code.api
+            label.get GET
+            | https://api.coinnext.com/v1/market/trades/{COIN}/{EXCHANGE}
+          p
+            | Fetches the last 100 trades for a given market.
+            | Example: https://api.coinnext.com/v1/market/trades/LTC/BTC
+          h4 Response
+          pre.api
+            |  {
+            |    "count":100,
+            |    "trades":
+            |      [{
+            |        "type":1,
+            |        "amount":0.05,
+            |        "price":0.02362821,
+            |        "total":0.0011814105,
+            |        "time":"2014-05-22T15:14:50.000Z"
+            |      },
+            |      ...
+            |      ]
+            |  }
+          p NOTE: Type 0 refers to a BUY and type 1 refers to a SELL.
+
+        article
+          h3 Market Orders
+          code.api
+            label.get GET
+            | https://api.coinnext.com/v1/market/orders/{COIN}/{EXCHANGE}/{TYPE}
+          p
+            | Fetches the 50 best priced orders of a given type for a given market.
+            | Example: https://api.coinnext.com/v1/market/orders/LTC/BTC/BUY
+          h4 Response
+          pre.api
+            |  {
+            |    "count":50,
+            |    "type":"BUY",
+            |    "orders":
+            |      [{
+            |        "price":0.016,
+            |        "amount":32.37325812,
+            |        "total":0.51797212992
+            |      },
+            |      ...
+            |      ]
+            |  }
+        
+        article
+          h3 Market Chart Data
+          code.api
+            label.get GET
+            | https://api.coinnext.com/v1/market/chartdata/{MARKET_ID}/{PERIOD}
+          p
+            | Fetches the chart data that we use for our candlestick graphs for a market for a given time period.
+            | The period is an optional parameter and can be either '6hh' (6 hours), '1DD' (24 hours), '3DD' (3 days), '7DD' (1 week) or 'MAX'.
+            | If no period is defined, it will default to 6 hours. The market ID can be found by checking the market summary or market stats.
+            | Example: https://api.coinnext.com/v1/market/chartdata/1/1DD
+          h4 Response
+          pre.api
+            |  [{
+            |    "date":"2014-05-22T15:00:00.000Z",
+            |    "open":0.02362821,
+            |    "close":0.02362821,
+            |    "high":0.02362821,
+            |    "low":0.02362821,
+            |    "coin_volume":0.25,
+            |    "exchange_volume":0.01274
+            |  },
+            |  ...
+            |  ]
+

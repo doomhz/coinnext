@@ -152,3 +152,8 @@ module.exports = (app)->
     res.render "static/security",
       title: 'Security - Coinnext'
       user: req.user
+
+  app.get "/api", (req, res)->
+    res.render "static/api",
+      title: 'API - Coinnext'
+      user: req.user

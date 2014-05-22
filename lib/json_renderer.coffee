@@ -231,7 +231,7 @@ JsonRenderer =
       stat.high = periodStat.getFloat "high_price"
       stat.low = periodStat.getFloat "low_price"
       stat.coin_volume = periodStat.getFloat "volume"
-      #stat.exchange_volume = periodStat.getFloat "" # TODO get BTC volume here
+      stat.exchange_volume = periodStat.getFloat "exchange_volume"
       result.push stat
     result
 
