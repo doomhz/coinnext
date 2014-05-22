@@ -8,6 +8,14 @@
       "host": "localhost",
       "logging": true
     },
+    "queue": {
+      "db": "coinnext_queue_dev",
+      "user": "root",
+      "password": "",
+      "port": 3306,
+      "host": "localhost",
+      "logging": true
+    },
     "redis": {
       "db": "coinnext_auth_dev"
     },
@@ -70,6 +78,14 @@
       "host": "localhost",
       "logging": true
     },
+    "queue": {
+      "db": "coinnext_queue_test",
+      "user": "root",
+      "password": "",
+      "port": 3306,
+      "host": "localhost",
+      "logging": true
+    },
     "redis": {
       "db": "coinnext_auth_test"
     },
@@ -121,6 +137,14 @@
   "production" : {
     "mysql": {
       "db": "coinnext_production",
+      "user": "root",
+      "password": "",
+      "port": 3306,
+      "host": "localhost",
+      "logging": true
+    },
+    "queue": {
+      "db": "coinnext_queue_production",
       "user": "root",
       "password": "",
       "port": 3306,

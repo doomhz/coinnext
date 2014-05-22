@@ -37,6 +37,14 @@ MARKET_STATUS =
   enabled: 1
   disabled: 2
 
+EVENT_TYPE =
+  orders_match: 1
+  order_canceled: 2
+
+EVENT_STATUS =
+  unsent: 1
+  sent: 2
+
 MarketHelper =
 
   getMarkets: ()->
@@ -164,5 +172,17 @@ MarketHelper =
   getWithdrawalFee: (currency)->
     return marketSettings.DEFAULT_WITHDRAWAL_FEE  if not marketSettings.WITHDRAWAL_FEES[currency]?
     marketSettings.WITHDRAWAL_FEES[currency]
+
+  getEventType: (type)->
+    EVENT_TYPE[type]
+
+  getEventTypeLiteral: (intType)->
+    _.invert(EVENT_TYPE)[intType]
+
+  getEventStatus: (status)->
+    EVENT_STATUS[status]
+
+  getEventStatusLiteral: (intStatus)->
+    _.invert(EVENT_STATUS)[intStatus]
 
 exports = module.exports = MarketHelper

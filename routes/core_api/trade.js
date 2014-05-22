@@ -54,7 +54,7 @@
         });
       });
     });
-    app.del("/cancel_order/:order_id", function(req, res, next) {
+    return app.del("/cancel_order/:order_id", function(req, res, next) {
       var orderId;
       orderId = req.params.order_id;
       return Order.findById(orderId, function(err, order) {
@@ -110,51 +110,6 @@
                       }
                     });
                   });
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-    return app.post("/orders_match", function(req, res, next) {
-      var matchedData;
-      matchedData = req.body;
-      delete matchedData[0].id;
-      delete matchedData[1].id;
-      return GLOBAL.db.sequelize.transaction(function(transaction) {
-        return Order.findByIdWithTransaction(matchedData[0].order_id, transaction, function(err, orderToMatch) {
-          if (!orderToMatch || err || orderToMatch.status === "completed") {
-            return next(new restify.ConflictError("Wrong order to complete " + matchedData[0].order_id + " - " + err));
-          }
-          return Order.findByIdWithTransaction(matchedData[1].order_id, transaction, function(err, matchingOrder) {
-            if (!matchingOrder || err || orderToMatch.status === "completed") {
-              return next(new restify.ConflictError("Wrong order to complete " + matchedData[1].order_id + " - " + err));
-            }
-            return TradeHelper.updateMatchedOrder(orderToMatch, matchedData[0], transaction, function(err, updatedOrderToMatch, updatedOrderToMatchLog) {
-              if (err) {
-                console.error("Could not process order " + orderToMatch.id, err);
-                return transaction.rollback().success(function() {
-                  return next(new restify.ConflictError("Could not process order " + orderToMatch.id + " - " + err));
-                });
-              }
-              return TradeHelper.updateMatchedOrder(matchingOrder, matchedData[1], transaction, function(err, updatedMatchingOrder, updatedMatchingOrderLog) {
-                if (err) {
-                  console.error("Could not process order " + matchingOrder.id, err);
-                  return transaction.rollback().success(function() {
-                    return next(new restify.ConflictError("Could not process order " + matchingOrder.id + " - " + err));
-                  });
-                }
-                transaction.commit().success(function() {
-                  TradeHelper.trackMatchedOrder(updatedOrderToMatchLog);
-                  TradeHelper.trackMatchedOrder(updatedMatchingOrderLog);
-                  return res.send();
-                });
-                return transaction.done(function(err) {
-                  if (err) {
-                    console.error("Could not process order " + orderId, err);
-                    return next(new restify.ConflictError("Could not process order " + orderId + " - " + err));
-                  }
                 });
               });
             });

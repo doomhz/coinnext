@@ -66,31 +66,3 @@ module.exports = (app)->
                       eventData: JsonRenderer.wallet wallet
                   transaction.done (err)->
                     next(new restify.ConflictError "Could not cancel order #{orderId} - #{err}")  if err
-
-  app.post "/orders_match", (req, res, next)->
-    matchedData = req.body
-    delete matchedData[0].id
-    delete matchedData[1].id
-    GLOBAL.db.sequelize.transaction (transaction)->
-      Order.findByIdWithTransaction matchedData[0].order_id, transaction, (err, orderToMatch)->
-        return next(new restify.ConflictError "Wrong order to complete #{matchedData[0].order_id} - #{err}")  if not orderToMatch or err or orderToMatch.status is "completed"
-        Order.findByIdWithTransaction matchedData[1].order_id, transaction, (err, matchingOrder)->
-          return next(new restify.ConflictError "Wrong order to complete #{matchedData[1].order_id} - #{err}")  if not matchingOrder or err or orderToMatch.status is "completed"
-          TradeHelper.updateMatchedOrder orderToMatch, matchedData[0], transaction, (err, updatedOrderToMatch, updatedOrderToMatchLog)->
-            if err
-              console.error "Could not process order #{orderToMatch.id}", err
-              return transaction.rollback().success ()->
-                next(new restify.ConflictError "Could not process order #{orderToMatch.id} - #{err}")
-            TradeHelper.updateMatchedOrder matchingOrder, matchedData[1], transaction, (err, updatedMatchingOrder, updatedMatchingOrderLog)->
-              if err
-                console.error "Could not process order #{matchingOrder.id}", err
-                return transaction.rollback().success ()->
-                  next(new restify.ConflictError "Could not process order #{matchingOrder.id} - #{err}")
-              transaction.commit().success ()->
-                TradeHelper.trackMatchedOrder updatedOrderToMatchLog
-                TradeHelper.trackMatchedOrder updatedMatchingOrderLog
-                res.send()
-              transaction.done (err)->
-                if err
-                  console.error "Could not process order #{orderId}", err
-                  next(new restify.ConflictError "Could not process order #{orderId} - #{err}")

@@ -13,8 +13,8 @@ describe "Trade Api", ->
       GLOBAL.db.sequelize.query("TRUNCATE TABLE #{GLOBAL.db.MarketStats.tableName}").complete ()->
         GLOBAL.db.MarketStats.bulkCreate(marketStats).complete ()->
           done()
-
-  describe "POST /orders_match", ()->
+  ###
+  describe "TradeHelper.matchOrders", ()->
     describe "When a valid match order is coming in", ()->
       beforeEach (done)->
         wallets = [
@@ -290,3 +290,4 @@ describe "Trade Api", ->
                 new Date(stats["LTC_BTC"].today).getDate().should.eql new Date().getDate()
                 done()
             , 500
+  ###
