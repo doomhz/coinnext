@@ -35,7 +35,8 @@
               open_price: 0,
               high_price: 0,
               low_price: 0,
-              volume: 0
+              volume: 0,
+              exchange_volume: 0
             };
           }
           if (markets[marketType].open_price === 0) {
@@ -49,6 +50,7 @@
             markets[marketType].low_price = orderLog.unit_price;
           }
           markets[marketType].volume = math.add(markets[marketType].volume, orderLog.matched_amount);
+          markets[marketType].exchange_volume = math.add(markets[marketType].exchange_volume, orderLog.result_amount);
         }
         markets = _.values(markets);
         return TradeStats.bulkCreate(markets).complete(function(err, result) {

@@ -26,11 +26,13 @@ module.exports = (app)->
             high_price: 0
             low_price: 0
             volume: 0
+            exchange_volume: 0
         markets[marketType].open_price = orderLog.unit_price  if markets[marketType].open_price is 0
         markets[marketType].close_price = orderLog.unit_price
         markets[marketType].high_price = orderLog.unit_price  if orderLog.unit_price > markets[marketType].high_price
         markets[marketType].low_price = orderLog.unit_price  if orderLog.unit_price < markets[marketType].low_price or markets[marketType].low_price is 0
         markets[marketType].volume = math.add markets[marketType].volume, orderLog.matched_amount
+        markets[marketType].exchange_volume = math.add markets[marketType].exchange_volume, orderLog.result_amount
       markets = _.values markets
       TradeStats.bulkCreate(markets).complete (err, result)->
         res.send

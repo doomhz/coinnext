@@ -35,6 +35,11 @@ module.exports = (sequelize, DataTypes) ->
         defaultValue: 0
         allowNull: false
         comment: "FLOAT x 100000000"
+      exchange_volume:
+        type: DataTypes.BIGINT.UNSIGNED
+        defaultValue: 0
+        allowNull: false
+        comment: "FLOAT x 100000000"
       start_time:
         type: DataTypes.DATE
       end_time:
