@@ -8,10 +8,38 @@ FraudHelper =
 
   findDesyncedWallets: (callback)->
     GLOBAL.db.Wallet.findAll({where: {address: {ne: null}}}).complete (err, wallets)->
-      async.mapSeries wallets, FraudHelper.checkProperBalance, (err, result = [])->
+      async.mapSeries wallets, FraudHelper.checkHoldBalance, (err, result = [])->
         callback err, result.filter (val)->
           val?
 
+  checkHoldBalance: (wallet, cb)->
+    options =
+      status: "open"
+      user_id: wallet.user_id
+      sell_currency: wallet.sell_currency
+    GLOBAL.db.Order.findByOptions options, (err, orders)->
+      totalHoldBalance = 0
+      for order in orders
+        totalHoldBalance = math.add totalHoldBalance, order.left_hold_balance
+      return cb()  if totalHoldBalance is wallet.hold_balance
+      if totalHoldBalance > wallet.hold_balance
+        holdBalanceDiff = math.add totalHoldBalance, -wallet.hold_balance
+        totalAvailableBalance = math.add wallet.balance, -holdBalanceDiff
+      else
+        holdBalanceDiff = math.add wallet.hold_balance, -totalHoldBalance
+        totalAvailableBalance = math.add wallet.balance, -holdBalanceDiff
+      return cb null,
+        wallet_id: wallet.id
+        user_id: wallet.user_id
+        currency: wallet.currency
+        current:
+          balance: wallet.balance
+          hold_balance: wallet.hold_balance
+        fixed:
+          balance: totalAvailableBalance
+          hold_balance: totalHoldBalance
+
+###
   checkProperBalance: (wallet, cb)->
     GLOBAL.db.Transaction.findProcessedByUserAndWallet wallet.user_id, wallet.id, (err, transactions)->
       GLOBAL.db.Payment.findByUserAndWallet wallet.user_id, wallet.id, "processed", (err, payments)->
@@ -36,11 +64,14 @@ FraudHelper =
             wallet_id: wallet.id
             user_id: wallet.user_id
             currency: wallet.currency
+            deposit: totalDeposit
+            withdrawal: totalWithdrawal
             current:
               balance: wallet.balance
               hold_balance: wallet.hold_balance
             fixed:
               balance: totalAvailableBalance
               hold_balance: totalHoldBalance
+###
 
 exports = module.exports = FraudHelper
