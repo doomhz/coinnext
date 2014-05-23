@@ -209,10 +209,12 @@ module.exports = (app)->
       res.json user
     return User.findById term, renderUser  if not _.isNaN parseInt(term)
     return User.findByEmail term, renderUser  if term.indexOf("@") > -1
-    Wallet.findByAddress term, (err, wallet)->
-      return User.findById wallet.user_id, renderUser  if wallet
-      res.json
-        error: "Could not find user by #{term}"
+    User.findByUsername term, (err, user)->
+      return renderUser err, user  if user
+      Wallet.findByAddress term, (err, wallet)->
+        return User.findById wallet.user_id, renderUser  if wallet
+        res.json
+          error: "Could not find user by #{term}"
 
   app.get "/administratie/markets", (req, res)->
     MarketStats.getStats (err, markets)->
