@@ -70,6 +70,16 @@ MarketHelper =
     market = "#{sellCurrency}_#{buyCurrency}"  if action is "sell"
     !!marketSettings.AVAILABLE_MARKETS[market]
 
+  isValidExchange: (exchange)->
+    for market in @getMarketTypes()
+      if market.indexOf("_#{exchange}") > -1
+        return true
+    return false
+
+  isValidMarketPair: (coin, exchange)->
+    market = "#{coin}_#{exchange}"
+    !!marketSettings.AVAILABLE_MARKETS[market]    
+
   getOrderStatus: (status)->
     ORDER_STATUS[status]
 
@@ -81,6 +91,9 @@ MarketHelper =
 
   getOrderActionLiteral: (intAction)->
     _.invert(ORDER_ACTIONS)[intAction]
+
+  isValidOrderAction: (action)->
+    !!ORDER_ACTIONS[action]
 
   getOrderType: (type)->
     ORDER_TYPES[type]

@@ -119,6 +119,16 @@
             }
           }).complete(callback);
         },
+        findByUsername: function(username, callback) {
+          if (callback == null) {
+            callback = function() {};
+          }
+          return User.find({
+            where: {
+              username: username
+            }
+          }).complete(callback);
+        },
         hashPassword: function(password) {
           return crypto.createHash("sha256").update("" + password + (GLOBAL.appConfig().salt), "utf8").digest("hex");
         },

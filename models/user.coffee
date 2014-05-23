@@ -77,6 +77,9 @@ module.exports = (sequelize, DataTypes) ->
         findByEmail: (email, callback = ()->)->
           User.find({where:{email: email}}).complete callback
 
+        findByUsername: (username, callback = ()->)->
+          User.find({where:{username: username}}).complete callback
+        
         hashPassword: (password)->
           crypto.createHash("sha256").update("#{password}#{GLOBAL.appConfig().salt}", "utf8").digest("hex")
         

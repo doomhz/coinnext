@@ -1,5 +1,5 @@
 (function() {
-  var AuthStats, JsonRenderer, MarketHelper, MarketStats, Payment, Transaction, User, Wallet, jsonBeautifier;
+  var AuthStats, JsonRenderer, MarketHelper, MarketStats, Payment, Transaction, User, Wallet, jsonBeautifier, _;
 
   Wallet = GLOBAL.db.Wallet;
 
@@ -18,6 +18,8 @@
   JsonRenderer = require("../lib/json_renderer");
 
   jsonBeautifier = require("../lib/json_beautifier");
+
+  _ = require("underscore");
 
   module.exports = function(app) {
     var login;
@@ -311,18 +313,23 @@
         }
         return res.json(user);
       };
-      if (_.isNumber(parseInt(term))) {
+      if (!_.isNaN(parseInt(term))) {
         return User.findById(term, renderUser);
       }
       if (term.indexOf("@") > -1) {
         return User.findByEmail(term, renderUser);
       }
-      return Wallet.findByAddress(term, function(err, wallet) {
-        if (wallet) {
-          return User.findById(wallet.user_id, renderUser);
+      return User.findByUsername(term, function(err, user) {
+        if (user) {
+          return renderUser(err, user);
         }
-        return res.json({
-          error: "Could not find user by " + term
+        return Wallet.findByAddress(term, function(err, wallet) {
+          if (wallet) {
+            return User.findById(wallet.user_id, renderUser);
+          }
+          return res.json({
+            error: "Could not find user by " + term
+          });
         });
       });
     });
