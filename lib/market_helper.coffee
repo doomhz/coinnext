@@ -145,6 +145,9 @@ MarketHelper =
   getMinTradeAmount: ()->
     10
 
+  getMinUnitPriceAmount: ()->
+    1
+
   getMinSpendAmount: ()->
     10000
 

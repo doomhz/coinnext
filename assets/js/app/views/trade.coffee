@@ -61,7 +61,7 @@ class App.TradeView extends App.MasterView
           unit_price:
             required: true
             number: true
-            min: 0.000001
+            min: 0.00000001
         messages:
           amount:
             required: "Please provide an amount."
