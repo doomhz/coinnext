@@ -157,7 +157,7 @@
         validate: {
           isInt: true,
           validPrice: function(value) {
-            if (this.type === "limit" && !Order.isValidTradeAmount(value)) {
+            if (this.type === "limit" && !Order.isValidUnitPriceAmount(value)) {
               throw new Error("Please submit a valid unit price amount.");
             }
           }
@@ -293,6 +293,9 @@
         },
         isValidTradeAmount: function(amount) {
           return _.isNumber(amount) && !_.isNaN(amount) && _.isFinite(amount) && amount >= MarketHelper.getMinTradeAmount();
+        },
+        isValidUnitPriceAmount: function(amount) {
+          return _.isNumber(amount) && !_.isNaN(amount) && _.isFinite(amount) && amount >= MarketHelper.getMinUnitPriceAmount();
         },
         isValidFee: function(amount, action, unitPrice) {
           if (MarketHelper.getTradeFee() === 0) {

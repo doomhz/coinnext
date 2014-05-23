@@ -186,7 +186,8 @@
     app.get("/fees", function(req, res) {
       return res.render("static/fees", {
         title: 'Fees - Coinnext',
-        user: req.user
+        user: req.user,
+        MarketHelper: MarketHelper
       });
     });
     app.get("/about", function(req, res) {

@@ -28,17 +28,9 @@ block content
         p Withdrawals are free. We do add a transaction fee to ensure swift processing by the network.
         .fees.container
           table.trade-data
-            tr
-              th BTC
-              td 0.0002
-            tr
-              th LTC
-              td 0.002
-            tr
-              th PPC
-              td 0.02
-            tr
-              th DOGE
-              td 2
+            - each id, currencyLabel in MarketHelper.getCurrencies()
+              tr
+                th #{currencyLabel}
+                td #{MarketHelper.fromBigint(MarketHelper.getWithdrawalFee(currencyLabel))}
         p All fees are subject to change. Any fee change will be announced in writing prior to going live.
           

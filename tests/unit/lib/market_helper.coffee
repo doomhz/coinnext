@@ -11,7 +11,8 @@ describe "MarketHelper", ->
     BC: 8, VTC: 9, METH: 10, NLG: 11, TCO: 12, CX: 13
     BANK: 14, BRM: 15, GAY: 16, MAX: 17, ACC: 18, VIO: 19
     VRC: 20, IDC: 21, GRC: 22, DIS: 23, CAIX: 24, SHARE: 25
-    LGC: 26, CFC: 27, RDD: 28, H5C: 29, RATC: 30, MGC: 31
+    LGC: 26, CFC: 27, RDD: 28, H5C: 29, RATC: 30, MAGIC: 31,
+    SCOT: 32, UTC: 33, DIEM: 34, LIM: 35, NAUT: 36
 
   CURRENCY_NAMES =
     BTC: "Bitcoin", LTC: "Litecoin", PPC: "Peercoin"
@@ -23,8 +24,9 @@ describe "MarketHelper", ->
     VIO: "Violincoin", VRC: "Vericoin", IDC: "Indocoin"
     GRC: "Gridcoin", DIS: "Distrocoin", CAIX: "CAIx"
     SHARE: "Sharecoin", LGC: "Logicoin", CFC: "Coffeecoin"
-    RDD: "Reddcoin", H5C: "HighFivecoin", RATC: "Ratcoin"
-    MGC: "Magicoin"
+    RDD: "Reddcoin", H5C: "Highfivecoin", RATC: "Ratcoin"
+    MAGIC: "Magicoin", SCOT: "Scotcoin", UTC: "Ultracoin"
+    DIEM: "Carpediemcoin", LIM: "Limecoin", NAUT: "Nautiluscoin"
 
   AVAILABLE_MARKETS =
     LTC_BTC: 1, PPC_BTC: 2, DOGE_BTC: 3, NMC_BTC: 4
@@ -34,7 +36,8 @@ describe "MarketHelper", ->
     VIO_BTC: 18, VRC_BTC: 19, IDC_BTC: 20, GRC_BTC: 21
     DIS_BTC: 22, CAIX_BTC: 23, SHARE_BTC: 24, LGC_BTC: 25
     CFC_BTC: 26, RDD_BTC: 27, H5C_BTC: 28, RATC_BTC: 29
-    MGC_BTC: 30
+    MAGIC_BTC: 30, SCOT_BTC: 31, UTC_BTC: 32, DIEM_BTC: 33
+    LIM_BTC: 34, NAUT_BTC: 35
 
   ORDER_TYPES =
     market: 1
@@ -62,7 +65,7 @@ describe "MarketHelper", ->
     BTC: 20000
     LTC: 200000
     PPC: 2000000
-    DOGE: 200000000
+    DOGE: 100000000
 
   DEFAULT_WITHDRAWAL_FEE = 200000
     

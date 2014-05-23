@@ -7,6 +7,7 @@ MarketStats = GLOBAL.db.MarketStats
 MarketHelper = require "../lib/market_helper"
 JsonRenderer = require "../lib/json_renderer"
 jsonBeautifier = require "../lib/json_beautifier"
+_ = require "underscore"
 
 module.exports = (app)->
 
@@ -114,6 +115,9 @@ module.exports = (app)->
       ]
       limit: count
       offset: from
+      include: [
+        {model: GLOBAL.db.User, attributes: ["username", "email"]}
+      ]
     if userId
       query.where =
         user_id: userId
@@ -206,12 +210,14 @@ module.exports = (app)->
     term = req.body.term
     renderUser = (err, user = {})->
       res.json user
-    return User.findById term, renderUser  if _.isNumber parseInt(term)
+    return User.findById term, renderUser  if not _.isNaN parseInt(term)
     return User.findByEmail term, renderUser  if term.indexOf("@") > -1
-    Wallet.findByAddress term, (err, wallet)->
-      return User.findById wallet.user_id, renderUser  if wallet
-      res.json
-        error: "Could not find user by #{term}"
+    User.findByUsername term, (err, user)->
+      return renderUser err, user  if user
+      Wallet.findByAddress term, (err, wallet)->
+        return User.findById wallet.user_id, renderUser  if wallet
+        res.json
+          error: "Could not find user by #{term}"
 
   app.get "/administratie/markets", (req, res)->
     MarketStats.getStats (err, markets)->
@@ -226,6 +232,21 @@ module.exports = (app)->
     MarketStats.setMarketStatus req.params.id, req.body.status, (err, market)->
       console.error err  if err
       res.json market
+
+  app.post "/administratie/resend_user_verification_email/:id", (req, res)->
+    User.findById req.params.id, (err, user)->
+      if user
+        user.sendEmailVerificationLink (err)->
+          if err
+            console.error err
+            res.json
+              error: "Could not send email #{err}"
+          else
+            res.json
+              user_id: user.id
+      else
+        res.json
+          error: "Could not find user #{userId}"
 
 
   login = (req, res, next)->

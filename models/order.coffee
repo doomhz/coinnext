@@ -96,7 +96,7 @@ module.exports = (sequelize, DataTypes) ->
         validate:
           isInt: true
           validPrice: (value)->
-            throw new Error "Please submit a valid unit price amount."  if @type is "limit" and not Order.isValidTradeAmount(value)
+            throw new Error "Please submit a valid unit price amount."  if @type is "limit" and not Order.isValidUnitPriceAmount(value)
         comment: "FLOAT x 100000000"
       status:
         type: DataTypes.INTEGER.UNSIGNED
@@ -179,6 +179,9 @@ module.exports = (sequelize, DataTypes) ->
 
         isValidTradeAmount: (amount)->
           _.isNumber(amount) and not _.isNaN(amount) and _.isFinite(amount) and amount >= MarketHelper.getMinTradeAmount()
+
+        isValidUnitPriceAmount: (amount)->
+          _.isNumber(amount) and not _.isNaN(amount) and _.isFinite(amount) and amount >= MarketHelper.getMinUnitPriceAmount()
 
         isValidFee: (amount, action, unitPrice)->
           return true  if MarketHelper.getTradeFee() is 0
