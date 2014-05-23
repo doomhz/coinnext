@@ -65,3 +65,11 @@ task "admin:generate_user", "Add new admin user -e -p", (opts)->
     newUser.generateGAuthData (data, newUser)->
       console.log data.google_auth_qr
       console.log newUser.gauth_key
+
+task "wallet:sync_balance", "Sync wallets balance", ()->
+  FraudHelper = require "./lib/fraud_helper"
+  FraudHelper.findDesyncedWallets (err, result)->
+    console.error err  if err
+    console.log "#{result.length} desynced wallets", result
+
+

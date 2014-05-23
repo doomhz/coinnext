@@ -87,6 +87,33 @@ TradeHelper =
   pushUserUpdate: (data)->
     usersSocket.send data
 
+  matchOrders: (matchedData, callback)->
+    delete matchedData[0].id
+    delete matchedData[1].id
+    GLOBAL.db.sequelize.transaction (transaction)->
+      Order.findByIdWithTransaction matchedData[0].order_id, transaction, (err, orderToMatch)->
+        return callback "Wrong order to complete #{matchedData[0].order_id} - #{err}"  if not orderToMatch or err or orderToMatch.status is "completed"
+        Order.findByIdWithTransaction matchedData[1].order_id, transaction, (err, matchingOrder)->
+          return callback "Wrong order to complete #{matchedData[1].order_id} - #{err}"  if not matchingOrder or err or orderToMatch.status is "completed"
+          TradeHelper.updateMatchedOrder orderToMatch, matchedData[0], transaction, (err, updatedOrderToMatch, updatedOrderToMatchLog)->
+            if err
+              console.error "Could not process order #{orderToMatch.id}", err
+              return transaction.rollback().success ()->
+                callback "Could not process order #{orderToMatch.id} - #{err}"
+            TradeHelper.updateMatchedOrder matchingOrder, matchedData[1], transaction, (err, updatedMatchingOrder, updatedMatchingOrderLog)->
+              if err
+                console.error "Could not process order #{matchingOrder.id}", err
+                return transaction.rollback().success ()->
+                  callback "Could not process order #{matchingOrder.id} - #{err}"
+              transaction.commit().success ()->
+                TradeHelper.trackMatchedOrder updatedOrderToMatchLog
+                TradeHelper.trackMatchedOrder updatedMatchingOrderLog
+                callback()
+              transaction.done (err)->
+                if err
+                  console.error "Could not process order #{orderId}", err
+                  callback "Could not process order #{orderId} - #{err}"
+
   updateMatchedOrder: (orderToMatch, matchData, transaction, callback)->
     Wallet.findUserWalletByCurrency orderToMatch.user_id, orderToMatch.buy_currency, (err, buyWallet)->
       Wallet.findUserWalletByCurrency orderToMatch.user_id, orderToMatch.sell_currency, (err, sellWallet)->
@@ -121,7 +148,7 @@ TradeHelper =
     eventType = if orderLog.status is "completed" then "order-completed" else "order-partially-completed"
     MarketStats.trackFromOrderLog orderLog, (err, mkSt)->
       callback err, mkSt
-      TradeHelper.send
+      TradeHelper.pushOrderUpdate
         type: "market-stats-updated"
         eventData: mkSt.toJSON()
     orderLog.getOrder().complete (err, order)->

@@ -137,6 +137,9 @@ module.exports = (sequelize, DataTypes) ->
         findById: (id, callback)->
           Order.find(id).complete callback
 
+        findByIdWithTransaction: (id, transaction, callback)->
+          Order.find({where: {id: id}}, {transaction: transaction}).complete callback
+
         findByUserAndId: (id, userId, callback)->
           Order.find({where: {id: id, user_id: userId}}).complete callback
       
