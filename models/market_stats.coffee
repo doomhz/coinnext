@@ -97,6 +97,8 @@ module.exports = (sequelize, DataTypes) ->
               marketStats.last_price = orderLog.unit_price
               marketStats.day_high = orderLog.unit_price  if orderLog.unit_price > marketStats.day_high
               marketStats.day_low = orderLog.unit_price  if orderLog.unit_price < marketStats.day_low or marketStats.day_low is 0
+              if order.action is "buy"
+                marketStats.top_bid = orderLog.unit_price  if orderLog.unit_price > marketStats.top_bid
               if order.action is "sell"
                 marketStats.top_ask = orderLog.unit_price  if orderLog.unit_price > marketStats.top_ask
                 # Alt currency volume traded
@@ -107,8 +109,6 @@ module.exports = (sequelize, DataTypes) ->
                   growthRatio = MarketStats.calculateGrowthRatio tradeStats.close_price, orderLog.unit_price
                   marketStats.growth_ratio = math.round MarketHelper.toBigint(growthRatio), 0
                   marketStats.save().complete callback
-              if order.action is "buy"
-                marketStats.top_bid = orderLog.unit_price  if orderLog.unit_price > marketStats.top_bid
 
         calculateGrowthRatio: (lastPrice, newPrice)->
           return 100  if not lastPrice
