@@ -75,6 +75,8 @@ task "wallet:sync_balance", "Sync wallets balance", ()->
 task "promo:find_addresses", "", ()->
   fs = require "fs"
   async = require "async"
+  CoreAPIClient = require('./lib/core_api_client')
+  GLOBAL.coreAPIClient = new CoreAPIClient({host: GLOBAL.appConfig().wallets_host})
   addresses = fs.readFileSync "email_addresses.txt"
   addresses = addresses.toString()
   addresses = addresses.split "\n"
