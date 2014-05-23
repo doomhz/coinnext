@@ -233,6 +233,21 @@ module.exports = (app)->
       console.error err  if err
       res.json market
 
+  app.post "/administratie/resend_user_verification_email/:id", (req, res)->
+    User.findById req.params.id, (err, user)->
+      if user
+        user.sendEmailVerificationLink (err)->
+          if err
+            console.error err
+            res.json
+              error: "Could not send email #{err}"
+          else
+            res.json
+              user_id: user.id
+      else
+        res.json
+          error: "Could not find user #{userId}"
+
 
   login = (req, res, next)->
     passport.authenticate("local", (err, user, info)->

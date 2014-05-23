@@ -358,6 +358,28 @@
         return res.json(market);
       });
     });
+    app.post("/administratie/resend_user_verification_email/:id", function(req, res) {
+      return User.findById(req.params.id, function(err, user) {
+        if (user) {
+          return user.sendEmailVerificationLink(function(err) {
+            if (err) {
+              console.error(err);
+              return res.json({
+                error: "Could not send email " + err
+              });
+            } else {
+              return res.json({
+                user_id: user.id
+              });
+            }
+          });
+        } else {
+          return res.json({
+            error: "Could not find user " + userId
+          });
+        }
+      });
+    });
     return login = function(req, res, next) {
       return passport.authenticate("local", function(err, user, info) {
         if (err) {
