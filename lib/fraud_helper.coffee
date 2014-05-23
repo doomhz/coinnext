@@ -13,11 +13,12 @@ FraudHelper =
           val?
 
   checkHoldBalance: (wallet, cb)->
-    options =
-      status: "open"
-      user_id: wallet.user_id
-      sell_currency: wallet.sell_currency
-    GLOBAL.db.Order.findByOptions options, (err, orders)->
+    query =
+      where:
+        status: MarketHelper.getOrderStatus "open"
+        user_id: wallet.user_id
+        sell_currency: MarketHelper.getCurrency wallet.sell_currency
+    GLOBAL.db.Order.findAll(query).complete (err, orders)->
       totalHoldBalance = 0
       for order in orders
         totalHoldBalance = math.add totalHoldBalance, order.left_hold_balance
