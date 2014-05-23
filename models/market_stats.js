@@ -144,6 +144,7 @@
                 if (orderLog.unit_price > marketStats.top_bid) {
                   marketStats.top_bid = orderLog.unit_price;
                 }
+                marketStats.save().complete(callback);
               }
               if (order.action === "sell") {
                 if (orderLog.unit_price > marketStats.top_ask) {

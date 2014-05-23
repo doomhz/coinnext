@@ -99,6 +99,7 @@ module.exports = (sequelize, DataTypes) ->
               marketStats.day_low = orderLog.unit_price  if orderLog.unit_price < marketStats.day_low or marketStats.day_low is 0
               if order.action is "buy"
                 marketStats.top_bid = orderLog.unit_price  if orderLog.unit_price > marketStats.top_bid
+                marketStats.save().complete callback
               if order.action is "sell"
                 marketStats.top_ask = orderLog.unit_price  if orderLog.unit_price > marketStats.top_ask
                 # Alt currency volume traded
