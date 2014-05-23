@@ -31,6 +31,6 @@ block content
             - each id, currencyLabel in MarketHelper.getCurrencies()
               tr
                 th #{currencyLabel}
-                td #{MarketHelper.getWithdrawalFee(currencyLabel)}
+                td #{MarketHelper.fromBigint(MarketHelper.getWithdrawalFee(currencyLabel))}
         p All fees are subject to change. Any fee change will be announced in writing prior to going live.
           
