@@ -63,7 +63,7 @@ describe "MarketHelper", ->
     BTC: 20000
     LTC: 200000
     PPC: 2000000
-    DOGE: 200000000
+    DOGE: 100000000
 
   DEFAULT_WITHDRAWAL_FEE = 200000
     
