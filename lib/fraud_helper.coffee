@@ -15,19 +15,20 @@ FraudHelper =
   checkHoldBalance: (wallet, cb)->
     query =
       where:
-        status: MarketHelper.getOrderStatus "open"
+        status: [MarketHelper.getOrderStatus("partiallyCompleted"), MarketHelper.getOrderStatus("open")]
         user_id: wallet.user_id
-        sell_currency: MarketHelper.getCurrency wallet.sell_currency
+        sell_currency: MarketHelper.getCurrency wallet.currency
     GLOBAL.db.Order.findAll(query).complete (err, orders)->
       totalHoldBalance = 0
       for order in orders
         totalHoldBalance = math.add totalHoldBalance, order.left_hold_balance
       return cb()  if totalHoldBalance is wallet.hold_balance
-      diff = math.add totalHoldBalance, -wallet.hold_balance
+      diff = math.add wallet.hold_balance, -totalHoldBalance
       return cb null,
         wallet_id: wallet.id
         user_id: wallet.user_id
         currency: wallet.currency
+        total_hold: totalHoldBalance
         diff: diff
         diff_float: MarketHelper.fromBigint diff
         current:
