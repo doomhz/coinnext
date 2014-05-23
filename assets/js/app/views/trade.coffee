@@ -101,13 +101,13 @@ class App.TradeView extends App.MasterView
   onAmountClick: (ev)->
     ev.preventDefault()
     $target = $(ev.currentTarget)
-    amount = $target.data('amount')
+    amount = parseFloat $target.data('amount')
     type = $target.data('type')
     $input = @$("##{type}-amount-input")
     unitPrice = _.str.satoshiRound @$("##{type}-unit-price").val()
     resultAmount = if type is "buy" then _.str.satoshiRound App.math.divide(amount, unitPrice) else amount
     resultAmount = if @isValidAmount(resultAmount) then resultAmount else 0
-    $input.val(resultAmount)
+    $input.val(_.str.toFixed(resultAmount))
     $input.trigger "keyup"
 
   onLimitBuyAmountChange: (ev)->
