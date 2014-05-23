@@ -156,7 +156,13 @@
       query = {
         order: [["created_at", "DESC"]],
         limit: count,
-        offset: from
+        offset: from,
+        include: [
+          {
+            model: GLOBAL.db.User,
+            attributes: ["username", "email"]
+          }
+        ]
       };
       if (userId) {
         query.where = {
