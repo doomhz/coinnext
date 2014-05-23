@@ -7,6 +7,7 @@ MarketStats = GLOBAL.db.MarketStats
 MarketHelper = require "../lib/market_helper"
 JsonRenderer = require "../lib/json_renderer"
 jsonBeautifier = require "../lib/json_beautifier"
+_ = require "underscore"
 
 module.exports = (app)->
 
@@ -206,7 +207,7 @@ module.exports = (app)->
     term = req.body.term
     renderUser = (err, user = {})->
       res.json user
-    return User.findById term, renderUser  if _.isNumber parseInt(term)
+    return User.findById term, renderUser  if not _.isNaN parseInt(term)
     return User.findByEmail term, renderUser  if term.indexOf("@") > -1
     Wallet.findByAddress term, (err, wallet)->
       return User.findById wallet.user_id, renderUser  if wallet

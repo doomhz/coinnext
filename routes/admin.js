@@ -1,5 +1,5 @@
 (function() {
-  var AuthStats, JsonRenderer, MarketHelper, MarketStats, Payment, Transaction, User, Wallet, jsonBeautifier;
+  var AuthStats, JsonRenderer, MarketHelper, MarketStats, Payment, Transaction, User, Wallet, jsonBeautifier, _;
 
   Wallet = GLOBAL.db.Wallet;
 
@@ -18,6 +18,8 @@
   JsonRenderer = require("../lib/json_renderer");
 
   jsonBeautifier = require("../lib/json_beautifier");
+
+  _ = require("underscore");
 
   module.exports = function(app) {
     var login;
@@ -311,7 +313,7 @@
         }
         return res.json(user);
       };
-      if (_.isNumber(parseInt(term))) {
+      if (!_.isNaN(parseInt(term))) {
         return User.findById(term, renderUser);
       }
       if (term.indexOf("@") > -1) {
