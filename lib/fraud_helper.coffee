@@ -8,8 +8,9 @@ FraudHelper =
 
   findDesyncedWallets: (callback)->
     GLOBAL.db.Wallet.findAll({where: {address: {ne: null}}}).complete (err, wallets)->
-      async.mapSeries wallets, FraudHelper.checkProperBalance, (err, result)->
-        callback err, result
+      async.mapSeries wallets, FraudHelper.checkProperBalance, (err, result = [])->
+        callback err, result.filter (val)->
+          val?
 
   checkProperBalance: (wallet, cb)->
     GLOBAL.db.Transaction.findProcessedByUserAndWallet wallet.user_id, wallet.id, (err, transactions)->
@@ -21,19 +22,17 @@ FraudHelper =
         GLOBAL.db.Order.findByOptions options, (err, orders)->
           totalDeposit = 0
           totalWithdrawal = 0
-          totalHoldBalance
+          totalHoldBalance = 0
           for transaction in transactions
             totalDeposit = math.add totalDeposit, transaction.amount  if transaction.category is "receive"
           for payment in payments
             totalWithdrawal = math.add totalWithdrawal, payment.amount
           for order in orders
-            try
-              totalHoldBalance = math.add totalHoldBalance, order.left_hold_balance
-            catch
+            totalHoldBalance = math.add totalHoldBalance, order.left_hold_balance
           totalBalance = math.add totalDeposit, -totalWithdrawal
           totalAvailableBalance = math.add totalBalance, -totalHoldBalance
           return cb()  if totalAvailableBalance is wallet.balance and totalHoldBalance is wallet.hold_balance
-          return cb
+          return cb null,
             wallet_id: wallet.id
             user_id: wallet.user_id
             currency: wallet.currency

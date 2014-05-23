@@ -70,6 +70,6 @@ task "wallet:sync_balance", "Sync wallets balance", ()->
   FraudHelper = require "./lib/fraud_helper"
   FraudHelper.findDesyncedWallets (err, result)->
     console.error err  if err
-    console.log result
+    console.log "#{result.length} desynced wallets", result
 
 
