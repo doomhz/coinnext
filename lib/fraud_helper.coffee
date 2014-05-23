@@ -22,22 +22,16 @@ FraudHelper =
       for order in orders
         totalHoldBalance = math.add totalHoldBalance, order.left_hold_balance
       return cb()  if totalHoldBalance is wallet.hold_balance
-      if totalHoldBalance > wallet.hold_balance
-        holdBalanceDiff = math.add totalHoldBalance, -wallet.hold_balance
-        totalAvailableBalance = math.add wallet.balance, -holdBalanceDiff
-      else
-        holdBalanceDiff = math.add wallet.hold_balance, -totalHoldBalance
-        totalAvailableBalance = math.add wallet.balance, -holdBalanceDiff
+      diff = math.add totalHoldBalance, -wallet.hold_balance
       return cb null,
         wallet_id: wallet.id
         user_id: wallet.user_id
         currency: wallet.currency
+        diff: diff
+        diff_float: MarketHelper.fromBigint diff
         current:
           balance: wallet.balance
           hold_balance: wallet.hold_balance
-        fixed:
-          balance: totalAvailableBalance
-          hold_balance: totalHoldBalance
 
 ###
   checkProperBalance: (wallet, cb)->
