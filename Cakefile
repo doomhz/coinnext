@@ -72,4 +72,21 @@ task "wallet:sync_balance", "Sync wallets balance", ()->
     console.error err  if err
     console.log "#{result.length} desynced wallets", result
 
+task "promo:find_addresses", "", ()->
+  fs = require "fs"
+  async = require "async"
+  addresses = fs.readFileSync "email_addresses.txt"
+  addresses = addresses.toString()
+  addresses = addresses.split "\n"
 
+  getWalletAddress = (user, cb)->
+    GLOBAL.db.Wallet.findOrCreateUserWalletByCurrency user.id, "SCOT", (err, wallet)->
+      return cb err  if err
+      return cb null, "#{user.email} - #{wallet.address}"  if wallet.address
+      wallet.generateAddress (err, wl)->
+        return cb err  if err
+        cb null, "#{user.email} - #{wl.address}"
+
+  GLOBAL.db.User.findAll({where: {email: addresses}}).complete (err, users)->
+    async.mapSeries users, getWalletAddress, (err, result)->
+      console.log result
