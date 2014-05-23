@@ -142,6 +142,7 @@ module.exports = (app)->
     res.render "static/fees",
       title: 'Fees - Coinnext'
       user: req.user
+      MarketHelper: MarketHelper
 
   app.get "/about", (req, res)->
     res.render "static/about",
