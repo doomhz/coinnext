@@ -2,7 +2,7 @@ extends ../admin
 
 block content
   .content
-    h2.content-title User #{user.email} - #{user.id}
+    h2.content-title User #{user.email} / #{user.username} / #{user.id}
 
     p Email verified: #{user.email_verified}
     p Created: #{user.created_at.toFormat("DD MMM YYYY HH24:MI")}

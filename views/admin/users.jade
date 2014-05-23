@@ -18,6 +18,7 @@ block content
       thead
         tr
           th Email
+          th Username
           th Created
           th Updated
       tbody
@@ -25,6 +26,8 @@ block content
           tr
             td
               a(href="/administratie/user/#{user.id}", target="_blank") #{user.email}
+            td
+              | #{user.username}
             td
               | #{user.created_at.toFormat("DD MMM YYYY HH24:MI")}
             td
