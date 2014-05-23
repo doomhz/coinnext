@@ -104,3 +104,14 @@ $(document).ready ()->
           status: $el.data "status"
         success: (response)->
           window.location.reload()
+
+  $resendEmailVerificationBt = $("#resend-email-verification")
+  if $resendEmailVerificationBt.length
+    $resendEmailVerificationBt.click (ev)->
+      return  if not confirm "Are you sure?"
+      $target = $(ev.target)
+      $.post "#{rootUrl}/resend_user_verification_email/#{$target.data("id")}", (response)->
+        if response.user_id
+          alert "Verification successfully sent."
+        else
+          alert xhr.responseText
