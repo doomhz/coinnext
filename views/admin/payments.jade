@@ -34,7 +34,7 @@ block content
                 br
                 | IP: #{payment.remote_ip}
             td #{payment.address}
-            td #{payment.getFloat('amount')} #{payment.currency}
+            td #{_str.toFixed(payment.getFloat('amount'))} #{payment.currency}
             td #{payment.created_at.toFormat("DD MMM YYYY HH24:MI")}
             td
               span.payment-status #{payment.status}

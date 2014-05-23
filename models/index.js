@@ -50,7 +50,11 @@
 
   db.User.hasMany(db.UserToken);
 
+  db.User.hasMany(db.Transaction);
+
   db.Chat.belongsTo(db.User);
+
+  db.Transaction.belongsTo(db.User);
 
   db.UserToken.belongsTo(db.User);
 

@@ -115,6 +115,9 @@ module.exports = (app)->
       ]
       limit: count
       offset: from
+      include: [
+        {model: GLOBAL.db.User, attributes: ["username", "email"]}
+      ]
     if userId
       query.where =
         user_id: userId

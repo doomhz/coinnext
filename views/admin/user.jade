@@ -32,9 +32,9 @@ block content
             td
               | #{wallet.address}
             td
-              | #{wallet.getFloat('balance')}
+              | #{_str.toFixed(wallet.getFloat('balance'))}
             td
-              | #{wallet.getFloat('hold_balance')}
+              | #{_str.toFixed(wallet.getFloat('hold_balance'))}
             td
               | #{wallet.created_at.toFormat("DD MMM YYYY HH24:MI")}
             td

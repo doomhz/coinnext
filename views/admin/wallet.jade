@@ -5,8 +5,8 @@ block content
     h2.content-title Wallet #{wallet.id} #{wallet.currency}
 
     p Address: #{wallet.address}
-    p Balance: #{wallet.getFloat('balance')} #{wallet.currency}
-    p Hold balance: #{wallet.getFloat('hold_balance')} #{wallet.currency}
+    p Balance: #{_str.toFixed(wallet.getFloat('balance'))} #{wallet.currency}
+    p Hold balance: #{_str.toFixed(wallet.getFloat('hold_balance'))} #{wallet.currency}
     p Created: #{wallet.created_at.toFormat("DD MMM YYYY HH24:MI")}
     p Updated: #{wallet.updated_at.toFormat("DD MMM YYYY HH24:MI")}
 
