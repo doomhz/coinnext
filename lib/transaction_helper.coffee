@@ -129,7 +129,7 @@ TransactionHelper =
                       user_id: wallet.user_id
                       eventData: JsonRenderer.wallet wallet
                   transaction.done (err)->
-                    console.error "Could not load transaction #{updatedTransaction.id} - #{err}"
+                    console.error "Could not load transaction #{updatedTransaction.id} - #{err}"  if err
                     return callback()
           else
             Payment.findByTransaction txId, (err, payment)->
