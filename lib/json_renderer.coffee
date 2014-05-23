@@ -183,14 +183,14 @@ JsonRenderer =
         "market_id": stats.id
         "code": stats.label
         "exchange": stats.exchange
-        "last_price": stats.getFloat "last_price"
-        "yesterday_price": stats.getFloat "yesterday_price"
-        "change": stats.getFloat "growth_ratio"
-        "24hhigh": stats.getFloat "day_high"
-        "24hlow": stats.getFloat "day_low"
-        "24hvol": stats.getFloat "volume1"
-        "top_bid": stats.getFloat "top_bid"
-        "top_ask": stats.getFloat "top_ask"
+        "last_price": _str.toFixed(stats.getFloat("last_price"))
+        "yesterday_price": _str.toFixed(stats.getFloat("yesterday_price"))
+        "change": _str.toFixed(stats.getFloat("growth_ratio"), 2)
+        "24hhigh": _str.toFixed(stats.getFloat("day_high"))
+        "24hlow": _str.toFixed(stats.getFloat("day_low"))
+        "24hvol": _str.toFixed(stats.getFloat("volume1"), 3)
+        "top_bid": _str.toFixed(stats.getFloat("top_bid"))
+        "top_ask": _str.toFixed(stats.getFloat("top_ask"))
       marketSummaryStats.push summary
     marketSummaryStats
 
@@ -201,9 +201,9 @@ JsonRenderer =
     for orderLog in orderLogs
       trade = {}
       trade.type = if orderLog.order.action is "buy" then 0 else 1
-      trade.amount = orderLog.getFloat "matched_amount"
-      trade.price = orderLog.getFloat "unit_price"
-      trade.total = orderLog.getFloat "total"
+      trade.amount = _str.toFixed(orderLog.getFloat("matched_amount"))
+      trade.price = _str.toFixed(orderLog.getFloat("unit_price"))
+      trade.total = _str.toFixed(orderLog.getFloat("total"))
       trade.time = orderLog.time
       result.trades.push trade
     result
@@ -215,9 +215,9 @@ JsonRenderer =
     result.orders = []
     for order in orders
       lastOrder = {}
-      lastOrder.price = order.getFloat "unit_price"
-      lastOrder.amount = order.getFloat "amount"
-      lastOrder.total = order.getFloat "total"
+      lastOrder.price = _str.toFixed(order.getFloat("unit_price"))
+      lastOrder.amount = _str.toFixed(order.getFloat("amount"))
+      lastOrder.total = _str.toFixed(order.getFloat("total"))
       result.orders.push lastOrder
     result
 
@@ -226,12 +226,12 @@ JsonRenderer =
     for periodStat in tradeStats
       stat = {}
       stat.date = periodStat.start_time
-      stat.open = periodStat.getFloat "open_price"
-      stat.close = periodStat.getFloat "close_price"
-      stat.high = periodStat.getFloat "high_price"
-      stat.low = periodStat.getFloat "low_price"
-      stat.coin_volume = periodStat.getFloat "volume"
-      stat.exchange_volume = periodStat.getFloat "exchange_volume"
+      stat.open = _str.toFixed(periodStat.getFloat("open_price"))
+      stat.close = _str.toFixed(periodStat.getFloat("close_price"))
+      stat.high = _str.toFixed(periodStat.getFloat("high_price"))
+      stat.low = _str.toFixed(periodStat.getFloat("low_price"))
+      stat.coin_volume = _str.toFixed(periodStat.getFloat("volume"))
+      stat.exchange_volume = _str.toFixed(periodStat.getFloat("exchange_volume"))
       result.push stat
     result
 
