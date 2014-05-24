@@ -50,6 +50,6 @@ class window.App.OrdersCollection extends Backbone.Collection
     stackedOrders = {}
     @each (order)->
       unitPrice = _.str.satoshiRound order.get("unit_price")
-      stackedOrders[unitPrice] = new App.OrderModel  if not stackedOrders[unitPrice]
-      stackedOrders[unitPrice].mergeWithOrder order
+      stackedOrders["0#{unitPrice}"] = new App.OrderModel  if not stackedOrders[unitPrice]
+      stackedOrders["0#{unitPrice}"].mergeWithOrder order
     _.values stackedOrders
