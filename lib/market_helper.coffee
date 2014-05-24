@@ -39,11 +39,14 @@ MARKET_STATUS =
 
 EVENT_TYPE =
   orders_match: 1
-  order_canceled: 2
+  cancel_order: 2
+  order_canceled: 3
+  add_order: 4
+  order_added: 5
 
 EVENT_STATUS =
-  unsent: 1
-  sent: 2
+  pending: 1
+  processed: 2
 
 MarketHelper =
 

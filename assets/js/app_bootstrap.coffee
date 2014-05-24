@@ -225,5 +225,9 @@ $(document).ready ()->
     $.publish "order-partially-completed", order
   ordersSocket.on "order-canceled", (data)->
     $.publish "order-canceled", data
+  ordersSocket.on "order-to-cancel", (data)->
+    $.publish "order-to-cancel", data
+  ordersSocket.on "order-to-add", (data)->
+    $.publish "order-to-add", data
   ordersSocket.on "market-stats-updated", (data)->
     $.publish "market-stats-updated", data

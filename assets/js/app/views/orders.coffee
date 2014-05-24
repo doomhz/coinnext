@@ -17,7 +17,9 @@ class App.OrdersView extends App.MasterView
     $.subscribe "new-order", @onNewOrder
     $.subscribe "order-completed", @onOrderCompleted
     $.subscribe "order-partially-completed", @onOrderPartiallyCompleted
+    $.subscribe "order-to-cancel", @onOrderToCancel
     $.subscribe "order-canceled", @onOrderCanceled
+    $.subscribe "order-to-add", @onOrderToAdd
 
   render: ()->
     @collection.fetch
@@ -55,6 +57,14 @@ class App.OrdersView extends App.MasterView
         , 1000
 
   onOrderCanceled: (ev, data)=>
+    @$el.empty()
+    @render()
+
+  onOrderToCancel: (ev, data)=>
+    @$el.empty()
+    @render()
+
+  onOrderToAdd: (ev, data)=>
     @$el.empty()
     @render()
 

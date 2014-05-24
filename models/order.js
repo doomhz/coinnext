@@ -176,6 +176,11 @@
           return this.setDataValue("status", MarketHelper.getOrderStatus(status));
         }
       },
+      in_queue: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
+      },
       published: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
@@ -326,6 +331,9 @@
           }
           return MarketHelper.fromBigint(this[attribute]);
         },
+        canBeCanceled: function() {
+          return !this.in_queue && this.status !== "completed";
+        },
         publish: function(callback) {
           if (callback == null) {
             callback = function() {};
@@ -335,9 +343,6 @@
               if (err) {
                 console.error(err);
                 return callback(err, res, body);
-              }
-              if (body && body.published) {
-                return Order.findById(body.id, callback);
               }
               if (body && body.id) {
                 return Order.findById(body.id, callback);
@@ -357,7 +362,7 @@
                 console.error(err);
                 return callback(err, res, body);
               }
-              if (body && body.canceled) {
+              if (body && body.id) {
                 return callback();
               } else {
                 console.error("Could not cancel the order - " + (JSON.stringify(body)));

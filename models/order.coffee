@@ -107,6 +107,10 @@ module.exports = (sequelize, DataTypes) ->
           MarketHelper.getOrderStatusLiteral @getDataValue("status")
         set: (status)->
           @setDataValue "status", MarketHelper.getOrderStatus(status)
+      in_queue:
+        type: DataTypes.BOOLEAN
+        defaultValue: false
+        allowNull: false
       published:
         type: DataTypes.BOOLEAN
         defaultValue: false
@@ -202,12 +206,14 @@ module.exports = (sequelize, DataTypes) ->
           return @[attribute]  if not @[attribute]?
           MarketHelper.fromBigint @[attribute]
 
+        canBeCanceled: ()->
+          not @in_queue and @status isnt "completed"
+
         publish: (callback = ()->)->
           GLOBAL.coreAPIClient.sendWithData "publish_order", @values, (err, res, body)=>
             if err
               console.error err
               return callback err, res, body
-            return Order.findById body.id, callback  if body and body.published
             return Order.findById body.id, callback  if body and body.id
             console.error "Could not publish the order - #{JSON.stringify(body)}"
             callback body
@@ -217,7 +223,7 @@ module.exports = (sequelize, DataTypes) ->
             if err
               console.error err
               return callback err, res, body
-            if body and body.canceled
+            if body and body.id
               callback()
             else
               console.error "Could not cancel the order - #{JSON.stringify(body)}"
