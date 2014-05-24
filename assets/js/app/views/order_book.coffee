@@ -48,7 +48,7 @@ class App.OrderBookView extends App.MasterView
     unitPrice = $row.data "unit-price"
     action = $row.data "action"
     order = new App.OrderModel
-      unit_price: unitPrice
+      unit_price: _.str.toFixed unitPrice
       action: action
-      amount: @collection.calculateVolumeForPriceLimit unitPrice
+      amount: _.str.toFixed @collection.calculateVolumeForPriceLimit unitPrice
     $.publish "order-book-order-selected", order
