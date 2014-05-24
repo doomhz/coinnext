@@ -45,6 +45,31 @@ TradeHelper =
               transaction.done (err)->
                 return callback "Could not open an order. Please try again later."  if err
 
+  cancelOrder: (orderId, callback = ()->)->
+    Order.findById orderId, (err, order)->
+      Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, wallet)->
+        GLOBAL.db.sequelize.transaction (transaction)->
+          wallet.holdBalance -order.left_hold_balance, transaction, (err, wallet)->
+            if err or not wallet
+              return transaction.rollback().success ()->
+                callback "Could not cancel order #{orderId} - #{err}"
+            order.destroy({transaction: transaction}).complete (err)->
+              if err
+                return transaction.rollback().success ()->
+                  callback err
+              transaction.commit().success ()->
+                callback()
+                TradeHelper.pushOrderUpdate
+                  type: "order-canceled"
+                  eventData:
+                    id: orderId
+                TradeHelper.pushUserUpdate
+                  type: "wallet-balance-changed"
+                  user_id: wallet.user_id
+                  eventData: JsonRenderer.wallet wallet
+              transaction.done (err)->
+                callback "Could not cancel order #{orderId} - #{err}"  if err
+
   submitOrder: (order, callback = ()->)->
     orderData =
       order_id: order.id
@@ -59,14 +84,6 @@ TradeHelper =
       uri: uri
       method: "POST"
       json: orderData
-    @sendEngineData uri, options, callback
-
-  cancelOrder: (order, callback = ()->)->
-    return callback()  if not order.published
-    uri = "#{GLOBAL.appConfig().engine_api_host}/order/#{order.id}"
-    options =
-      uri: uri
-      method: "DELETE"
     @sendEngineData uri, options, callback
 
   sendEngineData: (uri, options, callback)->

@@ -13,22 +13,48 @@ GLOBAL.queue = require('./lib/queue/index');
 var TradeHelper = require('./lib/trade_helper');
 
 var processEvents = function () {
-  GLOBAL.queue.Event.findNext(function (err, event) {
-    if (!event) return setTimeout(processEvents, QUEUE_DELAY);
+  processNextCancellation(function () {
+    processNextMatch(function () {
+      setTimeout(processEvents, QUEUE_DELAY);
+    });
+  });
+};
+
+var processNextCancellation = function (callback) {
+  GLOBAL.queue.Event.findNext("order_canceled", function (err, event) {
+    if (!event) return callback();
+    TradeHelper.cancelOrder(event.loadout.order_id, function () {
+      if (!err) {
+        event.status = "sent";
+        event.save().complete(function () {
+          return callback();
+        });
+      } else {
+        console.error("Could not process event " + event.id, err);
+        return callback();
+      }
+    });
+  });
+};
+
+var processNextMatch = function (callback) {
+  GLOBAL.queue.Event.findNext("orders_match", function (err, event) {
+    if (!event) return callback();
     TradeHelper.matchOrders(event.loadout, function (err) {
       if (!err) {
         event.status = "sent";
         event.save().complete(function () {
-          setTimeout(processEvents, QUEUE_DELAY);
+          return callback();
         });
       } else {
         console.error("Could not process event " + event.id, err);
-        setTimeout(processEvents, QUEUE_DELAY)
+        return callback();
       }
     });
   });
 };
 
 processEvents();
+
 
 console.log("processing events...");

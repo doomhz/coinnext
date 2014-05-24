@@ -5,4 +5,9 @@ script(type="text/template", id="open-order-tpl")
     td.trade-price <%= _.str.toFixed(order.get('unit_price')) %>
     td.trade-amount <%= _.str.toFixed(order.calculateFirstNoFeeAmount()) %>
     td.trade-total <%= _.str.toFixed(order.calculateSecondNoFeeAmount()) %>
-    td.trade-action <a href="#" class="action cancel" data-id="<%= order.id %>">Cancel</a>
+    td.trade-action
+      | <% if (!order.get("in_queue")) { %>
+      <a href="#" class="action cancel" data-id="<%= order.id %>">Cancel</a>
+      | <% } else { %>
+      span Pending...
+      | <% } %>

@@ -61,7 +61,7 @@ describe "Orders Routes", ->
                   resultData =
                     id: 1, type: 'limit', action: 'buy', buy_currency: 'LTC', sell_currency: 'BTC',
                     amount: 5, matched_amount: 0, result_amount: 0, fee: 0, unit_price: 0.01, status: 'open',
-                    published: false
+                    in_queue: false, published: false
                   request(GLOBAL.appConfig().app_host)
                   .post("/orders")
                   .set("cookie", cookie)

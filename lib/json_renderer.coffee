@@ -81,6 +81,7 @@ JsonRenderer =
     fee:            order.getFloat "fee"
     unit_price:     order.getFloat "unit_price"
     status:         order.status
+    in_queue:       order.in_queue
     published:      order.published
     updated_at:     order.updated_at
     created_at:     order.created_at

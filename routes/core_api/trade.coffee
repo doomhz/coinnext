@@ -34,35 +34,25 @@ module.exports = (app)->
 
   app.del "/cancel_order/:order_id", (req, res, next)->
     orderId = req.params.order_id
-    #console.log orderId
     Order.findById orderId, (err, order)->
-      return next(new restify.ConflictError err)  if err or not order
+      return next(new restify.ConflictError err)  if err or not order or not order.canBeCanceled()
       orderCurrency = order["#{order.action}_currency"]
       MarketStats.findEnabledMarket orderCurrency, "BTC", (err, market)->
         return next(new restify.ConflictError "#{new Date()} - Will not process order #{orderId}, the market for #{orderCurrency} is disabled.")  if not market
-        TradeHelper.cancelOrder order, (err)->
-          return next(new restify.ConflictError err)  if err
-          Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, wallet)->
-            GLOBAL.db.sequelize.transaction (transaction)->
-              wallet.holdBalance -order.left_hold_balance, transaction, (err, wallet)->
-                if err or not wallet
-                  return transaction.rollback().success ()->
-                    next(new restify.ConflictError "Could not cancel order #{orderId} - #{err}")
-                order.destroy({transaction: transaction}).complete (err)->
-                  if err
-                    return transaction.rollback().success ()->
-                      next(new restify.ConflictError err)
-                  transaction.commit().success ()->
-                    res.send
-                      id:       orderId
-                      canceled: true
-                    TradeHelper.pushOrderUpdate
-                      type: "order-canceled"
-                      eventData:
-                        id: orderId
-                    TradeHelper.pushUserUpdate
-                      type: "wallet-balance-changed"
-                      user_id: wallet.user_id
-                      eventData: JsonRenderer.wallet wallet
-                  transaction.done (err)->
-                    next(new restify.ConflictError "Could not cancel order #{orderId} - #{err}")  if err
+        GLOBAL.db.sequelize.transaction (transaction)->
+          GLOBAL.queue.Event.addCancelOrder {order_id: orderId}, (err)->
+            if err
+              return transaction.rollback().success ()->
+                next(new restify.ConflictError "Could not cancel order #{orderId} - #{err}")
+            order.in_queue = true
+            order.save({transaction: transaction}).complete (err)->
+              if err
+                return transaction.rollback().success ()->
+                  next(new restify.ConflictError "Could not set order #{orderId} for canceling - #{err}")
+              transaction.commit().success ()->
+                res.send
+                  id: orderId
+                TradeHelper.pushOrderUpdate
+                  type: "order-to-cancel"
+                  eventData:
+                    id: orderId

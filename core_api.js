@@ -9,6 +9,7 @@ var environment = process.env.NODE_ENV || 'development';
 GLOBAL.appConfig = require("./configs/config");
 GLOBAL.wallets = require('./configs/wallets');
 GLOBAL.db = require('./models/index');
+GLOBAL.queue = require('./lib/queue/index');
 
 // Setup express
 var server = restify.createServer();

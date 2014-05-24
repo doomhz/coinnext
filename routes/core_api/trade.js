@@ -59,7 +59,7 @@
       orderId = req.params.order_id;
       return Order.findById(orderId, function(err, order) {
         var orderCurrency;
-        if (err || !order) {
+        if (err || !order || !order.canBeCanceled()) {
           return next(new restify.ConflictError(err));
         }
         orderCurrency = order["" + order.action + "_currency"];
@@ -67,48 +67,33 @@
           if (!market) {
             return next(new restify.ConflictError("" + (new Date()) + " - Will not process order " + orderId + ", the market for " + orderCurrency + " is disabled."));
           }
-          return TradeHelper.cancelOrder(order, function(err) {
-            if (err) {
-              return next(new restify.ConflictError(err));
-            }
-            return Wallet.findUserWalletByCurrency(order.user_id, order.sell_currency, function(err, wallet) {
-              return GLOBAL.db.sequelize.transaction(function(transaction) {
-                return wallet.holdBalance(-order.left_hold_balance, transaction, function(err, wallet) {
-                  if (err || !wallet) {
-                    return transaction.rollback().success(function() {
-                      return next(new restify.ConflictError("Could not cancel order " + orderId + " - " + err));
-                    });
-                  }
-                  return order.destroy({
-                    transaction: transaction
-                  }).complete(function(err) {
-                    if (err) {
-                      return transaction.rollback().success(function() {
-                        return next(new restify.ConflictError(err));
-                      });
+          return GLOBAL.db.sequelize.transaction(function(transaction) {
+            return GLOBAL.queue.Event.addCancelOrder({
+              order_id: orderId
+            }, function(err) {
+              if (err) {
+                return transaction.rollback().success(function() {
+                  return next(new restify.ConflictError("Could not cancel order " + orderId + " - " + err));
+                });
+              }
+              order.in_queue = true;
+              return order.save({
+                transaction: transaction
+              }).complete(function(err) {
+                if (err) {
+                  return transaction.rollback().success(function() {
+                    return next(new restify.ConflictError("Could not set order " + orderId + " for canceling - " + err));
+                  });
+                }
+                return transaction.commit().success(function() {
+                  res.send({
+                    id: orderId
+                  });
+                  return TradeHelper.pushOrderUpdate({
+                    type: "order-to-cancel",
+                    eventData: {
+                      id: orderId
                     }
-                    transaction.commit().success(function() {
-                      res.send({
-                        id: orderId,
-                        canceled: true
-                      });
-                      TradeHelper.pushOrderUpdate({
-                        type: "order-canceled",
-                        eventData: {
-                          id: orderId
-                        }
-                      });
-                      return TradeHelper.pushUserUpdate({
-                        type: "wallet-balance-changed",
-                        user_id: wallet.user_id,
-                        eventData: JsonRenderer.wallet(wallet)
-                      });
-                    });
-                    return transaction.done(function(err) {
-                      if (err) {
-                        return next(new restify.ConflictError("Could not cancel order " + orderId + " - " + err));
-                      }
-                    });
                   });
                 });
               });
