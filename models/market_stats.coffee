@@ -128,13 +128,12 @@ module.exports = (sequelize, DataTypes) ->
         setMarketStatus: (id, status, callback = ()->)->
           MarketStats.update({status: status}, {id: id}).complete callback
 
-        # findEnabledMarkets null, null -> all markets
-        # findEnabledMarkets null, BTC -> all BTC markets
-        # findEnabledMarkets LTC, BTC -> return LTC_BTC market
-        findEnabledMarkets: (currency1, currency2, callback = ()->)->
-          query =
-            where:
-              status: MarketHelper.getMarketStatus("enabled")
+        # findMarkets null, null -> all markets
+        # findMarkets null, BTC -> all BTC markets
+        # findMarkets LTC, BTC -> return LTC_BTC market
+        findMarkets: (currency1, currency2, callback = ()->)->
+          query = {}
+          query.where = {}
           if currency1 isnt null and currency2 isnt null
             query.where.type = MarketHelper.getMarket("#{currency1}_#{currency2}")
           else if currency1 is null and currency2 isnt null

@@ -9,7 +9,7 @@ module.exports = (app)->
 
   # Provides an overview of all our markets
   app.get "/v1/market/summary", (req, res, next)->
-    MarketStats.findEnabledMarkets null, null, (err, marketStats)->
+    MarketStats.findMarkets null, null, (err, marketStats)->
       return res.json({error: {code: 404, message: "Not found"}})  if err
       res.send JsonRenderer.marketSummary marketStats
   
@@ -19,7 +19,7 @@ module.exports = (app)->
     exchange = req.params.exchange
     if not MarketHelper.isValidExchange(exchange)
       return res.json({error: {code: 404, message: "Not found"}})
-    MarketStats.findEnabledMarkets(null, exchange).complete (err, marketStats)->
+    MarketStats.findMarkets(null, exchange).complete (err, marketStats)->
       return res.json({error: {code: 404, message: "Not found"}})  if err
       res.send JsonRenderer.marketSummary marketStats
   
@@ -30,7 +30,7 @@ module.exports = (app)->
     exchange = req.params.exchange
     if not MarketHelper.isValidMarketPair(coin, exchange)
       return res.json({error: {code: 404, message: "Not found"}})
-    MarketStats.findEnabledMarkets(coin, exchange).complete (err, marketStats)->
+    MarketStats.findMarkets(coin, exchange).complete (err, marketStats)->
       return res.json({error: {code: 404, message: "Not found"}})  if err
       res.send JsonRenderer.marketSummary marketStats
 

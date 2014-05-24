@@ -198,16 +198,13 @@
             id: id
           }).complete(callback);
         },
-        findEnabledMarkets: function(currency1, currency2, callback) {
+        findMarkets: function(currency1, currency2, callback) {
           var query;
           if (callback == null) {
             callback = function() {};
           }
-          query = {
-            where: {
-              status: MarketHelper.getMarketStatus("enabled")
-            }
-          };
+          query = {};
+          query.where = {};
           if (currency1 !== null && currency2 !== null) {
             query.where.type = MarketHelper.getMarket("" + currency1 + "_" + currency2);
           } else if (currency1 === null && currency2 !== null) {

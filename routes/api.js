@@ -15,7 +15,7 @@
 
   module.exports = function(app) {
     app.get("/v1/market/summary", function(req, res, next) {
-      return MarketStats.findEnabledMarkets(null, null, function(err, marketStats) {
+      return MarketStats.findMarkets(null, null, function(err, marketStats) {
         if (err) {
           return res.json({
             error: {
@@ -38,7 +38,7 @@
           }
         });
       }
-      return MarketStats.findEnabledMarkets(null, exchange).complete(function(err, marketStats) {
+      return MarketStats.findMarkets(null, exchange).complete(function(err, marketStats) {
         if (err) {
           return res.json({
             error: {
@@ -62,7 +62,7 @@
           }
         });
       }
-      return MarketStats.findEnabledMarkets(coin, exchange).complete(function(err, marketStats) {
+      return MarketStats.findMarkets(coin, exchange).complete(function(err, marketStats) {
         if (err) {
           return res.json({
             error: {
