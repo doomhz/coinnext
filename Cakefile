@@ -92,3 +92,15 @@ task "promo:find_addresses", "", ()->
   GLOBAL.db.User.findAll({where: {email: addresses}}).complete (err, users)->
     async.mapSeries users, getWalletAddress, (err, result)->
       console.log result
+
+task "promo:find_diff_addresses", "", ()->
+  fs = require "fs"
+  _ = require "underscore"
+  addresses = fs.readFileSync "email_addresses.txt"
+  addresses = addresses.toString()
+  addresses = addresses.split "\n"
+  addressesOut = fs.readFileSync "email_addresses_out.txt"
+  addressesOut = addressesOut.toString()
+  addressesOut = addressesOut.split "\n"
+
+  console.log _.difference addresses, addressesOut
