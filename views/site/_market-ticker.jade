@@ -12,7 +12,10 @@
             li.market-ticker-coin(data-market-type="#{type}", data-market-currency="#{info.label}", class="#{info.label == currency1 ? 'active' : ''}")
               a(href="/trade/#{type.replace('_', '/')}")
                 .label #{info.label}
-                div(class="rate #{growthRatio > 0 ? 'up' : ''} #{growthRatio < 0 ? 'down' : ''} #{growthRatio == 0 ? 'none' : ''}") #{_str.toFixed(info.last_price, 8)}
+                - if (info.status === "disabled")
+                  div(class="rate none") ON HOLD
+                - else
+                  div(class="rate #{growthRatio > 0 ? 'up' : ''} #{growthRatio < 0 ? 'down' : ''} #{growthRatio == 0 ? 'none' : ''}") #{_str.toFixed(info.last_price, 8)}
                 .move-coin <i class="icon-reorder"></i>
 
     .add-coin
