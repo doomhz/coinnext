@@ -3,7 +3,7 @@ if (process.env.NODE_ENV === "production") require("./configs/logger");
 
 // Configure modules
 var environment = process.env.NODE_ENV || 'development';
-var QUEUE_DELAY = 1000;
+var QUEUE_DELAY = 500;
 
 // Configure globals
 GLOBAL.appConfig = require("./configs/config");
