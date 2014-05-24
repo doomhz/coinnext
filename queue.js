@@ -27,7 +27,7 @@ var processNextCancellation = function (callback) {
     if (!event) return callback();
     TradeHelper.cancelOrder(event.loadout.order_id, function () {
       if (!err) {
-        event.status = "sent";
+        event.status = "processed";
         event.save().complete(function () {
           return callback();
         });
@@ -44,7 +44,7 @@ var processNextAdd = function (callback) {
     if (!event) return callback();
     TradeHelper.publishOrder(event.loadout.order_id, function () {
       if (!err) {
-        event.status = "sent";
+        event.status = "processed";
         event.save().complete(function () {
           return callback();
         });
@@ -61,7 +61,7 @@ var processNextMatch = function (callback) {
     if (!event) return callback();
     TradeHelper.matchOrders(event.loadout, function (err) {
       if (!err) {
-        event.status = "sent";
+        event.status = "processed";
         event.save().complete(function () {
           return callback();
         });

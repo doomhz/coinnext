@@ -23,8 +23,8 @@ module.exports = (sequelize, DataTypes) ->
       status:
         type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
-        defaultValue: MarketHelper.getEventStatus "unsent"
-        comment: "unsent, sent"
+        defaultValue: MarketHelper.getEventStatus "pending"
+        comment: "pending, processed"
         get: ()->
           MarketHelper.getEventStatusLiteral @getDataValue("status")
         set: (status)->
@@ -37,21 +37,21 @@ module.exports = (sequelize, DataTypes) ->
           data =
             type: "add_order"
             loadout: loadout
-            status: "unsent"
+            status: "pending"
           Event.create(data).complete callback
 
         addCancelOrder: (loadout, callback = ()->)->
           data =
             type: "cancel_order"
             loadout: loadout
-            status: "unsent"
+            status: "pending"
           Event.create(data).complete callback
 
         findNext: (type, callback = ()->)->
           query =
             where:
               type: MarketHelper.getEventType type
-              status: MarketHelper.getEventStatus "unsent"
+              status: MarketHelper.getEventStatus "pending"
             order: [
               ["created_at", "ASC"]
             ]

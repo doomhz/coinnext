@@ -45,8 +45,8 @@ EVENT_TYPE =
   order_added: 5
 
 EVENT_STATUS =
-  unsent: 1
-  sent: 2
+  pending: 1
+  processed: 2
 
 MarketHelper =
 
