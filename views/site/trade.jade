@@ -61,7 +61,7 @@ block content
                       .overlay-amount #{wallet1.currency}
                     label Price per #{wallet1.currency}:
                     .currency-input
-                      input#buy-unit-price.amount-field(type="text", name="unit_price", value="#{coinStats.last_price}")
+                      input#buy-unit-price.amount-field(type="text", name="unit_price", value="#{_str.toFixed(coinStats.last_price)}")
                       .overlay-amount #{wallet2.currency}
                     table.order-overview
                       tr.subtotal
@@ -95,7 +95,7 @@ block content
                       .overlay-amount #{wallet1.currency}
                     label Price per #{wallet1.currency}:
                     .currency-input
-                      input#sell-unit-price.amount-field(type="text", name="unit_price", value="#{coinStats.last_price}")
+                      input#sell-unit-price.amount-field(type="text", name="unit_price", value="#{_str.toFixed(coinStats.last_price)}")
                       .overlay-amount #{wallet2.currency}
                     table.order-overview
                       tr.subtotal 
