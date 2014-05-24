@@ -197,6 +197,9 @@
           if (callback == null) {
             callback = function() {};
           }
+          if (this.email_verified) {
+            return callback();
+          }
           return GLOBAL.db.UserToken.generateEmailConfirmationTokenForUser(this.id, this.uuid, (function(_this) {
             return function(err, userToken) {
               var data, emailer, options;

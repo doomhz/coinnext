@@ -122,6 +122,7 @@ module.exports = (sequelize, DataTypes) ->
             callback()
 
         sendEmailVerificationLink: (callback = ()->)->
+          return callback()  if @email_verified
           GLOBAL.db.UserToken.generateEmailConfirmationTokenForUser @id, @uuid, (err, userToken)=>
             data =
               "verification_url": "/verify/#{userToken.token}"
