@@ -32,7 +32,7 @@ block content
         - each wallet in wallets
           tr
             td
-              a(href="/administratie/wallet/#{wallet.id}", target="_blank") #{wallet.id}
+              a(href="/administratie/wallet/#{wallet.id}", target="_blank") #{wallet.currency}
             td
               | #{wallet.address}
             td
