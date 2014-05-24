@@ -8,8 +8,9 @@ block content
     p Created: #{user.created_at.toFormat("DD MMM YYYY HH24:MI")}
     p Updated: #{user.updated_at.toFormat("DD MMM YYYY HH24:MI")}
 
-    p
-      button(data-id="#{user.id}")#resend-email-verification Re-send verification email
+    - if (!user.email_verified)
+      p
+        button(data-id="#{user.id}")#resend-email-verification Re-send verification email
 
     p
       a(href="/administratie/payments?user_id=#{user.id}", target="_blank") View payments
