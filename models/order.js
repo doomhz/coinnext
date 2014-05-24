@@ -344,9 +344,6 @@
                 console.error(err);
                 return callback(err, res, body);
               }
-              if (body && body.published) {
-                return Order.findById(body.id, callback);
-              }
               if (body && body.id) {
                 return Order.findById(body.id, callback);
               }

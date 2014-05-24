@@ -1,4 +1,3 @@
-request = require "request"
 Order = GLOBAL.db.Order
 OrderLog = GLOBAL.db.OrderLog
 Wallet = GLOBAL.db.Wallet
@@ -45,6 +44,19 @@ TradeHelper =
               transaction.done (err)->
                 return callback "Could not open an order. Please try again later."  if err
 
+  publishOrder: (orderId, callback)->
+    Order.findById orderId, (err, order)->
+      return callback "Could not publish order #{orderId} - #{err}"  if err
+      return callback "Order #{orderId} not fund to be published"  if not order
+      order.published = true
+      order.in_queue = false
+      order.save().complete (err, publishedOrder)->
+        return callback "Could not save published order #{orderId} - #{err}"  if err
+        callback err, publishedOrder
+        TradeHelper.pushOrderUpdate
+          type: "order-published"
+          eventData: JsonRenderer.order publishedOrder
+
   cancelOrder: (orderId, callback = ()->)->
     Order.findById orderId, (err, order)->
       Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, wallet)->
@@ -69,34 +81,6 @@ TradeHelper =
                   eventData: JsonRenderer.wallet wallet
               transaction.done (err)->
                 callback "Could not cancel order #{orderId} - #{err}"  if err
-
-  submitOrder: (order, callback = ()->)->
-    orderData =
-      order_id: order.id
-      type: order.type
-      action: order.action
-      buy_currency: MarketHelper.getCurrency order.buy_currency
-      sell_currency: MarketHelper.getCurrency order.sell_currency
-      amount: order.amount
-      unit_price: order.unit_price
-    uri = "#{GLOBAL.appConfig().engine_api_host}/order/#{order.id}"
-    options =
-      uri: uri
-      method: "POST"
-      json: orderData
-    @sendEngineData uri, options, callback
-
-  sendEngineData: (uri, options, callback)->
-    try
-      request options, (err, response = {}, body)->
-        if err or response.statusCode isnt 200
-          err = "#{response.statusCode} - Could not send order data to #{uri} - #{JSON.stringify(options.json)} - #{JSON.stringify(err)} - #{JSON.stringify(body)}"
-          console.error err
-          return callback err
-        return callback()
-    catch e
-      console.error e
-      callback "Bad response #{e}"
 
   pushOrderUpdate: (data)->
     orderSocket.send data

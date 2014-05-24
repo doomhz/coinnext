@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) ->
       type:
         type: DataTypes.INTEGER.UNSIGNED
         allowNull: false
-        comment: "orders_match, cancel_order, order_canceled"
+        comment: "orders_match, cancel_order, order_canceled, add_order, order_added"
         get: ()->
           MarketHelper.getEventTypeLiteral @getDataValue("type")
         set: (type)->
@@ -32,6 +32,13 @@ module.exports = (sequelize, DataTypes) ->
     ,
       tableName: "events"
       classMethods:
+
+        addOrder: (loadout, callback = ()->)->
+          data =
+            type: "add_order"
+            loadout: loadout
+            status: "unsent"
+          Event.create(data).complete callback
 
         addCancelOrder: (loadout, callback = ()->)->
           data =

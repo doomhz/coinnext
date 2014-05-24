@@ -10,27 +10,29 @@ module.exports = (app)->
 
   app.post "/publish_order", (req, res, next)->
     data = req.body
+    data.in_queue = true
     orderCurrency = data["#{data.action}_currency"]
     MarketStats.findEnabledMarket orderCurrency, "BTC", (err, market)->
       return next(new restify.ConflictError "Market for #{orderCurrency} is disabled.")  if not market
       TradeHelper.createOrder data, (err, newOrder)->
         return next(new restify.ConflictError err)  if err
-        TradeHelper.submitOrder newOrder, (err)->
-          # TODO: Make a task that tries to resubmit non published orders...
+        orderData =
+          external_order_id: newOrder.id
+          type: newOrder.type
+          action: newOrder.action
+          buy_currency: MarketHelper.getCurrency newOrder.buy_currency
+          sell_currency: MarketHelper.getCurrency newOrder.sell_currency
+          amount: newOrder.amount
+          unit_price: newOrder.unit_price
+        GLOBAL.queue.Event.addOrder orderData, (err)->
           if err
-            console.error "Could not publish the order #{newOrder.id} - #{err}"
-            return res.send
-              id:        newOrder.id
-              published: false
-          newOrder.published = true
-          newOrder.save().complete (err, newOrder)->
-            console.error "Could not set order #{newOrder.id} to published - #{err}"  if err
-            res.send
-              id:        newOrder.id
-              published: newOrder.published
-            TradeHelper.pushOrderUpdate
-              type: "order-published"
-              eventData: JsonRenderer.order newOrder
+            console.error "Could add add_order event for order #{newOrder.id} - #{err}"
+            return next(new restify.ConflictError "Could not submit order.")  if err
+          res.send
+            id: newOrder.id
+          TradeHelper.pushOrderUpdate
+            type: "order-to-add"
+            eventData: JsonRenderer.order newOrder
 
   app.del "/cancel_order/:order_id", (req, res, next)->
     orderId = req.params.order_id

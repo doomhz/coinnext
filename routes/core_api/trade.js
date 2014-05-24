@@ -19,36 +19,39 @@
     app.post("/publish_order", function(req, res, next) {
       var data, orderCurrency;
       data = req.body;
+      data.in_queue = true;
       orderCurrency = data["" + data.action + "_currency"];
       return MarketStats.findEnabledMarket(orderCurrency, "BTC", function(err, market) {
         if (!market) {
           return next(new restify.ConflictError("Market for " + orderCurrency + " is disabled."));
         }
         return TradeHelper.createOrder(data, function(err, newOrder) {
+          var orderData;
           if (err) {
             return next(new restify.ConflictError(err));
           }
-          return TradeHelper.submitOrder(newOrder, function(err) {
+          orderData = {
+            external_order_id: newOrder.id,
+            type: newOrder.type,
+            action: newOrder.action,
+            buy_currency: MarketHelper.getCurrency(newOrder.buy_currency),
+            sell_currency: MarketHelper.getCurrency(newOrder.sell_currency),
+            amount: newOrder.amount,
+            unit_price: newOrder.unit_price
+          };
+          return GLOBAL.queue.Event.addOrder(orderData, function(err) {
             if (err) {
-              console.error("Could not publish the order " + newOrder.id + " - " + err);
-              return res.send({
-                id: newOrder.id,
-                published: false
-              });
-            }
-            newOrder.published = true;
-            return newOrder.save().complete(function(err, newOrder) {
+              console.error("Could add add_order event for order " + newOrder.id + " - " + err);
               if (err) {
-                console.error("Could not set order " + newOrder.id + " to published - " + err);
+                return next(new restify.ConflictError("Could not submit order."));
               }
-              res.send({
-                id: newOrder.id,
-                published: newOrder.published
-              });
-              return TradeHelper.pushOrderUpdate({
-                type: "order-published",
-                eventData: JsonRenderer.order(newOrder)
-              });
+            }
+            res.send({
+              id: newOrder.id
+            });
+            return TradeHelper.pushOrderUpdate({
+              type: "order-to-add",
+              eventData: JsonRenderer.order(newOrder)
             });
           });
         });

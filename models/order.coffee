@@ -214,7 +214,6 @@ module.exports = (sequelize, DataTypes) ->
             if err
               console.error err
               return callback err, res, body
-            return Order.findById body.id, callback  if body and body.published
             return Order.findById body.id, callback  if body and body.id
             console.error "Could not publish the order - #{JSON.stringify(body)}"
             callback body
