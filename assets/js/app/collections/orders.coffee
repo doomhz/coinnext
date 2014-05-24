@@ -17,7 +17,7 @@ class window.App.OrdersCollection extends Backbone.Collection
     params.currency2 = @currency2  if @currency2
     params.published = @published  if @published?
     params.user_id   = @userId     if @userId
-    params.sort_by   = @sortBy     if @sortBy
+    params.sort_by   = @orderBy    if @orderBy
     url += "?#{$.param(params)}"
 
   model: window.App.OrderModel
@@ -29,7 +29,7 @@ class window.App.OrdersCollection extends Backbone.Collection
     @currency2 = options.currency2
     @published = options.published
     @userId    = options.userId
-    @sortBy    = options.sortBy
+    @orderBy   = options.orderBy
 
   calculateVolume: ()->
     total = 0
@@ -50,6 +50,6 @@ class window.App.OrdersCollection extends Backbone.Collection
     stackedOrders = {}
     @each (order)->
       unitPrice = _.str.satoshiRound order.get("unit_price")
-      stackedOrders[unitPrice] = new App.OrderModel  if not stackedOrders[unitPrice]
-      stackedOrders[unitPrice].mergeWithOrder order
+      stackedOrders["0#{unitPrice}"] = new App.OrderModel  if not stackedOrders[unitPrice]
+      stackedOrders["0#{unitPrice}"].mergeWithOrder order
     _.values stackedOrders

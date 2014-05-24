@@ -72,4 +72,35 @@ task "wallet:sync_balance", "Sync wallets balance", ()->
     console.error err  if err
     console.log "#{result.length} desynced wallets", result
 
+task "promo:find_addresses", "", ()->
+  fs = require "fs"
+  async = require "async"
+  CoreAPIClient = require('./lib/core_api_client')
+  GLOBAL.coreAPIClient = new CoreAPIClient({host: GLOBAL.appConfig().wallets_host})
+  addresses = fs.readFileSync "email_addresses.txt"
+  addresses = addresses.toString()
+  addresses = addresses.split "\n"
 
+  getWalletAddress = (user, cb)->
+    GLOBAL.db.Wallet.findOrCreateUserWalletByCurrency user.id, "SCOT", (err, wallet)->
+      return cb err  if err
+      return cb null, "#{user.email} - #{wallet.address}"  if wallet.address
+      wallet.generateAddress (err, wl)->
+        return cb err  if err
+        cb null, "#{user.email} - #{wl.address}"
+
+  GLOBAL.db.User.findAll({where: {email: addresses}}).complete (err, users)->
+    async.mapSeries users, getWalletAddress, (err, result)->
+      console.log result
+
+task "promo:find_diff_addresses", "", ()->
+  fs = require "fs"
+  _ = require "underscore"
+  addresses = fs.readFileSync "email_addresses.txt"
+  addresses = addresses.toString()
+  addresses = addresses.split "\n"
+  addressesOut = fs.readFileSync "email_addresses_out.txt"
+  addressesOut = addressesOut.toString()
+  addressesOut = addressesOut.split "\n"
+
+  console.log _.difference addresses, addressesOut

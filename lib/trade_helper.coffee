@@ -106,8 +106,8 @@ TradeHelper =
                 return transaction.rollback().success ()->
                   callback "Could not process order #{matchingOrder.id} - #{err}"
               transaction.commit().success ()->
-                TradeHelper.trackMatchedOrder updatedOrderToMatchLog
-                TradeHelper.trackMatchedOrder updatedMatchingOrderLog
+                TradeHelper.trackMatchedOrder updatedOrderToMatchLog, ()->
+                  TradeHelper.trackMatchedOrder updatedMatchingOrderLog
                 callback()
               transaction.done (err)->
                 if err
