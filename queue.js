@@ -45,7 +45,7 @@ var processCancellation = function (event, callback) {
       });
     } else {
       console.error("Could not process event " + event.id, err);
-      return callback();
+      return callback(err);
     }
   });
 };
@@ -59,7 +59,7 @@ var processAdd = function (event, callback) {
       });
     } else {
       console.error("Could not process event " + event.id, err);
-      return callback();
+      return callback(err);
     }
   });
 };
@@ -73,7 +73,7 @@ var processMatch = function (event, callback) {
       });
     } else {
       console.error("Could not process event " + event.id, err);
-      return callback();
+      return callback(err);
     }
   });
 };
@@ -84,6 +84,5 @@ var exit = function (errMessage, err) {
 };
 
 processEvents();
-
 
 console.log("processing events...");
