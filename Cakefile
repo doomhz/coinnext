@@ -109,7 +109,7 @@ task "cancel_stuck_orders", ()->
   GLOBAL.queue = require('./lib/queue/index')
   TradeHelper = require('./lib/trade_helper')
   async = require "async"
-  orderIds = [457,643,1458,1459,1460,1461,1462,1463,1464,1465,1466]
+  orderIds = [1792, 1889, 1892, 1894]
   cancelOrder = (id, cb)->
     TradeHelper.cancelOrder id, cb
   async.mapSeries orderIds, cancelOrder, ()->
