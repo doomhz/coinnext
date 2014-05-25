@@ -165,6 +165,6 @@ class App.TradeView extends App.MasterView
     @renderWalletBalance wallet.id
 
   onOrderBookOrderSelected: (ev, order)=>
-    @$("#buy-unit-price,#sell-unit-price").val order.get "unit_price"
-    @$("#buy-amount-input").val(order.get("amount")).trigger("keyup")  if order.get("action") is "sell"
-    @$("#sell-amount-input").val(order.get("amount")).trigger("keyup")  if order.get("action") is "buy"
+    @$("#buy-unit-price,#sell-unit-price").val(_.str.toFixed(order.get("unit_price")))
+    @$("#buy-amount-input").val(_.str.toFixed(order.get("amount"))).trigger("keyup")  if order.get("action") is "sell"
+    @$("#sell-amount-input").val(_.str.toFixed(order.get("amount"))).trigger("keyup")  if order.get("action") is "buy"
