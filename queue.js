@@ -14,22 +14,22 @@ var TradeHelper = require('./lib/trade_helper');
 
 var processEvents = function () {
   GLOBAL.queue.Event.findNextValid(function (err, event) {
-    if (err) return console.error("Could not fetch the next event. Exitting...", err);
+    if (err) return exit("Could not fetch the next event. Exitting...", err);
     if (!event) {
       setTimeout(processEvents, QUEUE_DELAY);
     } else if (event.type === "order_canceled") {
-      processCancellation(event, function (err) {
-        if (err) return console.error("Could not process cancellation. Exitting...", err);
+      return processCancellation(event, function (err) {
+        if (err) return exit("Could not process cancellation. Exitting...", err);
         setTimeout(processEvents, QUEUE_DELAY);
       });
     } else if (event.type === "order_added") {
-      processAdd(event, function (err) {
-        if (err) return console.error("Could not process order add. Exitting...", err);
+      return processAdd(event, function (err) {
+        if (err) return exit("Could not process order add. Exitting...", err);
         setTimeout(processEvents, QUEUE_DELAY);
       });
     } else if (event.type === "orders_match") {
-      processMatch(event, function (err) {
-        if (err) return console.error("Could not process order match. Exitting...", err);
+      return processMatch(event, function (err) {
+        if (err) return exit("Could not process order match. Exitting...", err);
         setTimeout(processEvents, QUEUE_DELAY);
       });
     }
@@ -76,6 +76,11 @@ var processMatch = function (event, callback) {
       return callback();
     }
   });
+};
+
+var exit = function (errMessage, err) {
+  console.error(errMessage, err);
+  process.exit();
 };
 
 processEvents();
