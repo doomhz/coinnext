@@ -58,7 +58,7 @@ exports = module.exports =
     GRC: 20000000
     DIS: 20000000
     CAIx: 20000000
-    SHARE: 0
+    SHARE: 20000000
     LGC: 2000000
     CFC: 20000000
     RDD: 200000000
