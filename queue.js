@@ -14,21 +14,22 @@ var TradeHelper = require('./lib/trade_helper');
 
 var processEvents = function () {
   GLOBAL.queue.Event.findNextValid(function (err, event) {
-    if (err) {
-      return console.error("Could not fetch the next event. Exitting...", err);
-    }
+    if (err) return console.error("Could not fetch the next event. Exitting...", err);
     if (!event) {
       setTimeout(processEvents, QUEUE_DELAY);
     } else if (event.type === "order_canceled") {
-      processCancellation(event, function () {
+      processCancellation(event, function (err) {
+        if (err) return console.error("Could not process cancellation. Exitting...", err);
         setTimeout(processEvents, QUEUE_DELAY);
       });
     } else if (event.type === "order_added") {
-      processAdd(event, function () {
+      processAdd(event, function (err) {
+        if (err) return console.error("Could not process order add. Exitting...", err);
         setTimeout(processEvents, QUEUE_DELAY);
       });
     } else if (event.type === "orders_match") {
       processMatch(event, function () {
+        if (err) return console.error("Could not process order match. Exitting...", err);
         setTimeout(processEvents, QUEUE_DELAY);
       });
     }
