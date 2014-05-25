@@ -28,7 +28,7 @@ var processEvents = function () {
         setTimeout(processEvents, QUEUE_DELAY);
       });
     } else if (event.type === "orders_match") {
-      processMatch(event, function () {
+      processMatch(event, function (err) {
         if (err) return console.error("Could not process order match. Exitting...", err);
         setTimeout(processEvents, QUEUE_DELAY);
       });
