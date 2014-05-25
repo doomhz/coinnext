@@ -36,9 +36,9 @@ class App.FinancesView extends App.MasterView
       id: walletId
     wallet.fetch
       success: ()=>
-        @$("[data-wallet-balance-id='#{walletId}']").html _.str.satoshiRound(wallet.get("balance") + wallet.get("hold_balance"))
-        @$("[data-wallet-hold-balance-id='#{walletId}']").text _.str.satoshiRound(wallet.get("hold_balance"))
-        @$("[data-wallet-available-balance-id='#{walletId}']").text _.str.satoshiRound(wallet.get("balance"))
+        @$("[data-wallet-balance-id='#{walletId}']").html _.str.toFixed(wallet.get("balance") + wallet.get("hold_balance"))
+        @$("[data-wallet-hold-balance-id='#{walletId}']").text _.str.toFixed(wallet.get("hold_balance"))
+        @$("[data-wallet-available-balance-id='#{walletId}']").text _.str.toFixed(wallet.get("balance"))
 
   setupFormValidators: ()->
     $.validator.addMethod "cryptoAddress", (value, element)->
