@@ -3,6 +3,11 @@ MarketHelper = require "../market_helper"
 module.exports = (sequelize, DataTypes) ->
 
   EVENTS_FETCH_LIMIT = 1
+  VALID_EVENTS = [
+    MarketHelper.getEventType "order_canceled"
+    MarketHelper.getEventType "order_added"
+    MarketHelper.getEventType "orders_match"
+  ]
 
   Event = sequelize.define "Event",
       type:
@@ -47,11 +52,22 @@ module.exports = (sequelize, DataTypes) ->
             status: "pending"
           Event.create(data).complete callback
 
-        findNext: (type, callback = ()->)->
+        findNext: (type = null, callback = ()->)->
           query =
             where:
-              type: MarketHelper.getEventType type
               status: MarketHelper.getEventStatus "pending"
+            order: [
+              ["created_at", "ASC"]
+            ]
+            limit: EVENTS_FETCH_LIMIT
+          query.where.type = MarketHelper.getEventType type  if type
+          Event.find(query).complete callback
+
+        findNextValid: (callback = ()->)->
+          query =
+            where:
+              status: MarketHelper.getEventStatus "pending"
+              type: VALID_EVENTS
             order: [
               ["created_at", "ASC"]
             ]

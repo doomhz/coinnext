@@ -59,6 +59,8 @@ TradeHelper =
 
   cancelOrder: (orderId, callback = ()->)->
     Order.findById orderId, (err, order)->
+      return callback "Could not find order to cancel #{orderId} - #{err}"  if err
+      return callback "Could not find order to cancel #{orderId}"  if not order
       Wallet.findUserWalletByCurrency order.user_id, order.sell_currency, (err, wallet)->
         GLOBAL.db.sequelize.transaction (transaction)->
           wallet.holdBalance -order.left_hold_balance, transaction, (err, wallet)->
