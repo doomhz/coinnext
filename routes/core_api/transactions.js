@@ -24,8 +24,6 @@
       var currency, txId;
       txId = req.params.tx_id;
       currency = req.params.currency;
-      console.log(txId);
-      console.log(currency);
       return GLOBAL.wallets[currency].getTransaction(txId, function(err, walletTransaction) {
         var loadTransactionCallback, subTransactions;
         subTransactions = _.clone(walletTransaction.details);
