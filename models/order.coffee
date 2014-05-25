@@ -149,7 +149,8 @@ module.exports = (sequelize, DataTypes) ->
       
         findByOptions: (options = {}, callback)->
           query =
-            where: {}
+            where:
+              deleted_at: null
             order: [
               ["created_at", "DESC"]
             ]

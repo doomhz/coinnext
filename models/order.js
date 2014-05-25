@@ -243,7 +243,9 @@
             options = {};
           }
           query = {
-            where: {},
+            where: {
+              deleted_at: null
+            },
             order: [["created_at", "DESC"]]
           };
           if (options.limit) {
