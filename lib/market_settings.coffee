@@ -6,7 +6,8 @@ exports = module.exports =
     BANK: 14, BRM: 15, GAY: 16, MAX: 17, ACC: 18, VIO: 19
     VRC: 20, IDC: 21, GRC: 22, DIS: 23, CAIX: 24, SHARE: 25
     LGC: 26, CFC: 27, RDD: 28, H5C: 29, RATC: 30, MAGIC: 31
-    SCOT: 32, UTC: 33, DIEM: 34, LIM: 35, NAUT: 36
+    SCOT: 32, UTC: 33, DIEM: 34, LIM: 35, NAUT: 36, CFN: 37
+    CURE: 38, GOOD: 39, QRK: 40
 
   AVAILABLE_MARKETS:
     LTC_BTC: 1, PPC_BTC: 2, DOGE_BTC: 3, NMC_BTC: 4
@@ -17,7 +18,8 @@ exports = module.exports =
     DIS_BTC: 22, CAIX_BTC: 23, SHARE_BTC: 24, LGC_BTC: 25
     CFC_BTC: 26, RDD_BTC: 27, H5C_BTC: 28, RATC_BTC: 29
     MAGIC_BTC: 30, SCOT_BTC: 31, UTC_BTC: 32, DIEM_BTC: 33
-    LIM_BTC: 34, NAUT_BTC: 35
+    LIM_BTC: 34, NAUT_BTC: 35, CFN_BTC: 36, CURE_BTC: 37
+    GOOD_BTC: 38, QRK_BTC: 39
 
   CURRENCY_NAMES:
     BTC: "Bitcoin", LTC: "Litecoin", PPC: "Peercoin"
@@ -32,6 +34,8 @@ exports = module.exports =
     RDD: "Reddcoin", H5C: "Highfivecoin", RATC: "Ratcoin"
     MAGIC: "Magicoin", SCOT: "Scotcoin", UTC: "Ultracoin"
     DIEM: "Carpediemcoin", LIM: "Limecoin", NAUT: "Nautiluscoin"
+    CFN: "Confessioncoin", CURE: "Curecoin", GOOD: "Goodcoin"
+    QRK: "Quarkcoin"
 
   WITHDRAWAL_FEES:
     BTC: 20000
