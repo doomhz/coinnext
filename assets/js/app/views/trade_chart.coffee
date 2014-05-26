@@ -72,9 +72,11 @@ class App.TradeChartView extends App.MasterView
         borderColor: "#d1d5dd"
         formatter: ()->
           s = Highcharts.dateFormat('%b %e %Y %H:%M', this.x) + "<br />"
-          
-          s += "<b>Open:</b> " + @points[1].point.open + "<br />"+"<b>High:</b> " + @points[1].point.high + "<br />"+"<b>Low:</b> " + @points[1].point.low + "<br />"+"<b>Close:</b> " + @points[1].point.close + "<br />"+"<b>Volume:</b> " + @points[0].point.y   
-            
+          s += "<b>Open:</b> " + _.str.toFixed(@points[1].point.open) + "<br />"
+          s += "<b>High:</b> " + _.str.toFixed(@points[1].point.high) + "<br />"
+          s += "<b>Low:</b> " + _.str.toFixed(@points[1].point.low) + "<br />"
+          s += "<b>Close:</b> " + _.str.toFixed(@points[1].point.close) + "<br />"
+          s += "<b>Volume:</b> " + _.str.toFixed(@points[0].point.y)            
           return s
       series: [
         {
