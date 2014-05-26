@@ -105,7 +105,7 @@ $(document).ready ()->
 
     $closedOrders = $("#closed-orders-cnt")
     if $closedOrders.length
-      closedOrders = new App.OrdersView
+      closedOrders = new App.OrderLogsView
         el: $closedOrders
         tpl: "wallet-closed-order-tpl"
         collection: new App.OrdersCollection null,
@@ -128,7 +128,7 @@ $(document).ready ()->
 
     $overviewClosedOrders = $("#overview-closed-orders-cnt")
     if $overviewClosedOrders.length
-      overviewClosedOrders = new App.OrdersView
+      overviewClosedOrders = new App.OrderLogsView
         el: $overviewClosedOrders
         tpl: "wallet-closed-order-tpl"
         collection: new App.OrderLogsCollection null,
@@ -202,7 +202,7 @@ $(document).ready ()->
     orderBookBuy.render()
 
     $closedOrders = $("#closed-orders-cnt")
-    closedOrders = new App.OrdersView
+    closedOrders = new App.OrderLogsView
       el: $closedOrders
       tpl: "site-closed-order-tpl"
       collection: new App.OrderLogsCollection null,

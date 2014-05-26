@@ -19,7 +19,7 @@ class App.OrdersView extends App.MasterView
     $.subscribe "order-partially-completed", @onOrderPartiallyCompleted
     #$.subscribe "order-to-cancel", @onOrderToCancel
     $.subscribe "order-canceled", @onOrderCanceled
-    $.subscribe "order-to-add", @onOrderToAdd
+    #$.subscribe "order-to-add", @onOrderToAdd
 
   render: ()->
     @collection.fetch

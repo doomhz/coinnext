@@ -45,6 +45,7 @@
 //= require app/views/trade_chart
 //= require app/views/orders
 //= require app/views/order_book
+//= require app/views/order_logs
 //= require app/views/market_ticker
 
 //= require chat/models/chat_message
