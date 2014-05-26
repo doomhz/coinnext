@@ -13,8 +13,6 @@ module.exports = (app)->
   app.put "/transaction/:currency/:tx_id", (req, res, next)->
     txId = req.params.tx_id
     currency = req.params.currency
-    console.log txId
-    console.log currency
     GLOBAL.wallets[currency].getTransaction txId, (err, walletTransaction)->
       subTransactions = _.clone walletTransaction.details
       delete walletTransaction.details

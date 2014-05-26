@@ -17,9 +17,9 @@ class App.OrdersView extends App.MasterView
     $.subscribe "new-order", @onNewOrder
     $.subscribe "order-completed", @onOrderCompleted
     $.subscribe "order-partially-completed", @onOrderPartiallyCompleted
-    $.subscribe "order-to-cancel", @onOrderToCancel
+    #$.subscribe "order-to-cancel", @onOrderToCancel
     $.subscribe "order-canceled", @onOrderCanceled
-    $.subscribe "order-to-add", @onOrderToAdd
+    #$.subscribe "order-to-add", @onOrderToAdd
 
   render: ()->
     @collection.fetch
@@ -71,6 +71,9 @@ class App.OrdersView extends App.MasterView
   onCancelClick: (ev)->
     ev.preventDefault()
     if confirm "Are you sure?"
+      $target = $(ev.target)
+      $target.attr "disabled", true
+      $target.text "Pending..."
       order = new App.OrderModel
         id: $(ev.target).data("id")
       order.destroy
@@ -78,3 +81,5 @@ class App.OrdersView extends App.MasterView
           #@$el.find("tr[data-id='#{order.id}']").remove()
         error: (m, xhr)->
           $.publish "error", xhr
+          $target.attr "disabled", false
+          $target.text "Cancel"
