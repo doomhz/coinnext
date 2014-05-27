@@ -12,7 +12,7 @@ describe "Transactions Api", ->
     GLOBAL.db.sequelize.sync({force: true}).complete ()->
       GLOBAL.db.sequelize.query("TRUNCATE TABLE #{GLOBAL.db.MarketStats.tableName}").complete ()->
         GLOBAL.db.MarketStats.bulkCreate(marketStats).success ()->
-          GLOBAL.db.Wallet.create({currency: "BTC", user_id: 1}).complete (err, wl)->
+          GLOBAL.db.Wallet.create({currency: "BTC", user_id: 1, address: "address"}).complete (err, wl)->
             wallet = wl
             done()
 
@@ -48,6 +48,20 @@ describe "Transactions Api", ->
             GLOBAL.db.Wallet.findById wallet.id, (err, wl)->
               wl.balance.should.eql MarketHelper.toBigint 1
               done()
+
+
+  describe "POST /load_latest_transactions/:currency", ()->
+    describe "When there is a valid currency and tx id", ()->
+      it "returns 200 ok", (done)->
+        request('http://localhost:6000')
+        .post("/load_latest_transactions/BTC")
+        .send()
+        .expect(200)
+        .end (e, res = {})->
+          throw e if e
+          res.body.should.endWith "- Processed 1 transactions"
+          done()
+
 
   describe "POST /process_pending_payments", ()->
     describe "when the wallet has enough balance", ()->
