@@ -41,8 +41,6 @@ TradeHelper =
                   type: "wallet-balance-changed"
                   user_id: wallet.user_id
                   eventData: JsonRenderer.wallet wallet
-              transaction.done (err)->
-                return callback "Could not open an order. Please try again later."  if err
 
   publishOrder: (orderId, callback)->
     Order.findById orderId, (err, order)->
@@ -81,8 +79,6 @@ TradeHelper =
                   type: "wallet-balance-changed"
                   user_id: wallet.user_id
                   eventData: JsonRenderer.wallet wallet
-              transaction.done (err)->
-                callback "Could not cancel order #{orderId} - #{err}"  if err
 
   pushOrderUpdate: (data)->
     orderSocket.send data
@@ -112,10 +108,6 @@ TradeHelper =
                 TradeHelper.trackMatchedOrder updatedOrderToMatchLog, ()->
                   TradeHelper.trackMatchedOrder updatedMatchingOrderLog
                 callback()
-              transaction.done (err)->
-                if err
-                  console.error "Could not process order #{orderId}", err
-                  callback "Could not process order #{orderId} - #{err}"
 
   updateMatchedOrder: (orderToMatch, matchData, transaction, callback)->
     Wallet.findUserWalletByCurrency orderToMatch.user_id, orderToMatch.buy_currency, (err, buyWallet)->

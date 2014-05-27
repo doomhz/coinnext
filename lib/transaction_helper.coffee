@@ -42,8 +42,6 @@ TransactionHelper =
                 type: "wallet-balance-changed"
                 user_id: wallet.user_id
                 eventData: JsonRenderer.wallet wallet
-            transaction.done (err)->
-              callback JsonRenderer.error err  if err
 
   processPayment: (payment, callback)->
     Wallet.findById payment.wallet_id, (err, wallet)->
@@ -80,10 +78,6 @@ TransactionHelper =
                 type: "wallet-balance-changed"
                 user_id: wallet.user_id
                 eventData: JsonRenderer.wallet wallet
-            transaction.done (err)->
-              if err
-                console.error err
-                callback err
 
   pay: (payment, callback = ()->)->
     GLOBAL.wallets[payment.currency].sendToAddress payment.address, payment.getFloat("amount"), (err, response = "")->
@@ -122,9 +116,6 @@ TransactionHelper =
                     type: "wallet-balance-loaded"
                     user_id: wallet.user_id
                     eventData: JsonRenderer.wallet wallet
-                transaction.done (err)->
-                  console.error "Could not load transaction #{updatedTransaction.id} - #{err}"  if err
-                  return callback()
         else
           Payment.findByTransaction txId, (err, payment)->
             return callback()  if not payment
