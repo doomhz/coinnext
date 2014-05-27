@@ -41,7 +41,7 @@ block content
             td
               | #{order.getFloat('matched_amount')} #{order.action == "buy" ? order.buy_currency : order.sell_currency}
             td
-              | #{order.getFloat('result')} #{order.action == "buy" ? order.sell_currency : order.buy_currency}
+              | #{order.getFloat('result_amount')} #{order.action == "buy" ? order.sell_currency : order.buy_currency}
             td
               | #{order.status}
             td
@@ -76,7 +76,7 @@ block content
             td
               | #{order.getFloat('matched_amount')} #{order.action == "buy" ? order.buy_currency : order.sell_currency}
             td
-              | #{order.getFloat('result')} #{order.action == "buy" ? order.sell_currency : order.buy_currency}
+              | #{order.getFloat('result_amount')} #{order.action == "buy" ? order.sell_currency : order.buy_currency}
             td
               | #{order.created_at.toFormat("DD MMM YYYY HH24:MI")}
             td
