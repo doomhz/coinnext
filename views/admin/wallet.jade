@@ -80,4 +80,4 @@ block content
             td
               | #{order.created_at.toFormat("DD MMM YYYY HH24:MI")}
             td
-              | #{order.close_time.toFormat("DD MMM YYYY HH24:MI")}
+              | #{order.close_time ? order.close_time.toFormat("DD MMM YYYY HH24:MI") : ''}
