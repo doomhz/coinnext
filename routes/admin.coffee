@@ -2,6 +2,7 @@ Wallet = GLOBAL.db.Wallet
 User = GLOBAL.db.User
 Transaction = GLOBAL.db.Transaction
 Payment = GLOBAL.db.Payment
+Order = GLOBAL.db.Order
 AuthStats = GLOBAL.db.AuthStats
 MarketStats = GLOBAL.db.MarketStats
 MarketHelper = require "../lib/market_helper"
@@ -74,12 +75,26 @@ module.exports = (app)->
 
   app.get "/administratie/wallet/:id", (req, res)->
     Wallet.findById req.params.id, (err, wallet)->
-      res.render "admin/wallet",
-        title: "Wallet #{wallet.id} - Admin - CoinNext"
-        page: "wallets"
-        adminUser: req.user
-        currencies: MarketHelper.getCurrencyTypes()
-        wallet: wallet
+      openOptions =
+        sell_currency: wallet.currency
+        status: "open"
+        user_id: wallet.user_id
+        currency1: wallet.currency
+      closedOptions =
+        sell_currency: wallet.currency
+        status: "completed"
+        user_id: wallet.user_id
+        currency1: wallet.currency
+      Order.findByOptions openOptions, (err, openOrders)->
+        Order.findByOptions closedOptions, (err, closedOrders)->
+          res.render "admin/wallet",
+            title: "Wallet #{wallet.id} - Admin - CoinNext"
+            page: "wallets"
+            adminUser: req.user
+            currencies: MarketHelper.getCurrencyTypes()
+            wallet: wallet
+            openOrders: openOrders
+            closedOrders: closedOrders
 
   app.get "/administratie/wallets", (req, res)->
     count = req.query.count or 20

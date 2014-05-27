@@ -12,3 +12,72 @@ block content
 
     p
       a(href="/administratie/user/#{wallet.user_id}", target="_blank") View user #{wallet.user_id}
+
+    h3 Open orders
+
+    table#open-orders.table
+      thead
+        tr
+          th ID
+          th Type
+          th Price
+          th Amount
+          th Matched
+          th Result
+          th Status
+          th Created
+          
+      tbody
+        - each order in openOrders
+          tr
+            td
+              | #{order.id}
+            td
+              | #{order.action} #{order.action == "buy" ? order.buy_currency : order.sell_currency}
+            td
+              | #{order.getFloat('unit_price')}
+            td
+              | #{order.getFloat('amount')} #{order.action == "buy" ? order.buy_currency : order.sell_currency}
+            td
+              | #{order.getFloat('matched_amount')} #{order.action == "buy" ? order.buy_currency : order.sell_currency}
+            td
+              | #{order.getFloat('result')} #{order.action == "buy" ? order.sell_currency : order.buy_currency}
+            td
+              | #{order.status}
+            td
+              | #{order.created_at.toFormat("DD MMM YYYY HH24:MI")}
+
+
+    h3 Closed orders
+
+    table#closed-orders.table
+      thead
+        tr
+          th ID
+          th Type
+          th Price
+          th Amount
+          th Matched
+          th Result
+          th Created
+          th Closed
+          
+      tbody
+        - each order in closedOrders
+          tr
+            td
+              | #{order.id}
+            td
+              | #{order.action} #{order.action == "buy" ? order.buy_currency : order.sell_currency}
+            td
+              | #{order.getFloat('unit_price')}
+            td
+              | #{order.getFloat('amount')} #{order.action == "buy" ? order.buy_currency : order.sell_currency}
+            td
+              | #{order.getFloat('matched_amount')} #{order.action == "buy" ? order.buy_currency : order.sell_currency}
+            td
+              | #{order.getFloat('result')} #{order.action == "buy" ? order.sell_currency : order.buy_currency}
+            td
+              | #{order.created_at.toFormat("DD MMM YYYY HH24:MI")}
+            td
+              | #{order.close_time.toFormat("DD MMM YYYY HH24:MI")}

@@ -1,5 +1,5 @@
 (function() {
-  var AuthStats, JsonRenderer, MarketHelper, MarketStats, Payment, Transaction, User, Wallet, jsonBeautifier, _;
+  var AuthStats, JsonRenderer, MarketHelper, MarketStats, Order, Payment, Transaction, User, Wallet, jsonBeautifier, _;
 
   Wallet = GLOBAL.db.Wallet;
 
@@ -8,6 +8,8 @@
   Transaction = GLOBAL.db.Transaction;
 
   Payment = GLOBAL.db.Payment;
+
+  Order = GLOBAL.db.Order;
 
   AuthStats = GLOBAL.db.AuthStats;
 
@@ -106,12 +108,31 @@
     });
     app.get("/administratie/wallet/:id", function(req, res) {
       return Wallet.findById(req.params.id, function(err, wallet) {
-        return res.render("admin/wallet", {
-          title: "Wallet " + wallet.id + " - Admin - CoinNext",
-          page: "wallets",
-          adminUser: req.user,
-          currencies: MarketHelper.getCurrencyTypes(),
-          wallet: wallet
+        var closedOptions, openOptions;
+        openOptions = {
+          sell_currency: wallet.currency,
+          status: "open",
+          user_id: wallet.user_id,
+          currency1: wallet.currency
+        };
+        closedOptions = {
+          sell_currency: wallet.currency,
+          status: "completed",
+          user_id: wallet.user_id,
+          currency1: wallet.currency
+        };
+        return Order.findByOptions(openOptions, function(err, openOrders) {
+          return Order.findByOptions(closedOptions, function(err, closedOrders) {
+            return res.render("admin/wallet", {
+              title: "Wallet " + wallet.id + " - Admin - CoinNext",
+              page: "wallets",
+              adminUser: req.user,
+              currencies: MarketHelper.getCurrencyTypes(),
+              wallet: wallet,
+              openOrders: openOrders,
+              closedOrders: closedOrders
+            });
+          });
         });
       });
     });
