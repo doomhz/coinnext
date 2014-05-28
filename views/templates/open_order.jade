@@ -1,5 +1,5 @@
 script(type="text/template", id="open-order-tpl")
-  tr(class="<%= order.get('action') %>", data-id="<%= order.id %>")
+  tr(class="order-row <%= order.get('action') %>", data-id="<%= order.id %>")
     td.trade-date <%= order.getCreatedDate() %>
     td.trade-type <%= order.get('action') %>
     td.trade-price <%= _.str.toFixed(order.get('unit_price')) %>

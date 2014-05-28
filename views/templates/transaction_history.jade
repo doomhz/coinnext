@@ -1,6 +1,6 @@
 script(type="text/template", id="transaction-history-tpl")
   | <% if (typeof(transaction) !== "undefined") { %>
-  tr(class="<%= transaction.get('category') === 'send' ? 'substract' : 'add' %>")
+  tr(class="<%= transaction.get('category') === 'send' ? 'substract' : 'add' %>", data-id="<%= transaction.id %>")
     td <%= transaction.getCreatedDate() %>
     td <%= transaction.get('category') === 'send' ? 'Withdrawal to ' + transaction.get('address') : 'Deposit' %>
     td.trade-amount <%= transaction.get('category') === 'receive' ? '+' : '' %><%= _.str.toFixed(transaction.get("amount")) %> <%= transaction.get("currency") %>

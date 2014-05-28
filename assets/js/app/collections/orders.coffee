@@ -54,3 +54,9 @@ class window.App.OrdersCollection extends Backbone.Collection
       stackedOrders[stackId] = new App.OrderModel  if not stackedOrders[stackId]
       stackedOrders[stackId].mergeWithOrder order
     _.values stackedOrders
+
+  getIds: ()->
+    ids = []
+    @each (order)->
+      ids.push order.id
+    ids

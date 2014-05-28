@@ -17,24 +17,35 @@ class App.OrdersView extends App.MasterView
     $.subscribe "new-order", @onNewOrder
     $.subscribe "order-completed", @onOrderCompleted
     $.subscribe "order-partially-completed", @onOrderPartiallyCompleted
-    #$.subscribe "order-to-cancel", @onOrderToCancel
+    $.subscribe "order-to-cancel", @onOrderToCancel
     $.subscribe "order-canceled", @onOrderCanceled
-    #$.subscribe "order-to-add", @onOrderToAdd
+    $.subscribe "order-to-add", @onOrderToAdd
 
   render: ()->
     @collection.fetch
       success: ()=>
-        @collection.each (order)=>
-          @$el.append @template
-            order: order
+        @clearDeletedOrders()
+        @renderOrders()
         @renderVolume()  if @$totalsEl
         @toggleVisible()  if @hideOnEmpty
+
+  renderOrders: ()->
+    @collection.each (order)=>
+      $existentOrder = @$("[data-id='#{order.id}']")
+      tpl = @template
+        order: order
+      @$el.append tpl  if not $existentOrder.length
+      $existentOrder.replaceWith tpl  if $existentOrder.length
+
+  clearDeletedOrders: ()->
+    existentOrderIds = @collection.getIds()
+    for row in @$(".order-row")
+      $(row).remove()  if existentOrderIds.indexOf($(row).data("id")) is -1
 
   renderVolume: ()->
     @$totalsEl.text @collection.calculateVolume()
 
   onNewOrder: (ev, order)=>
-    @$el.empty()
     @render()
 
   onOrderCompleted: (ev, order)=>
@@ -57,15 +68,12 @@ class App.OrdersView extends App.MasterView
         , 1000
 
   onOrderCanceled: (ev, data)=>
-    @$el.empty()
     @render()
 
   onOrderToCancel: (ev, data)=>
-    @$el.empty()
     @render()
 
   onOrderToAdd: (ev, data)=>
-    @$el.empty()
     @render()
 
   onCancelClick: (ev)->
@@ -78,7 +86,6 @@ class App.OrdersView extends App.MasterView
         id: $(ev.target).data("id")
       order.destroy
         success: ()=>
-          #@$el.find("tr[data-id='#{order.id}']").remove()
         error: (m, xhr)->
           $.publish "error", xhr
           $target.attr "disabled", false

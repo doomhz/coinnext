@@ -13,15 +13,19 @@ class App.TransactionsHistoryView extends App.MasterView
   render: ()->
     @collection.fetch
       success: ()=>
-        @collection.each (transaction)=>
-          @$el.append @template
-            transaction: transaction
+        @renderTransactions()
         @toggleVisible()  if @hideOnEmpty
 
+  renderTransactions: ()->
+    @collection.each (transaction)=>
+      $existentTransaction = @$("[data-id='#{transaction.id}']")
+      tpl = @template
+        transaction: transaction
+      @$el.append tpl  if not $existentTransaction.length
+      $existentTransaction.replaceWith tpl  if $existentTransaction.length
+
   onTransactionUpdate: (ev, transaction)=>
-    @$el.empty()
-    @render()  if not @$("[data-id='#{transaction.id}']").length
+    @render()
 
   onPaymentProcessed: (ev, payment)=>
-    @$el.empty()
-    @render()  if not @$("[data-id='#{payment.id}']").length
+    @render()
