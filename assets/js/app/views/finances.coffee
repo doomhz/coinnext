@@ -65,6 +65,7 @@ class App.FinancesView extends App.MasterView
   onAddWallet: (ev)->
     ev.preventDefault()
     $form = $(ev.target)
+    $form.find("button").attr "disabled", true
     wallet = new App.WalletModel
       currency: $form.find("#currency-type").val()
     wallet.save null,
@@ -72,6 +73,7 @@ class App.FinancesView extends App.MasterView
         window.location.reload()
       error: (m, xhr)->
         $.publish "error", xhr
+        $form.find("button").attr "disabled", false
 
   onShowQrAddress: (ev)->
     ev.preventDefault()
