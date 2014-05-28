@@ -25,7 +25,7 @@ class App.PendingTransactionsView extends App.MasterView
             @$el.append $tx
           else
             $existentTx.replaceWith $tx
-          @toggleVisible()  if @hideOnEmpty
+        @toggleVisible()  if @hideOnEmpty
     @payments.fetch
       success: ()=>
         @payments.each (payment)=>
@@ -36,7 +36,7 @@ class App.PendingTransactionsView extends App.MasterView
             @$el.append $pm
           else
             $existentPm.replaceWith $pm
-          @toggleVisible()  if @hideOnEmpty
+        @toggleVisible()  if @hideOnEmpty
 
   onTransactionUpdate: (ev, transaction)=>
     @render()
