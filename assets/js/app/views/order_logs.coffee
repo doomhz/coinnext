@@ -13,22 +13,22 @@ class App.OrderLogsView extends App.MasterView
     $.subscribe "order-completed", @onOrderCompleted
     $.subscribe "order-partially-completed", @onOrderPartiallyCompleted
 
-  render: ()->
+  render: (method)->
     @collection.fetch
       success: ()=>
-        @renderOrders()
+        @renderOrders method
         @toggleVisible()  if @hideOnEmpty
 
-  renderOrders: ()->
+  renderOrders: (method = "append")->
     @collection.each (order)=>
       $existentOrder = @$("[data-id='#{order.id}']")
       tpl = @template
         order: order
-      @$el.prepend tpl  if not $existentOrder.length
+      @$el[method] tpl  if not $existentOrder.length
       $existentOrder.replaceWith tpl  if $existentOrder.length
 
   onOrderCompleted: (ev, order)=>
-    @render()
+    @render "prepend"
 
   onOrderPartiallyCompleted: (ev, order)=>
-    @render()
+    @render "prepend"
