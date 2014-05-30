@@ -21,10 +21,8 @@ block content
           th ID
           th Type
           th Price
-          th Amount
-          th Matched
-          th Result
-          th Status
+          th Amount/Matched
+          th Received/Spent
           th Created
           
       tbody
@@ -37,13 +35,9 @@ block content
             td
               | #{order.getFloat('unit_price')}
             td
-              | #{order.getFloat('amount')} #{order.action == "buy" ? order.buy_currency : order.sell_currency}
+              | #{order.getFloat('amount')} #{order.action == "buy" ? order.buy_currency : order.sell_currency} / #{order.getFloat('matched_amount')} #{order.action == "buy" ? order.buy_currency : order.sell_currency}
             td
-              | #{order.getFloat('matched_amount')} #{order.action == "buy" ? order.buy_currency : order.sell_currency}
-            td
-              | #{order.getFloat('result_amount')} #{order.action == "buy" ? order.sell_currency : order.buy_currency}
-            td
-              | #{order.status}
+              | #{order.action == "buy" ? order.calculateSpentFromLogs(true) : order.calculateReceivedFromLogs(true)} #{order.action == "buy" ? order.sell_currency : order.buy_currency}
             td
               | #{order.created_at.toFormat("DD MMM YYYY HH24:MI")}
 
@@ -56,9 +50,8 @@ block content
           th ID
           th Type
           th Price
-          th Amount
-          th Matched
-          th Result
+          th Amount/Matched
+          th Result/Spent
           th Created
           th Closed
           
@@ -72,11 +65,9 @@ block content
             td
               | #{order.getFloat('unit_price')}
             td
-              | #{order.getFloat('amount')} #{order.action == "buy" ? order.buy_currency : order.sell_currency}
+              | #{order.getFloat('amount')} #{order.action == "buy" ? order.buy_currency : order.sell_currency} / #{order.getFloat('matched_amount')} #{order.action == "buy" ? order.buy_currency : order.sell_currency}
             td
-              | #{order.getFloat('matched_amount')} #{order.action == "buy" ? order.buy_currency : order.sell_currency}
-            td
-              | #{order.getFloat('result_amount')} #{order.action == "buy" ? order.sell_currency : order.buy_currency}
+              | #{order.action == "buy" ? order.calculateSpentFromLogs(true) : order.calculateReceivedFromLogs(true)} #{order.action == "buy" ? order.sell_currency : order.buy_currency}
             td
               | #{order.created_at.toFormat("DD MMM YYYY HH24:MI")}
             td

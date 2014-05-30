@@ -80,11 +80,13 @@ module.exports = (app)->
         status: "open"
         user_id: wallet.user_id
         currency1: wallet.currency
+        include_logs: true
       closedOptions =
         sell_currency: wallet.currency
         status: "completed"
         user_id: wallet.user_id
         currency1: wallet.currency
+        include_logs: true
       Order.findByOptions openOptions, (err, openOrders)->
         Order.findByOptions closedOptions, (err, closedOrders)->
           res.render "admin/wallet",
