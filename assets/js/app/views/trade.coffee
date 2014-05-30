@@ -101,7 +101,7 @@ class App.TradeView extends App.MasterView
   onAmountClick: (ev)->
     ev.preventDefault()
     $target = $(ev.currentTarget)
-    amount = parseFloat $target.data('amount')
+    amount = parseFloat $target.find("[data-wallet-available-balance-id]").text()
     type = $target.data('type')
     $input = @$("##{type}-amount-input")
     unitPrice = _.str.satoshiRound @$("##{type}-unit-price").val()

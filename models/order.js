@@ -248,6 +248,15 @@
             },
             order: [["created_at", "DESC"]]
           };
+          if (options.include_logs) {
+            query.include = [
+              {
+                model: GLOBAL.db.OrderLog,
+                attributes: ["matched_amount", "result_amount", "unit_price"],
+                where: {}
+              }
+            ];
+          }
           if (options.limit) {
             query.limit = options.limit;
           }
@@ -387,6 +396,48 @@
           return this.save({
             transaction: transaction
           }).complete(callback);
+        },
+        calculateReceivedFromLogs: function(toFloat) {
+          var log, resultAmount, _i, _len, _ref;
+          if (toFloat == null) {
+            toFloat = false;
+          }
+          resultAmount = 0;
+          _ref = this.orderLogs;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            log = _ref[_i];
+            resultAmount += log.result_amount;
+          }
+          if (toFloat) {
+            return MarketHelper.fromBigint(resultAmount);
+          } else {
+            return resultAmount;
+          }
+        },
+        calculateSpentFromLogs: function(toFloat) {
+          var log, spentAmount, _i, _j, _len, _len1, _ref, _ref1;
+          if (toFloat == null) {
+            toFloat = false;
+          }
+          spentAmount = 0;
+          if (this.action === "buy") {
+            _ref = this.orderLogs;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              log = _ref[_i];
+              spentAmount += log.total;
+            }
+          } else {
+            _ref1 = this.orderLogs;
+            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+              log = _ref1[_j];
+              spentAmount += log.matched_amount;
+            }
+          }
+          if (toFloat) {
+            return MarketHelper.fromBigint(spentAmount);
+          } else {
+            return spentAmount;
+          }
         }
       }
     });

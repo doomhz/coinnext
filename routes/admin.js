@@ -113,13 +113,15 @@
           sell_currency: wallet.currency,
           status: "open",
           user_id: wallet.user_id,
-          currency1: wallet.currency
+          currency1: wallet.currency,
+          include_logs: true
         };
         closedOptions = {
           sell_currency: wallet.currency,
           status: "completed",
           user_id: wallet.user_id,
-          currency1: wallet.currency
+          currency1: wallet.currency,
+          include_logs: true
         };
         return Order.findByOptions(openOptions, function(err, openOrders) {
           return Order.findByOptions(closedOptions, function(err, closedOrders) {

@@ -154,6 +154,12 @@ module.exports = (sequelize, DataTypes) ->
             order: [
               ["created_at", "DESC"]
             ]
+          if options.include_logs
+            query.include = [
+              model: GLOBAL.db.OrderLog
+              attributes: ["matched_amount", "result_amount", "unit_price"]
+              where: {}
+            ]
           query.limit = options.limit  if options.limit
           if options.status is "open"
             query.where.status = [MarketHelper.getOrderStatus("partiallyCompleted"), MarketHelper.getOrderStatus("open")]
@@ -237,5 +243,21 @@ module.exports = (sequelize, DataTypes) ->
           @fee = math.add @fee, matchedData.fee
           @close_time = new Date matchedData.time  if @status is "completed"
           @save({transaction: transaction}).complete callback
+
+        calculateReceivedFromLogs: (toFloat = false)->
+          resultAmount = 0
+          for log in @orderLogs
+            resultAmount += log.result_amount
+          if toFloat then MarketHelper.fromBigint resultAmount else resultAmount
+
+        calculateSpentFromLogs: (toFloat = false)->
+          spentAmount = 0
+          if @action is "buy"
+            for log in @orderLogs
+              spentAmount += log.total
+          else
+            for log in @orderLogs
+              spentAmount += log.matched_amount
+          if toFloat then MarketHelper.fromBigint(spentAmount) else spentAmount
 
   Order
