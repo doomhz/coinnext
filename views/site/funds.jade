@@ -13,9 +13,9 @@ block content
           table.trade-data
             tr
               th Currency
-              th Balance
-              th Available
-              th On Hold
+              th Total Balance
+              th Available Balance
+              th Held for Orders
             - each wallet in wallets
               tr.wallet(data-id="#{wallet._id}")
                 td <a href="/funds/#{wallet.currency}">#{wallet.currency}</a>

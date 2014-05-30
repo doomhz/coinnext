@@ -13,13 +13,12 @@ block content
               | #{currencies[wallet.currency]} Balance
           table.trade-data
             tr
-              th Balance
+              th Total Balance
+              th Available Balance
+              th Held for Orders
+            tr
               td <span data-wallet-balance-id="#{wallet.id}">#{_str.toFixed(wallet.getFloat('total_balance'))}</span> #{wallet.currency}
-            tr
-              th Available
               td <span data-wallet-available-balance-id="#{wallet.id}">#{_str.toFixed(wallet.getFloat('balance'))}</span> #{wallet.currency}
-            tr
-              th On Hold
               td <span data-wallet-hold-balance-id="#{wallet.id}">#{_str.toFixed(wallet.getFloat('hold_balance'))}</span> #{wallet.currency}
             
 
