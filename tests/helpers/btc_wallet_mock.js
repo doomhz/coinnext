@@ -13,7 +13,7 @@
         account: "account",
         fee: 0.0001,
         address: "address",
-        category: "send"
+        category: "receive"
       }
     ]
   };
@@ -37,6 +37,7 @@
     BtcWallet.prototype.confirmations = 6;
 
     BtcWallet.prototype.getTransaction = function(txId, callback) {
+      console.log(transactionData);
       return callback(null, transactionData);
     };
 

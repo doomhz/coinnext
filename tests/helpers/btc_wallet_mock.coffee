@@ -8,7 +8,7 @@ transactionData =
     account:  "account"
     fee:      0.0001
     address:  "address"
-    category: "send"
+    category: "receive"
   }]
 transactionsData = [
   {
@@ -27,6 +27,7 @@ class BtcWallet
   confirmations: 6
 
   getTransaction: (txId, callback)->
+    console.log transactionData
     callback null, transactionData
   getTransactions: (account = "*", limit = 100, from = 0, callback)->
     callback null, transactionsData

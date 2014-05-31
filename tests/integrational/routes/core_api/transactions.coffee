@@ -29,17 +29,18 @@ describe "Transactions Api", ->
           done()
 
       describe "when the category is not move", ()->
-        xit "adds the transaction in the db", (done)->
+        it "adds the transaction in the db", (done)->
           request('http://localhost:6000')
           .put("/transaction/BTC/1")
           .send()
           .expect(200)
-          .expect {}, ()->
+          .end (e, res = {})->
+            throw e if e
             GLOBAL.db.Transaction.find({where: {txid: "unique_tx_id"}}).complete (err, tx)->
-              tx.account.should.eql "account"
+              tx.address.should.eql "address"
               done()
 
-        xit "loads the transaction amount to the wallet", (done)->
+        it "loads the transaction amount to the wallet", (done)->
           request('http://localhost:6000')
           .put("/transaction/BTC/1")
           .send()
