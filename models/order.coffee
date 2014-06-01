@@ -157,6 +157,7 @@ module.exports = (sequelize, DataTypes) ->
           if options.include_logs
             query.include = [
               model: GLOBAL.db.OrderLog
+              required: false
               attributes: ["matched_amount", "result_amount", "unit_price"]
               where: {}
             ]
