@@ -270,6 +270,12 @@
 .header-balance
   float right
 
+.header-aside
+  float right
+  line-height 20px
+  a
+    font-weight bold
+
 .market-title
   @extends .con-header
   color $text-color
@@ -391,8 +397,7 @@
     background-color #f9f9f9
   tr.highlight
     td
-      color $lightgray
-      
+      color $lightgray  
   .buy
     .trade-type
     .trade-amount
@@ -401,6 +406,9 @@
     .trade-type
     .trade-amount
       color $red
+
+  .trade-type
+    text-transform uppercase
 
   .action
     background #fff
