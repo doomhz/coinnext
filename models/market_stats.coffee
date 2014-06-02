@@ -1,4 +1,5 @@
 MarketHelper = require "../lib/market_helper"
+_ = require "underscore"
 math = require("mathjs")
   number: "bignumber"
   decimals: 8
@@ -84,6 +85,8 @@ module.exports = (sequelize, DataTypes) ->
         
         getStats: (callback = ()->)->
           MarketStats.findAll().complete (err, marketStats)->
+            marketStats = _.sortBy marketStats, (s)->
+              s.type
             stats = {}
             for stat in marketStats
               stats[stat.type] = stat
