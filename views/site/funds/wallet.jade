@@ -11,6 +11,8 @@ block content
             h3.con-header-title
               img(src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==", alt="icon", class="coin-icon #{wallet.currency_name.toLowerCase()}")
               | #{currencies[wallet.currency]} Balance
+            .header-aside
+              a(href="/trade/#{wallet.currency}/BTC") Trade #{wallet.currency}/BTC 
           table.trade-data
             tr
               th Total Balance
@@ -20,7 +22,8 @@ block content
               td <span data-wallet-balance-id="#{wallet.id}">#{_str.toFixed(wallet.getFloat('total_balance'))}</span> #{wallet.currency}
               td <span data-wallet-available-balance-id="#{wallet.id}">#{_str.toFixed(wallet.getFloat('balance'))}</span> #{wallet.currency}
               td <span data-wallet-hold-balance-id="#{wallet.id}">#{_str.toFixed(wallet.getFloat('hold_balance'))}</span> #{wallet.currency}
-            
+          
+
 
         // Pending Transactions
         #pending-transactions.container
