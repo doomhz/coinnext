@@ -8,7 +8,8 @@ exports = module.exports =
     LGC: 26, CFC: 27, RDD: 28, H5C: 29, RATC: 30, MAGIC: 31
     SCOT: 32, UTC: 33, DIEM: 34, LIM: 35, NAUT: 36, CFN: 37
     CURE: 38, GOOD: 39, QRK: 40, AAA: 41, MAST: 42, XC: 43
-    BOST: 44, FRK: 45, MUGA: 46, GLC: 47, DON: 48
+    BOST: 44, FRK: 45, MUGA: 46, GLC: 47, DON: 48, PEV: 49
+    FRC: 50, UNO: 51, WDC: 52, FTC: 53, CSC: 54
 
   AVAILABLE_MARKETS:
     LTC_BTC: 1, PPC_BTC: 2, DOGE_BTC: 3, NMC_BTC: 4
@@ -22,7 +23,8 @@ exports = module.exports =
     LIM_BTC: 34, NAUT_BTC: 35, CFN_BTC: 36, CURE_BTC: 37
     GOOD_BTC: 38, QRK_BTC: 39, AAA_BTC: 40, MAST_BTC: 41
     XC_BTC: 42, BOST_BTC: 43, FRK_BTC: 44, MUGA_BTC: 45
-    GLC_BTC: 46, DON_BTC: 47
+    GLC_BTC: 46, DON_BTC: 47, PEV_BTC: 48, FRC_BTC: 49
+    UNO_BTC: 50, WDC_BTC: 51, FTC_BTC: 52, CSC_BTC: 53
 
   CURRENCY_NAMES:
     BTC: "Bitcoin", LTC: "Litecoin", PPC: "Peercoin"
@@ -41,6 +43,8 @@ exports = module.exports =
     QRK: "Quarkcoin", AAA: "Coinaaa", MAST: "Mastiffcoin"
     XC: "X11Coin", BOST: "Boostcoin", FRK: "Frankocoin"
     MUGA: "Mugatucoin", GLC: "Gameleaguecoin", DON: "Donationcoin"
+    PEV: "Plusevcoin", FRC: "Freicoin", UNO: "Unobtanium"
+    WDC: "Worldcoin", FTC: "Feathercoin", CSC: "Casinocoin"
 
   WITHDRAWAL_FEES:
     BTC: 20000
