@@ -37,7 +37,7 @@
           if (err) {
             console.error(err);
           }
-          return res.send("" + (new Date()) + " - Added transactino " + txId + " " + currency);
+          return res.send("" + (new Date()) + " - Added transaction " + txId + " " + currency);
         });
       });
     });

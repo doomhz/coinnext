@@ -99,18 +99,18 @@ TransactionHelper =
             user_id: updatedTransaction.user_id
             eventData: JsonRenderer.transaction updatedTransaction
           return callback()  if category isnt "receive" or updatedTransaction.balance_loaded or not GLOBAL.wallets[currency].isBalanceConfirmed(updatedTransaction.confirmations)
-          GLOBAL.db.sequelize.transaction (transaction)->
-            wallet.addBalance updatedTransaction.amount, transaction, (err)->
+          GLOBAL.db.sequelize.transaction (mysqlTransaction)->
+            wallet.addBalance updatedTransaction.amount, mysqlTransaction, (err)->
               if err
-                return transaction.rollback().success ()->
+                return mysqlTransaction.rollback().success ()->
                   console.error "Could not load user balance #{updatedTransaction.amount} - #{err}"
                   return callback()
-              Transaction.markAsLoaded updatedTransaction.id, transaction, (err)->
+              Transaction.markAsLoaded updatedTransaction.id, mysqlTransaction, (err)->
                 if err
-                  return transaction.rollback().success ()->
+                  return mysqlTransaction.rollback().success ()->
                     console.error "Could not mark the transaction as loaded #{updatedTransaction.id} - #{err}"
                     return callback()
-                transaction.commit().success ()->
+                mysqlTransaction.commit().success ()->
                   callback()
                   usersSocket.send
                     type: "wallet-balance-loaded"

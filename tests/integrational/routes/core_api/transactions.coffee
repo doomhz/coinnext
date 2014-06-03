@@ -25,7 +25,7 @@ describe "Transactions Api", ->
         .expect(200)
         .end (e, res = {})->
           throw e if e
-          res.body.should.endWith "- Added transactino 1 BTC"
+          res.body.should.endWith "- Added transaction 1 BTC"
           done()
 
       describe "when the category is not move", ()->
