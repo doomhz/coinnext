@@ -14,7 +14,7 @@ describe "MarketHelper", ->
     LGC: 26, CFC: 27, RDD: 28, H5C: 29, RATC: 30, MAGIC: 31,
     SCOT: 32, UTC: 33, DIEM: 34, LIM: 35, NAUT: 36, CFN: 37
     CURE: 38, GOOD: 39, QRK: 40, AAA: 41, MAST: 42, XC: 43
-    BOST: 44, FRK: 45
+    BOST: 44, FRK: 45, MUGA: 46, GLC: 47, DON: 48
 
   CURRENCY_NAMES =
     BTC: "Bitcoin", LTC: "Litecoin", PPC: "Peercoin"
@@ -32,6 +32,7 @@ describe "MarketHelper", ->
     CFN: "Confessioncoin", CURE: "Curecoin", GOOD: "Goodcoin"
     QRK: "Quarkcoin", AAA: "Coinaaa", MAST: "Mastiffcoin"
     XC: "X11Coin", BOST: "Boostcoin", FRK: "Frankocoin"
+    MUGA: "Mugatucoin", GLC: "Gameleagecoin", DON: "Donationcoin"
 
   AVAILABLE_MARKETS =
     LTC_BTC: 1, PPC_BTC: 2, DOGE_BTC: 3, NMC_BTC: 4
@@ -44,7 +45,8 @@ describe "MarketHelper", ->
     MAGIC_BTC: 30, SCOT_BTC: 31, UTC_BTC: 32, DIEM_BTC: 33
     LIM_BTC: 34, NAUT_BTC: 35, CFN_BTC: 36, CURE_BTC: 37
     GOOD_BTC: 38, QRK_BTC: 39, AAA_BTC: 40, MAST_BTC: 41
-    XC_BTC: 42, BOST_BTC: 43, FRK_BTC: 44
+    XC_BTC: 42, BOST_BTC: 43, FRK_BTC: 44, MUGA_BTC: 45
+    GLC_BTC: 46, DON_BTC: 47
 
   ORDER_TYPES =
     market: 1
