@@ -32,7 +32,7 @@ describe "MarketHelper", ->
     CFN: "Confessioncoin", CURE: "Curecoin", GOOD: "Goodcoin"
     QRK: "Quarkcoin", AAA: "Coinaaa", MAST: "Mastiffcoin"
     XC: "X11Coin", BOST: "Boostcoin", FRK: "Frankocoin"
-    MUGA: "Mugatucoin", GLC: "Gameleagecoin", DON: "Donationcoin"
+    MUGA: "Mugatucoin", GLC: "Gameleaguecoin", DON: "Donationcoin"
 
   AVAILABLE_MARKETS =
     LTC_BTC: 1, PPC_BTC: 2, DOGE_BTC: 3, NMC_BTC: 4

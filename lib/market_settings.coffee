@@ -40,7 +40,7 @@ exports = module.exports =
     CFN: "Confessioncoin", CURE: "Curecoin", GOOD: "Goodcoin"
     QRK: "Quarkcoin", AAA: "Coinaaa", MAST: "Mastiffcoin"
     XC: "X11Coin", BOST: "Boostcoin", FRK: "Frankocoin"
-    MUGA: "Mugatucoin", GLC: "Gameleagecoin", DON: "Donationcoin"
+    MUGA: "Mugatucoin", GLC: "Gameleaguecoin", DON: "Donationcoin"
 
   WITHDRAWAL_FEES:
     BTC: 20000
