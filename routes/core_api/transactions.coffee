@@ -21,7 +21,7 @@ module.exports = (app)->
         TransactionHelper.loadTransaction transactionData, currency, callback
       async.mapSeries subTransactions, loadTransactionCallback, (err, result)->
         console.error err  if err
-        res.send("#{new Date()} - Added transactino #{txId} #{currency}")
+        res.send("#{new Date()} - Added transaction #{txId} #{currency}")
 
   app.post "/load_latest_transactions/:currency", (req, res, next)->
     currency = req.params.currency

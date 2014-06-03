@@ -1,5 +1,7 @@
 (function() {
-  var BtcWallet, exports, trTime, transactionData, transactionsData;
+  var BtcWallet, exports, trTime, transactionData, transactionDetails, transactionsData, _;
+
+  _ = require("underscore");
 
   trTime = Date.now() / 1000;
 
@@ -8,28 +10,26 @@
     txid: "unique_tx_id",
     confirmations: 6,
     time: trTime,
-    details: [
-      {
-        account: "account",
-        fee: 0.0001,
-        address: "address",
-        category: "send"
-      }
-    ]
+    details: []
   };
 
-  transactionsData = [
-    {
-      amount: 1,
-      txid: "unique_tx_id",
-      confirmations: 6,
-      time: trTime,
-      account: "account",
-      fee: 0.0001,
-      address: "address",
-      category: "receive"
-    }
-  ];
+  transactionDetails = {
+    account: "account",
+    fee: 0.0001,
+    address: "address",
+    category: "receive"
+  };
+
+  transactionsData = {
+    amount: 1,
+    txid: "unique_tx_id",
+    confirmations: 6,
+    time: trTime,
+    account: "account",
+    fee: 0.0001,
+    address: "address",
+    category: "receive"
+  };
 
   BtcWallet = (function() {
     function BtcWallet() {}
@@ -37,7 +37,10 @@
     BtcWallet.prototype.confirmations = 6;
 
     BtcWallet.prototype.getTransaction = function(txId, callback) {
-      return callback(null, transactionData);
+      var tr;
+      tr = _.clone(transactionData);
+      tr.details = [_.clone(transactionDetails)];
+      return callback(null, tr);
     };
 
     BtcWallet.prototype.getTransactions = function(account, limit, from, callback) {
@@ -50,7 +53,7 @@
       if (from == null) {
         from = 0;
       }
-      return callback(null, transactionsData);
+      return callback(null, [_.clone(transactionsData)]);
     };
 
     BtcWallet.prototype.getBalance = function(account, callback) {

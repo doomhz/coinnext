@@ -8,7 +8,7 @@ transactionData =
     account:  "account"
     fee:      0.0001
     address:  "address"
-    category: "send"
+    category: "receive"
   }]
 
 class LtcWallet

@@ -1,35 +1,35 @@
+_ = require "underscore"
 trTime          = Date.now() / 1000
 transactionData =
   amount: 1
   txid: "unique_tx_id"
   confirmations: 6
   time: trTime
-  details: [{
-    account:  "account"
-    fee:      0.0001
-    address:  "address"
-    category: "send"
-  }]
-transactionsData = [
-  {
-    amount: 1
-    txid: "unique_tx_id"
-    confirmations: 6
-    time: trTime
-    account:  "account"
-    fee:      0.0001
-    address:  "address"
-    category: "receive"
-  }
-]
+  details: []
+transactionDetails =
+  account:  "account"
+  fee:      0.0001
+  address:  "address"
+  category: "receive"
+transactionsData =
+  amount: 1
+  txid: "unique_tx_id"
+  confirmations: 6
+  time: trTime
+  account:  "account"
+  fee:      0.0001
+  address:  "address"
+  category: "receive"
 
 class BtcWallet
   confirmations: 6
 
   getTransaction: (txId, callback)->
-    callback null, transactionData
+    tr = _.clone transactionData
+    tr.details = [_.clone(transactionDetails)]
+    callback null, tr
   getTransactions: (account = "*", limit = 100, from = 0, callback)->
-    callback null, transactionsData
+    callback null, [_.clone(transactionsData)]
   getBalance: (account, callback)->
     callback null, 1
   chargeAccount: (account, balance, callback)->
