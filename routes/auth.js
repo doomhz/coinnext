@@ -194,12 +194,9 @@
       return req.session.regenerate(function() {
         req.session.staging_auth = oldStagingAuth;
         req.session.csrfSecret = oldCsrf;
-        return UserToken.findByExpiredToken(token, function(err, userToken) {
-          if (!userToken) {
-            return res.redirect("/404");
-          }
+        return UserToken.findByToken(token, function(err, userToken) {
           return User.findByToken(token, function(err, user) {
-            if (!user) {
+            if (!user || user.email_verified) {
               return res.redirect("/404");
             }
             return user.sendEmailVerificationLink(function() {
@@ -208,7 +205,9 @@
                 user: user,
                 action: "resend"
               });
-              return UserToken.invalidateByToken(token);
+              if (userToken) {
+                return UserToken.invalidateByToken(token);
+              }
             });
           });
         });

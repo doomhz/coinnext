@@ -38,15 +38,6 @@ module.exports = (sequelize, DataTypes) ->
               created_at:
                 gt: UserToken.getMaxExpirationTime()
           UserToken.find(query).complete callback
-        
-        findByExpiredToken: (token, callback = ()->)->
-          query =
-            where:
-              token: token
-              active: true
-              created_at:
-                lte: UserToken.getMaxExpirationTime()
-          UserToken.find(query).complete callback
 
         findByUserAndType: (userId, type, callback = ()->)->
           query =

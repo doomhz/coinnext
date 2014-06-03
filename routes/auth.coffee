@@ -118,14 +118,13 @@ module.exports = (app)->
     req.session.regenerate ()->
       req.session.staging_auth = oldStagingAuth
       req.session.csrfSecret = oldCsrf
-      UserToken.findByExpiredToken token, (err, userToken)->
-        return res.redirect "/404"  if not userToken
+      UserToken.findByToken token, (err, userToken)->
         User.findByToken token, (err, user)->
-          return res.redirect "/404"  if not user
+          return res.redirect "/404"  if not user or user.email_verified
           user.sendEmailVerificationLink ()->
             res.render "auth/verify", {title: "Verify Account - Coinnext.com", user: user, action: "resend"}
-            UserToken.invalidateByToken token
-
+            UserToken.invalidateByToken token  if userToken
+        
   app.post "/google_auth", (req, res)->
     return JsonRenderer.error null, res, 401, false  if not req.user
     res.json UserToken.generateGAuthData()

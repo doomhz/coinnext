@@ -55,22 +55,6 @@
           };
           return UserToken.find(query).complete(callback);
         },
-        findByExpiredToken: function(token, callback) {
-          var query;
-          if (callback == null) {
-            callback = function() {};
-          }
-          query = {
-            where: {
-              token: token,
-              active: true,
-              created_at: {
-                lte: UserToken.getMaxExpirationTime()
-              }
-            }
-          };
-          return UserToken.find(query).complete(callback);
-        },
         findByUserAndType: function(userId, type, callback) {
           var query;
           if (callback == null) {
