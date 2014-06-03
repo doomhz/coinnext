@@ -1,7 +1,9 @@
 (function() {
-  var MarketHelper, math;
+  var MarketHelper, math, _;
 
   MarketHelper = require("../lib/market_helper");
+
+  _ = require("underscore");
 
   math = require("mathjs")({
     number: "bignumber",
@@ -112,6 +114,9 @@
           }
           return MarketStats.findAll().complete(function(err, marketStats) {
             var stat, stats, _i, _len;
+            marketStats = _.sortBy(marketStats, function(s) {
+              return s.type;
+            });
             stats = {};
             for (_i = 0, _len = marketStats.length; _i < _len; _i++) {
               stat = marketStats[_i];
