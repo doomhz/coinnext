@@ -37,7 +37,7 @@ module.exports = (app)->
               wallet2 = Wallet.build
                 currency: currency2
             res.render "site/trade",
-              title: "Trade #{MarketHelper.getCurrencyName(currency1)} to #{MarketHelper.getCurrencyName(currency2)} - #{currency1}/#{currency2} - Coinnext"
+              title: "Trade #{MarketHelper.getCurrencyName(currency1)} to #{MarketHelper.getCurrencyName(currency2)} #{currency1}/#{currency2} - Coinnext"
               page: "trade"
               user: req.user
               currency1: currency1
@@ -49,7 +49,7 @@ module.exports = (app)->
               _str: _str
       else
         res.render "site/trade",
-          title: "Trade #{MarketHelper.getCurrencyName(currency1)} to #{MarketHelper.getCurrencyName(currency2)} - #{currency1}/#{currency2} - Coinnext - Cryptocurrency Exchange"
+          title: "Trade #{MarketHelper.getCurrencyName(currency1)} to #{MarketHelper.getCurrencyName(currency2)} #{currency1}/#{currency2} - Coinnext - Cryptocurrency Exchange"
           page: "trade"
           currency1: currency1
           currency2: currency2
