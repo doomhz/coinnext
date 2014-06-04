@@ -73,7 +73,7 @@ module.exports = (sequelize, DataTypes) ->
             ]
           GLOBAL.db.UserToken.find(query).complete (err, userToken = {})->
             callback err, userToken.user
-
+        
         findByEmail: (email, callback = ()->)->
           User.find({where:{email: email}}).complete callback
 
@@ -126,6 +126,7 @@ module.exports = (sequelize, DataTypes) ->
           GLOBAL.db.UserToken.generateEmailConfirmationTokenForUser @id, @uuid, (err, userToken)=>
             data =
               "verification_url": "/verify/#{userToken.token}"
+              "resend_verification_url": "/resend/#{userToken.token}"
             options =
               to:
                 email: @email
