@@ -97,7 +97,7 @@
           page: "funds",
           user: req.user,
           wallets: wallets,
-          currencies: MarketHelper.getCurrencyNames(),
+          currencies: MarketHelper.getSortedCurrencyNames(),
           _str: _str
         });
       });
@@ -120,7 +120,7 @@
             user: req.user,
             wallet: wallet,
             wallets: wallets,
-            currencies: MarketHelper.getCurrencyNames(),
+            currencies: MarketHelper.getSortedCurrencyNames(),
             _str: _str
           });
         });
