@@ -74,7 +74,11 @@ module.exports = (sequelize, DataTypes) ->
             order: [
               ["created_at", "DESC"]
             ]
-          Wallet.findAll(query).complete callback
+          Wallet.findAll(query).complete (err, wallets = [])->
+            wallets = _.sortBy wallets, (w)->
+              return "A"  if w.currency is "BTC"
+              w.currency
+            callback err, wallets
 
         findUserWallet: (userId, walletId, callback = ()->)->
           Wallet.find({where: {user_id: userId, id: walletId}}).complete callback

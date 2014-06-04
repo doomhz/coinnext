@@ -69,7 +69,7 @@ module.exports = (app)->
         page: "funds"
         user: req.user
         wallets: wallets
-        currencies: MarketHelper.getCurrencyNames()
+        currencies: MarketHelper.getSortedCurrencyNames()
         _str: _str
 
   app.get "/funds/:currency", (req, res)->
@@ -84,7 +84,7 @@ module.exports = (app)->
           user: req.user
           wallet: wallet
           wallets: wallets
-          currencies: MarketHelper.getCurrencyNames()
+          currencies: MarketHelper.getSortedCurrencyNames()
           _str: _str
 
   app.get "/market_stats", (req, res)->
