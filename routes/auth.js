@@ -176,9 +176,38 @@
             return user.setEmailVerified(function(err, u) {
               res.render("auth/verify", {
                 title: "Verify Account - Coinnext.com",
-                user: u
+                user: u,
+                action: "verify"
               });
               return UserToken.invalidateByToken(token);
+            });
+          });
+        });
+      });
+    });
+    app.get("/resend/:token", function(req, res) {
+      var oldCsrf, oldStagingAuth, token;
+      token = req.params.token;
+      req.logout();
+      oldStagingAuth = req.session.staging_auth;
+      oldCsrf = req.session.csrfSecret;
+      return req.session.regenerate(function() {
+        req.session.staging_auth = oldStagingAuth;
+        req.session.csrfSecret = oldCsrf;
+        return UserToken.findByToken(token, function(err, userToken) {
+          return User.findByToken(token, function(err, user) {
+            if (!user || user.email_verified) {
+              return res.redirect("/404");
+            }
+            return user.sendEmailVerificationLink(function() {
+              res.render("auth/verify", {
+                title: "Verify Account - Coinnext.com",
+                user: user,
+                action: "resend"
+              });
+              if (userToken) {
+                return UserToken.invalidateByToken(token);
+              }
             });
           });
         });
