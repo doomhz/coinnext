@@ -111,7 +111,18 @@
             },
             order: [["created_at", "DESC"]]
           };
-          return Wallet.findAll(query).complete(callback);
+          return Wallet.findAll(query).complete(function(err, wallets) {
+            if (wallets == null) {
+              wallets = [];
+            }
+            wallets = _.sortBy(wallets, function(w) {
+              if (w.currency === "BTC") {
+                return "A";
+              }
+              return w.currency;
+            });
+            return callback(err, wallets);
+          });
         },
         findUserWallet: function(userId, walletId, callback) {
           if (callback == null) {
