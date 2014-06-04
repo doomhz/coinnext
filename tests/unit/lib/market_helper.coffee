@@ -16,7 +16,7 @@ describe "MarketHelper", ->
     CURE: 38, GOOD: 39, QRK: 40, AAA: 41, MAST: 42, XC: 43
     BOST: 44, FRK: 45, MUGA: 46, GLC: 47, DON: 48, PEV: 49
     FRC: 50, UNO: 51, WDC: 52, FTC: 53, CSC: 54, TAC: 55
-    ZET: 56, AUR: 57, XLB: 58
+    ZET: 56, AUR: 57, XLB: 58, CLOAK: 59, SWC: 60
 
   CURRENCY_NAMES =
     BTC: "Bitcoin", LTC: "Litecoin", PPC: "Peercoin"
@@ -38,7 +38,7 @@ describe "MarketHelper", ->
     PEV: "Plusevcoin", FRC: "Freicoin", UNO: "Unobtanium"
     WDC: "Worldcoin", FTC: "Feathercoin", CSC: "Casinocoin"
     TAC: "Talkcoin", ZET: "Zetacoin", AUR: "Auroracoin"
-    XLB: "Libertycoin"
+    XLB: "Libertycoin", CLOAK: "Cloakcoin", SWC: "Switzerlandcoin"
 
   AVAILABLE_MARKETS =
     LTC_BTC: 1, PPC_BTC: 2, DOGE_BTC: 3, NMC_BTC: 4
@@ -55,6 +55,7 @@ describe "MarketHelper", ->
     GLC_BTC: 46, DON_BTC: 47, PEV_BTC: 48, FRC_BTC: 49
     UNO_BTC: 50, WDC_BTC: 51, FTC_BTC: 52, CSC_BTC: 53
     TAC_BTC: 54, ZET_BTC: 55, AUR_BTC: 56, XLB_BTC: 57
+    CLOAK_BTC: 58, SWC_BTC: 59
 
   ORDER_TYPES =
     market: 1
