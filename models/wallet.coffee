@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) ->
           MarketHelper.getWithdrawalFee @currency
 
         total_balance: ()->
-          @balance + @hold_balance
+          math.add @balance, @hold_balance
 
         network_confirmations: ()->
           MarketHelper.getMinConfirmations @currency

@@ -114,6 +114,15 @@ module.exports = (sequelize, DataTypes) ->
             ]
           Transaction.findAll(query).complete callback
 
+        findTotalReceivedByUserAndWallet: (userId, walletId, callback)->
+          query =
+            where:
+              user_id: userId
+              wallet_id: walletId
+              balance_loaded: true
+              category: MarketHelper.getTransactionCategory "receive"
+          Transaction.sum("amount", query).complete callback
+
         isValidFormat: (category)->
           !!MarketHelper.getTransactionCategory category
 
