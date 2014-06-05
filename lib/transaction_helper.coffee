@@ -92,34 +92,35 @@ TransactionHelper =
     address = transactionData.address
     return callback()  if not Transaction.isValidFormat category
     Wallet.findByAddress address, (err, wallet)->
-      Transaction.addFromWallet transactionData, currency, wallet, (err, updatedTransaction)->
-        if wallet
-          usersSocket.send
-            type: "transaction-update"
-            user_id: updatedTransaction.user_id
-            eventData: JsonRenderer.transaction updatedTransaction
-          return callback()  if category isnt "receive" or updatedTransaction.balance_loaded or not GLOBAL.wallets[currency].isBalanceConfirmed(updatedTransaction.confirmations)
-          GLOBAL.db.sequelize.transaction (mysqlTransaction)->
-            wallet.addBalance updatedTransaction.amount, mysqlTransaction, (err)->
-              if err
-                return mysqlTransaction.rollback().success ()->
-                  console.error "Could not load user balance #{updatedTransaction.amount} - #{err}"
-                  return callback()
-              Transaction.markAsLoaded updatedTransaction.id, mysqlTransaction, (err)->
+      Transaction.addFromWallet transactionData, currency, wallet, (err)->
+        Transaction.findByTxid txId, (err, updatedTransaction)->
+          if wallet
+            usersSocket.send
+              type: "transaction-update"
+              user_id: updatedTransaction.user_id
+              eventData: JsonRenderer.transaction updatedTransaction
+            return callback()  if category isnt "receive" or updatedTransaction.balance_loaded or not GLOBAL.wallets[currency].isBalanceConfirmed(updatedTransaction.confirmations)
+            GLOBAL.db.sequelize.transaction (mysqlTransaction)->
+              wallet.addBalance updatedTransaction.amount, mysqlTransaction, (err)->
                 if err
                   return mysqlTransaction.rollback().success ()->
-                    console.error "Could not mark the transaction as loaded #{updatedTransaction.id} - #{err}"
+                    console.error "Could not load user balance #{updatedTransaction.amount} - #{err}"
                     return callback()
-                mysqlTransaction.commit().success ()->
-                  callback()
-                  usersSocket.send
-                    type: "wallet-balance-loaded"
-                    user_id: wallet.user_id
-                    eventData: JsonRenderer.wallet wallet
-        else
-          Payment.findByTransaction txId, (err, payment)->
-            return callback()  if not payment
-            Transaction.setUserAndWalletById txId, payment.user_id, payment.wallet_id, ()->
-              callback()
+                Transaction.markAsLoaded updatedTransaction.id, mysqlTransaction, (err)->
+                  if err
+                    return mysqlTransaction.rollback().success ()->
+                      console.error "Could not mark the transaction as loaded #{updatedTransaction.id} - #{err}"
+                      return callback()
+                  mysqlTransaction.commit().success ()->
+                    callback()
+                    usersSocket.send
+                      type: "wallet-balance-loaded"
+                      user_id: wallet.user_id
+                      eventData: JsonRenderer.wallet wallet
+          else
+            Payment.findByTransaction txId, (err, payment)->
+              return callback()  if not payment
+              Transaction.setUserAndWalletById txId, payment.user_id, payment.wallet_id, ()->
+                callback()
 
 exports = module.exports = TransactionHelper

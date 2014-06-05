@@ -76,6 +76,13 @@
         findById: function(id, callback) {
           return Transaction.find(id).complete(callback);
         },
+        findByTxid: function(txid, callback) {
+          return Transaction.find({
+            where: {
+              txid: txid
+            }
+          }).complete(callback);
+        },
         addFromWallet: function(transactionData, currency, wallet, callback) {
           var data, key;
           if (callback == null) {

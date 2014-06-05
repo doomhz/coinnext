@@ -60,6 +60,9 @@ module.exports = (sequelize, DataTypes) ->
         findById: (id, callback)->
           Transaction.find(id).complete callback
 
+        findByTxid: (txid, callback)->
+          Transaction.find({where: {txid: txid}}).complete callback
+
         addFromWallet: (transactionData, currency, wallet, callback = ()->)->
           data =
             user_id:       (wallet.user_id if wallet)
