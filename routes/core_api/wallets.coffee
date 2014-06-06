@@ -41,17 +41,22 @@ module.exports = (app)->
     walletsInfo = []
     for currency, wallet of GLOBAL.wallets
       wallet.getInfo (err, info)->
-        console.error err  if err
-        walletInfo = 
-          currency: currency
-          block: info.blocks
-          connections: info.connections
-          balance: MarketHelper.toBigint info.balance
-          last_updated: new Date()  # TODO - this should be the time the last block was updated
-          status: "normal" # TODO - this depends on last_updated (normal, delayed, blocked, inactive or error)
-        walletInfo.status = "error"  if err
+        if err
+          console.error err
+          walletInfo = 
+            status: "error"
+        else
+          walletInfo = 
+            currency: currency
+            block: info.blocks
+            connections: info.connections
+            balance: MarketHelper.toBigint info.balance
+          lastBlock = wallet.getBestBlock()
+          lastUpdated = lastBlock.time
+          wallet.last_updated = new Date(lastUpdated)  # TODO review
+          wallet.status = MarketHelper.getWalletLastUpdatedStatus(lastUpdated)
         walletsInfo.push walletInfo
     WalletHealth.bulkCreate(walletsInfo).complete (err, result)->
       res.send
-        message: "Wallet health check on #{new Date()}"
+        message: "Wallet health check performed on #{new Date()}"
         result: result

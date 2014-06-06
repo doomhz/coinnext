@@ -75,27 +75,30 @@
       for (currency in _ref) {
         wallet = _ref[currency];
         wallet.getInfo(function(err, info) {
-          var walletInfo;
+          var lastBlock, lastUpdated, walletInfo;
           if (err) {
             console.error(err);
-          }
-          walletInfo = {
-            currency: currency,
-            block: info.blocks,
-            connections: info.connections,
-            balance: MarketHelper.toBigint(info.balance),
-            last_updated: new Date(),
-            status: "normal"
-          };
-          if (err) {
-            walletInfo.status = "error";
+            walletInfo = {
+              status: "error"
+            };
+          } else {
+            walletInfo = {
+              currency: currency,
+              block: info.blocks,
+              connections: info.connections,
+              balance: MarketHelper.toBigint(info.balance)
+            };
+            lastBlock = wallet.getBestBlock();
+            lastUpdated = lastBlock.time;
+            wallet.last_updated = new Date(lastUpdated);
+            wallet.status = MarketHelper.getWalletLastUpdatedStatus(lastUpdated);
           }
           return walletsInfo.push(walletInfo);
         });
       }
       return WalletHealth.bulkCreate(walletsInfo).complete(function(err, result) {
         return res.send({
-          message: "Wallet health check on " + (new Date()),
+          message: "Wallet health check performed on " + (new Date()),
           result: result
         });
       });

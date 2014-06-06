@@ -176,6 +176,15 @@ MarketHelper =
   getWalletStatusLiteral: (intStatus)->
     _.invert(WALLET_STATUS)[intStatus]
 
+  getWalletLastUpdatedStatus: (lastUpdated)->
+    t2 = (new Date()).getTime()
+    t1 = lastUpdated.getTime()
+    diffSeconds = (t2 - t1) / 1000
+    return "normal" if diffSeconds <= 30 * 60
+    return "delayed" if diffSeconds <= 60 * 60
+    return "blocked" if diffSeconds > 60 * 60
+    return "error"
+
   getTradeFee: ()->
     FEE
 
