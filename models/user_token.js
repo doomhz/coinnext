@@ -74,6 +74,20 @@
           }
           return UserToken.find(query).complete(callback);
         },
+        findEmailConfirmationToken: function(userId, callback) {
+          var query;
+          if (callback == null) {
+            callback = function() {};
+          }
+          query = {
+            where: {
+              user_id: userId,
+              type: MarketHelper.getTokenType("email_confirmation"),
+              active: true
+            }
+          };
+          return UserToken.find(query).complete(callback);
+        },
         generateGAuthPassByKey: function(key) {
           return speakeasy.time({
             key: key,

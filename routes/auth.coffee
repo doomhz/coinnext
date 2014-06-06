@@ -107,24 +107,26 @@ module.exports = (app)->
         User.findByToken token, (err, user)->
           return res.redirect "/404"  if not user
           user.setEmailVerified (err, u)->
-            res.render "auth/verify", {title: "Verify Account - Coinnext.com", user: u, action: "verify"}
+            res.render "auth/verify", {title: "Verify Account - Coinnext.com", user: u}
             UserToken.invalidateByToken token
 
-  app.get "/resend/:token", (req, res)->
-    token = req.params.token
+  app.get "/resend", (req, res)->
+    user = req.user
+    return res.redirect "/404"  if not user or user.email_verified
     req.logout()
     oldStagingAuth = req.session.staging_auth
     oldCsrf = req.session.csrfSecret
     req.session.regenerate ()->
       req.session.staging_auth = oldStagingAuth
       req.session.csrfSecret = oldCsrf
-      UserToken.findByToken token, (err, userToken)->
-        User.findByToken token, (err, user)->
-          return res.redirect "/404"  if not user or user.email_verified
+      UserToken.findEmailConfirmationToken user.id, (err, userToken)->
+        return res.redirect "/404"  if not userToken
+        User.findByToken userToken.token, (err, user)->
+          return res.redirect "/404"  if not user
           user.sendEmailVerificationLink ()->
-            res.render "auth/verify", {title: "Verify Account - Coinnext.com", user: user, action: "resend"}
-            UserToken.invalidateByToken token  if userToken
-        
+            res.render "auth/resend_verify_link", {title: "Resend Verification Link - Coinnext.com", user: user}
+            UserToken.invalidateByToken userToken.token
+
   app.post "/google_auth", (req, res)->
     return JsonRenderer.error null, res, 401, false  if not req.user
     res.json UserToken.generateGAuthData()

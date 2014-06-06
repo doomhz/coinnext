@@ -5,17 +5,10 @@ block content
     .wrapper
       .auth-box
         h1 Email Verification
-        - if (user && action === "verify")
-          - if (user.email_verified)
-            p.msg
-              | Your email was successfully verified.
-              br
-              |  <a href="/">Return to home page.</a>
-          - else
-            p.msg Your email could not be verified.
-        - else if (user && action === "resend")
-          p.msg
-            | An activation link was sent to your email.
-            br
-            |  <a href="/">Return to home page.</a>
-          
+        - if (user && user.email_verified)
+          p.msg 
+            | Your email was successfully verified.
+        - else
+          p.msg Your email could not be verified.
+        br
+        |  <a href="/">Return to home page.</a>

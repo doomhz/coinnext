@@ -204,8 +204,7 @@
             return function(err, userToken) {
               var data, emailer, options;
               data = {
-                "verification_url": "/verify/" + userToken.token,
-                "resend_verification_url": "/resend/" + userToken.token
+                "verification_url": "/verify/" + userToken.token
               };
               options = {
                 to: {

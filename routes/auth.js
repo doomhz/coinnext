@@ -176,8 +176,7 @@
             return user.setEmailVerified(function(err, u) {
               res.render("auth/verify", {
                 title: "Verify Account - Coinnext.com",
-                user: u,
-                action: "verify"
+                user: u
               });
               return UserToken.invalidateByToken(token);
             });
@@ -185,29 +184,32 @@
         });
       });
     });
-    app.get("/resend/:token", function(req, res) {
-      var oldCsrf, oldStagingAuth, token;
-      token = req.params.token;
+    app.get("/resend", function(req, res) {
+      var oldCsrf, oldStagingAuth, user;
+      user = req.user;
+      if (!user || user.email_verified) {
+        return res.redirect("/404");
+      }
       req.logout();
       oldStagingAuth = req.session.staging_auth;
       oldCsrf = req.session.csrfSecret;
       return req.session.regenerate(function() {
         req.session.staging_auth = oldStagingAuth;
         req.session.csrfSecret = oldCsrf;
-        return UserToken.findByToken(token, function(err, userToken) {
-          return User.findByToken(token, function(err, user) {
-            if (!user || user.email_verified) {
+        return UserToken.findEmailConfirmationToken(user.id, function(err, userToken) {
+          if (!userToken) {
+            return res.redirect("/404");
+          }
+          return User.findByToken(userToken.token, function(err, user) {
+            if (!user) {
               return res.redirect("/404");
             }
             return user.sendEmailVerificationLink(function() {
-              res.render("auth/verify", {
-                title: "Verify Account - Coinnext.com",
-                user: user,
-                action: "resend"
+              res.render("auth/resend_verify_link", {
+                title: "Resend Verification Link - Coinnext.com",
+                user: user
               });
-              if (userToken) {
-                return UserToken.invalidateByToken(token);
-              }
+              return UserToken.invalidateByToken(userToken.token);
             });
           });
         });

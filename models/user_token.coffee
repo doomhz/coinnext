@@ -50,6 +50,14 @@ module.exports = (sequelize, DataTypes) ->
               gt: UserToken.getMaxExpirationTime()
           UserToken.find(query).complete callback
 
+        findEmailConfirmationToken: (userId, callback = ()->)->
+          query =
+            where:
+              user_id: userId
+              type: MarketHelper.getTokenType("email_confirmation")
+              active: true
+          UserToken.find(query).complete callback
+
         generateGAuthPassByKey: (key)->
           speakeasy.time
             key: key
