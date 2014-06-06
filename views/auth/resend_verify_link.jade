@@ -1,0 +1,14 @@
+extends ../auth
+
+block content
+  .main-content(role='main')
+    .wrapper
+      .auth-box
+        h1 Email Verification
+        - if (!user || user.email_verified)
+          p.msg 
+            | Your email was already verified.
+        - else
+          p.msg A verification link was sent to your email.
+        br
+        |  <a href="/">Return to home page.</a>
