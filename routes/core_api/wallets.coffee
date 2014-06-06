@@ -36,27 +36,32 @@ module.exports = (app)->
         info: info
         address: GLOBAL.appConfig().wallets[currency.toLowerCase()].wallet.address
 
-  app.get "/wallet_health", (req, res, next)->
-    console.log "/wallet_health"
-    walletsInfo = []
-    for currency, wallet of GLOBAL.wallets
-      wallet.getInfo (err, info)->
-        if err
-          console.error err
-          walletInfo = 
-            status: "error"
+  app.get "/wallet_health/:currency", (req, res, next)->
+    currency = req.params.currency
+    return return next(new restify.ConflictError "Wallet down or does not exist.")  if not GLOBAL.wallets[currency]
+    wallet = GLOBAL.wallets[currency]
+    wallet.getInfo (err, info)->
+      if err
+        console.error err
+        walletInfo = 
+          status: "error"
+      else
+        walletInfo = 
+          currency: currency
+          block: info.blocks
+          connections: info.connections
+          balance: MarketHelper.toBigint info.balance
+        lastBlock = wallet.getBestBlock()
+        lastUpdated = lastBlock.time
+        walletInfo.last_updated = new Date(lastUpdated)  # TODO review
+        walletInfo.status = MarketHelper.getWalletLastUpdatedStatus(lastUpdated)
+      WalletHealth.findOrCreate({currency: currency}, walletInfo).complete (err, wallet, created)->
+        if created
+          res.send
+            message: "Wallet health check performed on #{new Date()}"
+            result: wallet
         else
-          walletInfo = 
-            currency: currency
-            block: info.blocks
-            connections: info.connections
-            balance: MarketHelper.toBigint info.balance
-          lastBlock = wallet.getBestBlock()
-          lastUpdated = lastBlock.time
-          wallet.last_updated = new Date(lastUpdated)  # TODO review
-          wallet.status = MarketHelper.getWalletLastUpdatedStatus(lastUpdated)
-        walletsInfo.push walletInfo
-    WalletHealth.bulkCreate(walletsInfo).complete (err, result)->
-      res.send
-        message: "Wallet health check performed on #{new Date()}"
-        result: result
+          wallet.updateAttributes(walletInfo).complete (err, result)->
+          res.send
+            message: "Wallet health check performed on #{new Date()}"
+            result: result

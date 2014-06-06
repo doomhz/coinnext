@@ -67,39 +67,47 @@
         });
       });
     });
-    return app.get("/wallet_health", function(req, res, next) {
-      var currency, wallet, walletsInfo, _ref;
-      console.log("/wallet_health");
-      walletsInfo = [];
-      _ref = GLOBAL.wallets;
-      for (currency in _ref) {
-        wallet = _ref[currency];
-        wallet.getInfo(function(err, info) {
-          var lastBlock, lastUpdated, walletInfo;
-          if (err) {
-            console.error(err);
-            walletInfo = {
-              status: "error"
-            };
-          } else {
-            walletInfo = {
-              currency: currency,
-              block: info.blocks,
-              connections: info.connections,
-              balance: MarketHelper.toBigint(info.balance)
-            };
-            lastBlock = wallet.getBestBlock();
-            lastUpdated = lastBlock.time;
-            wallet.last_updated = new Date(lastUpdated);
-            wallet.status = MarketHelper.getWalletLastUpdatedStatus(lastUpdated);
-          }
-          return walletsInfo.push(walletInfo);
-        });
+    return app.get("/wallet_health/:currency", function(req, res, next) {
+      var currency, wallet;
+      currency = req.params.currency;
+      if (!GLOBAL.wallets[currency]) {
+        return next(new restify.ConflictError("Wallet down or does not exist."));
       }
-      return WalletHealth.bulkCreate(walletsInfo).complete(function(err, result) {
-        return res.send({
-          message: "Wallet health check performed on " + (new Date()),
-          result: result
+      wallet = GLOBAL.wallets[currency];
+      return wallet.getInfo(function(err, info) {
+        var lastBlock, lastUpdated, walletInfo;
+        if (err) {
+          console.error(err);
+          walletInfo = {
+            status: "error"
+          };
+        } else {
+          walletInfo = {
+            currency: currency,
+            block: info.blocks,
+            connections: info.connections,
+            balance: MarketHelper.toBigint(info.balance)
+          };
+          lastBlock = wallet.getBestBlock();
+          lastUpdated = lastBlock.time;
+          walletInfo.last_updated = new Date(lastUpdated);
+          walletInfo.status = MarketHelper.getWalletLastUpdatedStatus(lastUpdated);
+        }
+        return WalletHealth.findOrCreate({
+          currency: currency
+        }, walletInfo).complete(function(err, wallet, created) {
+          if (created) {
+            return res.send({
+              message: "Wallet health check performed on " + (new Date()),
+              result: wallet
+            });
+          } else {
+            wallet.updateAttributes(walletInfo).complete(function(err, result) {});
+            return res.send({
+              message: "Wallet health check performed on " + (new Date()),
+              result: result
+            });
+          }
         });
       });
     });
