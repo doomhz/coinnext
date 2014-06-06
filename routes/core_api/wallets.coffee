@@ -40,28 +40,25 @@ module.exports = (app)->
     currency = req.params.currency
     return return next(new restify.ConflictError "Wallet down or does not exist.")  if not GLOBAL.wallets[currency]
     wallet = GLOBAL.wallets[currency]
+    walletInfo = {}
     wallet.getInfo (err, info)->
       if err
         console.error err
-        walletInfo = 
-          status: "error"
+        walletInfo.status = "error"
+        walletInfo.currency = currency
       else
-        walletInfo = 
-          currency: currency
-          block: info.blocks
-          connections: info.connections
-          balance: MarketHelper.toBigint info.balance
         lastBlock = wallet.getBestBlock()
         lastUpdated = lastBlock.time
-        walletInfo.last_updated = new Date(lastUpdated)  # TODO review
+
+        walletInfo.currency = currency
+        walletInfo.block = info.blocks
+        walletInfo.connections = info.connections
+        walletInfo.balance = MarketHelper.toBigint info.balance
+        walletInfo.last_updated = new Date(lastUpdated)
         walletInfo.status = MarketHelper.getWalletLastUpdatedStatus(lastUpdated)
-      WalletHealth.findOrCreate({currency: currency}, walletInfo).complete (err, wallet, created)->
-        if created
-          res.send
-            message: "Wallet health check performed on #{new Date()}"
-            result: wallet
-        else
-          wallet.updateAttributes(walletInfo).complete (err, result)->
+      console.log walletInfo
+      WalletHealth.findOrCreate({currency: MarketHelper.getCurrency(currency)}, walletInfo).complete (err, wallet, created)->
+        wallet.updateAttributes(walletInfo).complete (err, result)->
           res.send
             message: "Wallet health check performed on #{new Date()}"
             result: result

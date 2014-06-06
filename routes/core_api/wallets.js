@@ -68,46 +68,39 @@
       });
     });
     return app.get("/wallet_health/:currency", function(req, res, next) {
-      var currency, wallet;
+      var currency, wallet, walletInfo;
       currency = req.params.currency;
       if (!GLOBAL.wallets[currency]) {
         return next(new restify.ConflictError("Wallet down or does not exist."));
       }
       wallet = GLOBAL.wallets[currency];
+      walletInfo = {};
       return wallet.getInfo(function(err, info) {
-        var lastBlock, lastUpdated, walletInfo;
+        var lastBlock, lastUpdated;
         if (err) {
           console.error(err);
-          walletInfo = {
-            status: "error"
-          };
+          walletInfo.status = "error";
+          walletInfo.currency = currency;
         } else {
-          walletInfo = {
-            currency: currency,
-            block: info.blocks,
-            connections: info.connections,
-            balance: MarketHelper.toBigint(info.balance)
-          };
           lastBlock = wallet.getBestBlock();
           lastUpdated = lastBlock.time;
+          walletInfo.currency = currency;
+          walletInfo.block = info.blocks;
+          walletInfo.connections = info.connections;
+          walletInfo.balance = MarketHelper.toBigint(info.balance);
           walletInfo.last_updated = new Date(lastUpdated);
           walletInfo.status = MarketHelper.getWalletLastUpdatedStatus(lastUpdated);
         }
+        console.log(walletInfo);
         return WalletHealth.findOrCreate({
-          currency: currency
+          currency: MarketHelper.getCurrency(currency)
         }, walletInfo).complete(function(err, wallet, created) {
-          if (created) {
-            return res.send({
-              message: "Wallet health check performed on " + (new Date()),
-              result: wallet
-            });
-          } else {
-            wallet.updateAttributes(walletInfo).complete(function(err, result) {});
+          return wallet.updateAttributes(walletInfo).complete(function(err, result) {
             return res.send({
               message: "Wallet health check performed on " + (new Date()),
               result: result
             });
-          }
+          });
         });
       });
     });
