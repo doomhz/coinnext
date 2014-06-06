@@ -42,6 +42,7 @@ WALLET_STATUS =
   delayed: 2
   blocked: 3
   inactive: 4
+  error: 5
 
 EVENT_TYPE =
   orders_match: 1

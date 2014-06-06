@@ -1,5 +1,9 @@
 (function() {
-  var restify;
+  var MarketHelper, WalletHealth, restify;
+
+  WalletHealth = GLOBAL.db.WalletHealth;
+
+  MarketHelper = require("../../lib/market_helper");
 
   restify = require("restify");
 
@@ -43,7 +47,7 @@
         });
       });
     });
-    return app.get("/wallet_info/:currency", function(req, res, next) {
+    app.get("/wallet_info/:currency", function(req, res, next) {
       var currency;
       currency = req.params.currency;
       if (!GLOBAL.wallets[currency]) {
@@ -60,6 +64,39 @@
           currency: currency,
           info: info,
           address: GLOBAL.appConfig().wallets[currency.toLowerCase()].wallet.address
+        });
+      });
+    });
+    return app.get("/wallet_health", function(req, res, next) {
+      var currency, wallet, walletsInfo, _ref;
+      console.log("/wallet_health");
+      walletsInfo = [];
+      _ref = GLOBAL.wallets;
+      for (currency in _ref) {
+        wallet = _ref[currency];
+        wallet.getInfo(function(err, info) {
+          var walletInfo;
+          if (err) {
+            console.error(err);
+          }
+          walletInfo = {
+            currency: currency,
+            block: info.blocks,
+            connections: info.connections,
+            balance: MarketHelper.toBigint(info.balance),
+            last_updated: new Date(),
+            status: "normal"
+          };
+          if (err) {
+            walletInfo.status = "error";
+          }
+          return walletsInfo.push(walletInfo);
+        });
+      }
+      return WalletHealth.bulkCreate(walletsInfo).complete(function(err, result) {
+        return res.send({
+          message: "Wallet health check on " + (new Date()),
+          result: result
         });
       });
     });

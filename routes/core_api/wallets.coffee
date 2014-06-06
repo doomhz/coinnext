@@ -1,3 +1,5 @@
+WalletHealth = GLOBAL.db.WalletHealth
+MarketHelper = require "../../lib/market_helper"
 restify = require "restify"
 
 module.exports = (app)->
@@ -33,3 +35,23 @@ module.exports = (app)->
         currency: currency
         info: info
         address: GLOBAL.appConfig().wallets[currency.toLowerCase()].wallet.address
+
+  app.get "/wallet_health", (req, res, next)->
+    console.log "/wallet_health"
+    walletsInfo = []
+    for currency, wallet of GLOBAL.wallets
+      wallet.getInfo (err, info)->
+        console.error err  if err
+        walletInfo = 
+          currency: currency
+          block: info.blocks
+          connections: info.connections
+          balance: MarketHelper.toBigint info.balance
+          last_updated: new Date()  # TODO - this should be the time the last block was updated
+          status: "normal" # TODO - this depends on last_updated (normal, delayed, blocked, inactive or error)
+        walletInfo.status = "error"  if err
+        walletsInfo.push walletInfo
+    WalletHealth.bulkCreate(walletsInfo).complete (err, result)->
+      res.send
+        message: "Wallet health check on #{new Date()}"
+        result: result
