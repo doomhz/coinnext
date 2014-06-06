@@ -45,12 +45,14 @@ class CryptoWallet
     @passphrase = options.wallet.passphrase
 
   generateAddress: (account, callback)->
-    @submitPassphrase ()=>
+    @submitPassphrase (err)=>
+      console.error err  if err
       @client.getNewAddress account, callback
 
   sendToAddress: (address, amount, callback)->
     amount = @convert @currency, @initialCurrency, amount
-    @submitPassphrase ()=>
+    @submitPassphrase (err)=>
+      console.error err  if err
       @client.sendToAddress address, amount, callback
 
   submitPassphrase: (callback)->
