@@ -66,7 +66,7 @@ module.exports = (app)->
         walletInfo.last_updated = new Date(lastUpdated)
         walletInfo.status = MarketHelper.getWalletLastUpdatedStatus(lastUpdated)
 
-        return WalletHealth.updateFromWalletInfo walletInfo, (err, result)->
+        WalletHealth.updateFromWalletInfo walletInfo, (err, result)->
           return next(new restify.ConflictError "Can't update wallet health from walletInfo")  if err
           res.send
             message: "Wallet health check performed on #{new Date()}"

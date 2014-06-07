@@ -75,11 +75,11 @@ class CryptoWallet
     @client.getBlock blockHash, callback
 
   getBestBlockHash: (callback)->
-    @getBlockCount (err, blockCount)->
+    @getBlockCount (err, blockCount)=>
       @getBlockHash blockCount - 1, callback
 
   getBestBlock: (callback)->
-    @getBestBlockHash (err, blockHash)->
+    @getBestBlockHash (err, blockHash)=>
       @getBlock blockHash, callback
 
   getTransactions: (account = "*", count = 10, from = 0, callback)->
