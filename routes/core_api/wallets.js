@@ -84,25 +84,33 @@
           walletInfo.connections = null;
           walletInfo.balance = null;
           walletInfo.lastUpdated = null;
-        } else {
-          walletInfo.currency = currency;
-          walletInfo.blocks = info.blocks;
-          walletInfo.connections = info.connections;
-          walletInfo.balance = MarketHelper.toBigint(info.balance);
-          wallet.getBestBlock(function(err, lastBlock) {
-            var lastUpdated;
-            lastUpdated = lastBlock.time;
-            walletInfo.last_updated = new Date(lastUpdated);
-            return walletInfo.status = MarketHelper.getWalletLastUpdatedStatus(lastUpdated);
+          return WalletHealth.updateFromWalletInfo(walletInfo, function(err, result) {
+            if (err) {
+              return next(new restify.ConflictError("Can't update wallet health from walletInfo"));
+            }
+            return res.send({
+              message: "Wallet health check performed on " + (new Date()),
+              result: result
+            });
           });
         }
-        return WalletHealth.updateFromWalletInfo(walletInfo, function(err, result) {
-          if (err) {
-            return next(new restify.ConflictError("Can't update wallet health from walletInfo"));
-          }
-          return res.send({
-            message: "Wallet health check performed on " + (new Date()),
-            result: result
+        walletInfo.currency = currency;
+        walletInfo.blocks = info.blocks;
+        walletInfo.connections = info.connections;
+        walletInfo.balance = MarketHelper.toBigint(info.balance);
+        return wallet.getBestBlock(function(err, lastBlock) {
+          var lastUpdated;
+          lastUpdated = lastBlock.time;
+          walletInfo.last_updated = new Date(lastUpdated);
+          walletInfo.status = MarketHelper.getWalletLastUpdatedStatus(lastUpdated);
+          return WalletHealth.updateFromWalletInfo(walletInfo, function(err, result) {
+            if (err) {
+              return next(new restify.ConflictError("Can't update wallet health from walletInfo"));
+            }
+            return res.send({
+              message: "Wallet health check performed on " + (new Date()),
+              result: result
+            });
           });
         });
       });
