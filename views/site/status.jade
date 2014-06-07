@@ -16,11 +16,17 @@ block content
               th Currency
               th Blocks
               th Connections
-              th Last updated
+              th Last update
+              th Last check
+            - var now = new Date();
             - each wallet in wallets
               tr.wallet(data-id="#{wallet._id}")
                 td #{wallet.status}
                 td #{wallet.currency}
                 td #{wallet.blocks}
                 td #{wallet.connections}
-                td #{wallet.last_updated}
+                - if (!wallet.last_updated)
+                  td N/A
+                - else
+                  td #{(new Date(wallet.last_updated)).toUTCString()}
+                td #{(new Date(wallet.updated_at)).toUTCString()}
