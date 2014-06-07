@@ -37,6 +37,13 @@ MARKET_STATUS =
   enabled: 1
   disabled: 2
 
+WALLET_STATUS =
+  normal: 1
+  delayed: 2
+  blocked: 3
+  inactive: 4
+  error: 5
+
 EVENT_TYPE =
   orders_match: 1
   cancel_order: 2
@@ -162,6 +169,21 @@ MarketHelper =
 
   getMarketStatusLiteral: (intStatus)->
     _.invert(MARKET_STATUS)[intStatus]
+
+  getWalletStatus: (status)->
+    WALLET_STATUS[status]
+
+  getWalletStatusLiteral: (intStatus)->
+    _.invert(WALLET_STATUS)[intStatus]
+
+  getWalletLastUpdatedStatus: (lastUpdated)->
+    t2 = (new Date()).getTime()
+    t1 = lastUpdated.getTime()
+    diffSeconds = (t2 - t1) / 1000
+    return "normal" if diffSeconds <= 30 * 60
+    return "delayed" if diffSeconds <= 60 * 60
+    return "blocked" if diffSeconds > 60 * 60
+    return "error"
 
   getTradeFee: ()->
     FEE

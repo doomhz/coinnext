@@ -1,0 +1,31 @@
+extends ../layout
+
+block content
+  #status.main-content.status(role='main')
+    .wrapper
+      .col-aside
+        //- include status/_wallet_list
+
+      .col-center#status-cnt
+        #wallets.container
+          .con-header
+            h3.con-header-title Wallet Status
+          table.trade-data
+            tr
+              th Status
+              th Currency
+              th Blocks
+              th Connections
+              th Last update
+              th Last check
+            - each wallet in wallets
+              tr.wallet(data-id="#{wallet._id}")
+                td #{wallet.status}
+                td #{wallet.currency}
+                td #{wallet.blocks}
+                td #{wallet.connections}
+                - if (!wallet.last_updated)
+                  td N/A
+                - else
+                  td #{new Date(wallet.last_updated).toFormat('DD.MM.YY HH24:MI')}
+                td #{new Date(wallet.updated_at).toFormat('DD.MM.YY HH24:MI')}

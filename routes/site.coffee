@@ -1,4 +1,5 @@
 Wallet = GLOBAL.db.Wallet
+WalletHealth = GLOBAL.db.WalletHealth
 MarketStats = GLOBAL.db.MarketStats
 TradeStats = GLOBAL.db.TradeStats
 AuthStats = GLOBAL.db.AuthStats
@@ -121,6 +122,16 @@ module.exports = (app)->
           user: req.user
           authStats: authStats
           googleToken: googleToken
+
+  # Status
+  app.get "/status", (req, res)->
+    WalletHealth.findAll().complete (err, wallets)->
+      res.render "site/status",
+        title: 'Status - Coinnext'
+        page: "status"
+        wallets: wallets
+        currencies: MarketHelper.getSortedCurrencyNames()
+        _str: _str
 
   # Static Pages
   app.get "/legal/terms", (req, res)->

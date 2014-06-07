@@ -1,7 +1,9 @@
 (function() {
-  var AuthStats, JsonRenderer, MarketHelper, MarketStats, TradeStats, UserToken, Wallet, _str;
+  var AuthStats, JsonRenderer, MarketHelper, MarketStats, TradeStats, UserToken, Wallet, WalletHealth, _str;
 
   Wallet = GLOBAL.db.Wallet;
+
+  WalletHealth = GLOBAL.db.WalletHealth;
 
   MarketStats = GLOBAL.db.MarketStats;
 
@@ -162,6 +164,17 @@
             authStats: authStats,
             googleToken: googleToken
           });
+        });
+      });
+    });
+    app.get("/status", function(req, res) {
+      return WalletHealth.findAll().complete(function(err, wallets) {
+        return res.render("site/status", {
+          title: 'Status - Coinnext',
+          page: "status",
+          wallets: wallets,
+          currencies: MarketHelper.getSortedCurrencyNames(),
+          _str: _str
         });
       });
     });
