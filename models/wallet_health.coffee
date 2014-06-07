@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) ->
       classMethods:
 
         updateFromWalletInfo: (walletInfo, callback)->
-          WalletHealth.findOrCreate({currency: MarketHelper.getCurrency(walletInfo.currency)}, walletInfo).complete (err, wallet, created)->
+          WalletHealth.findOrCreate({currency: MarketHelper.getCurrency(walletInfo.currency)}).complete (err, wallet, created)->
             wallet.updateAttributes(walletInfo).complete callback
 
   WalletHealth
