@@ -10,7 +10,7 @@ header.page-head
       ul.nav
         li: a(href='/', class=(page === 'home' ? 'active' : '')) Home
         li: a(href='/trade', class=(page === 'trade' ? 'active' : '')) Trade
-        li: a(href='/status', class=(page === 'status' ? 'active' : '')) Status
+        //li: a(href='/status', class=(page === 'status' ? 'active' : '')) Status
         - if (user)
           li: a(href='/funds', class=(page === 'funds' ? 'active' : '')) Funds
           li.dropdown
