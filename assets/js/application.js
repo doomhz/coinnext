@@ -17,6 +17,7 @@
 //= require vendor/sha256
 //= require vendor/zxcvbn
 //= require vendor/socket.io
+//= require vendor/mailcheck
 
 //= require app/helpers/crypto_currency
 
