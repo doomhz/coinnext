@@ -25,17 +25,23 @@ var transactionsJob = new CronJob({
       nextCurrency = fs.readFileSync(cronCurrencyPath).toString();
       if (excludedCurrencies.indexOf(nextCurrency) === -1) {
         var url = "http://" + GLOBAL.appConfig().wallets_host + "/load_latest_transactions/" + nextCurrency;
+        var statusUrl = "http://" + GLOBAL.appConfig().wallets_host + "/wallet_health/" + nextCurrency;
         request.post(url, function (err, httpResponse, body) {
           if (err) {
             console.error(nextCurrency, "Error loading transactions.", err);
           } else {
             console.log(nextCurrency, body);
           }
-          nextCurrencyIndex = currencies.indexOf(nextCurrency);
-          nextCurrencyIndex = currencies[nextCurrencyIndex + 1] ? nextCurrencyIndex + 1 : 0;
-          nextCurrency = currencies[nextCurrencyIndex];
-          fs.writeFileSync(cronCurrencyPath, nextCurrency);
-          transactionsInProgress = false;
+          request.get(statusUrl, function (err, httpResponse, body) {
+            if (err) {
+              console.error(nextCurrency, "Error updating wallet status.", err);
+            }
+            nextCurrencyIndex = currencies.indexOf(nextCurrency);
+            nextCurrencyIndex = currencies[nextCurrencyIndex + 1] ? nextCurrencyIndex + 1 : 0;
+            nextCurrency = currencies[nextCurrencyIndex];
+            fs.writeFileSync(cronCurrencyPath, nextCurrency);
+            transactionsInProgress = false;
+          });
         });
       } else {
         nextCurrencyIndex = currencies.indexOf(nextCurrency);
