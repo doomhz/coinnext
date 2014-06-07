@@ -1,5 +1,5 @@
 (function() {
-  var BANNED_USERNAMES, Emailer, MarketHelper, crypto, phonetic, speakeasy, _;
+  var BANNED_USERNAMES_REGEX, Emailer, MarketHelper, crypto, phonetic, speakeasy, _;
 
   MarketHelper = require("../lib/market_helper");
 
@@ -13,7 +13,7 @@
 
   _ = require("underscore");
 
-  BANNED_USERNAMES = ["admin", "administrator", "coinnext", "coinnext_admin", "coinnext_administrator"];
+  BANNED_USERNAMES_REGEX = /admin|coinnext/ig;
 
   module.exports = function(sequelize, DataTypes) {
     var User;
@@ -57,7 +57,7 @@
           isAllowedUsername: function(value) {
             var message;
             message = "This username is not allowed";
-            if (BANNED_USERNAMES.indexOf(value.toLowerCase()) !== -1) {
+            if (BANNED_USERNAMES_REGEX.test(value)) {
               throw new Error(message);
             }
           }

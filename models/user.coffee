@@ -5,13 +5,7 @@ Emailer   = require "../lib/emailer"
 phonetic  = require "phonetic"
 _         = require "underscore"
 
-BANNED_USERNAMES = [
-  "admin",
-  "administrator",
-  "coinnext",
-  "coinnext_admin",
-  "coinnext_administrator"
-]
+BANNED_USERNAMES_REGEX = /admin|coinnext/ig
 
 module.exports = (sequelize, DataTypes) ->
 
@@ -44,7 +38,7 @@ module.exports = (sequelize, DataTypes) ->
             throw new Error message  if not /^[a-zA-Z0-9_]{4,15}$/.test(value)
           isAllowedUsername: (value)->
             message = "This username is not allowed"
-            throw new Error message if BANNED_USERNAMES.indexOf(value.toLowerCase()) isnt -1
+            throw new Error message if BANNED_USERNAMES_REGEX.test(value)
       email_verified:
         type: DataTypes.BOOLEAN
         allowNull: false
