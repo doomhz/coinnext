@@ -8,21 +8,21 @@ block content
       .col-right
         - var coinStats = marketStats[currency1 + "_" + currency2];
         #coin-stats.coin-stats
-          table.trade-data
-            tr.last-price
-              th Last Price:
-              td
+          ul
+            li.last-price
+              label Last Price:
+              div
                 | #{_str.toFixed(coinStats.last_price)} #{currency2} 
                 span(class="rate #{coinStats.growth_ratio > 0 ? 'up' : ''} #{coinStats.growth_ratio < 0 ? 'down' : ''} #{coinStats.growth_ratio == 0 ? 'none' : ''}") #{_str.roundTo(coinStats.growth_ratio, 2) * (coinStats.growth_ratio < 0 ? -1 : 1)}%
-            tr.high-price
-              th 24hr High:
-              td #{_str.toFixed(coinStats.day_high)} #{currency2}
-            tr.low-price
-              th 24hr Low:
-              td #{_str.toFixed(coinStats.day_low)} #{currency2}
-            tr.volume
-              th Volume:
-              td #{_str.satoshiRound(coinStats.volume2)} #{currency2}
+            li.high-price
+              label 24hr High:
+              div #{_str.toFixed(coinStats.day_high)} #{currency2}
+            li.low-price
+              label 24hr Low:
+              div #{_str.toFixed(coinStats.day_low)} #{currency2}
+            li.volume
+              label Volume:
+              div #{_str.satoshiRound(coinStats.volume2)} #{currency2}
         
         - if (user)
           - if (user.chat_enabled)
