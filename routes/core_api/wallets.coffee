@@ -46,19 +46,23 @@ module.exports = (app)->
         console.error err
         walletInfo.status = "error"
         walletInfo.currency = currency
+        walletInfo.blocks = null
+        walletInfo.connections = null
+        walletInfo.balance = null
+        walletInfo.lastUpdated = null
       else
-        lastBlock = wallet.getBestBlock()
-        lastUpdated = lastBlock.time
-
         walletInfo.currency = currency
-        walletInfo.block = info.blocks
+        walletInfo.blocks = info.blocks
         walletInfo.connections = info.connections
         walletInfo.balance = MarketHelper.toBigint info.balance
-        walletInfo.last_updated = new Date(lastUpdated)
-        walletInfo.status = MarketHelper.getWalletLastUpdatedStatus(lastUpdated)
-      console.log walletInfo
-      WalletHealth.findOrCreate({currency: MarketHelper.getCurrency(currency)}, walletInfo).complete (err, wallet, created)->
-        wallet.updateAttributes(walletInfo).complete (err, result)->
-          res.send
-            message: "Wallet health check performed on #{new Date()}"
-            result: result
+
+        wallet.getBestBlock (err, lastBlock)->
+          lastUpdated = lastBlock.time
+          walletInfo.last_updated = new Date(lastUpdated)
+          walletInfo.status = MarketHelper.getWalletLastUpdatedStatus(lastUpdated)
+
+      WalletHealth.updateFromWalletInfo walletInfo, (err, result)->
+        return next(new restify.ConflictError "Can't update wallet health from walletInfo")  if err
+        res.send
+          message: "Wallet health check performed on #{new Date()}"
+          result: result

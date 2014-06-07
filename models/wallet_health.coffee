@@ -43,5 +43,11 @@ module.exports = (sequelize, DataTypes) ->
           return @[attribute]  if not @[attribute]?
           MarketHelper.fromBigint @[attribute]
 
+      classMethods:
+
+        updateFromWalletInfo: (walletInfo, callback)->
+          @findOrCreate({currency: MarketHelper.getCurrency(walletInfo.currency)}, walletInfo).complete (err, wallet, created)->
+            wallet.updateAttributes(walletInfo).complete callback
+
   WalletHealth
 

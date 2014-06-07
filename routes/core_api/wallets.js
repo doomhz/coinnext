@@ -76,30 +76,33 @@
       wallet = GLOBAL.wallets[currency];
       walletInfo = {};
       return wallet.getInfo(function(err, info) {
-        var lastBlock, lastUpdated;
         if (err) {
           console.error(err);
           walletInfo.status = "error";
           walletInfo.currency = currency;
+          walletInfo.blocks = null;
+          walletInfo.connections = null;
+          walletInfo.balance = null;
+          walletInfo.lastUpdated = null;
         } else {
-          lastBlock = wallet.getBestBlock();
-          lastUpdated = lastBlock.time;
           walletInfo.currency = currency;
-          walletInfo.block = info.blocks;
+          walletInfo.blocks = info.blocks;
           walletInfo.connections = info.connections;
           walletInfo.balance = MarketHelper.toBigint(info.balance);
-          walletInfo.last_updated = new Date(lastUpdated);
-          walletInfo.status = MarketHelper.getWalletLastUpdatedStatus(lastUpdated);
+          wallet.getBestBlock(function(err, lastBlock) {
+            var lastUpdated;
+            lastUpdated = lastBlock.time;
+            walletInfo.last_updated = new Date(lastUpdated);
+            return walletInfo.status = MarketHelper.getWalletLastUpdatedStatus(lastUpdated);
+          });
         }
-        console.log(walletInfo);
-        return WalletHealth.findOrCreate({
-          currency: MarketHelper.getCurrency(currency)
-        }, walletInfo).complete(function(err, wallet, created) {
-          return wallet.updateAttributes(walletInfo).complete(function(err, result) {
-            return res.send({
-              message: "Wallet health check performed on " + (new Date()),
-              result: result
-            });
+        return WalletHealth.updateFromWalletInfo(walletInfo, function(err, result) {
+          if (err) {
+            return next(new restify.ConflictError("Can't update wallet health from walletInfo"));
+          }
+          return res.send({
+            message: "Wallet health check performed on " + (new Date()),
+            result: result
           });
         });
       });

@@ -58,6 +58,15 @@
           }
           return MarketHelper.fromBigint(this[attribute]);
         }
+      },
+      classMethods: {
+        updateFromWalletInfo: function(walletInfo, callback) {
+          return this.findOrCreate({
+            currency: MarketHelper.getCurrency(walletInfo.currency)
+          }, walletInfo).complete(function(err, wallet, created) {
+            return wallet.updateAttributes(walletInfo).complete(callback);
+          });
+        }
       }
     });
     return WalletHealth;
