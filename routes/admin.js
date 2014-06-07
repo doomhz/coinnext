@@ -1,5 +1,5 @@
 (function() {
-  var AuthStats, JsonRenderer, MarketHelper, MarketStats, Order, Payment, Transaction, User, Wallet, jsonBeautifier, _;
+  var AuthStats, JsonRenderer, MarketHelper, MarketStats, Order, Payment, Transaction, User, UserToken, Wallet, jsonBeautifier, _;
 
   Wallet = GLOBAL.db.Wallet;
 
@@ -12,6 +12,8 @@
   Order = GLOBAL.db.Order;
 
   AuthStats = GLOBAL.db.AuthStats;
+
+  UserToken = GLOBAL.db.UserToken;
 
   MarketStats = GLOBAL.db.MarketStats;
 
@@ -93,14 +95,17 @@
             limit: 20
           };
           return AuthStats.findAll(query).complete(function(err, authStats) {
-            return res.render("admin/user", {
-              title: "User " + user.email + " - " + user.id + " - Admin - CoinNext",
-              page: "users",
-              adminUser: req.user,
-              currencies: MarketHelper.getCurrencyTypes(),
-              user: user,
-              wallets: wallets,
-              authStats: authStats
+            return UserToken.findByUserAndType(user.id, "google_auth", function(err, userToken) {
+              return res.render("admin/user", {
+                title: "User " + user.email + " - " + user.id + " - Admin - CoinNext",
+                page: "users",
+                adminUser: req.user,
+                currencies: MarketHelper.getCurrencyTypes(),
+                user: user,
+                userToken: userToken,
+                wallets: wallets,
+                authStats: authStats
+              });
             });
           });
         });

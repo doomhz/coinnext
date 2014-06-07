@@ -4,6 +4,7 @@ Transaction = GLOBAL.db.Transaction
 Payment = GLOBAL.db.Payment
 Order = GLOBAL.db.Order
 AuthStats = GLOBAL.db.AuthStats
+UserToken = GLOBAL.db.UserToken
 MarketStats = GLOBAL.db.MarketStats
 MarketHelper = require "../lib/market_helper"
 JsonRenderer = require "../lib/json_renderer"
@@ -64,14 +65,16 @@ module.exports = (app)->
           ]
           limit: 20
         AuthStats.findAll(query).complete (err, authStats)->
-          res.render "admin/user",
-            title: "User #{user.email} - #{user.id} - Admin - CoinNext"
-            page: "users"
-            adminUser: req.user
-            currencies: MarketHelper.getCurrencyTypes()
-            user: user
-            wallets: wallets
-            authStats: authStats
+          UserToken.findByUserAndType user.id, "google_auth", (err, userToken)->
+            res.render "admin/user",
+              title: "User #{user.email} - #{user.id} - Admin - CoinNext"
+              page: "users"
+              adminUser: req.user
+              currencies: MarketHelper.getCurrencyTypes()
+              user: user
+              userToken: userToken
+              wallets: wallets
+              authStats: authStats
 
   app.get "/administratie/wallet/:id", (req, res)->
     Wallet.findById req.params.id, (err, wallet)->

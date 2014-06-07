@@ -5,6 +5,7 @@ block content
     h2.content-title User #{user.email} / #{user.username} / #{user.id}
 
     p Email verified: #{user.email_verified}
+    p Two-factor authentication: #{!!userToken}
     p Created: #{user.created_at.toFormat("DD MMM YYYY HH24:MI")}
     p Updated: #{user.updated_at.toFormat("DD MMM YYYY HH24:MI")}
 
