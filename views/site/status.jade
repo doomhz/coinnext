@@ -24,7 +24,8 @@ block content
                 td #{wallet.currency}
                 td #{wallet.blocks}
                 td #{wallet.connections}
-                - if (!wallet.last_updated)
+                - lastUpdated = new Date(wallet.last_updated)
+                - if (lastUpdated.getTime() !== lastUpdated.getTime())
                   td N/A
                 - else
                   td #{new Date(wallet.last_updated).toFormat('DD.MM.YY HH24:MI')}
