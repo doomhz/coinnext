@@ -61,7 +61,7 @@
       },
       classMethods: {
         updateFromWalletInfo: function(walletInfo, callback) {
-          return this.findOrCreate({
+          return WalletHealth.findOrCreate({
             currency: MarketHelper.getCurrency(walletInfo.currency)
           }, walletInfo).complete(function(err, wallet, created) {
             return wallet.updateAttributes(walletInfo).complete(callback);
