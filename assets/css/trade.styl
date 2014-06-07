@@ -42,7 +42,23 @@
   select
     width 100%
 
+.coin-stats
+  ul
+    reset-list()
+    padding 10px
+  li
+    margin-bottom 5px
+    &:last-child
+      margin 0
+  label
+  div
+    display inline-block
+  label
+    width 100px
+
 .rate
+  &.on-hold
+    color $text-color
   &.none
     color $text-color
     &:after
@@ -413,14 +429,27 @@
 
 .trade-data
   width 100%
-  border-spacing 1px
   border-collapse separate
   th
   td
     padding 6px 10px
+  
   th
     vertical-align top
     width 100px
+    white-space nowrap
+    padding 0 10px
+    border-bottom 1px solid #e0e0e0
+    color #777c86
+    font-weight 800
+    height 29px
+    line-height 29px
+    text-align left
+    font-size .8em
+    text-transform uppercase
+    box-shadow 0 1px 0 rgba(#000,.03)
+    background-color #fff
+    background linear-gradient(#fff, rgba(248,248,248,.9) 100%)
   .wall
     font-weight bold
   tr:nth-child(even)

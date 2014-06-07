@@ -7,11 +7,29 @@ $(document).ready ()->
   $sendPassForm = $("#send-pass-form")
   $logoutBt = $("#logout-bt")
   $pwField = $signupForm.find("[name='password']")
+  $hint = $("#hint")
+  $email = $("#signup-email")
 
   $.validator.addMethod "onenumber", (value, element)->
       pattern = /[0-9]{1,}/
       return @optional(element) or pattern.test(value)
     , "The password should contain at least one number."
+
+  $email.on "blur", ->
+    $(this).mailcheck
+      suggested: (element, suggestion) ->
+        unless $hint.html()
+          suggestion = "Did you mean <span class='suggestion'>" + "<span class='address'>" + suggestion.address + "</span>" + "@<a href='#' class='domain'>" + suggestion.domain + "</a></span>?"
+          $hint.html(suggestion).show()
+        else
+          $(".address").html(suggestion.address);
+          $(".domain").html(suggestion.domain);
+      empty: (element) ->
+        $hint.empty().hide()
+
+  $hint.on "click", ".domain", ->
+    $email.val $(".suggestion").text()
+    $hint.empty().hide()
 
   onAuthSubmit = (ev)->
     ev.preventDefault()
