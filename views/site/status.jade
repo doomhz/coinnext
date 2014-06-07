@@ -18,7 +18,6 @@ block content
               th Connections
               th Last update
               th Last check
-            - var now = new Date();
             - each wallet in wallets
               tr.wallet(data-id="#{wallet._id}")
                 td #{wallet.status}
@@ -28,5 +27,5 @@ block content
                 - if (!wallet.last_updated)
                   td N/A
                 - else
-                  td #{(new Date(wallet.last_updated)).toUTCString()}
-                td #{(new Date(wallet.updated_at)).toUTCString()}
+                  td #{new Date(wallet.last_updated).toFormat('DD.MM.YY HH24:MI')}
+                td #{new Date(wallet.updated_at).toFormat('DD.MM.YY HH24:MI')}
