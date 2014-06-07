@@ -62,7 +62,7 @@ module.exports = (app)->
       walletInfo.balance = MarketHelper.toBigint info.balance
 
       wallet.getBestBlock (err, lastBlock)->
-        lastUpdated = lastBlock.time
+        lastUpdated = lastBlock.time * 1000
         walletInfo.last_updated = new Date(lastUpdated)
         walletInfo.status = MarketHelper.getWalletLastUpdatedStatus walletInfo.last_updated
 

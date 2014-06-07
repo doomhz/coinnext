@@ -100,7 +100,7 @@
         walletInfo.balance = MarketHelper.toBigint(info.balance);
         return wallet.getBestBlock(function(err, lastBlock) {
           var lastUpdated;
-          lastUpdated = lastBlock.time;
+          lastUpdated = lastBlock.time * 1000;
           walletInfo.last_updated = new Date(lastUpdated);
           walletInfo.status = MarketHelper.getWalletLastUpdatedStatus(walletInfo.last_updated);
           return WalletHealth.updateFromWalletInfo(walletInfo, function(err, result) {
