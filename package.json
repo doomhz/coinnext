@@ -40,6 +40,7 @@
     , "recaptcha-async": "0.0.4"
     , "mathjs": "0.19.0"
     , "express-simple-cdn": "1.0.1"
+    , "cron": "1.0.4"
   },
   "devDependencies": {
     "mocha": "latest"
