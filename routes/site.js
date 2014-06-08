@@ -98,7 +98,11 @@
       return Wallet.findUserWallets(req.user.id, function(err, wallets) {
         var sortedWallets;
         sortedWallets = _.sortBy(wallets, function(w) {
-          return w.currency;
+          if (w.currency === "BTC") {
+            return " ";
+          } else {
+            return w.currency;
+          }
         });
         return res.render("site/funds", {
           title: 'Funds - Coinnext',
