@@ -42,7 +42,7 @@ module.exports = (app)->
     wallet = GLOBAL.wallets[currency]
     walletInfo = {}
     wallet.getInfo (err, info)->
-      if err
+      if err or not info
         console.error err
         walletInfo.status = "error"
         walletInfo.currency = currency
@@ -62,7 +62,7 @@ module.exports = (app)->
       walletInfo.balance = MarketHelper.toBigint info.balance
 
       wallet.getBestBlock (err, lastBlock)->
-        lastUpdated = lastBlock.time * 1000
+        lastUpdated = if err or not lastBlock then NaN else lastBlock.time * 1000
         walletInfo.last_updated = new Date(lastUpdated)
         walletInfo.status = MarketHelper.getWalletLastUpdatedStatus walletInfo.last_updated
 
