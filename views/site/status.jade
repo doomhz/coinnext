@@ -3,10 +3,23 @@ extends ../layout
 block content
   #status.main-content.status(role='main')
     .wrapper
-      .col-aside
-        //- include status/_wallet_list
+      .one-col.content#status-cnt
+        h1.page-title Status
+        p Here you can find information about the current performance of all our wallets.
+        table.status-legend
+          tr
+            td.label <span class="wallet-status normal">Normal</span>
+            td Means the wallet is running normal and blocks have been seen in the last 30 mins.
+          tr
+            td.label <span class="wallet-status delayed">Delayed</span>
+            td Means we have not seen a block in the last 30 mins. This could be happening because of long block times or if there is a problem with the wallet. Please check with an official block explorer and see what's happening.
+          tr
+            td.label <span class="wallet-status blocked">Blocked</span>
+            td Means we have not seen a block in over 60 mins. This could be happening because of long block times or if there is a problem with the wallet. Please check with an official block explorer and see what's happening.
+          tr
+            td.label <span class="wallet-status error">Error</span>
+            td Means our wallet is currently not responding and is offline.
 
-      .col-center#status-cnt
         #wallets.container
           .con-header
             h3.con-header-title Wallet Status
@@ -18,10 +31,11 @@ block content
               th Connections
               th Last update
               th Last check
+
             - each wallet in wallets
               tr.wallet(data-id="#{wallet._id}")
                 td
-                  span(class="#{wallet.status}") #{wallet.status}
+                  span(class="wallet-status #{wallet.status}") #{wallet.status}
                 td #{wallet.currency}
                 td #{wallet.blocks}
                 td #{wallet.connections}
