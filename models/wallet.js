@@ -117,7 +117,7 @@
             }
             wallets = _.sortBy(wallets, function(w) {
               if (w.currency === "BTC") {
-                return "A";
+                return " ";
               }
               return w.currency;
             });

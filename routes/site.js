@@ -96,19 +96,11 @@
         return res.redirect("/login");
       }
       return Wallet.findUserWallets(req.user.id, function(err, wallets) {
-        var sortedWallets;
-        sortedWallets = _.sortBy(wallets, function(w) {
-          if (w.currency === "BTC") {
-            return " ";
-          } else {
-            return w.currency;
-          }
-        });
         return res.render("site/funds", {
           title: 'Funds - Coinnext',
           page: "funds",
           user: req.user,
-          wallets: sortedWallets,
+          wallets: wallets,
           currencies: MarketHelper.getSortedCurrencyNames(),
           _str: _str
         });

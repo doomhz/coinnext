@@ -66,13 +66,11 @@ module.exports = (app)->
   app.get "/funds", (req, res)->
     return res.redirect "/login"  if not req.user
     Wallet.findUserWallets req.user.id, (err, wallets)->
-      sortedWallets = _.sortBy wallets, (w)->
-        if w.currency is "BTC" then " " else w.currency #make sure BTC goes on top
       res.render "site/funds",
         title: 'Funds - Coinnext'
         page: "funds"
         user: req.user
-        wallets: sortedWallets
+        wallets: wallets
         currencies: MarketHelper.getSortedCurrencyNames()
         _str: _str
 

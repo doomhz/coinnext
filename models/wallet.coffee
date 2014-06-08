@@ -76,7 +76,7 @@ module.exports = (sequelize, DataTypes) ->
             ]
           Wallet.findAll(query).complete (err, wallets = [])->
             wallets = _.sortBy wallets, (w)->
-              return "A"  if w.currency is "BTC"
+              return " "  if w.currency is "BTC"
               w.currency
             callback err, wallets
 
