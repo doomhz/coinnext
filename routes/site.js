@@ -1,5 +1,5 @@
 (function() {
-  var AuthStats, JsonRenderer, MarketHelper, MarketStats, TradeStats, UserToken, Wallet, WalletHealth, _str;
+  var AuthStats, JsonRenderer, MarketHelper, MarketStats, TradeStats, UserToken, Wallet, WalletHealth, _, _str;
 
   Wallet = GLOBAL.db.Wallet;
 
@@ -18,6 +18,8 @@
   MarketHelper = require("../lib/market_helper");
 
   _str = require("../lib/underscore_string");
+
+  _ = require("underscore");
 
   module.exports = function(app) {
     app.get("/", function(req, res) {
@@ -94,11 +96,15 @@
         return res.redirect("/login");
       }
       return Wallet.findUserWallets(req.user.id, function(err, wallets) {
+        var sortedWallets;
+        sortedWallets = _.sortBy(wallets, function(w) {
+          return w.currency;
+        });
         return res.render("site/funds", {
           title: 'Funds - Coinnext',
           page: "funds",
           user: req.user,
-          wallets: wallets,
+          wallets: sortedWallets,
           currencies: MarketHelper.getSortedCurrencyNames(),
           _str: _str
         });
@@ -121,7 +127,6 @@
             page: "funds",
             user: req.user,
             wallet: wallet,
-            wallets: wallets,
             currencies: MarketHelper.getSortedCurrencyNames(),
             _str: _str
           });
@@ -169,12 +174,14 @@
     });
     app.get("/status", function(req, res) {
       return WalletHealth.findAll().complete(function(err, wallets) {
+        var sortedWallets;
+        sortedWallets = _.sortBy(wallets, function(w) {
+          return w.currency;
+        });
         return res.render("site/status", {
           title: 'Status - Coinnext',
           page: "status",
-          wallets: wallets,
-          currencies: MarketHelper.getSortedCurrencyNames(),
-          _str: _str
+          wallets: sortedWallets
         });
       });
     });

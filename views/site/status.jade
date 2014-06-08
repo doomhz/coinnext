@@ -20,7 +20,8 @@ block content
               th Last check
             - each wallet in wallets
               tr.wallet(data-id="#{wallet._id}")
-                td #{wallet.status}
+                td
+                  span(class="#{wallet.status}") #{wallet.status}
                 td #{wallet.currency}
                 td #{wallet.blocks}
                 td #{wallet.connections}

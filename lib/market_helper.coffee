@@ -117,6 +117,11 @@ MarketHelper =
   getCurrencyTypes: ()->
     Object.keys marketSettings.CURRENCIES
 
+  getSortedCurrencyTypes: ()->
+    types = _.sortBy @getCurrencyTypes(), (t)->
+      t
+    return types
+
   getCurrency: (currency)->
     marketSettings.CURRENCIES[currency]
 
@@ -127,8 +132,7 @@ MarketHelper =
     marketSettings.CURRENCY_NAMES
 
   getSortedCurrencyNames: ()->
-    types = _.sortBy @getCurrencyTypes(), (t)->
-      t
+    types = @getSortedCurrencyTypes()
     names = {}
     for type in types
       names[type] = @getCurrencyName type

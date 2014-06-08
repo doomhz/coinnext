@@ -7,6 +7,7 @@ UserToken = GLOBAL.db.UserToken
 JsonRenderer = require "../lib/json_renderer"
 MarketHelper = require "../lib/market_helper"
 _str = require "../lib/underscore_string"
+_ = require "underscore"
 
 module.exports = (app)->
 
@@ -65,11 +66,13 @@ module.exports = (app)->
   app.get "/funds", (req, res)->
     return res.redirect "/login"  if not req.user
     Wallet.findUserWallets req.user.id, (err, wallets)->
+      sortedWallets = _.sortBy wallets, (w)->
+        w.currency
       res.render "site/funds",
         title: 'Funds - Coinnext'
         page: "funds"
         user: req.user
-        wallets: wallets
+        wallets: sortedWallets
         currencies: MarketHelper.getSortedCurrencyNames()
         _str: _str
 
@@ -84,7 +87,6 @@ module.exports = (app)->
           page: "funds"
           user: req.user
           wallet: wallet
-          wallets: wallets
           currencies: MarketHelper.getSortedCurrencyNames()
           _str: _str
 
@@ -126,12 +128,12 @@ module.exports = (app)->
   # Status
   app.get "/status", (req, res)->
     WalletHealth.findAll().complete (err, wallets)->
+      sortedWallets = _.sortBy wallets, (w)->
+        w.currency
       res.render "site/status",
         title: 'Status - Coinnext'
         page: "status"
-        wallets: wallets
-        currencies: MarketHelper.getSortedCurrencyNames()
-        _str: _str
+        wallets: sortedWallets
 
   # Static Pages
   app.get "/legal/terms", (req, res)->
