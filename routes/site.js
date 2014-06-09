@@ -1,5 +1,5 @@
 (function() {
-  var AuthStats, JsonRenderer, MarketHelper, MarketStats, TradeStats, UserToken, Wallet, WalletHealth, _, _str;
+  var AuthStats, JsonRenderer, MarketHelper, MarketStats, OrderLog, TradeStats, UserToken, Wallet, WalletHealth, _, _str;
 
   Wallet = GLOBAL.db.Wallet;
 
@@ -13,6 +13,8 @@
 
   UserToken = GLOBAL.db.UserToken;
 
+  OrderLog = GLOBAL.db.OrderLog;
+
   JsonRenderer = require("../lib/json_renderer");
 
   MarketHelper = require("../lib/market_helper");
@@ -24,13 +26,16 @@
   module.exports = function(app) {
     app.get("/", function(req, res) {
       return MarketStats.getStats(function(err, marketStats) {
-        return res.render("site/index", {
-          title: req.user ? 'Home - Coinnext' : 'Coinnext - Cryptocurrency Exchange',
-          page: "home",
-          user: req.user,
-          marketStats: JsonRenderer.marketStats(marketStats),
-          currencies: MarketHelper.getCurrencyNames(),
-          _str: _str
+        return OrderLog.getNumberOfTrades(null, function(err, tradesCount) {
+          return res.render("site/index", {
+            title: req.user ? 'Home - Coinnext' : 'Coinnext - Cryptocurrency Exchange',
+            page: "home",
+            user: req.user,
+            marketStats: JsonRenderer.marketStats(marketStats),
+            currencies: MarketHelper.getCurrencyNames(),
+            tradesCount: tradesCount,
+            _str: _str
+          });
         });
       });
     });
