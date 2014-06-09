@@ -65,3 +65,13 @@ task "admin:generate_user", "Add new admin user -e -p", (opts)->
     newUser.generateGAuthData (data, newUser)->
       console.log data.google_auth_qr
       console.log newUser.gauth_key
+
+task "add_payments_fee", "Add fee for existent payments", ()->
+  async = require "async"
+  addFee = (payment, cb)->
+    GLOBAL.db.Wallet.findById payment.wallet_id, (err, wallet)->
+      return cb()  if not wallet
+      payment.updateAttributes({fee: wallet.withdrawal_fee}).complete cb
+  GLOBAL.db.Payment.findAll().complete (err, payments)->
+    async.mapSeries payments, addFee, (err, result)->
+      console.log arguments

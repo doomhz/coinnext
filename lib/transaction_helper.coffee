@@ -24,6 +24,7 @@ TransactionHelper =
       return callback "You don't have enough funds."  if not wallet.canWithdraw data.amount, true
       return callback "You can't withdraw to the same address."  if data.address is wallet.address
       data.currency = wallet.currency
+      data.fee = wallet.withdrawal_fee
       GLOBAL.db.sequelize.transaction (transaction)->
         Payment.create(data, {transaction: transaction}).complete (err, pm)->
           if err
