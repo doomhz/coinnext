@@ -60,7 +60,7 @@
           return MarketHelper.getWithdrawalFee(this.currency);
         },
         total_balance: function() {
-          return this.balance + this.hold_balance;
+          return math.add(this.balance, this.hold_balance);
         },
         network_confirmations: function() {
           return MarketHelper.getMinConfirmations(this.currency);

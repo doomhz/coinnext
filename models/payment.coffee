@@ -1,5 +1,8 @@
 MarketHelper = require "../lib/market_helper"
 ipFormatter = require "ip"
+math = require("mathjs")
+  number: "bignumber"
+  decimals: 8
 
 module.exports = (sequelize, DataTypes) ->
 
@@ -38,6 +41,14 @@ module.exports = (sequelize, DataTypes) ->
           isBiggerThanFee: (value)->
             fee = MarketHelper.getWithdrawalFee @currency
             throw new Error "The amount is too low."  if value <= fee
+        comment: "FLOAT x 100000000"
+      fee:
+        type: DataTypes.BIGINT.UNSIGNED
+        defaultValue: 0
+        allowNull: false
+        validate:
+          isInt: true
+          notNull: true
         comment: "FLOAT x 100000000"
       status:
         type: DataTypes.INTEGER.UNSIGNED
@@ -87,6 +98,17 @@ module.exports = (sequelize, DataTypes) ->
             where:
               transaction_id: transactionId
           Payment.find(query).complete callback
+
+        findTotalPayedByUserAndWallet: (userId, walletId, callback)->
+          query =
+            where:
+              user_id: userId
+              wallet_id: walletId
+          Payment.sum("amount", query).complete (err, totalAmount)->
+            return err  if err
+            Payment.sum("fee", query).complete (err, totalFee)->
+              return err  if err
+              callback err, math.add(totalAmount, totalFee)
 
         submit: (data, callback = ()->)->
           GLOBAL.coreAPIClient.sendWithData "create_payment", data, (err, res, body)=>

@@ -1,9 +1,14 @@
 (function() {
-  var MarketHelper, ipFormatter;
+  var MarketHelper, ipFormatter, math;
 
   MarketHelper = require("../lib/market_helper");
 
   ipFormatter = require("ip");
+
+  math = require("mathjs")({
+    number: "bignumber",
+    decimals: 8
+  });
 
   module.exports = function(sequelize, DataTypes) {
     var Payment;
@@ -58,6 +63,16 @@
               throw new Error("The amount is too low.");
             }
           }
+        },
+        comment: "FLOAT x 100000000"
+      },
+      fee: {
+        type: DataTypes.BIGINT.UNSIGNED,
+        defaultValue: 0,
+        allowNull: false,
+        validate: {
+          isInt: true,
+          notNull: true
         },
         comment: "FLOAT x 100000000"
       },
@@ -125,6 +140,26 @@
             }
           };
           return Payment.find(query).complete(callback);
+        },
+        findTotalPayedByUserAndWallet: function(userId, walletId, callback) {
+          var query;
+          query = {
+            where: {
+              user_id: userId,
+              wallet_id: walletId
+            }
+          };
+          return Payment.sum("amount", query).complete(function(err, totalAmount) {
+            if (err) {
+              return err;
+            }
+            return Payment.sum("fee", query).complete(function(err, totalFee) {
+              if (err) {
+                return err;
+              }
+              return callback(err, math.add(totalAmount, totalFee));
+            });
+          });
         },
         submit: function(data, callback) {
           if (callback == null) {

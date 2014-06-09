@@ -164,20 +164,24 @@ module.exports = (sequelize, DataTypes) ->
           query.limit = options.limit  if options.limit
           if options.status is "open"
             query.where.status = [MarketHelper.getOrderStatus("partiallyCompleted"), MarketHelper.getOrderStatus("open")]
-          if options.status is "completed"
+          else if options.status is "completed"
             query.where.status = MarketHelper.getOrderStatus(options.status)
-          query.where.action = MarketHelper.getOrderAction(options.action)    if !!MarketHelper.getOrderAction(options.action)
+          else if _.isArray options.status
+            query.where.status = []
+            for status in options.status
+              query.where.status.push MarketHelper.getOrderStatus(status)
+          query.where.action = MarketHelper.getOrderAction(options.action)  if !!MarketHelper.getOrderAction(options.action)
           query.where.user_id = options.user_id  if options.user_id?
           if options.action is "buy"
-            query.where.buy_currency = MarketHelper.getCurrency options.currency1
-            query.where.sell_currency = MarketHelper.getCurrency options.currency2
+            query.where.buy_currency = MarketHelper.getCurrency options.currency1  if options.currency1?
+            query.where.sell_currency = MarketHelper.getCurrency options.currency2  if options.currency2?
           else if options.action is "sell"
-            query.where.buy_currency = MarketHelper.getCurrency options.currency2
-            query.where.sell_currency = MarketHelper.getCurrency options.currency1
+            query.where.buy_currency = MarketHelper.getCurrency options.currency2  if options.currency2?
+            query.where.sell_currency = MarketHelper.getCurrency options.currency1  if options.currency1?
           else if not options.action
             currencies = []
-            currencies.push MarketHelper.getCurrency(options.currency1)  if options.currency1
-            currencies.push MarketHelper.getCurrency(options.currency2)  if options.currency2
+            currencies.push MarketHelper.getCurrency(options.currency1)  if options.currency1?
+            currencies.push MarketHelper.getCurrency(options.currency2)  if options.currency2?
             if currencies.length > 1
               query.where.buy_currency = currencies
               query.where.sell_currency = currencies

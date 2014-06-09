@@ -161,6 +161,18 @@
           };
           return Transaction.findAll(query).complete(callback);
         },
+        findTotalReceivedByUserAndWallet: function(userId, walletId, callback) {
+          var query;
+          query = {
+            where: {
+              user_id: userId,
+              wallet_id: walletId,
+              balance_loaded: true,
+              category: MarketHelper.getTransactionCategory("receive")
+            }
+          };
+          return Transaction.sum("amount", query).complete(callback);
+        },
         isValidFormat: function(category) {
           return !!MarketHelper.getTransactionCategory(category);
         },
