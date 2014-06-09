@@ -72,6 +72,6 @@ task "add_payments_fee", "Add fee for existent payments", ()->
     GLOBAL.db.Wallet.findById payment.wallet_id, (err, wallet)->
       return cb()  if not wallet
       payment.updateAttributes({fee: wallet.withdrawal_fee}).complete cb
-  GLOBAL.db.Payment.findAll().complete (err, payments)->
+  GLOBAL.db.Payment.findAll({where: {fee: 0}}).complete (err, payments)->
     async.mapSeries payments, addFee, (err, result)->
       console.log arguments
