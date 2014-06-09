@@ -2,6 +2,7 @@ Wallet = GLOBAL.db.Wallet
 Transaction = GLOBAL.db.Transaction
 Payment = GLOBAL.db.Payment
 MarketStats = GLOBAL.db.MarketStats
+FraudHelper = require "./fraud_helper"
 JsonRenderer = require "./json_renderer"
 ClientSocket = require "./client_socket"
 usersSocket = new ClientSocket
@@ -44,6 +45,14 @@ TransactionHelper =
                 user_id: wallet.user_id
                 eventData: JsonRenderer.wallet wallet
 
+  processPaymentWithFraud: (payment, callback)->
+    FraudHelper.checkUserBalances payment.user_id, (err, result)->
+      if not result.valid_final_balance or not result.valid_hold_balance
+        payment.markAsFraud result, ()->
+          callback null, "Could not process payment - fraud detected - #{JSON.stringify(result)}"
+      else
+        TransactionHelper.processPayment payment, callback
+  
   processPayment: (payment, callback)->
     Wallet.findById payment.wallet_id, (err, wallet)->
       return callback null, "#{payment.id} - wallet #{payment.wallet_id} not found"  if not wallet

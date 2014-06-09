@@ -65,6 +65,9 @@ module.exports = (sequelize, DataTypes) ->
           @setDataValue "remote_ip", ipFormatter.toLong ip
         get: ()->
           ipFormatter.fromLong @getDataValue "remote_ip"
+      fraud:
+        type: DataTypes.BOOLEAN
+        defaultValue: false
 
     ,
       tableName: "payments"
@@ -98,6 +101,16 @@ module.exports = (sequelize, DataTypes) ->
             where:
               transaction_id: transactionId
           Payment.find(query).complete callback
+
+        findToProcess: (callback)->
+          query =
+            where:
+              status: MarketHelper.getPaymentStatus "pending"
+              fraud: false
+            order: [
+              ["created_at", "ASC"]
+            ]
+          Payment.findAll(query).complete callback
 
         findTotalPayedByUserAndWallet: (userId, walletId, callback)->
           query =
@@ -154,6 +167,14 @@ module.exports = (sequelize, DataTypes) ->
           GLOBAL.db.PaymentLog.create
             payment_id: @id
             log: reason
+          @save().complete (e, p)->
+            callback reason, p
+
+        markAsFraud: (reason, callback)->
+          GLOBAL.db.PaymentLog.create
+            payment_id: @id
+            log: JSON.stringify reason
+          @fraud = true
           @save().complete (e, p)->
             callback reason, p
 

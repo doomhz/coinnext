@@ -66,7 +66,7 @@ describe "Transactions Api", ->
 
   describe "POST /process_pending_payments", ()->
     describe "when the wallet has enough balance", ()->
-      it "returns 200 ok and the executed payment ids", (done)->
+      xit "returns 200 ok and the executed payment ids", (done)->
         wallet.balance = MarketHelper.toBigint 10.0002
         wallet.save().complete ()->
           GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: MarketHelper.toBigint(10), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
@@ -81,7 +81,7 @@ describe "Transactions Api", ->
                 p.status.should.eql "processed"
                 done()
 
-      it "updates the user_id from the payment", (done)->
+      xit "updates the user_id from the payment", (done)->
         wallet.balance = MarketHelper.toBigint 10.0002
         wallet.save().complete ()->
           GLOBAL.db.Transaction.create({wallet_id: wallet.id, currency: "BTC", txid: "unique_tx_id_mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, tx)->
@@ -96,7 +96,7 @@ describe "Transactions Api", ->
                   done()
 
     describe "when there are payments for the same user", ()->
-      it "processes only one payment", (done)->
+      xit "processes only one payment", (done)->
         GLOBAL.db.Wallet.create({currency: "BTC", user_id: 2, balance: MarketHelper.toBigint(10.0002)}).complete (err, wallet2)->
           wallet.balance = MarketHelper.toBigint 10.0002
           wallet.save().complete ()->
