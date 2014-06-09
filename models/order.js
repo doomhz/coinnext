@@ -238,7 +238,7 @@
           }).complete(callback);
         },
         findByOptions: function(options, callback) {
-          var currencies, query;
+          var currencies, query, status, _i, _len, _ref;
           if (options == null) {
             options = {};
           }
@@ -263,9 +263,15 @@
           }
           if (options.status === "open") {
             query.where.status = [MarketHelper.getOrderStatus("partiallyCompleted"), MarketHelper.getOrderStatus("open")];
-          }
-          if (options.status === "completed") {
+          } else if (options.status === "completed") {
             query.where.status = MarketHelper.getOrderStatus(options.status);
+          } else if (_.isArray(options.status)) {
+            query.where.status = [];
+            _ref = options.status;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              status = _ref[_i];
+              query.where.status.push(MarketHelper.getOrderStatus(status));
+            }
           }
           if (!!MarketHelper.getOrderAction(options.action)) {
             query.where.action = MarketHelper.getOrderAction(options.action);
@@ -274,17 +280,25 @@
             query.where.user_id = options.user_id;
           }
           if (options.action === "buy") {
-            query.where.buy_currency = MarketHelper.getCurrency(options.currency1);
-            query.where.sell_currency = MarketHelper.getCurrency(options.currency2);
+            if (options.currency1 != null) {
+              query.where.buy_currency = MarketHelper.getCurrency(options.currency1);
+            }
+            if (options.currency2 != null) {
+              query.where.sell_currency = MarketHelper.getCurrency(options.currency2);
+            }
           } else if (options.action === "sell") {
-            query.where.buy_currency = MarketHelper.getCurrency(options.currency2);
-            query.where.sell_currency = MarketHelper.getCurrency(options.currency1);
+            if (options.currency2 != null) {
+              query.where.buy_currency = MarketHelper.getCurrency(options.currency2);
+            }
+            if (options.currency1 != null) {
+              query.where.sell_currency = MarketHelper.getCurrency(options.currency1);
+            }
           } else if (!options.action) {
             currencies = [];
-            if (options.currency1) {
+            if (options.currency1 != null) {
               currencies.push(MarketHelper.getCurrency(options.currency1));
             }
-            if (options.currency2) {
+            if (options.currency2 != null) {
               currencies.push(MarketHelper.getCurrency(options.currency2));
             }
             if (currencies.length > 1) {

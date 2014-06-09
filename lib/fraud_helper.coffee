@@ -19,13 +19,12 @@ FraudHelper =
         Payment.findTotalPayedByUserAndWallet wallet.user_id, wallet.id, (err, totalPayed)->
           return callback err  if err
           closedOptions =
-            status: "completed"
+            status: ["completed", "partiallyCompleted"]
             user_id: wallet.user_id
             currency1: wallet.currency
             include_logs: true
           openOptions =
-            status: "open"
-            action: "sell"
+            status: ["open", "partiallyCompleted"]
             user_id: wallet.user_id
             currency1: wallet.currency
             include_logs: true
@@ -35,20 +34,24 @@ FraudHelper =
               openOrdersBalance = 0
               for closedOrder in closedOrders
                 if closedOrder.action is "sell"
-                  closedOrdersBalance -= closedOrder.calculateSpentFromLogs()
-                else
-                  closedOrdersBalance += closedOrder.calculateReceivedFromLogs()
+                  closedOrdersBalance -= closedOrder.calculateSpentFromLogs()  if closedOrder.sell_currency is wallet.currency
+                  closedOrdersBalance += closedOrder.calculateReceivedFromLogs()  if closedOrder.buy_currency is wallet.currency
+                if closedOrder.action is "buy"
+                  closedOrdersBalance += closedOrder.calculateReceivedFromLogs()  if closedOrder.buy_currency is wallet.currency
+                  closedOrdersBalance -= closedOrder.calculateSpentFromLogs()  if closedOrder.sell_currency is wallet.currency
               for openOrder in openOrders
-                openOrdersBalance += closedOrder.calculateSpentFromLogs()
+                openOrdersBalance += openOrder.left_hold_balance  if openOrder.sell_currency is wallet.currency
               finalBalance = math.select(totalReceived).add(closedOrdersBalance).add(-wallet.hold_balance).add(-totalPayed).done()
               result =
                 total_received: MarketHelper.fromBigint totalReceived
                 total_payed: MarketHelper.fromBigint totalPayed
                 total_closed: MarketHelper.fromBigint closedOrdersBalance
+                total_open: MarketHelper.fromBigint openOrdersBalance
                 balance: MarketHelper.fromBigint wallet.balance
                 hold_balance: MarketHelper.fromBigint wallet.hold_balance
                 final_balance: MarketHelper.fromBigint finalBalance
                 valid_final_balance: finalBalance is wallet.balance
+                valid_hold_balance: openOrdersBalance is wallet.hold_balance
               callback err, result
 
 exports = module.exports = FraudHelper
