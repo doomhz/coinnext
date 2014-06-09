@@ -84,6 +84,7 @@ module.exports = (app)->
           title: "#{req.params.currency} - Funds - Coinnext"
           page: "funds"
           user: req.user
+          wallets: wallets
           wallet: wallet
           currencies: MarketHelper.getSortedCurrencyNames()
           _str: _str
