@@ -100,6 +100,9 @@ module.exports = (sequelize, DataTypes) ->
           query.limit = options.limit  if options.limit
           OrderLog.findAll(query).complete callback
 
+        getNumberOfTrades: (options = {}, callback)->
+          OrderLog.count().complete callback
+
       instanceMethods:
 
         getFloat: (attribute)->

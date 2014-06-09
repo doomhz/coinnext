@@ -144,6 +144,12 @@
             query.limit = options.limit;
           }
           return OrderLog.findAll(query).complete(callback);
+        },
+        getNumberOfTrades: function(options, callback) {
+          if (options == null) {
+            options = {};
+          }
+          return OrderLog.count().complete(callback);
         }
       },
       instanceMethods: {

@@ -4,6 +4,7 @@ MarketStats = GLOBAL.db.MarketStats
 TradeStats = GLOBAL.db.TradeStats
 AuthStats = GLOBAL.db.AuthStats
 UserToken = GLOBAL.db.UserToken
+OrderLog = GLOBAL.db.OrderLog
 JsonRenderer = require "../lib/json_renderer"
 MarketHelper = require "../lib/market_helper"
 _str = require "../lib/underscore_string"
@@ -13,13 +14,15 @@ module.exports = (app)->
 
   app.get "/", (req, res)->
     MarketStats.getStats (err, marketStats)->
-      res.render "site/index",
-        title: if req.user then 'Home - Coinnext' else 'Coinnext - Cryptocurrency Exchange'
-        page: "home"
-        user: req.user
-        marketStats: JsonRenderer.marketStats marketStats
-        currencies: MarketHelper.getCurrencyNames()
-        _str: _str
+      OrderLog.getNumberOfTrades null, (err, tradesCount)->
+        res.render "site/index",
+          title: if req.user then 'Home - Coinnext' else 'Coinnext - Cryptocurrency Exchange'
+          page: "home"
+          user: req.user
+          marketStats: JsonRenderer.marketStats marketStats
+          currencies: MarketHelper.getCurrencyNames()
+          tradesCount: tradesCount
+          _str: _str
 
   app.get "/trade", (req, res)->
     res.redirect "/trade/LTC/BTC"

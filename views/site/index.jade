@@ -25,6 +25,18 @@ block content
       .col-left
         include _market-ticker
       .col-right
+        #coin-stats.coin-stats
+          - var totalVolume = 0;
+          - each info, type in marketStats
+            - if (info.label) totalVolume = totalVolume + info.volume2
+          ul
+            li.volume
+              label Total Volume:
+              div #{_str.toFixed(totalVolume, 4)} BTC
+            li.trades
+              label Total Trades:
+              div #{tradesCount}
+
         - if (user)
           - if (user.chat_enabled)
             include _chatbox
