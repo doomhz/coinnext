@@ -150,10 +150,16 @@
             }
           };
           return Payment.sum("amount", query).complete(function(err, totalAmount) {
+            if (totalAmount == null) {
+              totalAmount = 0;
+            }
             if (err) {
               return err;
             }
             return Payment.sum("fee", query).complete(function(err, totalFee) {
+              if (totalFee == null) {
+                totalFee = 0;
+              }
               if (err) {
                 return err;
               }

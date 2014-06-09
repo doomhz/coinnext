@@ -2,6 +2,10 @@ environment = process.env.NODE_ENV or 'development'
 GLOBAL.appConfig = require "./configs/config"
 GLOBAL.db = require './models/index'
 
+option "-e", "--email [EMAIL]", "User email"
+option "-p", "--pass [PASS]", "User pass"
+option "-w", "--wallet [ID]", "Wallet ID"
+
 task "db:create_tables", "Create all tables", ()->
   GLOBAL.db.sequelize.sync().complete ()->
 
@@ -54,8 +58,6 @@ task "db:migrate_undo", "Undo database migrations", ()->
   migrator.migrate({method: "down"}).success ()->
     console.log "Database migrations reverted."
 
-option "-e", "--email [EMAIL]", "User email"
-option "-p", "--pass [PASS]", "User pass"
 task "admin:generate_user", "Add new admin user -e -p", (opts)->
   data =
     email: opts.email
@@ -66,12 +68,8 @@ task "admin:generate_user", "Add new admin user -e -p", (opts)->
       console.log data.google_auth_qr
       console.log newUser.gauth_key
 
-task "add_payments_fee", "Add fee for existent payments", ()->
-  async = require "async"
-  addFee = (payment, cb)->
-    GLOBAL.db.Wallet.findById payment.wallet_id, (err, wallet)->
-      return cb()  if not wallet
-      payment.updateAttributes({fee: wallet.withdrawal_fee}).complete cb
-  GLOBAL.db.Payment.findAll({where: {fee: 0}}).complete (err, payments)->
-    async.mapSeries payments, addFee, (err, result)->
-      console.log arguments
+task "fraud:check_wallet", "Check wallet for fraud", (opts)->
+  FraudHelper = require "./lib/fraud_helper"
+  FraudHelper.checkWalletBalance opts.wallet, (err, result)->
+    return console.error err  if err
+    console.log result

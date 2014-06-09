@@ -104,9 +104,9 @@ module.exports = (sequelize, DataTypes) ->
             where:
               user_id: userId
               wallet_id: walletId
-          Payment.sum("amount", query).complete (err, totalAmount)->
+          Payment.sum("amount", query).complete (err, totalAmount = 0)->
             return err  if err
-            Payment.sum("fee", query).complete (err, totalFee)->
+            Payment.sum("fee", query).complete (err, totalFee = 0)->
               return err  if err
               callback err, math.add(totalAmount, totalFee)
 

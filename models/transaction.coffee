@@ -124,7 +124,8 @@ module.exports = (sequelize, DataTypes) ->
               wallet_id: walletId
               balance_loaded: true
               category: MarketHelper.getTransactionCategory "receive"
-          Transaction.sum("amount", query).complete callback
+          Transaction.sum("amount", query).complete (err, sum = 0)->
+            callback err, sum
 
         isValidFormat: (category)->
           !!MarketHelper.getTransactionCategory category

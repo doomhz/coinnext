@@ -171,7 +171,12 @@
               category: MarketHelper.getTransactionCategory("receive")
             }
           };
-          return Transaction.sum("amount", query).complete(callback);
+          return Transaction.sum("amount", query).complete(function(err, sum) {
+            if (sum == null) {
+              sum = 0;
+            }
+            return callback(err, sum);
+          });
         },
         isValidFormat: function(category) {
           return !!MarketHelper.getTransactionCategory(category);
