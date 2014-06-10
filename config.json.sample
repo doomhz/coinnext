@@ -19,6 +19,11 @@
     "redis": {
       "db": "coinnext_auth_dev"
     },
+    "slackalerts": {
+      "domain": "coinnext",
+      "token": "25Kj3veGYbD8A4ZoHDynWCxc",
+      "channel": "#alerts"
+    },
     "session": {
       "cookie_secret": "secretkey",
       "session_key": "cnxweb",
@@ -89,6 +94,11 @@
     "redis": {
       "db": "coinnext_auth_test"
     },
+    "slackalerts": {
+      "domain": "coinnext",
+      "token": "25Kj3veGYbD8A4ZoHDynWCxc",
+      "channel": "#alerts"
+    },
     "session": {
       "cookie_secret": "secretkey",
       "session_key": "cnxweb",
@@ -157,6 +167,11 @@
       "user": "",
       "pass": "",
       "db": "coinnext_auth"
+    },
+    "slackalerts": {
+      "domain": "coinnext",
+      "token": "25Kj3veGYbD8A4ZoHDynWCxc",
+      "channel": "#alerts"
     },
     "session": {
       "cookie_secret": "secretkey",

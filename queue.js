@@ -11,6 +11,11 @@ GLOBAL.db = require('./models/index');
 GLOBAL.queue = require('./lib/queue/index');
 
 var TradeHelper = require('./lib/trade_helper');
+var Slackhook = require('slackhook');
+var slack = new Slackhook({
+    domain: GLOBAL.appConfig().slackalerts.domain,
+    token: GLOBAL.appConfig().slackalerts.token,
+});
 
 var processEvents = function () {
   GLOBAL.queue.Event.findNextValid(function (err, event) {
@@ -78,11 +83,38 @@ var processMatch = function (event, callback) {
   });
 };
 
+var sendAlert = function (msg, callback) {
+  if (process.env.NODE_ENV !== "production") {
+    console.log("sendAlert: not sending alert in dev environment. Message: " + msg);
+    if (callback && callback instanceof Function) {
+      callback();
+    }
+    return;
+  }
+  slack.send({
+    text: message,
+    channel: GLOBAL.appConfig().slackalerts.channel,
+    username: "alertbot",
+    icon_emoji: ":rotating_light:"
+  }, callback);
+}
+
 var exit = function (errMessage, err) {
   console.error(errMessage, err);
-  process.exit();
+  sendAlert("Event queue exiting! Message: " + errMessage, function () {
+    console.log("slack:", err, res);
+    process.exit();
+  })
 };
 
 processEvents();
-
+sendAlert("Event queue is processing events...");
 console.log("processing events...");
+
+process.on('uncaughtException', function (err) {
+  console.log('Caught exception: ' + err);
+  sendAlert("Event queue exiting! Exception: " + err, function () {
+    console.log("slack:", err, res);
+    process.exit();
+  })
+});
