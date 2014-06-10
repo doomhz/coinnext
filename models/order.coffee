@@ -130,11 +130,11 @@ module.exports = (sequelize, DataTypes) ->
           math.add(@amount, -@matched_amount)
 
         left_hold_balance: ()->
-          return math.multiply @left_amount, MarketHelper.fromBigint @unit_price  if @action is "buy"
+          return MarketHelper.fromBigint math.multiply(@left_amount, @unit_price)  if @action is "buy"
           return @left_amount  if @action is "sell"
 
         total: ()->
-          math.multiply @amount, MarketHelper.fromBigint @unit_price
+          MarketHelper.fromBigint math.multiply(@amount, @unit_price)
       
       classMethods:
         
@@ -253,7 +253,7 @@ module.exports = (sequelize, DataTypes) ->
           resultAmount = 0
           for log in @orderLogs
             resultAmount = math.add resultAmount, log.result_amount
-          if toFloat then MarketHelper.fromBigint resultAmount else resultAmount
+          if toFloat then MarketHelper.fromBigint(resultAmount) else resultAmount
 
         calculateSpentFromLogs: (toFloat = false)->
           spentAmount = 0

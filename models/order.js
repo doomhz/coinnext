@@ -206,14 +206,14 @@
         },
         left_hold_balance: function() {
           if (this.action === "buy") {
-            return math.multiply(this.left_amount, MarketHelper.fromBigint(this.unit_price));
+            return MarketHelper.fromBigint(math.multiply(this.left_amount, this.unit_price));
           }
           if (this.action === "sell") {
             return this.left_amount;
           }
         },
         total: function() {
-          return math.multiply(this.amount, MarketHelper.fromBigint(this.unit_price));
+          return MarketHelper.fromBigint(math.multiply(this.amount, this.unit_price));
         }
       },
       classMethods: {
