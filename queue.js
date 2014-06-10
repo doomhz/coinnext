@@ -119,7 +119,7 @@ console.log("processing events...");
 
 process.on('uncaughtException', function (err) {
   console.log('Caught exception: ' + err);
-  sendAlert("Event queue exiting! Exception: " + err, function () {
+  sendAlert("Event queue exiting! Exception: " + err, function (err, res) {
     console.log("slack:", err, res);
     process.exit();
   })
