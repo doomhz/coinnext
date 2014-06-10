@@ -2,7 +2,7 @@ MarketHelper = require "../lib/market_helper"
 _ = require "underscore"
 math = require("mathjs")
   number: "bignumber"
-  decimals: 8
+  precision: 20
 
 module.exports = (sequelize, DataTypes) ->
 
@@ -127,14 +127,14 @@ module.exports = (sequelize, DataTypes) ->
           return "sell"  if @action is "buy"
 
         left_amount: ()->
-          math.add(@amount, -@matched_amount)
+          math.subtract(@amount, @matched_amount)
 
         left_hold_balance: ()->
-          return math.multiply @left_amount, MarketHelper.fromBigint @unit_price  if @action is "buy"
+          return MarketHelper.fromBigint math.multiply(@left_amount, @unit_price)  if @action is "buy"
           return @left_amount  if @action is "sell"
 
         total: ()->
-          math.multiply @amount, MarketHelper.fromBigint @unit_price
+          MarketHelper.fromBigint math.multiply(@amount, @unit_price)
       
       classMethods:
         
@@ -252,17 +252,17 @@ module.exports = (sequelize, DataTypes) ->
         calculateReceivedFromLogs: (toFloat = false)->
           resultAmount = 0
           for log in @orderLogs
-            resultAmount += log.result_amount
-          if toFloat then MarketHelper.fromBigint resultAmount else resultAmount
+            resultAmount = math.add resultAmount, log.result_amount
+          if toFloat then MarketHelper.fromBigint(resultAmount) else resultAmount
 
         calculateSpentFromLogs: (toFloat = false)->
           spentAmount = 0
           if @action is "buy"
             for log in @orderLogs
-              spentAmount += log.total
+              spentAmount = math.add spentAmount, log.total
           else
             for log in @orderLogs
-              spentAmount += log.matched_amount
+              spentAmount = math.add spentAmount, log.matched_amount
           if toFloat then MarketHelper.fromBigint(spentAmount) else spentAmount
 
   Order

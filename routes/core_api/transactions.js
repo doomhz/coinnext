@@ -75,8 +75,8 @@
     });
     app.post("/process_pending_payments", function(req, res, next) {
       TransactionHelper.paymentsProcessedUserIds = [];
-      return Payment.findByStatus("pending", function(err, payments) {
-        return async.mapSeries(payments, TransactionHelper.processPayment, function(err, result) {
+      return Payment.findToProcess(function(err, payments) {
+        return async.mapSeries(payments, TransactionHelper.processPaymentWithFraud, function(err, result) {
           if (err) {
             console.log(err);
           }

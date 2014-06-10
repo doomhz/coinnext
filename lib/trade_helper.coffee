@@ -13,7 +13,7 @@ usersSocket = new ClientSocket
   redis: GLOBAL.appConfig().redis
 math = require("mathjs")
   number: "bignumber"
-  decimals: 8
+  precision: 20
 
 TradeHelper =
 
@@ -116,7 +116,7 @@ TradeHelper =
         resultAmount = matchData.result_amount
         unitPrice = matchData.unit_price
         holdBalance = if orderToMatch.action is "buy" then math.multiply(matchedAmount, MarketHelper.fromBigint(orderToMatch.unit_price)) else matchedAmount
-        changeBalance = if orderToMatch.action is "buy" then math.add(holdBalance, -math.multiply(matchedAmount, MarketHelper.fromBigint(unitPrice))) else 0
+        changeBalance = if orderToMatch.action is "buy" then math.subtract(holdBalance, math.multiply(matchedAmount, MarketHelper.fromBigint(unitPrice))) else 0
         sellWallet.addHoldBalance -holdBalance, transaction, (err, sellWallet)->
           return callback err  if err or not sellWallet
           sellWallet.addBalance changeBalance, transaction, (err, sellWallet)->

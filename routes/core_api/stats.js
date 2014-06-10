@@ -11,7 +11,7 @@
 
   math = require("mathjs")({
     number: "bignumber",
-    decimals: 8
+    precision: 20
   });
 
   module.exports = function(app) {

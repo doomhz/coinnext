@@ -7,7 +7,7 @@
 
   math = require("mathjs")({
     number: "bignumber",
-    decimals: 8
+    precision: 20
   });
 
   module.exports = function(sequelize, DataTypes) {
@@ -96,6 +96,10 @@
         get: function() {
           return ipFormatter.fromLong(this.getDataValue("remote_ip"));
         }
+      },
+      fraud: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
       }
     }, {
       tableName: "payments",
@@ -140,6 +144,17 @@
             }
           };
           return Payment.find(query).complete(callback);
+        },
+        findToProcess: function(callback) {
+          var query;
+          query = {
+            where: {
+              status: MarketHelper.getPaymentStatus("pending"),
+              fraud: false
+            },
+            order: [["created_at", "ASC"]]
+          };
+          return Payment.findAll(query).complete(callback);
         },
         findTotalPayedByUserAndWallet: function(userId, walletId, callback) {
           var query;
@@ -235,6 +250,16 @@
             payment_id: this.id,
             log: reason
           });
+          return this.save().complete(function(e, p) {
+            return callback(reason, p);
+          });
+        },
+        markAsFraud: function(reason, callback) {
+          GLOBAL.db.PaymentLog.create({
+            payment_id: this.id,
+            log: JSON.stringify(reason)
+          });
+          this.fraud = true;
           return this.save().complete(function(e, p) {
             return callback(reason, p);
           });

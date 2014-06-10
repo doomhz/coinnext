@@ -2,7 +2,7 @@ marketSettings = require "./market_settings"
 _ = require "underscore"
 math = require("mathjs")
   number: "bignumber"
-  decimals: 8
+  precision: 20
 
 FEE = 0
 

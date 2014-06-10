@@ -91,3 +91,5 @@ var tradeStatsJob = new CronJob({
   start: false
 });
 tradeStatsJob.start();
+
+console.log("Processing jobs...");
