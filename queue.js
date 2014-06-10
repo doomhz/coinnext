@@ -84,10 +84,16 @@ var processMatch = function (event, callback) {
 };
 
 var sendAlert = function (msg, callback) {
+  if (!GLOBAL.appConfig().slackalerts.enabled) {
+    if (callback && callback instanceof Function) {
+      return callback();
+    }
+    return;
+  }
   if (process.env.NODE_ENV !== "production") {
     console.log("sendAlert: not sending alert in dev environment. Message: " + msg);
     if (callback && callback instanceof Function) {
-      callback();
+      return callback();
     }
     return;
   }
