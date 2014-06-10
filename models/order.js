@@ -421,7 +421,7 @@
           _ref = this.orderLogs;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             log = _ref[_i];
-            resultAmount += log.result_amount;
+            resultAmount = math.add(resultAmount, log.result_amount);
           }
           if (toFloat) {
             return MarketHelper.fromBigint(resultAmount);
@@ -439,13 +439,13 @@
             _ref = this.orderLogs;
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               log = _ref[_i];
-              spentAmount += log.total;
+              spentAmount = math.add(spentAmount, log.total);
             }
           } else {
             _ref1 = this.orderLogs;
             for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
               log = _ref1[_j];
-              spentAmount += log.matched_amount;
+              spentAmount = math.add(spentAmount, log.matched_amount);
             }
           }
           if (toFloat) {

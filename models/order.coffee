@@ -252,17 +252,17 @@ module.exports = (sequelize, DataTypes) ->
         calculateReceivedFromLogs: (toFloat = false)->
           resultAmount = 0
           for log in @orderLogs
-            resultAmount += log.result_amount
+            resultAmount = math.add resultAmount, log.result_amount
           if toFloat then MarketHelper.fromBigint resultAmount else resultAmount
 
         calculateSpentFromLogs: (toFloat = false)->
           spentAmount = 0
           if @action is "buy"
             for log in @orderLogs
-              spentAmount += log.total
+              spentAmount = math.add spentAmount, log.total
           else
             for log in @orderLogs
-              spentAmount += log.matched_amount
+              spentAmount = math.add spentAmount, log.matched_amount
           if toFloat then MarketHelper.fromBigint(spentAmount) else spentAmount
 
   Order
