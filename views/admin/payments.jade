@@ -38,7 +38,7 @@ block content
             td #{payment.created_at.toFormat("DD MMM YYYY HH24:MI")}
             td
               - if (payment.fraud)
-                span.fraud FRAUD
+                span.fraud FRAUD 
               span.payment-status #{payment.status}
               - if (!payment.isProcessed() && !payment.isCanceled())
                 button.pay.btn.btn-success(data-id="#{payment.id}") Accept
