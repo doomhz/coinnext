@@ -1,5 +1,5 @@
 script(type="text/template", id="order-book-order-tpl")
-  tr.order-book-order(data-action="<%= order.get('action') %>", data-unit-price="<%= _.str.satoshiRound(order.get('unit_price')) %>")
+  tr.order-book-order(data-action="<%= order.get('action') %>", data-unit-price="<%= _.str.toFixed(order.get('unit_price')) %>")
     td.trade-price <%= _.str.toFixed(order.get('unit_price')) %>
     td.trade-amount <%= _.str.toFixed(order.calculateFirstNoFeeAmount()) %>
     td.trade-total <%= _.str.toFixed(order.calculateSecondNoFeeAmount()) %>
