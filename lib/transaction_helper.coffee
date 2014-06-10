@@ -10,7 +10,7 @@ usersSocket = new ClientSocket
   redis: GLOBAL.appConfig().redis
 math = require("mathjs")
   number: "bignumber"
-  decimals: 8
+  precision: 20
 
 TransactionHelper =
 

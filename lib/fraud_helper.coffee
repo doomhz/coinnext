@@ -4,9 +4,7 @@ Payment = GLOBAL.db.Payment
 Order = GLOBAL.db.Order
 MarketHelper = require "./market_helper"
 async = require "async"
-math = require("mathjs")
-  number: "bignumber"
-  decimals: 8
+math = require("mathjs")({number: "bignumber", precision: 20})
 
 FraudHelper =
 
@@ -43,14 +41,14 @@ FraudHelper =
             openOrdersBalance = 0
             for closedOrder in closedOrders
               if closedOrder.action is "sell"
-                closedOrdersBalance = math.add closedOrdersBalance, -closedOrder.calculateSpentFromLogs()  if closedOrder.sell_currency is wallet.currency
+                closedOrdersBalance = math.subtract closedOrdersBalance, closedOrder.calculateSpentFromLogs()  if closedOrder.sell_currency is wallet.currency
                 closedOrdersBalance = math.add closedOrdersBalance, closedOrder.calculateReceivedFromLogs()  if closedOrder.buy_currency is wallet.currency
               if closedOrder.action is "buy"
                 closedOrdersBalance = math.add closedOrdersBalance, closedOrder.calculateReceivedFromLogs()  if closedOrder.buy_currency is wallet.currency
-                closedOrdersBalance = math.add closedOrdersBalance, -closedOrder.calculateSpentFromLogs()  if closedOrder.sell_currency is wallet.currency
+                closedOrdersBalance = math.subtract closedOrdersBalance, closedOrder.calculateSpentFromLogs()  if closedOrder.sell_currency is wallet.currency
             for openOrder in openOrders
               openOrdersBalance = math.add openOrdersBalance, openOrder.left_hold_balance  if openOrder.sell_currency is wallet.currency
-            finalBalance = math.select(totalReceived).add(closedOrdersBalance).add(-wallet.hold_balance).add(-totalPayed).done()
+            finalBalance = math.select(totalReceived).add(closedOrdersBalance).subtract(wallet.hold_balance).subtract(totalPayed).done()
             result =
               total_received: MarketHelper.fromBigint totalReceived
               total_payed: MarketHelper.fromBigint totalPayed

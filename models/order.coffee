@@ -2,7 +2,7 @@ MarketHelper = require "../lib/market_helper"
 _ = require "underscore"
 math = require("mathjs")
   number: "bignumber"
-  decimals: 8
+  precision: 20
 
 module.exports = (sequelize, DataTypes) ->
 
@@ -127,7 +127,7 @@ module.exports = (sequelize, DataTypes) ->
           return "sell"  if @action is "buy"
 
         left_amount: ()->
-          math.add(@amount, -@matched_amount)
+          math.subtract(@amount, @matched_amount)
 
         left_hold_balance: ()->
           return MarketHelper.fromBigint math.multiply(@left_amount, @unit_price)  if @action is "buy"

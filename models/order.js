@@ -7,7 +7,7 @@
 
   math = require("mathjs")({
     number: "bignumber",
-    decimals: 8
+    precision: 20
   });
 
   module.exports = function(sequelize, DataTypes) {
@@ -202,7 +202,7 @@
           }
         },
         left_amount: function() {
-          return math.add(this.amount, -this.matched_amount);
+          return math.subtract(this.amount, this.matched_amount);
         },
         left_hold_balance: function() {
           if (this.action === "buy") {
