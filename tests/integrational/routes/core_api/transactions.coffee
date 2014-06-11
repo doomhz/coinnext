@@ -66,55 +66,59 @@ describe "Transactions Api", ->
 
   describe "POST /process_pending_payments", ()->
     describe "when the wallet has enough balance", ()->
-      xit "returns 200 ok and the executed payment ids", (done)->
-        wallet.balance = MarketHelper.toBigint 10.0002
-        wallet.save().complete ()->
-          GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: MarketHelper.toBigint(10), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
-            request('http://localhost:6000')
-            .post("/process_pending_payments")
-            .send()
-            .expect(200)
-            .end (e, res = {})->
-              throw e if e
-              res.body.should.endWith "#{pm.id} - processed"
-              GLOBAL.db.Payment.findById pm.id, (e, p)->
-                p.status.should.eql "processed"
-                done()
-
-      xit "updates the user_id from the payment", (done)->
-        wallet.balance = MarketHelper.toBigint 10.0002
-        wallet.save().complete ()->
-          GLOBAL.db.Transaction.create({wallet_id: wallet.id, currency: "BTC", txid: "unique_tx_id_mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, tx)->
-            GLOBAL.db.Payment.create({wallet_id: wallet.id, user_id: 1, amount: MarketHelper.toBigint(10), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
+      it "returns 200 ok and the executed payment ids", (done)->
+        GLOBAL.db.Transaction.create({amount: MarketHelper.toBigint(20.0002), category: "receive", currency: "BTC", user_id: 1, wallet_id: 1, balance_loaded: true}).complete ()->
+          wallet.balance = MarketHelper.toBigint 10
+          wallet.save().complete ()->
+            GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: MarketHelper.toBigint(10), fee: MarketHelper.toBigint(0.0002), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
               request('http://localhost:6000')
               .post("/process_pending_payments")
               .send()
-              .expect 200
-              .end ()->
-                GLOBAL.db.Transaction.findById tx.id, (e, t)->
-                  t.user_id.should.eql 1
+              .expect(200)
+              .end (e, res = {})->
+                throw e if e
+                res.body.should.endWith "#{pm.id} - processed"
+                GLOBAL.db.Payment.findById pm.id, (e, p)->
+                  p.status.should.eql "processed"
                   done()
 
-    describe "when there are payments for the same user", ()->
-      xit "processes only one payment", (done)->
-        GLOBAL.db.Wallet.create({currency: "BTC", user_id: 2, balance: MarketHelper.toBigint(10.0002)}).complete (err, wallet2)->
-          wallet.balance = MarketHelper.toBigint 10.0002
+      it "updates the user_id from the payment", (done)->
+        GLOBAL.db.Transaction.create({amount: MarketHelper.toBigint(20.0002), category: "receive", currency: "BTC", user_id: 1, wallet_id: 1, balance_loaded: true}).complete ()->
+          wallet.balance = MarketHelper.toBigint 10
           wallet.save().complete ()->
-            GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: MarketHelper.toBigint(5), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVa"}).complete (err, pm)->
-              GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: MarketHelper.toBigint(5), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVb"}).complete (err2, pm2)->
-                GLOBAL.db.Payment.create({user_id: 2, wallet_id: wallet2.id, amount: MarketHelper.toBigint(10), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVc"}).complete (err3, pm3)->
-                  request('http://localhost:6000')
-                  .post("/process_pending_payments")
-                  .send()
-                  .expect(200)
-                  .end (e, res = {})->
-                    throw e if e
-                    res.body.should.endWith "#{pm.id} - processed,#{pm2.id} - user already had a processed payment,#{pm3.id} - processed"
-                    GLOBAL.db.Payment.findById pm.id, (e, p1)->
-                      GLOBAL.db.Payment.findById pm2.id, (e, p2)->
-                        GLOBAL.db.Payment.findById pm3.id, (e, p3)->
-                          [p1.status, p2.status, p3.status].toString().should.eql "processed,pending,processed"
-                          done()
+            GLOBAL.db.Transaction.create({wallet_id: wallet.id, currency: "BTC", txid: "unique_tx_id_mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, tx)->
+              GLOBAL.db.Payment.create({wallet_id: wallet.id, user_id: 1, amount: MarketHelper.toBigint(10), fee: MarketHelper.toBigint(0.0002), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVw"}).complete (err, pm)->
+                request('http://localhost:6000')
+                .post("/process_pending_payments")
+                .send()
+                .expect 200
+                .end ()->
+                  GLOBAL.db.Transaction.findById tx.id, (e, t)->
+                    t.user_id.should.eql 1
+                    done()
+
+    describe "when there are payments for the same user", ()->
+      it "processes only one payment", (done)->
+        GLOBAL.db.Transaction.create({amount: MarketHelper.toBigint(20.0004), category: "receive", currency: "BTC", user_id: 1, wallet_id: 1, balance_loaded: true}).complete ()->
+          GLOBAL.db.Transaction.create({amount: MarketHelper.toBigint(10.0002), category: "receive", currency: "BTC", user_id: 2, wallet_id: 2, balance_loaded: true}).complete ()->
+            GLOBAL.db.Wallet.create({currency: "BTC", user_id: 2, balance: 0}).complete (err, wallet2)->
+              wallet.balance = MarketHelper.toBigint 10
+              wallet.save().complete ()->
+                GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: MarketHelper.toBigint(5), fee: MarketHelper.toBigint(0.0002), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVa"}).complete (err, pm)->
+                  GLOBAL.db.Payment.create({user_id: 1, wallet_id: wallet.id, amount: MarketHelper.toBigint(5), fee: MarketHelper.toBigint(0.0002), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVb"}).complete (err2, pm2)->
+                    GLOBAL.db.Payment.create({user_id: 2, wallet_id: wallet2.id, amount: MarketHelper.toBigint(10), fee: MarketHelper.toBigint(0.0002), currency: "BTC", address: "mrLpnPMsKR8oFqRRYA28y4Txu98TUNQzVc"}).complete (err3, pm3)->
+                      request('http://localhost:6000')
+                      .post("/process_pending_payments")
+                      .send()
+                      .expect(200)
+                      .end (e, res = {})->
+                        throw e if e
+                        res.body.should.endWith "#{pm.id} - processed,#{pm2.id} - user already had a processed payment,#{pm3.id} - processed"
+                        GLOBAL.db.Payment.findById pm.id, (e, p1)->
+                          GLOBAL.db.Payment.findById pm2.id, (e, p2)->
+                            GLOBAL.db.Payment.findById pm3.id, (e, p3)->
+                              [p1.status, p2.status, p3.status].toString().should.eql "processed,pending,processed"
+                              done()
 
 
   describe "DELETE /cancel_payment/:payment_id", ()->
