@@ -41,6 +41,7 @@
     , "mathjs": "0.22.0"
     , "express-simple-cdn": "1.0.1"
     , "cron": "1.0.4"
+    , "slackhook": "0.0.3"
   },
   "devDependencies": {
     "mocha": "latest"

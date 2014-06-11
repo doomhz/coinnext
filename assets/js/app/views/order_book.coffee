@@ -31,7 +31,7 @@ class App.OrderBookView extends App.MasterView
     @render()
 
   onOrderMatched: (ev, order)=>
-    unitPrice = _.str.satoshiRound order.get("unit_price")
+    unitPrice = _.str.toFixed order.get("unit_price")
     $existentOrder = @$("[data-unit-price='#{unitPrice}']")
     if $existentOrder.length
       $existentOrder.addClass "highlight"

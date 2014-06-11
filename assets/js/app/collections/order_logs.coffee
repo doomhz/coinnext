@@ -32,6 +32,7 @@ class window.App.OrderLogsCollection extends Backbone.Collection
   calculateVolumeForPriceLimit: (unitPrice)->
     totalAmount = 0
     reachedTheUnitPrice = false
+    unitPrice = _.str.satoshiRound unitPrice
     @each (order)->
       return  if reachedTheUnitPrice and unitPrice isnt _.str.satoshiRound(order.get("unit_price"))
       reachedTheUnitPrice = true  if unitPrice is _.str.satoshiRound(order.get("unit_price"))

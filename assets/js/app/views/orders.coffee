@@ -60,9 +60,9 @@ class App.OrdersView extends App.MasterView
     $existentOrder = @$("[data-id='#{order.id}']")
     if $existentOrder.length
       $existentOrder.addClass "highlight"
-      $existentOrder.find(".trade-price").text order.get("unit_price")
-      $existentOrder.find(".trade-amount").text order.calculateFirstNoFeeAmount()
-      $existentOrder.find(".trade-total").text order.calculateSecondNoFeeAmount()
+      $existentOrder.find(".trade-price").text _.str.toFixed(order.get("unit_price"))
+      $existentOrder.find(".trade-amount").text _.str.toFixed(order.calculateFirstNoFeeAmount())
+      $existentOrder.find(".trade-total").text _.str.toFixed(order.calculateSecondNoFeeAmount())
       setTimeout ()->
           $existentOrder.removeClass "highlight"  if $existentOrder.length
         , 1000

@@ -49,7 +49,7 @@ class window.App.OrdersCollection extends Backbone.Collection
   getStacked: ()->
     stackedOrders = {}
     @each (order)->
-      unitPrice = _.str.satoshiRound order.get("unit_price")
+      unitPrice = _.str.toFixed order.get("unit_price")
       stackId = "id-#{unitPrice}"
       stackedOrders[stackId] = new App.OrderModel  if not stackedOrders[stackId]
       stackedOrders[stackId].mergeWithOrder order
