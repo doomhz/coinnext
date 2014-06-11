@@ -98,7 +98,7 @@ var sendAlert = function (msg, callback) {
     return;
   }
   slack.send({
-    text: message,
+    text: msg,
     channel: GLOBAL.appConfig().slackalerts.channel,
     username: "alertbot",
     icon_emoji: ":rotating_light:"
