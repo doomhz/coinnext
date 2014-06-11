@@ -156,11 +156,17 @@ MarketHelper =
   getTransactionCategoryLiteral: (intCategory)->
     _.invert(TRANSACTION_ACCEPTED_CATEGORIES)[intCategory]
 
+  toBignum: (value)->
+    math.bignumber value.toString()
+  
   toBigint: (value)->
-    math.round math.multiply(value, 100000000)
+    parseInt math.multiply(@toBignum(value), @toBignum(100000000))
 
   fromBigint: (value)->
-    math.divide value, 100000000
+    parseFloat math.divide(@toBignum(value), @toBignum(100000000))
+
+  multiplyBigints: (value, value2)->
+    parseInt math.divide(math.multiply(@toBignum(value), @toBignum(value2)), @toBignum(100000000))
 
   getTokenTypeLiteral: (intType)->
     _.invert(TOKENS)[intType]
@@ -213,14 +219,14 @@ MarketHelper =
 
   calculateResultAmount: (amount, action, unitPrice)->
     return amount  if action is "buy"
-    math.multiply(amount, @fromBigint unitPrice)
+    @multiplyBigints amount, unitPrice
 
   calculateFee: (amount)->
-    math.select(amount).divide(100).multiply(@getTradeFee()).done()
+    parseFloat math.select(@toBignum(amount)).divide(@toBignum(100)).multiply(@toBignum(@getTradeFee())).done()
 
   calculateSpendAmount: (amount, action, unitPrice)->
     return amount  if action is "sell"
-    math.multiply(amount, @fromBigint unitPrice)
+    @multiplyBigints amount, unitPrice
 
   getWithdrawalFee: (currency)->
     return marketSettings.DEFAULT_WITHDRAWAL_FEE  if not marketSettings.WITHDRAWAL_FEES[currency]?

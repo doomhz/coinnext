@@ -2,6 +2,7 @@ Order = GLOBAL.db.Order
 OrderLog = GLOBAL.db.OrderLog
 Wallet = GLOBAL.db.Wallet
 MarketStats = GLOBAL.db.MarketStats
+MarketHelper = require "./market_helper"
 JsonRenderer = require "./json_renderer"
 MarketHelper = require "./market_helper"
 ClientSocket = require "./client_socket"
@@ -18,7 +19,7 @@ math = require("mathjs")
 TradeHelper =
 
   createOrder: (data, callback = ()->)->
-    holdBalance = math.multiply(data.amount, MarketHelper.fromBigint(data.unit_price))  if data.type is "limit" and data.action is "buy"
+    holdBalance = MarketHelper.multiplyBigints data.amount, data.unit_price  if data.type is "limit" and data.action is "buy"
     holdBalance = data.amount  if data.type is "limit" and data.action is "sell"
     Wallet.findOrCreateUserWalletByCurrency data.user_id, data.buy_currency, (err, buyWallet)->
       return callback "Wallet #{data.buy_currency} does not exist."  if err or not buyWallet
@@ -115,8 +116,8 @@ TradeHelper =
         matchedAmount = matchData.matched_amount
         resultAmount = matchData.result_amount
         unitPrice = matchData.unit_price
-        holdBalance = if orderToMatch.action is "buy" then math.multiply(matchedAmount, MarketHelper.fromBigint(orderToMatch.unit_price)) else matchedAmount
-        changeBalance = if orderToMatch.action is "buy" then math.subtract(holdBalance, math.multiply(matchedAmount, MarketHelper.fromBigint(unitPrice))) else 0
+        holdBalance = if orderToMatch.action is "buy" then MarketHelper.multiplyBigints(matchedAmount, orderToMatch.unit_price) else matchedAmount
+        changeBalance = if orderToMatch.action is "buy" then parseInt(math.subtract(MarketHelper.toBignum(holdBalance), MarketHelper.toBignum(MarketHelper.multiplyBigints(matchedAmount, unitPrice)))) else 0
         sellWallet.addHoldBalance -holdBalance, transaction, (err, sellWallet)->
           return callback err  if err or not sellWallet
           sellWallet.addBalance changeBalance, transaction, (err, sellWallet)->

@@ -178,7 +178,7 @@
               if (err) {
                 return err;
               }
-              return callback(err, math.add(totalAmount, totalFee));
+              return callback(err, parseInt(math.add(MarketHelper.toBignum(totalAmount), MarketHelper.toBignum(totalFee))));
             });
           });
         },

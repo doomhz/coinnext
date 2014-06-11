@@ -121,7 +121,7 @@ module.exports = (sequelize, DataTypes) ->
             return err  if err
             Payment.sum("fee", query).complete (err, totalFee = 0)->
               return err  if err
-              callback err, math.add(totalAmount, totalFee)
+              callback err, parseInt(math.add(MarketHelper.toBignum(totalAmount), MarketHelper.toBignum(totalFee)))
 
         submit: (data, callback = ()->)->
           GLOBAL.coreAPIClient.sendWithData "create_payment", data, (err, res, body)=>

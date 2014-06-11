@@ -155,8 +155,8 @@
                 if (orderLog.unit_price > marketStats.top_ask) {
                   marketStats.top_ask = orderLog.unit_price;
                 }
-                marketStats.volume1 = math.add(marketStats.volume1, orderLog.matched_amount);
-                marketStats.volume2 = math.select(marketStats.volume2).add(orderLog.result_amount).add(orderLog.fee).done();
+                marketStats.volume1 = parseInt(math.add(MarketHelper.toBignum(marketStats.volume1), MarketHelper.toBignum(orderLog.matched_amount)));
+                marketStats.volume2 = parseInt(math.select(MarketHelper.toBignum(marketStats.volume2)).add(MarketHelper.toBignum(orderLog.result_amount)).add(MarketHelper.toBignum(orderLog.fee)).done());
                 return GLOBAL.db.TradeStats.findLast24hByType(type, function(err, tradeStats) {
                   var growthRatio;
                   if (tradeStats == null) {
@@ -174,7 +174,7 @@
           if (!lastPrice) {
             return 100;
           }
-          return math.select(newPrice).multiply(100).divide(lastPrice).add(-100).done();
+          return parseFloat(math.select(MarketHelper.toBignum(newPrice)).multiply(MarketHelper.toBignum(100)).divide(MarketHelper.toBignum(lastPrice)).subtract(MarketHelper.toBignum(100)).done());
         },
         findEnabledMarket: function(currency1, currency2, callback) {
           var query, type;

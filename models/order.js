@@ -202,18 +202,18 @@
           }
         },
         left_amount: function() {
-          return math.subtract(this.amount, this.matched_amount);
+          return parseInt(math.subtract(MarketHelper.toBignum(this.amount), MarketHelper.toBignum(this.matched_amount)));
         },
         left_hold_balance: function() {
           if (this.action === "buy") {
-            return MarketHelper.fromBigint(math.multiply(this.left_amount, this.unit_price));
+            return MarketHelper.multiplyBigints(this.left_amount, this.unit_price);
           }
           if (this.action === "sell") {
             return this.left_amount;
           }
         },
         total: function() {
-          return MarketHelper.fromBigint(math.multiply(this.amount, this.unit_price));
+          return MarketHelper.multiplyBigints(this.amount, this.unit_price);
         }
       },
       classMethods: {
@@ -402,9 +402,9 @@
             callback = function() {};
           }
           this.status = matchedData.status;
-          this.matched_amount = math.add(this.matched_amount, matchedData.matched_amount);
-          this.result_amount = math.add(this.result_amount, matchedData.result_amount);
-          this.fee = math.add(this.fee, matchedData.fee);
+          this.matched_amount = parseInt(math.add(MarketHelper.toBignum(this.matched_amount), MarketHelper.toBignum(matchedData.matched_amount)));
+          this.result_amount = parseInt(math.add(MarketHelper.toBignum(this.result_amount), MarketHelper.toBignum(matchedData.result_amount)));
+          this.fee = parseInt(math.add(MarketHelper.toBignum(this.fee), MarketHelper.toBignum(matchedData.fee)));
           if (this.status === "completed") {
             this.close_time = new Date(matchedData.time);
           }
@@ -421,7 +421,7 @@
           _ref = this.orderLogs;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             log = _ref[_i];
-            resultAmount = math.add(resultAmount, log.result_amount);
+            resultAmount = parseInt(math.add(MarketHelper.toBignum(resultAmount), MarketHelper.toBignum(log.result_amount)));
           }
           if (toFloat) {
             return MarketHelper.fromBigint(resultAmount);
@@ -439,13 +439,13 @@
             _ref = this.orderLogs;
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               log = _ref[_i];
-              spentAmount = math.add(spentAmount, log.total);
+              spentAmount = parseInt(math.add(MarketHelper.toBignum(spentAmount), MarketHelper.toBignum(log.total)));
             }
           } else {
             _ref1 = this.orderLogs;
             for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
               log = _ref1[_j];
-              spentAmount = math.add(spentAmount, log.matched_amount);
+              spentAmount = parseInt(math.add(MarketHelper.toBignum(spentAmount), MarketHelper.toBignum(log.matched_amount)));
             }
           }
           if (toFloat) {

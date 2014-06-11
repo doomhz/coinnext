@@ -2,6 +2,7 @@ Wallet = GLOBAL.db.Wallet
 Transaction = GLOBAL.db.Transaction
 Payment = GLOBAL.db.Payment
 MarketStats = GLOBAL.db.MarketStats
+MarketHelper = require "./market_helper"
 FraudHelper = require "./fraud_helper"
 JsonRenderer = require "./json_renderer"
 ClientSocket = require "./client_socket"
@@ -32,7 +33,7 @@ TransactionHelper =
             console.error err
             return transaction.rollback().success ()->
               return callback JsonRenderer.error err
-          totalWithdrawalAmount = math.add(wallet.withdrawal_fee, pm.amount)
+          totalWithdrawalAmount = parseInt math.add(MarketHelper.toBignum(wallet.withdrawal_fee), MarketHelper.toBignum(pm.amount))
           wallet.addBalance -totalWithdrawalAmount, transaction, (err, wallet)->
             if err
               console.error err
@@ -70,7 +71,7 @@ TransactionHelper =
   cancelPayment: (payment, callback)->
     Wallet.findUserWalletByCurrency payment.user_id, payment.currency, (err, wallet)->
       return callback err  if err or not wallet
-      totalWithdrawalAmount = math.add(wallet.withdrawal_fee, payment.amount)
+      totalWithdrawalAmount = parseInt math.add(MarketHelper.toBignum(wallet.withdrawal_fee), MarketHelper.toBignum(payment.amount))
       GLOBAL.db.sequelize.transaction (transaction)->
         wallet.addBalance totalWithdrawalAmount, transaction, (err, wallet)->
           if err

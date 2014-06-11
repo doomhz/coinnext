@@ -60,7 +60,7 @@
           return MarketHelper.getWithdrawalFee(this.currency);
         },
         total_balance: function() {
-          return math.add(this.balance, this.hold_balance);
+          return parseInt(math.add(MarketHelper.toBignum(this.balance), MarketHelper.toBignum(this.hold_balance)));
         },
         network_confirmations: function() {
           return MarketHelper.getMinConfirmations(this.currency);
@@ -242,7 +242,7 @@
           }
           withdrawAmount = parseFloat(amount);
           if (includeFee) {
-            withdrawAmount = math.add(withdrawAmount, this.withdrawal_fee);
+            withdrawAmount = parseFloat(math.add(MarketHelper.toBignum(withdrawAmount), MarketHelper.toBignum(this.withdrawal_fee)));
           }
           return this.balance >= withdrawAmount;
         }

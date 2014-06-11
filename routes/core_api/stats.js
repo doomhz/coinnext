@@ -49,8 +49,8 @@
           if (orderLog.unit_price < markets[marketType].low_price || markets[marketType].low_price === 0) {
             markets[marketType].low_price = orderLog.unit_price;
           }
-          markets[marketType].volume = math.add(markets[marketType].volume, orderLog.matched_amount);
-          markets[marketType].exchange_volume = math.add(markets[marketType].exchange_volume, orderLog.result_amount);
+          markets[marketType].volume = parseInt(math.add(MarketHelper.toBignum(markets[marketType].volume), MarketHelper.toBignum(orderLog.matched_amount)));
+          markets[marketType].exchange_volume = parseInt(math.add(MarketHelper.toBignum(markets[marketType].exchange_volume), MarketHelper.toBignum(orderLog.result_amount)));
         }
         markets = _.values(markets);
         return TradeStats.bulkCreate(markets).complete(function(err, result) {

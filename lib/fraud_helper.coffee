@@ -41,14 +41,14 @@ FraudHelper =
             openOrdersBalance = 0
             for closedOrder in closedOrders
               if closedOrder.action is "sell"
-                closedOrdersBalance = math.subtract closedOrdersBalance, closedOrder.calculateSpentFromLogs()  if closedOrder.sell_currency is wallet.currency
-                closedOrdersBalance = math.add closedOrdersBalance, closedOrder.calculateReceivedFromLogs()  if closedOrder.buy_currency is wallet.currency
+                closedOrdersBalance = parseInt math.subtract(MarketHelper.toBignum(closedOrdersBalance), MarketHelper.toBignum(closedOrder.calculateSpentFromLogs()))  if closedOrder.sell_currency is wallet.currency
+                closedOrdersBalance = parseInt math.add(MarketHelper.toBignum(closedOrdersBalance), MarketHelper.toBignum(closedOrder.calculateReceivedFromLogs()))  if closedOrder.buy_currency is wallet.currency
               if closedOrder.action is "buy"
-                closedOrdersBalance = math.add closedOrdersBalance, closedOrder.calculateReceivedFromLogs()  if closedOrder.buy_currency is wallet.currency
-                closedOrdersBalance = math.subtract closedOrdersBalance, closedOrder.calculateSpentFromLogs()  if closedOrder.sell_currency is wallet.currency
+                closedOrdersBalance = parseInt math.add(MarketHelper.toBignum(closedOrdersBalance), MarketHelper.toBignum(closedOrder.calculateReceivedFromLogs()))  if closedOrder.buy_currency is wallet.currency
+                closedOrdersBalance = parseInt math.subtract(MarketHelper.toBignum(closedOrdersBalance), MarketHelper.toBignum(closedOrder.calculateSpentFromLogs()))  if closedOrder.sell_currency is wallet.currency
             for openOrder in openOrders
-              openOrdersBalance = math.add openOrdersBalance, openOrder.left_hold_balance  if openOrder.sell_currency is wallet.currency
-            finalBalance = math.select(totalReceived).add(closedOrdersBalance).subtract(wallet.hold_balance).subtract(totalPayed).done()
+              openOrdersBalance = parseInt math.add(MarketHelper.toBignum(openOrdersBalance), MarketHelper.toBignum(openOrder.left_hold_balance))  if openOrder.sell_currency is wallet.currency
+            finalBalance = parseInt math.select(MarketHelper.toBignum(totalReceived)).add(MarketHelper.toBignum(closedOrdersBalance)).subtract(MarketHelper.toBignum(wallet.hold_balance)).subtract(MarketHelper.toBignum(totalPayed)).done()
             result =
               total_received: MarketHelper.fromBigint totalReceived
               total_payed: MarketHelper.fromBigint totalPayed

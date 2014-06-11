@@ -127,14 +127,14 @@ module.exports = (sequelize, DataTypes) ->
           return "sell"  if @action is "buy"
 
         left_amount: ()->
-          math.subtract(@amount, @matched_amount)
+          parseInt math.subtract(MarketHelper.toBignum(@amount), MarketHelper.toBignum(@matched_amount))
 
         left_hold_balance: ()->
-          return MarketHelper.fromBigint math.multiply(@left_amount, @unit_price)  if @action is "buy"
+          return MarketHelper.multiplyBigints @left_amount, @unit_price  if @action is "buy"
           return @left_amount  if @action is "sell"
 
         total: ()->
-          MarketHelper.fromBigint math.multiply(@amount, @unit_price)
+          MarketHelper.multiplyBigints @amount, @unit_price
       
       classMethods:
         
@@ -243,26 +243,26 @@ module.exports = (sequelize, DataTypes) ->
 
         updateFromMatchedData: (matchedData, transaction, callback = ()->)->
           @status = matchedData.status
-          @matched_amount = math.add @matched_amount, matchedData.matched_amount
-          @result_amount = math.add @result_amount, matchedData.result_amount
-          @fee = math.add @fee, matchedData.fee
+          @matched_amount = parseInt math.add(MarketHelper.toBignum(@matched_amount), MarketHelper.toBignum(matchedData.matched_amount))
+          @result_amount = parseInt math.add(MarketHelper.toBignum(@result_amount), MarketHelper.toBignum(matchedData.result_amount))
+          @fee = parseInt math.add(MarketHelper.toBignum(@fee), MarketHelper.toBignum(matchedData.fee))
           @close_time = new Date matchedData.time  if @status is "completed"
           @save({transaction: transaction}).complete callback
 
         calculateReceivedFromLogs: (toFloat = false)->
           resultAmount = 0
           for log in @orderLogs
-            resultAmount = math.add resultAmount, log.result_amount
+            resultAmount = parseInt math.add(MarketHelper.toBignum(resultAmount), MarketHelper.toBignum(log.result_amount))
           if toFloat then MarketHelper.fromBigint(resultAmount) else resultAmount
 
         calculateSpentFromLogs: (toFloat = false)->
           spentAmount = 0
           if @action is "buy"
             for log in @orderLogs
-              spentAmount = math.add spentAmount, log.total
+              spentAmount = parseInt math.add(MarketHelper.toBignum(spentAmount), MarketHelper.toBignum(log.total))
           else
             for log in @orderLogs
-              spentAmount = math.add spentAmount, log.matched_amount
+              spentAmount = parseInt math.add(MarketHelper.toBignum(spentAmount), MarketHelper.toBignum(log.matched_amount))
           if toFloat then MarketHelper.fromBigint(spentAmount) else spentAmount
 
   Order

@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) ->
           MarketHelper.getWithdrawalFee @currency
 
         total_balance: ()->
-          math.add @balance, @hold_balance
+          parseInt math.add(MarketHelper.toBignum(@balance), MarketHelper.toBignum(@hold_balance))
 
         network_confirmations: ()->
           MarketHelper.getMinConfirmations @currency
@@ -133,7 +133,7 @@ module.exports = (sequelize, DataTypes) ->
 
         canWithdraw: (amount, includeFee = false)->
           withdrawAmount = parseFloat amount
-          withdrawAmount = math.add(withdrawAmount, @withdrawal_fee)  if includeFee
+          withdrawAmount = parseFloat math.add(MarketHelper.toBignum(withdrawAmount), MarketHelper.toBignum(@withdrawal_fee))  if includeFee
           @balance >= withdrawAmount
 
   Wallet
