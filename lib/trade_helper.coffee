@@ -12,9 +12,7 @@ orderSocket = new ClientSocket
 usersSocket = new ClientSocket
   namespace: "users"
   redis: GLOBAL.appConfig().redis
-math = require("mathjs")
-  number: "bignumber"
-  precision: 20
+math = require "./math"
 
 TradeHelper =
 

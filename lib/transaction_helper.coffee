@@ -6,12 +6,10 @@ MarketHelper = require "./market_helper"
 FraudHelper = require "./fraud_helper"
 JsonRenderer = require "./json_renderer"
 ClientSocket = require "./client_socket"
+math = require "./math"
 usersSocket = new ClientSocket
   namespace: "users"
   redis: GLOBAL.appConfig().redis
-math = require("mathjs")
-  number: "bignumber"
-  precision: 20
 
 TransactionHelper =
 

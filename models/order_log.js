@@ -3,10 +3,7 @@
 
   MarketHelper = require("../lib/market_helper");
 
-  math = require("mathjs")({
-    number: "bignumber",
-    precision: 20
-  });
+  math = require("../lib/math");
 
   module.exports = function(sequelize, DataTypes) {
     var OrderLog;

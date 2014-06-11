@@ -1,8 +1,6 @@
 MarketHelper = require "../lib/market_helper"
+math = require "../lib/math"
 _ = require "underscore"
-math = require("mathjs")
-  number: "bignumber"
-  precision: 20
 
 module.exports = (sequelize, DataTypes) ->
 

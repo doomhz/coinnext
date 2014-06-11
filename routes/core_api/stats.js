@@ -7,12 +7,9 @@
 
   MarketHelper = require("../../lib/market_helper");
 
-  _ = require("underscore");
+  math = require("../../lib/math");
 
-  math = require("mathjs")({
-    number: "bignumber",
-    precision: 20
-  });
+  _ = require("underscore");
 
   module.exports = function(app) {
     return app.post("/trade_stats", function(req, res, next) {

@@ -4,7 +4,7 @@ Payment = GLOBAL.db.Payment
 Order = GLOBAL.db.Order
 MarketHelper = require "./market_helper"
 async = require "async"
-math = require("mathjs")({number: "bignumber", precision: 20})
+math = require "./math"
 
 FraudHelper =
 

@@ -1,8 +1,6 @@
 MarketHelper = require "../lib/market_helper"
 ipFormatter = require "ip"
-math = require("mathjs")
-  number: "bignumber"
-  precision: 20
+math = require "../lib/math"
 
 module.exports = (sequelize, DataTypes) ->
 
