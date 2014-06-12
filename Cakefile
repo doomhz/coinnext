@@ -5,6 +5,7 @@ GLOBAL.db = require './models/index'
 option "-e", "--email [EMAIL]", "User email"
 option "-p", "--pass [PASS]", "User pass"
 option "-w", "--wallet [ID]", "Wallet ID"
+option "-u", "--user [ID]", "User ID"
 
 task "db:create_tables", "Create all tables", ()->
   GLOBAL.db.sequelize.sync().complete ()->
@@ -73,3 +74,16 @@ task "fraud:check_wallet", "Check wallet for fraud", (opts)->
   FraudHelper.checkWalletBalance opts.wallet, (err, result)->
     return console.error err  if err
     console.log result
+
+task "fraud:check_user_wallets", "Check user wallets for fraud", (opts)->
+  FraudHelper = require "./lib/fraud_helper"
+  async = require "async"
+  checkWalletBalance = (wallet, cb)->
+    FraudHelper.checkWalletBalance wallet.id, (err, result)->
+      return console.error err  if err
+      cb err,
+        wallet_id: wallet.id
+        result: result
+  GLOBAL.db.Wallet.findAll({where: {user_id: opts.user}}).complete (err, wallets)->
+    async.mapSeries wallets, checkWalletBalance, (err, results)->
+      console.log results
