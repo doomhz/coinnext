@@ -220,7 +220,7 @@ MarketHelper =
     @multiplyBigints amount, unitPrice
 
   calculateFee: (amount)->
-    parseFloat math.select(@toBignum(amount)).divide(@toBignum(100)).multiply(@toBignum(@getTradeFee())).done()
+    parseInt math.select(@toBignum(amount)).divide(@toBignum(100)).multiply(@toBignum(@getTradeFee())).done()
 
   calculateSpendAmount: (amount, action, unitPrice)->
     return amount  if action is "sell"
