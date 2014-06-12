@@ -6,6 +6,7 @@ option "-e", "--email [EMAIL]", "User email"
 option "-p", "--pass [PASS]", "User pass"
 option "-w", "--wallet [ID]", "Wallet ID"
 option "-u", "--user [ID]", "User ID"
+option "-o", "--order [ID]", "Order ID"
 
 task "db:create_tables", "Create all tables", ()->
   GLOBAL.db.sequelize.sync().complete ()->
@@ -68,6 +69,10 @@ task "admin:generate_user", "Add new admin user -e -p", (opts)->
     newUser.generateGAuthData (data, newUser)->
       console.log data.google_auth_qr
       console.log newUser.gauth_key
+
+task "order:cancel_open", "Cancel open order", (opts)->
+  TradeHelper = require "./lib/trade_helper"
+  TradeHelper.cancelOrder opts.order, ()->
 
 task "fraud:check_wallet", "Check wallet for fraud", (opts)->
   FraudHelper = require "./lib/fraud_helper"
