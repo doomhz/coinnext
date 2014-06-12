@@ -90,6 +90,33 @@ module.exports = (sequelize, DataTypes) ->
               stats[stat.type] = stat
             callback err, stats
         
+        trackFromNewOrder: (order, callback = ()->)->
+          type = if order.action is "buy" then "#{order.buy_currency}_#{order.sell_currency}" else "#{order.sell_currency}_#{order.buy_currency}"
+          MarketStats.find({where: {type: MarketHelper.getMarket(type)}}).complete (err, marketStats)->
+            if order.action is "buy"
+              marketStats.top_bid = order.unit_price  if order.unit_price > marketStats.top_bid
+            if order.action is "sell"
+              marketStats.top_ask = order.unit_price  if order.unit_price < marketStats.top_ask or marketStats.top_ask is 0
+            marketStats.save().complete callback
+
+        trackFromCancelledOrder: (order, callback = ()->)->
+          type = if order.action is "buy" then "#{order.buy_currency}_#{order.sell_currency}" else "#{order.sell_currency}_#{order.buy_currency}"
+          MarketStats.find({where: {type: MarketHelper.getMarket(type)}}).complete (err, marketStats)->
+            GLOBAL.db.Order.findTopBid order.buy_currency, order.sell_currency, (err1, topBidOrder)->
+              GLOBAL.db.Order.findTopAsk order.buy_currency, order.sell_currency, (err2, topAskOrder)->
+                marketStats.top_bid = if topBidOrder then topBidOrder.unit_price else 0
+                marketStats.top_ask = if topAskOrder then topAskOrder.unit_price else 0
+                marketStats.save().complete callback
+
+        trackFromMatchedOrder: (orderToMatch, matchingOrder, callback = ()->)->
+          type = if orderToMatch.action is "buy" then "#{orderToMatch.buy_currency}_#{orderToMatch.sell_currency}" else "#{orderToMatch.sell_currency}_#{orderToMatch.buy_currency}"
+          MarketStats.find({where: {type: MarketHelper.getMarket(type)}}).complete (err, marketStats)->
+            GLOBAL.db.Order.findTopBid orderToMatch.buy_currency, orderToMatch.sell_currency, (err1, topBidOrder)->
+              GLOBAL.db.Order.findTopAsk orderToMatch.buy_currency, orderToMatch.sell_currency, (err2, topAskOrder)->
+                marketStats.top_bid = if topBidOrder then topBidOrder.unit_price else 0
+                marketStats.top_ask = if topAskOrder then topAskOrder.unit_price else 0
+                marketStats.save().complete callback
+
         trackFromOrderLog: (orderLog, callback = ()->)->
           orderLog.getOrder().complete (err, order)->
             type = if order.action is "buy" then "#{order.buy_currency}_#{order.sell_currency}" else "#{order.sell_currency}_#{order.buy_currency}"
@@ -99,10 +126,8 @@ module.exports = (sequelize, DataTypes) ->
               marketStats.day_high = orderLog.unit_price  if orderLog.unit_price > marketStats.day_high
               marketStats.day_low = orderLog.unit_price  if orderLog.unit_price < marketStats.day_low or marketStats.day_low is 0
               if order.action is "buy"
-                marketStats.top_bid = orderLog.unit_price  if orderLog.unit_price > marketStats.top_bid
                 marketStats.save().complete callback
               if order.action is "sell"
-                marketStats.top_ask = orderLog.unit_price  if orderLog.unit_price > marketStats.top_ask
                 # Alt currency volume traded
                 marketStats.volume1 = parseInt math.add(MarketHelper.toBignum(marketStats.volume1), MarketHelper.toBignum(orderLog.matched_amount))
                 # BTC Volume Traded

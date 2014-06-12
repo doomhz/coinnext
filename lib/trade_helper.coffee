@@ -36,6 +36,7 @@ TradeHelper =
                   return callback err
               transaction.commit().success ()->
                 callback null, newOrder
+                MarketStats.trackFromNewOrder newOrder
                 TradeHelper.pushUserUpdate
                   type: "wallet-balance-changed"
                   user_id: wallet.user_id
@@ -70,6 +71,7 @@ TradeHelper =
                   callback err
               transaction.commit().success ()->
                 callback()
+                MarketStats.trackFromCancelledOrder order
                 TradeHelper.pushOrderUpdate
                   type: "order-canceled"
                   eventData:
@@ -105,8 +107,9 @@ TradeHelper =
                   callback "Could not process order #{matchingOrder.id} - #{err}"
               transaction.commit().success ()->
                 TradeHelper.trackMatchedOrder updatedOrderToMatchLog, ()->
-                  TradeHelper.trackMatchedOrder updatedMatchingOrderLog
-                callback()
+                  TradeHelper.trackMatchedOrder updatedMatchingOrderLog, ()->
+                    MarketStats.trackFromMatchedOrder orderToMatch, matchingOrder
+                  callback()
 
   updateMatchedOrder: (orderToMatch, matchData, transaction, callback)->
     Wallet.findUserWalletByCurrency orderToMatch.user_id, orderToMatch.buy_currency, (err, buyWallet)->
