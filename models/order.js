@@ -234,6 +234,42 @@
             }
           }).complete(callback);
         },
+        findTopBid: function(buyCurrency, sellCurrency, callback) {
+          var query;
+          if (callback == null) {
+            callback = function() {};
+          }
+          query = {
+            limit: 1,
+            where: {
+              deleted_at: null,
+              action: MarketHelper.getOrderAction("buy"),
+              status: [MarketHelper.getOrderStatus("open"), MarketHelper.getOrderStatus("partiallyCompleted")],
+              buy_currency: [MarketHelper.getCurrency(buyCurrency), MarketHelper.getCurrency(sellCurrency)],
+              sell_currency: [MarketHelper.getCurrency(buyCurrency), MarketHelper.getCurrency(sellCurrency)]
+            },
+            order: [["unit_price", "DESC"]]
+          };
+          return Order.find(query).complete(callback);
+        },
+        findTopAsk: function(buyCurrency, sellCurrency, callback) {
+          var query;
+          if (callback == null) {
+            callback = function() {};
+          }
+          query = {
+            limit: 1,
+            where: {
+              deleted_at: null,
+              action: MarketHelper.getOrderAction("sell"),
+              status: [MarketHelper.getOrderStatus("open"), MarketHelper.getOrderStatus("partiallyCompleted")],
+              buy_currency: [MarketHelper.getCurrency(buyCurrency), MarketHelper.getCurrency(sellCurrency)],
+              sell_currency: [MarketHelper.getCurrency(buyCurrency), MarketHelper.getCurrency(sellCurrency)]
+            },
+            order: [["unit_price", "ASC"]]
+          };
+          return Order.find(query).complete(callback);
+        },
         findByOptions: function(options, callback) {
           var currencies, query, status, _i, _len, _ref;
           if (options == null) {

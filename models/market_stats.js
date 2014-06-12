@@ -122,6 +122,70 @@
             return callback(err, stats);
           });
         },
+        trackFromNewOrder: function(order, callback) {
+          var type;
+          if (callback == null) {
+            callback = function() {};
+          }
+          type = order.action === "buy" ? "" + order.buy_currency + "_" + order.sell_currency : "" + order.sell_currency + "_" + order.buy_currency;
+          return MarketStats.find({
+            where: {
+              type: MarketHelper.getMarket(type)
+            }
+          }).complete(function(err, marketStats) {
+            if (order.action === "buy") {
+              if (order.unit_price > marketStats.top_bid) {
+                marketStats.top_bid = order.unit_price;
+              }
+            }
+            if (order.action === "sell") {
+              if (order.unit_price < marketStats.top_ask || marketStats.top_ask === 0) {
+                marketStats.top_ask = order.unit_price;
+              }
+            }
+            return marketStats.save().complete(callback);
+          });
+        },
+        trackFromCancelledOrder: function(order, callback) {
+          var type;
+          if (callback == null) {
+            callback = function() {};
+          }
+          type = order.action === "buy" ? "" + order.buy_currency + "_" + order.sell_currency : "" + order.sell_currency + "_" + order.buy_currency;
+          return MarketStats.find({
+            where: {
+              type: MarketHelper.getMarket(type)
+            }
+          }).complete(function(err, marketStats) {
+            return GLOBAL.db.Order.findTopBid(order.buy_currency, order.sell_currency, function(err1, topBidOrder) {
+              return GLOBAL.db.Order.findTopAsk(order.buy_currency, order.sell_currency, function(err2, topAskOrder) {
+                marketStats.top_bid = topBidOrder ? topBidOrder.unit_price : 0;
+                marketStats.top_ask = topAskOrder ? topAskOrder.unit_price : 0;
+                return marketStats.save().complete(callback);
+              });
+            });
+          });
+        },
+        trackFromMatchedOrder: function(orderToMatch, matchingOrder, callback) {
+          var type;
+          if (callback == null) {
+            callback = function() {};
+          }
+          type = orderToMatch.action === "buy" ? "" + orderToMatch.buy_currency + "_" + orderToMatch.sell_currency : "" + orderToMatch.sell_currency + "_" + orderToMatch.buy_currency;
+          return MarketStats.find({
+            where: {
+              type: MarketHelper.getMarket(type)
+            }
+          }).complete(function(err, marketStats) {
+            return GLOBAL.db.Order.findTopBid(orderToMatch.buy_currency, orderToMatch.sell_currency, function(err1, topBidOrder) {
+              return GLOBAL.db.Order.findTopAsk(orderToMatch.buy_currency, orderToMatch.sell_currency, function(err2, topAskOrder) {
+                marketStats.top_bid = topBidOrder ? topBidOrder.unit_price : 0;
+                marketStats.top_ask = topAskOrder ? topAskOrder.unit_price : 0;
+                return marketStats.save().complete(callback);
+              });
+            });
+          });
+        },
         trackFromOrderLog: function(orderLog, callback) {
           if (callback == null) {
             callback = function() {};
@@ -143,15 +207,9 @@
                 marketStats.day_low = orderLog.unit_price;
               }
               if (order.action === "buy") {
-                if (orderLog.unit_price > marketStats.top_bid) {
-                  marketStats.top_bid = orderLog.unit_price;
-                }
                 marketStats.save().complete(callback);
               }
               if (order.action === "sell") {
-                if (orderLog.unit_price > marketStats.top_ask) {
-                  marketStats.top_ask = orderLog.unit_price;
-                }
                 marketStats.volume1 = parseInt(math.add(MarketHelper.toBignum(marketStats.volume1), MarketHelper.toBignum(orderLog.matched_amount)));
                 marketStats.volume2 = parseInt(math.select(MarketHelper.toBignum(marketStats.volume2)).add(MarketHelper.toBignum(orderLog.result_amount)).add(MarketHelper.toBignum(orderLog.fee)).done());
                 return GLOBAL.db.TradeStats.findLast24hByType(type, function(err, tradeStats) {

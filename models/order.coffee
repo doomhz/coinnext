@@ -144,7 +144,35 @@ module.exports = (sequelize, DataTypes) ->
 
         findByUserAndId: (id, userId, callback)->
           Order.find({where: {id: id, user_id: userId}}).complete callback
-      
+
+        findTopBid: (buyCurrency, sellCurrency, callback = ()->)->
+          query = 
+            limit: 1
+            where:
+              deleted_at: null
+              action: MarketHelper.getOrderAction("buy")
+              status: [MarketHelper.getOrderStatus("open"), MarketHelper.getOrderStatus("partiallyCompleted")]
+              buy_currency: [MarketHelper.getCurrency(buyCurrency), MarketHelper.getCurrency(sellCurrency)]
+              sell_currency: [MarketHelper.getCurrency(buyCurrency), MarketHelper.getCurrency(sellCurrency)]
+            order: [
+              ["unit_price", "DESC"]
+            ]
+          Order.find(query).complete callback
+
+        findTopAsk: (buyCurrency, sellCurrency, callback = ()->)->
+          query = 
+            limit: 1
+            where:
+              deleted_at: null
+              action: MarketHelper.getOrderAction("sell")
+              status: [MarketHelper.getOrderStatus("open"), MarketHelper.getOrderStatus("partiallyCompleted")]
+              buy_currency: [MarketHelper.getCurrency(buyCurrency), MarketHelper.getCurrency(sellCurrency)]
+              sell_currency: [MarketHelper.getCurrency(buyCurrency), MarketHelper.getCurrency(sellCurrency)]
+            order: [
+              ["unit_price", "ASC"]
+            ]
+          Order.find(query).complete callback
+
         findByOptions: (options = {}, callback)->
           query =
             where:
