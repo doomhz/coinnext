@@ -109,7 +109,7 @@ TradeHelper =
                 TradeHelper.trackMatchedOrder updatedOrderToMatchLog, ()->
                   TradeHelper.trackMatchedOrder updatedMatchingOrderLog, ()->
                     MarketStats.trackFromMatchedOrder orderToMatch, matchingOrder
-                  callback()
+                    callback()
 
   updateMatchedOrder: (orderToMatch, matchData, transaction, callback)->
     Wallet.findUserWalletByCurrency orderToMatch.user_id, orderToMatch.buy_currency, (err, buyWallet)->
