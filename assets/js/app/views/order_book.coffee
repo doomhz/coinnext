@@ -45,10 +45,10 @@ class App.OrderBookView extends App.MasterView
 
   onOrderClick: (ev)->
     $row = $(ev.currentTarget)
-    unitPrice = $row.data "unit-price"
+    unitPrice = parseFloat $row.data "unit-price"
     action = $row.data "action"
     order = new App.OrderModel
-      unit_price: _.str.toFixed unitPrice
+      unit_price: unitPrice
       action: action
-      amount: _.str.toFixed @collection.calculateVolumeForPriceLimit unitPrice
+      amount: @collection.calculateVolumeForPriceLimit unitPrice
     $.publish "order-book-order-selected", order
