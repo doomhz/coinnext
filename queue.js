@@ -107,7 +107,7 @@ var sendAlert = function (msg, callback) {
 
 var exit = function (errMessage, err) {
   console.error(errMessage, err);
-  sendAlert("Event queue exiting! Message: " + errMessage, function () {
+  sendAlert("Event queue exiting! Message: " + errMessage, function (err, res) {
     console.log("slack:", err, res);
     process.exit();
   })
