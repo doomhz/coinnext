@@ -38,12 +38,12 @@ class window.App.OrdersCollection extends Backbone.Collection
     _.str.satoshiRound total
 
   calculateVolumeForPriceLimit: (unitPrice)->
+    unitPrice = _.str.satoshiRound(unitPrice)
     totalAmount = 0
-    reachedTheUnitPrice = false
     @each (order)->
-      return  if reachedTheUnitPrice and unitPrice isnt _.str.satoshiRound(order.get("unit_price"))
-      reachedTheUnitPrice = true  if unitPrice is _.str.satoshiRound(order.get("unit_price"))
-      totalAmount = App.math.add(totalAmount, order.calculateFirstNoFeeAmount())
+      orderPrice = _.str.satoshiRound(order.get("unit_price"))
+      totalAmount = App.math.add(totalAmount, order.calculateFirstNoFeeAmount())  if orderPrice <= unitPrice
+      return if orderPrice > unitPrice
     _.str.satoshiRound totalAmount
 
   getStacked: ()->
