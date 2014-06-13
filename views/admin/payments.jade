@@ -8,7 +8,7 @@ block content
       - if (from - count >= 0)
         a(href="/administratie/payments?from=#{from - count}&user_id=#{userId ? userId : ''}") Prev
         |  | 
-      a(href="/general_admiral_sergeant/payments?from=#{from + count}&user_id=#{userId ? userId : ''}") Next
+      a(href="/administratie/payments?from=#{from + count}&user_id=#{userId ? userId : ''}") Next
 
     table#payments.table
       thead

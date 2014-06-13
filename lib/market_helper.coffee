@@ -155,7 +155,7 @@ MarketHelper =
     _.invert(TRANSACTION_ACCEPTED_CATEGORIES)[intCategory]
 
   toBignum: (value)->
-    math.bignumber value.toString()
+    math.bignumber "#{value}"
   
   toBigint: (value)->
     parseInt math.multiply(@toBignum(value), @toBignum(100000000))
