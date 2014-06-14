@@ -94,6 +94,8 @@ task "fraud:check_user_wallets", "Check user wallets for fraud", (opts)->
       console.log results
 
 task "fraud:check_all_wallets_hold_balances", "Check user wallets for fraud", ()->
+  FraudHelper = require "./lib/fraud_helper"
+  async = require "async"
   walletIds = []
   checkWalletBalance = (wallet, cb)->
     FraudHelper.checkWalletBalance wallet.id, (err, result)->
