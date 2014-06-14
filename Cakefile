@@ -93,15 +93,18 @@ task "fraud:check_user_wallets", "Check user wallets for fraud", (opts)->
     async.mapSeries wallets, checkWalletBalance, (err, results)->
       console.log results
 
-task "fraud:check_all_wallets_hold_balances", "Check user wallets for fraud", ()->
+task "fraud:check_all_wallets_balances", "Check user wallets for fraud", ()->
   FraudHelper = require "./lib/fraud_helper"
   async = require "async"
-  walletIds = []
+  wrongHoldBalanceWalletsIds = []
+  wrongBalanceWalletsIds = []
   checkWalletBalance = (wallet, cb)->
     FraudHelper.checkWalletBalance wallet.id, (err, result)->
       return console.error err  if err
-      walletIds.push wallet.id  if not result.valid_hold_balance
+      wrongHoldBalanceWalletsIds.push wallet.id  if not result.valid_hold_balance
+      wrongBalanceWalletsIds.push wallet.id  if not result.valid_final_balance
       cb err
   GLOBAL.db.Wallet.findAll().complete (err, wallets)->
     async.mapSeries wallets, checkWalletBalance, (err, results)->
-      console.log walletIds
+      console.log "Wrong hold balances: ", wrongHoldBalanceWalletsIds
+      console.log "Wrong balances: ", wrongBalanceWalletsIds
