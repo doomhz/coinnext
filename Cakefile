@@ -92,3 +92,14 @@ task "fraud:check_user_wallets", "Check user wallets for fraud", (opts)->
   GLOBAL.db.Wallet.findAll({where: {user_id: opts.user}}).complete (err, wallets)->
     async.mapSeries wallets, checkWalletBalance, (err, results)->
       console.log results
+
+task "fraud:check_all_wallets_hold_balances", "Check user wallets for fraud", ()->
+  walletIds = []
+  checkWalletBalance = (wallet, cb)->
+    FraudHelper.checkWalletBalance wallet.id, (err, result)->
+      return console.error err  if err
+      walletIds.push wallet.id  if not result.valid_hold_balance
+      cb err
+  GLOBAL.db.Wallet.findAll().complete (err, wallets)->
+    async.mapSeries wallets, checkWalletBalance, (err, results)->
+      console.log walletIds
