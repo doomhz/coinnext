@@ -44,11 +44,17 @@
       return next();
     });
     app.get("/administratie", function(req, res) {
-      return res.render("admin/stats", {
-        title: "Stats - Admin - CoinNext",
-        page: "stats",
-        adminUser: req.user,
-        currencies: MarketHelper.getCurrencyTypes()
+      return MarketStats.findRemovedCurrencies(function(err, removedCurrencies) {
+        var currencies;
+        currencies = MarketHelper.getCurrencyTypes().filter(function(curr) {
+          return removedCurrencies.indexOf(curr) === -1;
+        });
+        return res.render("admin/stats", {
+          title: "Stats - Admin - CoinNext",
+          page: "stats",
+          adminUser: req.user,
+          currencies: currencies
+        });
       });
     });
     app.get("/administratie/users", function(req, res) {

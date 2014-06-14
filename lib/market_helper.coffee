@@ -34,6 +34,7 @@ TOKENS =
 MARKET_STATUS =
   enabled: 1
   disabled: 2
+  removed: 3
 
 WALLET_STATUS =
   normal: 1

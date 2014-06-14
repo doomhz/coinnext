@@ -106,10 +106,18 @@
       },
       classMethods: {
         getStats: function(callback) {
+          var query;
           if (callback == null) {
             callback = function() {};
           }
-          return MarketStats.findAll().complete(function(err, marketStats) {
+          query = {
+            where: {
+              status: {
+                ne: MarketHelper.getMarketStatus("removed")
+              }
+            }
+          };
+          return MarketStats.findAll(query).complete(function(err, marketStats) {
             var stat, stats, _i, _len;
             marketStats = _.sortBy(marketStats, function(s) {
               return s.type;
@@ -263,8 +271,13 @@
           if (callback == null) {
             callback = function() {};
           }
-          query = {};
-          query.where = {};
+          query = {
+            where: {
+              status: {
+                ne: MarketHelper.getMarketStatus("removed")
+              }
+            }
+          };
           if (currency1 !== null && currency2 !== null) {
             query.where.type = MarketHelper.getMarket("" + currency1 + "_" + currency2);
           } else if (currency1 === null && currency2 !== null) {
@@ -272,6 +285,29 @@
             query.where.type["in"] = MarketHelper.getExchangeMarketsId(currency2);
           }
           return MarketStats.findAll(query).complete(callback);
+        },
+        findRemovedCurrencies: function(callback) {
+          var query;
+          if (callback == null) {
+            callback = function() {};
+          }
+          query = {
+            where: {
+              status: MarketHelper.getMarketStatus("removed")
+            }
+          };
+          return MarketStats.findAll(query).complete(function(err, removedMarkets) {
+            var market, removedCurrencies, _i, _len;
+            if (removedMarkets == null) {
+              removedMarkets = [];
+            }
+            removedCurrencies = [];
+            for (_i = 0, _len = removedMarkets.length; _i < _len; _i++) {
+              market = removedMarkets[_i];
+              removedCurrencies.push(market.label);
+            }
+            return callback(err, removedCurrencies);
+          });
         }
       },
       instanceMethods: {

@@ -82,7 +82,11 @@ module.exports = (sequelize, DataTypes) ->
       classMethods:
         
         getStats: (callback = ()->)->
-          MarketStats.findAll().complete (err, marketStats)->
+          query =
+            where:
+              status:
+                ne: MarketHelper.getMarketStatus "removed"
+          MarketStats.findAll(query).complete (err, marketStats)->
             marketStats = _.sortBy marketStats, (s)->
               s.type
             stats = {}
@@ -158,14 +162,26 @@ module.exports = (sequelize, DataTypes) ->
         # findMarkets null, BTC -> all BTC markets
         # findMarkets LTC, BTC -> return LTC_BTC market
         findMarkets: (currency1, currency2, callback = ()->)->
-          query = {}
-          query.where = {}
+          query =
+            where:
+              status:
+                ne: MarketHelper.getMarketStatus "removed"
           if currency1 isnt null and currency2 isnt null
             query.where.type = MarketHelper.getMarket("#{currency1}_#{currency2}")
           else if currency1 is null and currency2 isnt null
             query.where.type = {}
             query.where.type.in = MarketHelper.getExchangeMarketsId(currency2)
           MarketStats.findAll(query).complete callback
+
+        findRemovedCurrencies: (callback = ()->)->
+          query =
+            where:
+              status: MarketHelper.getMarketStatus "removed"
+          MarketStats.findAll(query).complete (err, removedMarkets = [])->
+            removedCurrencies = []
+            for market in removedMarkets
+              removedCurrencies.push market.label
+            callback err, removedCurrencies
 
       instanceMethods:
 

@@ -32,6 +32,7 @@ module.exports = (app)->
     currency2 = req.params.currency2
     return res.redirect "/"  if not MarketHelper.isValidCurrency(currency1) or not MarketHelper.isValidCurrency(currency2)
     MarketStats.getStats (err, marketStats)->
+      return res.redirect "/404"  if not marketStats["#{currency1}_#{currency2}"]
       if req.user
         Wallet.findUserWalletByCurrency req.user.id, currency1, (err, wallet1)->
           if not wallet1
@@ -68,29 +69,40 @@ module.exports = (app)->
 
   app.get "/funds", (req, res)->
     return res.redirect "/login"  if not req.user
-    Wallet.findUserWallets req.user.id, (err, wallets)->
-      res.render "site/funds",
-        title: 'Funds - Coinnext'
-        page: "funds"
-        user: req.user
-        wallets: wallets
-        currencies: MarketHelper.getSortedCurrencyNames()
-        _str: _str
-
-  app.get "/funds/:currency", (req, res)->
-    return res.redirect "/login"  if not req.user
-    Wallet.findUserWallets req.user.id, (err, wallets)->
-      Wallet.findUserWalletByCurrency req.user.id, req.params.currency, (err, wallet)->
-        console.error err  if err
-        return res.redirect "/"  if not wallet
-        res.render "site/funds/wallet",
-          title: "#{req.params.currency} - Funds - Coinnext"
+    Wallet.findUserWallets req.user.id, (err, wallets = [])->
+      MarketStats.findRemovedCurrencies (err, removedCurrencies)->
+        wallets = wallets.filter (wl)->
+          removedCurrencies.indexOf(wl.currency) is -1
+        currencies = MarketHelper.getSortedCurrencyNames()
+        currencies = _.omit currencies, removedCurrencies
+        res.render "site/funds",
+          title: 'Funds - Coinnext'
           page: "funds"
           user: req.user
           wallets: wallets
-          wallet: wallet
-          currencies: MarketHelper.getSortedCurrencyNames()
+          currencies: currencies
           _str: _str
+
+  app.get "/funds/:currency", (req, res)->
+    return res.redirect "/login"  if not req.user
+    MarketStats.findRemovedCurrencies (err, removedCurrencies)->
+      return res.redirect "/404"  if removedCurrencies.indexOf(req.params.currency) > -1
+      Wallet.findUserWallets req.user.id, (err, wallets)->
+        Wallet.findUserWalletByCurrency req.user.id, req.params.currency, (err, wallet)->
+          console.error err  if err
+          return res.redirect "/"  if not wallet
+          wallets = wallets.filter (wl)->
+            removedCurrencies.indexOf(wl.currency) is -1
+          currencies = MarketHelper.getSortedCurrencyNames()
+          currencies = _.omit currencies, removedCurrencies
+          res.render "site/funds/wallet",
+            title: "#{req.params.currency} - Funds - Coinnext"
+            page: "funds"
+            user: req.user
+            wallets: wallets
+            wallet: wallet
+            currencies: currencies
+            _str: _str
 
   app.get "/market_stats", (req, res)->
     MarketStats.getStats (err, marketStats)->
