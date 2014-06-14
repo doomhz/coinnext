@@ -165,7 +165,7 @@ MarketHelper =
     parseFloat math.divide(@toBignum(value), @toBignum(100000000))
 
   multiplyBigints: (value, value2)->
-    parseInt math.divide(math.multiply(@toBignum(value), @toBignum(value2)), @toBignum(100000000))
+    parseInt math.round math.divide(math.multiply(@toBignum(value), @toBignum(value2)), @toBignum(100000000))
 
   getTokenTypeLiteral: (intType)->
     _.invert(TOKENS)[intType]
