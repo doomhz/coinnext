@@ -206,12 +206,6 @@
         MarketHelper: MarketHelper
       });
     });
-    app.get("/about", function(req, res) {
-      return res.render("static/about", {
-        title: 'About - Coinnext',
-        user: req.user
-      });
-    });
     app.get("/security", function(req, res) {
       return res.render("static/security", {
         title: 'Security - Coinnext',
