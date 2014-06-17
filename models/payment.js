@@ -1,9 +1,11 @@
 (function() {
-  var MarketHelper, ipFormatter;
+  var MarketHelper, ipFormatter, math;
 
   MarketHelper = require("../lib/market_helper");
 
   ipFormatter = require("ip");
+
+  math = require("../lib/math");
 
   module.exports = function(sequelize, DataTypes) {
     var Payment;
@@ -61,6 +63,16 @@
         },
         comment: "FLOAT x 100000000"
       },
+      fee: {
+        type: DataTypes.BIGINT.UNSIGNED,
+        defaultValue: 0,
+        allowNull: false,
+        validate: {
+          isInt: true,
+          notNull: true
+        },
+        comment: "FLOAT x 100000000"
+      },
       status: {
         type: DataTypes.INTEGER.UNSIGNED,
         defaultValue: MarketHelper.getPaymentStatus("pending"),
@@ -81,6 +93,10 @@
         get: function() {
           return ipFormatter.fromLong(this.getDataValue("remote_ip"));
         }
+      },
+      fraud: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
       }
     }, {
       tableName: "payments",
@@ -125,6 +141,43 @@
             }
           };
           return Payment.find(query).complete(callback);
+        },
+        findToProcess: function(callback) {
+          var query;
+          query = {
+            where: {
+              status: MarketHelper.getPaymentStatus("pending"),
+              fraud: false
+            },
+            order: [["created_at", "ASC"]]
+          };
+          return Payment.findAll(query).complete(callback);
+        },
+        findTotalPayedByUserAndWallet: function(userId, walletId, callback) {
+          var query;
+          query = {
+            where: {
+              user_id: userId,
+              wallet_id: walletId
+            }
+          };
+          return Payment.sum("amount", query).complete(function(err, totalAmount) {
+            if (totalAmount == null) {
+              totalAmount = 0;
+            }
+            if (err) {
+              return err;
+            }
+            return Payment.sum("fee", query).complete(function(err, totalFee) {
+              if (totalFee == null) {
+                totalFee = 0;
+              }
+              if (err) {
+                return err;
+              }
+              return callback(err, parseInt(math.add(MarketHelper.toBignum(totalAmount), MarketHelper.toBignum(totalFee))));
+            });
+          });
         },
         submit: function(data, callback) {
           if (callback == null) {
@@ -194,6 +247,16 @@
             payment_id: this.id,
             log: reason
           });
+          return this.save().complete(function(e, p) {
+            return callback(reason, p);
+          });
+        },
+        markAsFraud: function(reason, callback) {
+          GLOBAL.db.PaymentLog.create({
+            payment_id: this.id,
+            log: JSON.stringify(reason)
+          });
+          this.fraud = true;
           return this.save().complete(function(e, p) {
             return callback(reason, p);
           });

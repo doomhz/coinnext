@@ -1,5 +1,6 @@
 MarketHelper = require "../lib/market_helper"
 ipFormatter = require "ip"
+math = require "../lib/math"
 
 module.exports = (sequelize, DataTypes) ->
 
@@ -39,6 +40,14 @@ module.exports = (sequelize, DataTypes) ->
             fee = MarketHelper.getWithdrawalFee @currency
             throw new Error "The amount is too low."  if value <= fee
         comment: "FLOAT x 100000000"
+      fee:
+        type: DataTypes.BIGINT.UNSIGNED
+        defaultValue: 0
+        allowNull: false
+        validate:
+          isInt: true
+          notNull: true
+        comment: "FLOAT x 100000000"
       status:
         type: DataTypes.INTEGER.UNSIGNED
         defaultValue: MarketHelper.getPaymentStatus "pending"
@@ -54,6 +63,9 @@ module.exports = (sequelize, DataTypes) ->
           @setDataValue "remote_ip", ipFormatter.toLong ip
         get: ()->
           ipFormatter.fromLong @getDataValue "remote_ip"
+      fraud:
+        type: DataTypes.BOOLEAN
+        defaultValue: false
 
     ,
       tableName: "payments"
@@ -87,6 +99,27 @@ module.exports = (sequelize, DataTypes) ->
             where:
               transaction_id: transactionId
           Payment.find(query).complete callback
+
+        findToProcess: (callback)->
+          query =
+            where:
+              status: MarketHelper.getPaymentStatus "pending"
+              fraud: false
+            order: [
+              ["created_at", "ASC"]
+            ]
+          Payment.findAll(query).complete callback
+
+        findTotalPayedByUserAndWallet: (userId, walletId, callback)->
+          query =
+            where:
+              user_id: userId
+              wallet_id: walletId
+          Payment.sum("amount", query).complete (err, totalAmount = 0)->
+            return err  if err
+            Payment.sum("fee", query).complete (err, totalFee = 0)->
+              return err  if err
+              callback err, parseInt(math.add(MarketHelper.toBignum(totalAmount), MarketHelper.toBignum(totalFee)))
 
         submit: (data, callback = ()->)->
           GLOBAL.coreAPIClient.sendWithData "create_payment", data, (err, res, body)=>
@@ -132,6 +165,14 @@ module.exports = (sequelize, DataTypes) ->
           GLOBAL.db.PaymentLog.create
             payment_id: @id
             log: reason
+          @save().complete (e, p)->
+            callback reason, p
+
+        markAsFraud: (reason, callback)->
+          GLOBAL.db.PaymentLog.create
+            payment_id: @id
+            log: JSON.stringify reason
+          @fraud = true
           @save().complete (e, p)->
             callback reason, p
 

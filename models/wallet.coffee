@@ -1,8 +1,6 @@
 MarketHelper = require "../lib/market_helper"
 _ = require "underscore"
-math = require("mathjs")
-  number: "bignumber"
-  decimals: 8
+math = require "../lib/math"
 
 module.exports = (sequelize, DataTypes) ->
 
@@ -48,7 +46,7 @@ module.exports = (sequelize, DataTypes) ->
           MarketHelper.getWithdrawalFee @currency
 
         total_balance: ()->
-          @balance + @hold_balance
+          parseInt math.add(MarketHelper.toBignum(@balance), MarketHelper.toBignum(@hold_balance))
 
         network_confirmations: ()->
           MarketHelper.getMinConfirmations @currency
@@ -133,7 +131,7 @@ module.exports = (sequelize, DataTypes) ->
 
         canWithdraw: (amount, includeFee = false)->
           withdrawAmount = parseFloat amount
-          withdrawAmount = math.add(withdrawAmount, @withdrawal_fee)  if includeFee
+          withdrawAmount = parseFloat math.add(MarketHelper.toBignum(withdrawAmount), MarketHelper.toBignum(@withdrawal_fee))  if includeFee
           @balance >= withdrawAmount
 
   Wallet

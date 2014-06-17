@@ -1,73 +1,64 @@
+Wallet = GLOBAL.db.Wallet
+Transaction = GLOBAL.db.Transaction
+Payment = GLOBAL.db.Payment
+Order = GLOBAL.db.Order
 MarketHelper = require "./market_helper"
 async = require "async"
-math = require("mathjs")
-  number: "bignumber"
-  decimals: 8
+math = require "./math"
 
 FraudHelper =
 
-  findDesyncedWallets: (callback)->
-    GLOBAL.db.Wallet.findAll({where: {address: {ne: null}}}).complete (err, wallets)->
-      async.mapSeries wallets, FraudHelper.checkHoldBalance, (err, result = [])->
-        callback err, result.filter (val)->
-          val?
+  checkWalletBalance: (walletId, callback)->
+    Wallet.findById walletId, (err, wallet)->
+      return callback err  if err
+      return callback "Wallet not found."  if not wallet
+      FraudHelper.checkBalances wallet, callback
 
-  checkHoldBalance: (wallet, cb)->
-    query =
-      where:
-        status: [MarketHelper.getOrderStatus("partiallyCompleted"), MarketHelper.getOrderStatus("open")]
-        user_id: wallet.user_id
-        sell_currency: MarketHelper.getCurrency wallet.currency
-    GLOBAL.db.Order.findAll(query).complete (err, orders)->
-      totalHoldBalance = 0
-      for order in orders
-        totalHoldBalance = math.add totalHoldBalance, order.left_hold_balance
-      return cb()  if totalHoldBalance is wallet.hold_balance
-      diff = math.add wallet.hold_balance, -totalHoldBalance
-      return cb null,
-        wallet_id: wallet.id
-        user_id: wallet.user_id
-        currency: wallet.currency
-        total_hold: totalHoldBalance
-        diff: diff
-        diff_float: MarketHelper.fromBigint diff
-        current:
-          balance: wallet.balance
-          hold_balance: wallet.hold_balance
+  checkUserBalances: (userId, callback)->
+    Wallet.findUserWalletByCurrency userId, "BTC", (err, wallet)->
+      return callback err  if err
+      return callback "Wallet not found."  if not wallet
+      FraudHelper.checkBalances wallet, callback
 
-###
-  checkProperBalance: (wallet, cb)->
-    GLOBAL.db.Transaction.findProcessedByUserAndWallet wallet.user_id, wallet.id, (err, transactions)->
-      GLOBAL.db.Payment.findByUserAndWallet wallet.user_id, wallet.id, "processed", (err, payments)->
-        options =
-          status: "open"
+  checkBalances: (wallet, callback)->
+    Transaction.findTotalReceivedByUserAndWallet wallet.user_id, wallet.id, (err, totalReceived)->
+      return callback err  if err
+      Payment.findTotalPayedByUserAndWallet wallet.user_id, wallet.id, (err, totalPayed)->
+        return callback err  if err
+        closedOptions =
+          status: ["completed", "partiallyCompleted"]
           user_id: wallet.user_id
-          sell_currency: wallet.sell_currency
-        GLOBAL.db.Order.findByOptions options, (err, orders)->
-          totalDeposit = 0
-          totalWithdrawal = 0
-          totalHoldBalance = 0
-          for transaction in transactions
-            totalDeposit = math.add totalDeposit, transaction.amount  if transaction.category is "receive"
-          for payment in payments
-            totalWithdrawal = math.add totalWithdrawal, payment.amount
-          for order in orders
-            totalHoldBalance = math.add totalHoldBalance, order.left_hold_balance
-          totalBalance = math.add totalDeposit, -totalWithdrawal
-          totalAvailableBalance = math.add totalBalance, -totalHoldBalance
-          return cb()  if totalAvailableBalance is wallet.balance and totalHoldBalance is wallet.hold_balance
-          return cb null,
-            wallet_id: wallet.id
-            user_id: wallet.user_id
-            currency: wallet.currency
-            deposit: totalDeposit
-            withdrawal: totalWithdrawal
-            current:
-              balance: wallet.balance
-              hold_balance: wallet.hold_balance
-            fixed:
-              balance: totalAvailableBalance
-              hold_balance: totalHoldBalance
-###
+          currency1: wallet.currency
+          include_logs: true
+        openOptions =
+          status: ["open", "partiallyCompleted"]
+          user_id: wallet.user_id
+          currency1: wallet.currency
+          include_logs: true
+        Order.findByOptions closedOptions, (err, closedOrders)->
+          Order.findByOptions openOptions, (err, openOrders)->
+            closedOrdersBalance = 0
+            openOrdersBalance = 0
+            for closedOrder in closedOrders
+              if closedOrder.action is "sell"
+                closedOrdersBalance = parseInt math.subtract(MarketHelper.toBignum(closedOrdersBalance), MarketHelper.toBignum(closedOrder.calculateSpentFromLogs()))  if closedOrder.sell_currency is wallet.currency
+                closedOrdersBalance = parseInt math.add(MarketHelper.toBignum(closedOrdersBalance), MarketHelper.toBignum(closedOrder.calculateReceivedFromLogs()))  if closedOrder.buy_currency is wallet.currency
+              if closedOrder.action is "buy"
+                closedOrdersBalance = parseInt math.add(MarketHelper.toBignum(closedOrdersBalance), MarketHelper.toBignum(closedOrder.calculateReceivedFromLogs()))  if closedOrder.buy_currency is wallet.currency
+                closedOrdersBalance = parseInt math.subtract(MarketHelper.toBignum(closedOrdersBalance), MarketHelper.toBignum(closedOrder.calculateSpentFromLogs()))  if closedOrder.sell_currency is wallet.currency
+            for openOrder in openOrders
+              openOrdersBalance = parseInt math.add(MarketHelper.toBignum(openOrdersBalance), MarketHelper.toBignum(openOrder.left_hold_balance))  if openOrder.sell_currency is wallet.currency
+            finalBalance = parseInt math.select(MarketHelper.toBignum(totalReceived)).add(MarketHelper.toBignum(closedOrdersBalance)).subtract(MarketHelper.toBignum(wallet.hold_balance)).subtract(MarketHelper.toBignum(totalPayed)).done()
+            result =
+              total_received: MarketHelper.fromBigint totalReceived
+              total_payed: MarketHelper.fromBigint totalPayed
+              total_closed: MarketHelper.fromBigint closedOrdersBalance
+              total_open: MarketHelper.fromBigint openOrdersBalance
+              balance: MarketHelper.fromBigint wallet.balance
+              hold_balance: MarketHelper.fromBigint wallet.hold_balance
+              final_balance: MarketHelper.fromBigint finalBalance
+              valid_final_balance: finalBalance is wallet.balance
+              valid_hold_balance: openOrdersBalance is wallet.hold_balance
+            callback err, result
 
 exports = module.exports = FraudHelper

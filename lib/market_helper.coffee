@@ -1,8 +1,6 @@
 marketSettings = require "./market_settings"
 _ = require "underscore"
-math = require("mathjs")
-  number: "bignumber"
-  decimals: 8
+math = require "./math"
 
 FEE = 0
 
@@ -36,6 +34,7 @@ TOKENS =
 MARKET_STATUS =
   enabled: 1
   disabled: 2
+  removed: 3
 
 WALLET_STATUS =
   normal: 1
@@ -156,11 +155,17 @@ MarketHelper =
   getTransactionCategoryLiteral: (intCategory)->
     _.invert(TRANSACTION_ACCEPTED_CATEGORIES)[intCategory]
 
+  toBignum: (value)->
+    math.bignumber "#{value}"
+  
   toBigint: (value)->
-    math.round math.multiply(value, 100000000)
+    parseInt math.multiply(@toBignum(value), @toBignum(100000000))
 
   fromBigint: (value)->
-    math.divide value, 100000000
+    parseFloat math.divide(@toBignum(value), @toBignum(100000000))
+
+  multiplyBigints: (value, value2)->
+    parseInt math.round math.divide(math.multiply(@toBignum(value), @toBignum(value2)), @toBignum(100000000))
 
   getTokenTypeLiteral: (intType)->
     _.invert(TOKENS)[intType]
@@ -213,14 +218,14 @@ MarketHelper =
 
   calculateResultAmount: (amount, action, unitPrice)->
     return amount  if action is "buy"
-    math.multiply(amount, @fromBigint unitPrice)
+    @multiplyBigints amount, unitPrice
 
   calculateFee: (amount)->
-    math.select(amount).divide(100).multiply(@getTradeFee()).done()
+    parseInt math.select(@toBignum(amount)).divide(@toBignum(100)).multiply(@toBignum(@getTradeFee())).ceil().done()
 
   calculateSpendAmount: (amount, action, unitPrice)->
     return amount  if action is "sell"
-    math.multiply(amount, @fromBigint unitPrice)
+    @multiplyBigints amount, unitPrice
 
   getWithdrawalFee: (currency)->
     return marketSettings.DEFAULT_WITHDRAWAL_FEE  if not marketSettings.WITHDRAWAL_FEES[currency]?

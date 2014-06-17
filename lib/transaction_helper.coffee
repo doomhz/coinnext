@@ -2,14 +2,14 @@ Wallet = GLOBAL.db.Wallet
 Transaction = GLOBAL.db.Transaction
 Payment = GLOBAL.db.Payment
 MarketStats = GLOBAL.db.MarketStats
+MarketHelper = require "./market_helper"
+FraudHelper = require "./fraud_helper"
 JsonRenderer = require "./json_renderer"
 ClientSocket = require "./client_socket"
+math = require "./math"
 usersSocket = new ClientSocket
   namespace: "users"
   redis: GLOBAL.appConfig().redis
-math = require("mathjs")
-  number: "bignumber"
-  decimals: 8
 
 TransactionHelper =
 
@@ -24,13 +24,14 @@ TransactionHelper =
       return callback "You don't have enough funds."  if not wallet.canWithdraw data.amount, true
       return callback "You can't withdraw to the same address."  if data.address is wallet.address
       data.currency = wallet.currency
+      data.fee = wallet.withdrawal_fee
       GLOBAL.db.sequelize.transaction (transaction)->
         Payment.create(data, {transaction: transaction}).complete (err, pm)->
           if err
             console.error err
             return transaction.rollback().success ()->
               return callback JsonRenderer.error err
-          totalWithdrawalAmount = math.add(wallet.withdrawal_fee, pm.amount)
+          totalWithdrawalAmount = parseInt math.add(MarketHelper.toBignum(wallet.withdrawal_fee), MarketHelper.toBignum(pm.amount))
           wallet.addBalance -totalWithdrawalAmount, transaction, (err, wallet)->
             if err
               console.error err
@@ -43,6 +44,14 @@ TransactionHelper =
                 user_id: wallet.user_id
                 eventData: JsonRenderer.wallet wallet
 
+  processPaymentWithFraud: (payment, callback)->
+    FraudHelper.checkUserBalances payment.user_id, (err, result)->
+      if not result.valid_final_balance or not result.valid_hold_balance
+        payment.markAsFraud result, ()->
+          callback null, "Could not process payment - fraud detected - #{JSON.stringify(result)}"
+      else
+        TransactionHelper.processPayment payment, callback
+  
   processPayment: (payment, callback)->
     Wallet.findById payment.wallet_id, (err, wallet)->
       return callback null, "#{payment.id} - wallet #{payment.wallet_id} not found"  if not wallet
@@ -60,7 +69,7 @@ TransactionHelper =
   cancelPayment: (payment, callback)->
     Wallet.findUserWalletByCurrency payment.user_id, payment.currency, (err, wallet)->
       return callback err  if err or not wallet
-      totalWithdrawalAmount = math.add(wallet.withdrawal_fee, payment.amount)
+      totalWithdrawalAmount = parseInt math.add(MarketHelper.toBignum(wallet.withdrawal_fee), MarketHelper.toBignum(payment.amount))
       GLOBAL.db.sequelize.transaction (transaction)->
         wallet.addBalance totalWithdrawalAmount, transaction, (err, wallet)->
           if err

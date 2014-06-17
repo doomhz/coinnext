@@ -5,10 +5,7 @@
 
   _ = require("underscore");
 
-  math = require("mathjs")({
-    number: "bignumber",
-    decimals: 8
-  });
+  math = require("../lib/math");
 
   module.exports = function(sequelize, DataTypes) {
     var Order;
@@ -202,18 +199,18 @@
           }
         },
         left_amount: function() {
-          return math.add(this.amount, -this.matched_amount);
+          return parseInt(math.subtract(MarketHelper.toBignum(this.amount), MarketHelper.toBignum(this.matched_amount)));
         },
         left_hold_balance: function() {
           if (this.action === "buy") {
-            return math.multiply(this.left_amount, MarketHelper.fromBigint(this.unit_price));
+            return MarketHelper.multiplyBigints(this.left_amount, this.unit_price);
           }
           if (this.action === "sell") {
             return this.left_amount;
           }
         },
         total: function() {
-          return math.multiply(this.amount, MarketHelper.fromBigint(this.unit_price));
+          return MarketHelper.multiplyBigints(this.amount, this.unit_price);
         }
       },
       classMethods: {
@@ -237,8 +234,44 @@
             }
           }).complete(callback);
         },
+        findTopBid: function(buyCurrency, sellCurrency, callback) {
+          var query;
+          if (callback == null) {
+            callback = function() {};
+          }
+          query = {
+            limit: 1,
+            where: {
+              deleted_at: null,
+              action: MarketHelper.getOrderAction("buy"),
+              status: [MarketHelper.getOrderStatus("open"), MarketHelper.getOrderStatus("partiallyCompleted")],
+              buy_currency: [MarketHelper.getCurrency(buyCurrency), MarketHelper.getCurrency(sellCurrency)],
+              sell_currency: [MarketHelper.getCurrency(buyCurrency), MarketHelper.getCurrency(sellCurrency)]
+            },
+            order: [["unit_price", "DESC"]]
+          };
+          return Order.find(query).complete(callback);
+        },
+        findTopAsk: function(buyCurrency, sellCurrency, callback) {
+          var query;
+          if (callback == null) {
+            callback = function() {};
+          }
+          query = {
+            limit: 1,
+            where: {
+              deleted_at: null,
+              action: MarketHelper.getOrderAction("sell"),
+              status: [MarketHelper.getOrderStatus("open"), MarketHelper.getOrderStatus("partiallyCompleted")],
+              buy_currency: [MarketHelper.getCurrency(buyCurrency), MarketHelper.getCurrency(sellCurrency)],
+              sell_currency: [MarketHelper.getCurrency(buyCurrency), MarketHelper.getCurrency(sellCurrency)]
+            },
+            order: [["unit_price", "ASC"]]
+          };
+          return Order.find(query).complete(callback);
+        },
         findByOptions: function(options, callback) {
-          var currencies, query;
+          var currencies, query, status, _i, _len, _ref;
           if (options == null) {
             options = {};
           }
@@ -263,9 +296,15 @@
           }
           if (options.status === "open") {
             query.where.status = [MarketHelper.getOrderStatus("partiallyCompleted"), MarketHelper.getOrderStatus("open")];
-          }
-          if (options.status === "completed") {
+          } else if (options.status === "completed") {
             query.where.status = MarketHelper.getOrderStatus(options.status);
+          } else if (_.isArray(options.status)) {
+            query.where.status = [];
+            _ref = options.status;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              status = _ref[_i];
+              query.where.status.push(MarketHelper.getOrderStatus(status));
+            }
           }
           if (!!MarketHelper.getOrderAction(options.action)) {
             query.where.action = MarketHelper.getOrderAction(options.action);
@@ -274,17 +313,25 @@
             query.where.user_id = options.user_id;
           }
           if (options.action === "buy") {
-            query.where.buy_currency = MarketHelper.getCurrency(options.currency1);
-            query.where.sell_currency = MarketHelper.getCurrency(options.currency2);
+            if (options.currency1 != null) {
+              query.where.buy_currency = MarketHelper.getCurrency(options.currency1);
+            }
+            if (options.currency2 != null) {
+              query.where.sell_currency = MarketHelper.getCurrency(options.currency2);
+            }
           } else if (options.action === "sell") {
-            query.where.buy_currency = MarketHelper.getCurrency(options.currency2);
-            query.where.sell_currency = MarketHelper.getCurrency(options.currency1);
+            if (options.currency2 != null) {
+              query.where.buy_currency = MarketHelper.getCurrency(options.currency2);
+            }
+            if (options.currency1 != null) {
+              query.where.sell_currency = MarketHelper.getCurrency(options.currency1);
+            }
           } else if (!options.action) {
             currencies = [];
-            if (options.currency1) {
+            if (options.currency1 != null) {
               currencies.push(MarketHelper.getCurrency(options.currency1));
             }
-            if (options.currency2) {
+            if (options.currency2 != null) {
               currencies.push(MarketHelper.getCurrency(options.currency2));
             }
             if (currencies.length > 1) {
@@ -388,9 +435,9 @@
             callback = function() {};
           }
           this.status = matchedData.status;
-          this.matched_amount = math.add(this.matched_amount, matchedData.matched_amount);
-          this.result_amount = math.add(this.result_amount, matchedData.result_amount);
-          this.fee = math.add(this.fee, matchedData.fee);
+          this.matched_amount = parseInt(math.add(MarketHelper.toBignum(this.matched_amount), MarketHelper.toBignum(matchedData.matched_amount)));
+          this.result_amount = parseInt(math.add(MarketHelper.toBignum(this.result_amount), MarketHelper.toBignum(matchedData.result_amount)));
+          this.fee = parseInt(math.add(MarketHelper.toBignum(this.fee), MarketHelper.toBignum(matchedData.fee)));
           if (this.status === "completed") {
             this.close_time = new Date(matchedData.time);
           }
@@ -407,7 +454,7 @@
           _ref = this.orderLogs;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             log = _ref[_i];
-            resultAmount += log.result_amount;
+            resultAmount = parseInt(math.add(MarketHelper.toBignum(resultAmount), MarketHelper.toBignum(log.result_amount)));
           }
           if (toFloat) {
             return MarketHelper.fromBigint(resultAmount);
@@ -425,13 +472,13 @@
             _ref = this.orderLogs;
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               log = _ref[_i];
-              spentAmount += log.total;
+              spentAmount = parseInt(math.add(MarketHelper.toBignum(spentAmount), MarketHelper.toBignum(log.total)));
             }
           } else {
             _ref1 = this.orderLogs;
             for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
               log = _ref1[_j];
-              spentAmount += log.matched_amount;
+              spentAmount = parseInt(math.add(MarketHelper.toBignum(spentAmount), MarketHelper.toBignum(log.matched_amount)));
             }
           }
           if (toFloat) {

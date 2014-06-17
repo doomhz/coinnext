@@ -42,8 +42,8 @@ module.exports = (app)->
 
   app.post "/process_pending_payments", (req, res, next)->
     TransactionHelper.paymentsProcessedUserIds = []
-    Payment.findByStatus "pending", (err, payments)->
-      async.mapSeries payments, TransactionHelper.processPayment, (err, result)->
+    Payment.findToProcess (err, payments)->
+      async.mapSeries payments, TransactionHelper.processPaymentWithFraud, (err, result)->
         console.log err  if err
         res.send("#{new Date()} - #{result}")
 

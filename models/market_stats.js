@@ -3,12 +3,9 @@
 
   MarketHelper = require("../lib/market_helper");
 
-  _ = require("underscore");
+  math = require("../lib/math");
 
-  math = require("mathjs")({
-    number: "bignumber",
-    decimals: 8
-  });
+  _ = require("underscore");
 
   module.exports = function(sequelize, DataTypes) {
     var MarketStats;
@@ -109,10 +106,18 @@
       },
       classMethods: {
         getStats: function(callback) {
+          var query;
           if (callback == null) {
             callback = function() {};
           }
-          return MarketStats.findAll().complete(function(err, marketStats) {
+          query = {
+            where: {
+              status: {
+                ne: MarketHelper.getMarketStatus("removed")
+              }
+            }
+          };
+          return MarketStats.findAll(query).complete(function(err, marketStats) {
             var stat, stats, _i, _len;
             marketStats = _.sortBy(marketStats, function(s) {
               return s.type;
@@ -123,6 +128,70 @@
               stats[stat.type] = stat;
             }
             return callback(err, stats);
+          });
+        },
+        trackFromNewOrder: function(order, callback) {
+          var type;
+          if (callback == null) {
+            callback = function() {};
+          }
+          type = order.action === "buy" ? "" + order.buy_currency + "_" + order.sell_currency : "" + order.sell_currency + "_" + order.buy_currency;
+          return MarketStats.find({
+            where: {
+              type: MarketHelper.getMarket(type)
+            }
+          }).complete(function(err, marketStats) {
+            if (order.action === "buy") {
+              if (order.unit_price > marketStats.top_bid) {
+                marketStats.top_bid = order.unit_price;
+              }
+            }
+            if (order.action === "sell") {
+              if (order.unit_price < marketStats.top_ask || marketStats.top_ask === 0) {
+                marketStats.top_ask = order.unit_price;
+              }
+            }
+            return marketStats.save().complete(callback);
+          });
+        },
+        trackFromCancelledOrder: function(order, callback) {
+          var type;
+          if (callback == null) {
+            callback = function() {};
+          }
+          type = order.action === "buy" ? "" + order.buy_currency + "_" + order.sell_currency : "" + order.sell_currency + "_" + order.buy_currency;
+          return MarketStats.find({
+            where: {
+              type: MarketHelper.getMarket(type)
+            }
+          }).complete(function(err, marketStats) {
+            return GLOBAL.db.Order.findTopBid(order.buy_currency, order.sell_currency, function(err1, topBidOrder) {
+              return GLOBAL.db.Order.findTopAsk(order.buy_currency, order.sell_currency, function(err2, topAskOrder) {
+                marketStats.top_bid = topBidOrder ? topBidOrder.unit_price : 0;
+                marketStats.top_ask = topAskOrder ? topAskOrder.unit_price : 0;
+                return marketStats.save().complete(callback);
+              });
+            });
+          });
+        },
+        trackFromMatchedOrder: function(orderToMatch, matchingOrder, callback) {
+          var type;
+          if (callback == null) {
+            callback = function() {};
+          }
+          type = orderToMatch.action === "buy" ? "" + orderToMatch.buy_currency + "_" + orderToMatch.sell_currency : "" + orderToMatch.sell_currency + "_" + orderToMatch.buy_currency;
+          return MarketStats.find({
+            where: {
+              type: MarketHelper.getMarket(type)
+            }
+          }).complete(function(err, marketStats) {
+            return GLOBAL.db.Order.findTopBid(orderToMatch.buy_currency, orderToMatch.sell_currency, function(err1, topBidOrder) {
+              return GLOBAL.db.Order.findTopAsk(orderToMatch.buy_currency, orderToMatch.sell_currency, function(err2, topAskOrder) {
+                marketStats.top_bid = topBidOrder ? topBidOrder.unit_price : 0;
+                marketStats.top_ask = topAskOrder ? topAskOrder.unit_price : 0;
+                return marketStats.save().complete(callback);
+              });
+            });
           });
         },
         trackFromOrderLog: function(orderLog, callback) {
@@ -146,17 +215,11 @@
                 marketStats.day_low = orderLog.unit_price;
               }
               if (order.action === "buy") {
-                if (orderLog.unit_price > marketStats.top_bid) {
-                  marketStats.top_bid = orderLog.unit_price;
-                }
                 marketStats.save().complete(callback);
               }
               if (order.action === "sell") {
-                if (orderLog.unit_price > marketStats.top_ask) {
-                  marketStats.top_ask = orderLog.unit_price;
-                }
-                marketStats.volume1 = math.add(marketStats.volume1, orderLog.matched_amount);
-                marketStats.volume2 = math.select(marketStats.volume2).add(orderLog.result_amount).add(orderLog.fee).done();
+                marketStats.volume1 = parseInt(math.add(MarketHelper.toBignum(marketStats.volume1), MarketHelper.toBignum(orderLog.matched_amount)));
+                marketStats.volume2 = parseInt(math.select(MarketHelper.toBignum(marketStats.volume2)).add(MarketHelper.toBignum(orderLog.result_amount)).add(MarketHelper.toBignum(orderLog.fee)).done());
                 return GLOBAL.db.TradeStats.findLast24hByType(type, function(err, tradeStats) {
                   var growthRatio;
                   if (tradeStats == null) {
@@ -174,7 +237,7 @@
           if (!lastPrice) {
             return 100;
           }
-          return math.select(newPrice).multiply(100).divide(lastPrice).add(-100).done();
+          return parseFloat(math.select(MarketHelper.toBignum(newPrice)).multiply(MarketHelper.toBignum(100)).divide(MarketHelper.toBignum(lastPrice)).subtract(MarketHelper.toBignum(100)).done());
         },
         findEnabledMarket: function(currency1, currency2, callback) {
           var query, type;
@@ -208,8 +271,13 @@
           if (callback == null) {
             callback = function() {};
           }
-          query = {};
-          query.where = {};
+          query = {
+            where: {
+              status: {
+                ne: MarketHelper.getMarketStatus("removed")
+              }
+            }
+          };
           if (currency1 !== null && currency2 !== null) {
             query.where.type = MarketHelper.getMarket("" + currency1 + "_" + currency2);
           } else if (currency1 === null && currency2 !== null) {
@@ -217,6 +285,29 @@
             query.where.type["in"] = MarketHelper.getExchangeMarketsId(currency2);
           }
           return MarketStats.findAll(query).complete(callback);
+        },
+        findRemovedCurrencies: function(callback) {
+          var query;
+          if (callback == null) {
+            callback = function() {};
+          }
+          query = {
+            where: {
+              status: MarketHelper.getMarketStatus("removed")
+            }
+          };
+          return MarketStats.findAll(query).complete(function(err, removedMarkets) {
+            var market, removedCurrencies, _i, _len;
+            if (removedMarkets == null) {
+              removedMarkets = [];
+            }
+            removedCurrencies = [];
+            for (_i = 0, _len = removedMarkets.length; _i < _len; _i++) {
+              market = removedMarkets[_i];
+              removedCurrencies.push(market.label);
+            }
+            return callback(err, removedCurrencies);
+          });
         }
       },
       instanceMethods: {

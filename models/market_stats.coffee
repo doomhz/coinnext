@@ -1,8 +1,6 @@
 MarketHelper = require "../lib/market_helper"
+math = require "../lib/math"
 _ = require "underscore"
-math = require("mathjs")
-  number: "bignumber"
-  decimals: 8
 
 module.exports = (sequelize, DataTypes) ->
 
@@ -84,7 +82,11 @@ module.exports = (sequelize, DataTypes) ->
       classMethods:
         
         getStats: (callback = ()->)->
-          MarketStats.findAll().complete (err, marketStats)->
+          query =
+            where:
+              status:
+                ne: MarketHelper.getMarketStatus "removed"
+          MarketStats.findAll(query).complete (err, marketStats)->
             marketStats = _.sortBy marketStats, (s)->
               s.type
             stats = {}
@@ -92,6 +94,33 @@ module.exports = (sequelize, DataTypes) ->
               stats[stat.type] = stat
             callback err, stats
         
+        trackFromNewOrder: (order, callback = ()->)->
+          type = if order.action is "buy" then "#{order.buy_currency}_#{order.sell_currency}" else "#{order.sell_currency}_#{order.buy_currency}"
+          MarketStats.find({where: {type: MarketHelper.getMarket(type)}}).complete (err, marketStats)->
+            if order.action is "buy"
+              marketStats.top_bid = order.unit_price  if order.unit_price > marketStats.top_bid
+            if order.action is "sell"
+              marketStats.top_ask = order.unit_price  if order.unit_price < marketStats.top_ask or marketStats.top_ask is 0
+            marketStats.save().complete callback
+
+        trackFromCancelledOrder: (order, callback = ()->)->
+          type = if order.action is "buy" then "#{order.buy_currency}_#{order.sell_currency}" else "#{order.sell_currency}_#{order.buy_currency}"
+          MarketStats.find({where: {type: MarketHelper.getMarket(type)}}).complete (err, marketStats)->
+            GLOBAL.db.Order.findTopBid order.buy_currency, order.sell_currency, (err1, topBidOrder)->
+              GLOBAL.db.Order.findTopAsk order.buy_currency, order.sell_currency, (err2, topAskOrder)->
+                marketStats.top_bid = if topBidOrder then topBidOrder.unit_price else 0
+                marketStats.top_ask = if topAskOrder then topAskOrder.unit_price else 0
+                marketStats.save().complete callback
+
+        trackFromMatchedOrder: (orderToMatch, matchingOrder, callback = ()->)->
+          type = if orderToMatch.action is "buy" then "#{orderToMatch.buy_currency}_#{orderToMatch.sell_currency}" else "#{orderToMatch.sell_currency}_#{orderToMatch.buy_currency}"
+          MarketStats.find({where: {type: MarketHelper.getMarket(type)}}).complete (err, marketStats)->
+            GLOBAL.db.Order.findTopBid orderToMatch.buy_currency, orderToMatch.sell_currency, (err1, topBidOrder)->
+              GLOBAL.db.Order.findTopAsk orderToMatch.buy_currency, orderToMatch.sell_currency, (err2, topAskOrder)->
+                marketStats.top_bid = if topBidOrder then topBidOrder.unit_price else 0
+                marketStats.top_ask = if topAskOrder then topAskOrder.unit_price else 0
+                marketStats.save().complete callback
+
         trackFromOrderLog: (orderLog, callback = ()->)->
           orderLog.getOrder().complete (err, order)->
             type = if order.action is "buy" then "#{order.buy_currency}_#{order.sell_currency}" else "#{order.sell_currency}_#{order.buy_currency}"
@@ -101,14 +130,12 @@ module.exports = (sequelize, DataTypes) ->
               marketStats.day_high = orderLog.unit_price  if orderLog.unit_price > marketStats.day_high
               marketStats.day_low = orderLog.unit_price  if orderLog.unit_price < marketStats.day_low or marketStats.day_low is 0
               if order.action is "buy"
-                marketStats.top_bid = orderLog.unit_price  if orderLog.unit_price > marketStats.top_bid
                 marketStats.save().complete callback
               if order.action is "sell"
-                marketStats.top_ask = orderLog.unit_price  if orderLog.unit_price > marketStats.top_ask
                 # Alt currency volume traded
-                marketStats.volume1 = math.add marketStats.volume1, orderLog.matched_amount
+                marketStats.volume1 = parseInt math.add(MarketHelper.toBignum(marketStats.volume1), MarketHelper.toBignum(orderLog.matched_amount))
                 # BTC Volume Traded
-                marketStats.volume2 = math.select(marketStats.volume2).add(orderLog.result_amount).add(orderLog.fee).done()
+                marketStats.volume2 = parseInt math.select(MarketHelper.toBignum(marketStats.volume2)).add(MarketHelper.toBignum(orderLog.result_amount)).add(MarketHelper.toBignum(orderLog.fee)).done()
                 GLOBAL.db.TradeStats.findLast24hByType type, (err, tradeStats = {})->
                   growthRatio = MarketStats.calculateGrowthRatio tradeStats.close_price, orderLog.unit_price
                   marketStats.growth_ratio = math.round MarketHelper.toBigint(growthRatio), 0
@@ -116,7 +143,7 @@ module.exports = (sequelize, DataTypes) ->
 
         calculateGrowthRatio: (lastPrice, newPrice)->
           return 100  if not lastPrice
-          math.select(newPrice).multiply(100).divide(lastPrice).add(-100).done()
+          parseFloat math.select(MarketHelper.toBignum(newPrice)).multiply(MarketHelper.toBignum(100)).divide(MarketHelper.toBignum(lastPrice)).subtract(MarketHelper.toBignum(100)).done()
 
         findEnabledMarket: (currency1, currency2, callback = ()->)->
           # TODO: Review when both are equal to BTC
@@ -135,14 +162,26 @@ module.exports = (sequelize, DataTypes) ->
         # findMarkets null, BTC -> all BTC markets
         # findMarkets LTC, BTC -> return LTC_BTC market
         findMarkets: (currency1, currency2, callback = ()->)->
-          query = {}
-          query.where = {}
+          query =
+            where:
+              status:
+                ne: MarketHelper.getMarketStatus "removed"
           if currency1 isnt null and currency2 isnt null
             query.where.type = MarketHelper.getMarket("#{currency1}_#{currency2}")
           else if currency1 is null and currency2 isnt null
             query.where.type = {}
             query.where.type.in = MarketHelper.getExchangeMarketsId(currency2)
           MarketStats.findAll(query).complete callback
+
+        findRemovedCurrencies: (callback = ()->)->
+          query =
+            where:
+              status: MarketHelper.getMarketStatus "removed"
+          MarketStats.findAll(query).complete (err, removedMarkets = [])->
+            removedCurrencies = []
+            for market in removedMarkets
+              removedCurrencies.push market.label
+            callback err, removedCurrencies
 
       instanceMethods:
 

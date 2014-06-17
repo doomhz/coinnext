@@ -1,5 +1,5 @@
 (function() {
-  var AuthStats, JsonRenderer, MarketHelper, MarketStats, TradeStats, UserToken, Wallet, WalletHealth, _, _str;
+  var AuthStats, JsonRenderer, MarketHelper, MarketStats, OrderLog, TradeStats, UserToken, Wallet, WalletHealth, _, _str;
 
   Wallet = GLOBAL.db.Wallet;
 
@@ -13,6 +13,8 @@
 
   UserToken = GLOBAL.db.UserToken;
 
+  OrderLog = GLOBAL.db.OrderLog;
+
   JsonRenderer = require("../lib/json_renderer");
 
   MarketHelper = require("../lib/market_helper");
@@ -24,13 +26,16 @@
   module.exports = function(app) {
     app.get("/", function(req, res) {
       return MarketStats.getStats(function(err, marketStats) {
-        return res.render("site/index", {
-          title: req.user ? 'Home - Coinnext' : 'Coinnext - Cryptocurrency Exchange',
-          page: "home",
-          user: req.user,
-          marketStats: JsonRenderer.marketStats(marketStats),
-          currencies: MarketHelper.getCurrencyNames(),
-          _str: _str
+        return OrderLog.getNumberOfTrades(null, function(err, tradesCount) {
+          return res.render("site/index", {
+            title: req.user ? 'Home - Coinnext' : 'Coinnext - Cryptocurrency Exchange',
+            page: "home",
+            user: req.user,
+            marketStats: JsonRenderer.marketStats(marketStats),
+            currencies: MarketHelper.getCurrencyNames(),
+            tradesCount: tradesCount,
+            _str: _str
+          });
         });
       });
     });
@@ -45,6 +50,9 @@
         return res.redirect("/");
       }
       return MarketStats.getStats(function(err, marketStats) {
+        if (!marketStats["" + currency1 + "_" + currency2]) {
+          return res.redirect("/404");
+        }
         if (req.user) {
           return Wallet.findUserWalletByCurrency(req.user.id, currency1, function(err, wallet1) {
             if (!wallet1) {
@@ -96,13 +104,24 @@
         return res.redirect("/login");
       }
       return Wallet.findUserWallets(req.user.id, function(err, wallets) {
-        return res.render("site/funds", {
-          title: 'Funds - Coinnext',
-          page: "funds",
-          user: req.user,
-          wallets: wallets,
-          currencies: MarketHelper.getSortedCurrencyNames(),
-          _str: _str
+        if (wallets == null) {
+          wallets = [];
+        }
+        return MarketStats.findRemovedCurrencies(function(err, removedCurrencies) {
+          var currencies;
+          wallets = wallets.filter(function(wl) {
+            return removedCurrencies.indexOf(wl.currency) === -1;
+          });
+          currencies = MarketHelper.getSortedCurrencyNames();
+          currencies = _.omit(currencies, removedCurrencies);
+          return res.render("site/funds", {
+            title: 'Funds - Coinnext',
+            page: "funds",
+            user: req.user,
+            wallets: wallets,
+            currencies: currencies,
+            _str: _str
+          });
         });
       });
     });
@@ -110,21 +129,33 @@
       if (!req.user) {
         return res.redirect("/login");
       }
-      return Wallet.findUserWallets(req.user.id, function(err, wallets) {
-        return Wallet.findUserWalletByCurrency(req.user.id, req.params.currency, function(err, wallet) {
-          if (err) {
-            console.error(err);
-          }
-          if (!wallet) {
-            return res.redirect("/");
-          }
-          return res.render("site/funds/wallet", {
-            title: "" + req.params.currency + " - Funds - Coinnext",
-            page: "funds",
-            user: req.user,
-            wallet: wallet,
-            currencies: MarketHelper.getSortedCurrencyNames(),
-            _str: _str
+      return MarketStats.findRemovedCurrencies(function(err, removedCurrencies) {
+        if (removedCurrencies.indexOf(req.params.currency) > -1) {
+          return res.redirect("/404");
+        }
+        return Wallet.findUserWallets(req.user.id, function(err, wallets) {
+          return Wallet.findUserWalletByCurrency(req.user.id, req.params.currency, function(err, wallet) {
+            var currencies;
+            if (err) {
+              console.error(err);
+            }
+            if (!wallet) {
+              return res.redirect("/");
+            }
+            wallets = wallets.filter(function(wl) {
+              return removedCurrencies.indexOf(wl.currency) === -1;
+            });
+            currencies = MarketHelper.getSortedCurrencyNames();
+            currencies = _.omit(currencies, removedCurrencies);
+            return res.render("site/funds/wallet", {
+              title: "" + req.params.currency + " - Funds - Coinnext",
+              page: "funds",
+              user: req.user,
+              wallets: wallets,
+              wallet: wallet,
+              currencies: currencies,
+              _str: _str
+            });
           });
         });
       });

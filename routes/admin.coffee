@@ -28,11 +28,14 @@ module.exports = (app)->
     next()
 
   app.get "/administratie", (req, res)->
-    res.render "admin/stats",
-      title: "Stats - Admin - CoinNext"
-      page: "stats"
-      adminUser: req.user
-      currencies: MarketHelper.getCurrencyTypes()
+    MarketStats.findRemovedCurrencies (err, removedCurrencies)->
+      currencies = MarketHelper.getCurrencyTypes().filter (curr)->
+        removedCurrencies.indexOf(curr) is -1
+      res.render "admin/stats",
+        title: "Stats - Admin - CoinNext"
+        page: "stats"
+        adminUser: req.user
+        currencies: currencies
 
   app.get "/administratie/users", (req, res)->
     count = req.query.count or 20

@@ -1,10 +1,8 @@
 OrderLog = GLOBAL.db.OrderLog
 TradeStats = GLOBAL.db.TradeStats
 MarketHelper = require "../../lib/market_helper"
+math = require "../../lib/math"
 _ = require "underscore"
-math = require("mathjs")
-  number: "bignumber"
-  decimals: 8
 
 module.exports = (app)->
 
@@ -31,8 +29,8 @@ module.exports = (app)->
         markets[marketType].close_price = orderLog.unit_price
         markets[marketType].high_price = orderLog.unit_price  if orderLog.unit_price > markets[marketType].high_price
         markets[marketType].low_price = orderLog.unit_price  if orderLog.unit_price < markets[marketType].low_price or markets[marketType].low_price is 0
-        markets[marketType].volume = math.add markets[marketType].volume, orderLog.matched_amount
-        markets[marketType].exchange_volume = math.add markets[marketType].exchange_volume, orderLog.result_amount
+        markets[marketType].volume = parseInt math.add(MarketHelper.toBignum(markets[marketType].volume), MarketHelper.toBignum(orderLog.matched_amount))
+        markets[marketType].exchange_volume = parseInt math.add(MarketHelper.toBignum(markets[marketType].exchange_volume), MarketHelper.toBignum(orderLog.result_amount))
       markets = _.values markets
       TradeStats.bulkCreate(markets).complete (err, result)->
         res.send

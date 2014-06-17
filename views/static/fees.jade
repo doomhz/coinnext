@@ -28,7 +28,7 @@ block content
         p Withdrawals are free. We do add a transaction fee to ensure swift processing by the network.
         .fees.container
           table.trade-data
-            - each id, currencyLabel in MarketHelper.getCurrencies()
+            - each currencyLabel in MarketHelper.getSortedCurrencyTypes()
               tr
                 th #{currencyLabel}
                 td #{MarketHelper.fromBigint(MarketHelper.getWithdrawalFee(currencyLabel))}

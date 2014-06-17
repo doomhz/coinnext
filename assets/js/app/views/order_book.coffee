@@ -31,7 +31,7 @@ class App.OrderBookView extends App.MasterView
     @render()
 
   onOrderMatched: (ev, order)=>
-    unitPrice = _.str.satoshiRound order.get("unit_price")
+    unitPrice = _.str.toFixed order.get("unit_price")
     $existentOrder = @$("[data-unit-price='#{unitPrice}']")
     if $existentOrder.length
       $existentOrder.addClass "highlight"
@@ -45,10 +45,10 @@ class App.OrderBookView extends App.MasterView
 
   onOrderClick: (ev)->
     $row = $(ev.currentTarget)
-    unitPrice = $row.data "unit-price"
+    unitPrice = parseFloat $row.data "unit-price"
     action = $row.data "action"
     order = new App.OrderModel
-      unit_price: _.str.toFixed unitPrice
+      unit_price: unitPrice
       action: action
-      amount: _.str.toFixed @collection.calculateVolumeForPriceLimit unitPrice
+      amount: @collection.calculateVolumeForPriceLimit unitPrice
     $.publish "order-book-order-selected", order

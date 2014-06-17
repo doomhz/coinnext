@@ -1,7 +1,5 @@
 MarketHelper = require "../lib/market_helper"
-math = require("mathjs")
-  number: "bignumber"
-  decimals: 8
+math = require "../lib/math"
 
 module.exports = (sequelize, DataTypes) ->
 
@@ -53,7 +51,7 @@ module.exports = (sequelize, DataTypes) ->
       getterMethods:
 
         total: ()->
-          math.multiply @matched_amount, MarketHelper.fromBigint @unit_price
+          MarketHelper.multiplyBigints @matched_amount, @unit_price
 
       classMethods:
 
@@ -99,6 +97,9 @@ module.exports = (sequelize, DataTypes) ->
           query.order = options.sort_by  if options.sort_by
           query.limit = options.limit  if options.limit
           OrderLog.findAll(query).complete callback
+
+        getNumberOfTrades: (options = {}, callback)->
+          OrderLog.count().complete callback
 
       instanceMethods:
 

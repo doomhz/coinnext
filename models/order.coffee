@@ -1,8 +1,6 @@
 MarketHelper = require "../lib/market_helper"
 _ = require "underscore"
-math = require("mathjs")
-  number: "bignumber"
-  decimals: 8
+math = require "../lib/math"
 
 module.exports = (sequelize, DataTypes) ->
 
@@ -127,14 +125,14 @@ module.exports = (sequelize, DataTypes) ->
           return "sell"  if @action is "buy"
 
         left_amount: ()->
-          math.add(@amount, -@matched_amount)
+          parseInt math.subtract(MarketHelper.toBignum(@amount), MarketHelper.toBignum(@matched_amount))
 
         left_hold_balance: ()->
-          return math.multiply @left_amount, MarketHelper.fromBigint @unit_price  if @action is "buy"
+          return MarketHelper.multiplyBigints @left_amount, @unit_price  if @action is "buy"
           return @left_amount  if @action is "sell"
 
         total: ()->
-          math.multiply @amount, MarketHelper.fromBigint @unit_price
+          MarketHelper.multiplyBigints @amount, @unit_price
       
       classMethods:
         
@@ -146,7 +144,35 @@ module.exports = (sequelize, DataTypes) ->
 
         findByUserAndId: (id, userId, callback)->
           Order.find({where: {id: id, user_id: userId}}).complete callback
-      
+
+        findTopBid: (buyCurrency, sellCurrency, callback = ()->)->
+          query = 
+            limit: 1
+            where:
+              deleted_at: null
+              action: MarketHelper.getOrderAction("buy")
+              status: [MarketHelper.getOrderStatus("open"), MarketHelper.getOrderStatus("partiallyCompleted")]
+              buy_currency: [MarketHelper.getCurrency(buyCurrency), MarketHelper.getCurrency(sellCurrency)]
+              sell_currency: [MarketHelper.getCurrency(buyCurrency), MarketHelper.getCurrency(sellCurrency)]
+            order: [
+              ["unit_price", "DESC"]
+            ]
+          Order.find(query).complete callback
+
+        findTopAsk: (buyCurrency, sellCurrency, callback = ()->)->
+          query = 
+            limit: 1
+            where:
+              deleted_at: null
+              action: MarketHelper.getOrderAction("sell")
+              status: [MarketHelper.getOrderStatus("open"), MarketHelper.getOrderStatus("partiallyCompleted")]
+              buy_currency: [MarketHelper.getCurrency(buyCurrency), MarketHelper.getCurrency(sellCurrency)]
+              sell_currency: [MarketHelper.getCurrency(buyCurrency), MarketHelper.getCurrency(sellCurrency)]
+            order: [
+              ["unit_price", "ASC"]
+            ]
+          Order.find(query).complete callback
+
         findByOptions: (options = {}, callback)->
           query =
             where:
@@ -164,20 +190,24 @@ module.exports = (sequelize, DataTypes) ->
           query.limit = options.limit  if options.limit
           if options.status is "open"
             query.where.status = [MarketHelper.getOrderStatus("partiallyCompleted"), MarketHelper.getOrderStatus("open")]
-          if options.status is "completed"
+          else if options.status is "completed"
             query.where.status = MarketHelper.getOrderStatus(options.status)
-          query.where.action = MarketHelper.getOrderAction(options.action)    if !!MarketHelper.getOrderAction(options.action)
+          else if _.isArray options.status
+            query.where.status = []
+            for status in options.status
+              query.where.status.push MarketHelper.getOrderStatus(status)
+          query.where.action = MarketHelper.getOrderAction(options.action)  if !!MarketHelper.getOrderAction(options.action)
           query.where.user_id = options.user_id  if options.user_id?
           if options.action is "buy"
-            query.where.buy_currency = MarketHelper.getCurrency options.currency1
-            query.where.sell_currency = MarketHelper.getCurrency options.currency2
+            query.where.buy_currency = MarketHelper.getCurrency options.currency1  if options.currency1?
+            query.where.sell_currency = MarketHelper.getCurrency options.currency2  if options.currency2?
           else if options.action is "sell"
-            query.where.buy_currency = MarketHelper.getCurrency options.currency2
-            query.where.sell_currency = MarketHelper.getCurrency options.currency1
+            query.where.buy_currency = MarketHelper.getCurrency options.currency2  if options.currency2?
+            query.where.sell_currency = MarketHelper.getCurrency options.currency1  if options.currency1?
           else if not options.action
             currencies = []
-            currencies.push MarketHelper.getCurrency(options.currency1)  if options.currency1
-            currencies.push MarketHelper.getCurrency(options.currency2)  if options.currency2
+            currencies.push MarketHelper.getCurrency(options.currency1)  if options.currency1?
+            currencies.push MarketHelper.getCurrency(options.currency2)  if options.currency2?
             if currencies.length > 1
               query.where.buy_currency = currencies
               query.where.sell_currency = currencies
@@ -239,26 +269,26 @@ module.exports = (sequelize, DataTypes) ->
 
         updateFromMatchedData: (matchedData, transaction, callback = ()->)->
           @status = matchedData.status
-          @matched_amount = math.add @matched_amount, matchedData.matched_amount
-          @result_amount = math.add @result_amount, matchedData.result_amount
-          @fee = math.add @fee, matchedData.fee
+          @matched_amount = parseInt math.add(MarketHelper.toBignum(@matched_amount), MarketHelper.toBignum(matchedData.matched_amount))
+          @result_amount = parseInt math.add(MarketHelper.toBignum(@result_amount), MarketHelper.toBignum(matchedData.result_amount))
+          @fee = parseInt math.add(MarketHelper.toBignum(@fee), MarketHelper.toBignum(matchedData.fee))
           @close_time = new Date matchedData.time  if @status is "completed"
           @save({transaction: transaction}).complete callback
 
         calculateReceivedFromLogs: (toFloat = false)->
           resultAmount = 0
           for log in @orderLogs
-            resultAmount += log.result_amount
-          if toFloat then MarketHelper.fromBigint resultAmount else resultAmount
+            resultAmount = parseInt math.add(MarketHelper.toBignum(resultAmount), MarketHelper.toBignum(log.result_amount))
+          if toFloat then MarketHelper.fromBigint(resultAmount) else resultAmount
 
         calculateSpentFromLogs: (toFloat = false)->
           spentAmount = 0
           if @action is "buy"
             for log in @orderLogs
-              spentAmount += log.total
+              spentAmount = parseInt math.add(MarketHelper.toBignum(spentAmount), MarketHelper.toBignum(log.total))
           else
             for log in @orderLogs
-              spentAmount += log.matched_amount
+              spentAmount = parseInt math.add(MarketHelper.toBignum(spentAmount), MarketHelper.toBignum(log.matched_amount))
           if toFloat then MarketHelper.fromBigint(spentAmount) else spentAmount
 
   Order

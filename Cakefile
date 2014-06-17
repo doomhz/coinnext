@@ -2,6 +2,12 @@ environment = process.env.NODE_ENV or 'development'
 GLOBAL.appConfig = require "./configs/config"
 GLOBAL.db = require './models/index'
 
+option "-e", "--email [EMAIL]", "User email"
+option "-p", "--pass [PASS]", "User pass"
+option "-w", "--wallet [ID]", "Wallet ID"
+option "-u", "--user [ID]", "User ID"
+option "-o", "--order [ID]", "Order ID"
+
 task "db:create_tables", "Create all tables", ()->
   GLOBAL.db.sequelize.sync().complete ()->
 
@@ -54,8 +60,6 @@ task "db:migrate_undo", "Undo database migrations", ()->
   migrator.migrate({method: "down"}).success ()->
     console.log "Database migrations reverted."
 
-option "-e", "--email [EMAIL]", "User email"
-option "-p", "--pass [PASS]", "User pass"
 task "admin:generate_user", "Add new admin user -e -p", (opts)->
   data =
     email: opts.email
@@ -66,52 +70,53 @@ task "admin:generate_user", "Add new admin user -e -p", (opts)->
       console.log data.google_auth_qr
       console.log newUser.gauth_key
 
-task "wallet:sync_balance", "Sync wallets balance", ()->
+task "order:cancel_open", "Cancel open order", (opts)->
+  TradeHelper = require "./lib/trade_helper"
+  TradeHelper.cancelOrder opts.order, ()->
+
+task "fraud:check_wallet", "Check wallet for fraud", (opts)->
   FraudHelper = require "./lib/fraud_helper"
-  FraudHelper.findDesyncedWallets (err, result)->
-    console.error err  if err
-    console.log "#{result.length} desynced wallets", result
+  FraudHelper.checkWalletBalance opts.wallet, (err, result)->
+    return console.error err  if err
+    console.log result
 
-task "promo:find_addresses", "", ()->
-  fs = require "fs"
+task "fraud:check_user_wallets", "Check user wallets for fraud", (opts)->
+  FraudHelper = require "./lib/fraud_helper"
   async = require "async"
-  CoreAPIClient = require('./lib/core_api_client')
-  GLOBAL.coreAPIClient = new CoreAPIClient({host: GLOBAL.appConfig().wallets_host})
-  addresses = fs.readFileSync "email_addresses.txt"
-  addresses = addresses.toString()
-  addresses = addresses.split "\n"
+  checkWalletBalance = (wallet, cb)->
+    FraudHelper.checkWalletBalance wallet.id, (err, result)->
+      return console.error err  if err
+      cb err,
+        wallet_id: wallet.id
+        result: result
+  GLOBAL.db.Wallet.findAll({where: {user_id: opts.user}}).complete (err, wallets)->
+    async.mapSeries wallets, checkWalletBalance, (err, results)->
+      console.log results
 
-  getWalletAddress = (user, cb)->
-    GLOBAL.db.Wallet.findOrCreateUserWalletByCurrency user.id, "SCOT", (err, wallet)->
-      return cb err  if err
-      return cb null, "#{user.email} - #{wallet.address}"  if wallet.address
-      wallet.generateAddress (err, wl)->
-        return cb err  if err
-        cb null, "#{user.email} - #{wl.address}"
-
-  GLOBAL.db.User.findAll({where: {email: addresses}}).complete (err, users)->
-    async.mapSeries users, getWalletAddress, (err, result)->
-      console.log result
-
-task "promo:find_diff_addresses", "", ()->
-  fs = require "fs"
-  _ = require "underscore"
-  addresses = fs.readFileSync "email_addresses.txt"
-  addresses = addresses.toString()
-  addresses = addresses.split "\n"
-  addressesOut = fs.readFileSync "email_addresses_out.txt"
-  addressesOut = addressesOut.toString()
-  addressesOut = addressesOut.split "\n"
-
-  console.log _.difference addresses, addressesOut
-
-task "cancel_stuck_orders", ()->
-  GLOBAL.queue = require('./lib/queue/index')
-  TradeHelper = require('./lib/trade_helper')
+task "fraud:check_all_wallets_balances", "Check user wallets for fraud", ()->
+  MarketHelper = require "./lib/market_helper"
+  FraudHelper = require "./lib/fraud_helper"
   async = require "async"
-  orderIds = [1792, 1889, 1892, 1894]
-  cancelOrder = (id, cb)->
-    TradeHelper.cancelOrder id, cb
-  async.mapSeries orderIds, cancelOrder, ()->
-    console.log arguments
-
+  wrongHoldBalanceWalletsIds = []
+  wrongBalanceWalletsIds = []
+  lost = {}
+  totals = {}
+  checkWalletBalance = (wallet, cb)->
+    FraudHelper.checkWalletBalance wallet.id, (err, result)->
+      return console.error err  if err
+      wrongHoldBalanceWalletsIds.push wallet.id  if not result.valid_hold_balance
+      wrongBalanceWalletsIds.push wallet.id  if result.final_balance < 0
+      if result.final_balance < 0
+        lost[wallet.currency] = 0  if not lost[wallet.currency]?
+        lost[wallet.currency] += (result.final_balance * -1)
+      totals[wallet.currency] = 0  if not totals[wallet.currency]?
+      totals[wallet.currency] += (wallet.total_balance)
+      cb err
+  GLOBAL.db.Wallet.findAll().complete (err, wallets)->
+    async.mapSeries wallets, checkWalletBalance, (err, results)->
+      console.log "Wrong hold balances: ", wrongHoldBalanceWalletsIds
+      console.log "Wrong balances: ", wrongBalanceWalletsIds
+      console.log "Lost: ", lost
+      for curr, amount of totals
+        totals[curr] = MarketHelper.fromBigint(amount)
+      console.log "Totals: ", totals
