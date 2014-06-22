@@ -171,11 +171,6 @@ module.exports = (app)->
       user: req.user
       MarketHelper: MarketHelper
 
-  app.get "/about", (req, res)->
-    res.render "static/about",
-      title: 'About - Coinnext'
-      user: req.user
-
   app.get "/security", (req, res)->
     res.render "static/security",
       title: 'Security - Coinnext'
