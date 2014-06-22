@@ -27,7 +27,7 @@ describe "FraudHelper", ->
             orders = [
               {id: 1, user_id: 1, action: "sell", buy_currency: "BTC", sell_currency: "LTC", amount: MarketHelper.toBigint(5), status: "completed"}
               {id: 2, user_id: 1, action: "buy", buy_currency: "LTC", sell_currency: "BTC", amount: MarketHelper.toBigint(2), status: "completed"}
-              {id: 3, user_id: 1, action: "sell", buy_currency: "BTC", sell_currency: "LTC", amount: MarketHelper.toBigint(40), matched_amount: MarketHelper.toBigint(15), status: "partiallyCompleted"}
+              {id: 3, user_id: 1, action: "sell", buy_currency: "BTC", sell_currency: "LTC", amount: MarketHelper.toBigint(40), matched_amount: MarketHelper.toBigint(15), status: "partiallyCompleted", deleted_at: Date.now() - 1000000}
               {id: 4, user_id: 1, action: "sell", buy_currency: "BTC", sell_currency: "LTC", amount: MarketHelper.toBigint(20), status: "open"}
             ]
             orderLogs = [
@@ -74,7 +74,7 @@ describe "FraudHelper", ->
             orders = [
               {id: 1, user_id: 1, action: "sell", buy_currency: "BTC", sell_currency: "LTC", amount: MarketHelper.toBigint(5), unit_price: MarketHelper.toBigint(0.1), status: "completed"}
               {id: 2, user_id: 1, action: "buy", buy_currency: "LTC", sell_currency: "BTC", amount: MarketHelper.toBigint(2), unit_price: MarketHelper.toBigint(0.1), status: "completed"}
-              {id: 3, user_id: 1, action: "sell", buy_currency: "BTC", sell_currency: "LTC", amount: MarketHelper.toBigint(40), matched_amount: MarketHelper.toBigint(15), unit_price: MarketHelper.toBigint(0.1), status: "partiallyCompleted"}
+              {id: 3, user_id: 1, action: "sell", buy_currency: "BTC", sell_currency: "LTC", amount: MarketHelper.toBigint(40), matched_amount: MarketHelper.toBigint(15), unit_price: MarketHelper.toBigint(0.1), status: "partiallyCompleted", deleted_at: Date.now() - 1000000}
               {id: 4, user_id: 1, action: "buy", buy_currency: "LTC", sell_currency: "BTC", amount: MarketHelper.toBigint(20), unit_price: MarketHelper.toBigint(0.01), status: "open"}
             ]
             orderLogs = [

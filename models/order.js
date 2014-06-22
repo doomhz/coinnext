@@ -276,11 +276,12 @@
             options = {};
           }
           query = {
-            where: {
-              deleted_at: null
-            },
+            where: {},
             order: [["created_at", "DESC"]]
           };
+          if (!options.include_deleted) {
+            query.where.deleted_at = null;
+          }
           if (options.include_logs) {
             query.include = [
               {

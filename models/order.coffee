@@ -175,11 +175,11 @@ module.exports = (sequelize, DataTypes) ->
 
         findByOptions: (options = {}, callback)->
           query =
-            where:
-              deleted_at: null
+            where: {}
             order: [
               ["created_at", "DESC"]
             ]
+          query.where.deleted_at = null  if not options.include_deleted
           if options.include_logs
             query.include = [
               model: GLOBAL.db.OrderLog

@@ -30,11 +30,13 @@ FraudHelper =
           user_id: wallet.user_id
           currency1: wallet.currency
           include_logs: true
+          include_deleted: true
         openOptions =
           status: ["open", "partiallyCompleted"]
           user_id: wallet.user_id
           currency1: wallet.currency
           include_logs: true
+          include_deleted: true
         Order.findByOptions closedOptions, (err, closedOrders)->
           Order.findByOptions openOptions, (err, openOrders)->
             closedOrdersBalance = 0
