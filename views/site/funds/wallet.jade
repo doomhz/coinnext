@@ -41,17 +41,18 @@ block content
               .con-header
                 h3.con-header-title <i class="icon-circle-arrow-down"></i> Deposit #{currencies[wallet.currency]}
               .con-body
-                label To deposit #{currencies[wallet.currency]}, send to this address:
-                .coin-deposit-address
-                  code#address-row #{wallet.address}
-                  - if (!wallet.address)
-                    button#generate-address(data-id="#{wallet.id}") Generate Wallet Address
-                  .coin-deposit-actions
-                    button#show-qr-bt Show QR
-                    button#copy-address(data-clipboard-text="#{wallet.address ? wallet.address : ''}") Copy
-                #qr-address-cnt.qr-address(data-address="#{wallet.address ? wallet.address : ''}")
-                ul.terms
-                  li Your deposit will be credited after #{wallet.network_confirmations} network confirmations.
+                label Deposits are permanently disabled. <br />For more information please see <a href="http://blog.coinnext.com/2014/06/24/closing-down/">here</a>.
+                //label To deposit #{currencies[wallet.currency]}, send to this address:
+                //.coin-deposit-address
+                //  code#address-row #{wallet.address}
+                //  - if (!wallet.address)
+                //    button#generate-address(data-id="#{wallet.id}") Generate Wallet Address
+                //  .coin-deposit-actions
+                //    button#show-qr-bt Show QR
+                //    button#copy-address(data-clipboard-text="#{wallet.address ? wallet.address : ''}") Copy
+                //#qr-address-cnt.qr-address(data-address="#{wallet.address ? wallet.address : ''}")
+                //ul.terms
+                //  li Your deposit will be credited after #{wallet.network_confirmations} network confirmations.
           .two-col-wrap
             .transaction-con.container
               .con-header
